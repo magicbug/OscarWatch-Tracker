@@ -40,6 +40,7 @@ public sealed class TrackingOrchestrator
     public IReadOnlyList<SatelliteTrackState> GetLiveStates(DateTime utc)
     {
         var site = _settings.Current.GroundStation;
+        var minEl = _settings.Current.MinimumElevationDeg;
         var sats = _tleService.GetEnabledSatellites(_settings.Current);
         var states = new List<SatelliteTrackState>();
         var sunEci = SunPositionCalculator.GetPosition(utc);
@@ -77,13 +78,14 @@ public sealed class TrackingOrchestrator
 
                 if (!_visualCache.TryGetFreshFootprint(sat.NoradId, utc, out var footprint))
                 {
-                    footprint = _groundGeometry.GetFootprint(sat, utc, minimumElevationDeg: 0);
+                    footprint = _groundGeometry.GetFootprint(sat, utc, minimumElevationDeg: minEl);
                     cache.Footprint = footprint;
                     cache.FootprintUtc = utc;
                 }
 
-                if (cache.FootprintRadiusDeg <= 0)
-                    cache.FootprintRadiusDeg = FootprintGeometry.HorizonRadiusDeg(altKm, minimumElevationDeg: 0);
+                // Always recompute: cheap formula keeps the radius in sync with the current
+                // minimum-elevation setting and the satellite's current altitude.
+                cache.FootprintRadiusDeg = FootprintGeometry.HorizonRadiusDeg(altKm, minEl);
 
                 var footprintRadiusDeg = cache.FootprintRadiusDeg > 0
                     ? cache.FootprintRadiusDeg
