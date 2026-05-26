@@ -40,6 +40,7 @@ public sealed class TrackingOrchestrator
     public IReadOnlyList<SatelliteTrackState> GetLiveStates(DateTime utc)
     {
         var site = _settings.Current.GroundStation;
+        var minimumElevationDeg = _settings.Current.MinimumElevationDeg;
         var sats = _tleService.GetEnabledSatellites(_settings.Current);
         var states = new List<SatelliteTrackState>();
         var sunEci = SunPositionCalculator.GetPosition(utc);
@@ -75,15 +76,18 @@ public sealed class TrackingOrchestrator
                     cache.GroundTrackUtc = utc;
                 }
 
-                if (!_visualCache.TryGetFreshFootprint(sat.NoradId, utc, out var footprint))
+                if (!_visualCache.TryGetFreshFootprint(sat.NoradId, utc, minimumElevationDeg, out var footprint))
                 {
-                    footprint = _groundGeometry.GetFootprint(sat, utc, minimumElevationDeg: 0);
+                    footprint = _groundGeometry.GetFootprint(sat, utc, minimumElevationDeg);
                     cache.Footprint = footprint;
                     cache.FootprintUtc = utc;
+                    cache.FootprintMinElevationDeg = minimumElevationDeg;
+                    cache.FootprintRadiusDeg = FootprintGeometry.HorizonRadiusDeg(altKm, minimumElevationDeg);
                 }
-
-                if (cache.FootprintRadiusDeg <= 0)
-                    cache.FootprintRadiusDeg = FootprintGeometry.HorizonRadiusDeg(altKm, minimumElevationDeg: 0);
+                else if (cache.FootprintRadiusDeg <= 0)
+                {
+                    cache.FootprintRadiusDeg = FootprintGeometry.HorizonRadiusDeg(altKm, minimumElevationDeg);
+                }
 
                 var footprintRadiusDeg = cache.FootprintRadiusDeg > 0
                     ? cache.FootprintRadiusDeg

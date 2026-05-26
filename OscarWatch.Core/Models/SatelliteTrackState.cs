@@ -10,7 +10,7 @@ public sealed class SatelliteTrackState
     public double? AheadAzimuthDeg { get; init; }
     public IReadOnlyList<GeoCoordinate> GroundTrack { get; init; } = [];
     public IReadOnlyList<GeoCoordinate> Footprint { get; init; } = [];
-    /// <summary>Angular radius of the 0°-elevation footprint on Earth (degrees).</summary>
+    /// <summary>Angular radius of the minimum-elevation footprint on Earth (degrees).</summary>
     public double FootprintRadiusDeg { get; init; }
     /// <summary>True when the spacecraft is in full sunlight; false when in Earth's shadow.</summary>
     public bool IsSunlit { get; init; } = true;

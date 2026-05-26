@@ -34,10 +34,17 @@ internal sealed class SatelliteVisualCache
         return track.Count >= 2;
     }
 
-    public bool TryGetFreshFootprint(string noradId, DateTime utc, out IReadOnlyList<GeoCoordinate> footprint)
+    public bool TryGetFreshFootprint(
+        string noradId,
+        DateTime utc,
+        double minimumElevationDeg,
+        out IReadOnlyList<GeoCoordinate> footprint)
     {
         footprint = [];
         if (!_entries.TryGetValue(noradId, out var entry))
+            return false;
+
+        if (Math.Abs(entry.FootprintMinElevationDeg - minimumElevationDeg) > 0.001)
             return false;
 
         if (utc - entry.FootprintUtc > FootprintRefreshInterval)
@@ -53,6 +60,7 @@ internal sealed class SatelliteVisualCache
         public DateTime GroundTrackUtc;
         public IReadOnlyList<GeoCoordinate> Footprint { get; set; } = [];
         public DateTime FootprintUtc;
+        public double FootprintMinElevationDeg;
         public double FootprintRadiusDeg;
     }
 }
