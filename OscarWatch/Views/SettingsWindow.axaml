@@ -175,6 +175,13 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="Draws a small arrow inside each satellite footprint on the world map showing ground-track direction." />
+            <CheckBox Content="Show grayline (day/night terminator)"
+                      IsChecked="{Binding ShowGrayline, Mode=TwoWay}"
+                      Margin="0,8,0,0" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       Text="Overlays the day/night boundary on the world map. The dark area represents the night side of Earth; a golden line marks the terminator." />
           </StackPanel>
         </ScrollViewer>
       </TabItem>

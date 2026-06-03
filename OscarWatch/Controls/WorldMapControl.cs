@@ -8,6 +8,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using OscarWatch.Core.Geo;
 using OscarWatch.Core.Models;
+using OscarWatch.Core.Orbit;
 
 namespace OscarWatch.Controls;
 
@@ -36,6 +37,9 @@ public class WorldMapControl : ThemeAwareControl
     public static readonly StyledProperty<bool> SoloFocusedSatelliteProperty =
         AvaloniaProperty.Register<WorldMapControl, bool>(nameof(SoloFocusedSatellite));
 
+    public static readonly StyledProperty<bool> ShowGraylineProperty =
+        AvaloniaProperty.Register<WorldMapControl, bool>(nameof(ShowGrayline), true);
+
     private Bitmap? _mapBitmap;
     private INotifyCollectionChanged? _trackStatesSource;
     private Size _lastLayoutInvalidationSize;
@@ -55,13 +59,20 @@ public class WorldMapControl : ThemeAwareControl
             FocusedNoradIdProperty,
             ShowFootprintMotionArrowsProperty,
             RemoteStationProperty,
-            SoloFocusedSatelliteProperty);
+            SoloFocusedSatelliteProperty,
+            ShowGraylineProperty);
     }
 
     public bool ShowFootprintMotionArrows
     {
         get => GetValue(ShowFootprintMotionArrowsProperty);
         set => SetValue(ShowFootprintMotionArrowsProperty, value);
+    }
+
+    public bool ShowGrayline
+    {
+        get => GetValue(ShowGraylineProperty);
+        set => SetValue(ShowGraylineProperty, value);
     }
 
     private const double HitRadiusPx = 16;
@@ -234,6 +245,9 @@ public class WorldMapControl : ThemeAwareControl
             context.DrawText(noMap, new Point(12, 12));
         }
 
+        if (ShowGrayline)
+            RenderGrayline(context, w, h);
+
         if (GroundStation is { } gs)
         {
             var (gx, gy) = EquirectangularProjection.GeoToPixel(gs.LatitudeDeg, gs.LongitudeDeg, w, h);
@@ -379,6 +393,101 @@ public class WorldMapControl : ThemeAwareControl
         }
 
         return bestId;
+    }
+
+    // ── Grayline ──────────────────────────────────────────────────────────
+
+    private void RenderGrayline(DrawingContext context, double w, double h)
+    {
+        var utc = DateTime.UtcNow;
+        var (subLat, subLon) = GraylineCalculator.GetSubsolarPoint(utc);
+
+        DrawNightSideOverlay(context, w, h, subLat, subLon);
+        DrawTerminatorLine(context, w, h, subLat, subLon);
+    }
+
+    private static double GetTerminatorLatitude(double lonDeg, double subLatDeg, double subLonDeg)
+    {
+        var lat = subLatDeg;
+        if (Math.Abs(lat) < 0.0001)
+            lat = lat >= 0 ? 0.0001 : -0.0001;
+
+        var subLatRad = lat * Math.PI / 180.0;
+        var lonRad = lonDeg * Math.PI / 180.0;
+        var subLonRad = subLonDeg * Math.PI / 180.0;
+
+        var termLatRad = Math.Atan(-Math.Cos(lonRad - subLonRad) / Math.Tan(subLatRad));
+        return termLatRad * 180.0 / Math.PI;
+    }
+
+    private static void DrawNightSideOverlay(
+        DrawingContext context,
+        double w,
+        double h,
+        double subLatDeg,
+        double subLonDeg)
+    {
+        var geom = new StreamGeometry();
+        using (var sgc = geom.Open())
+        {
+            var isNightBelow = subLatDeg >= 0;
+
+            var startLat = GetTerminatorLatitude(-180.0, subLatDeg, subLonDeg);
+            var (startX, startY) = EquirectangularProjection.GeoToPixel(startLat, -180.0, w, h);
+
+            sgc.BeginFigure(new Point(startX, startY), true);
+
+            const int steps = 360;
+            for (var i = 1; i <= steps; i++)
+            {
+                var lon = -180.0 + i * (360.0 / steps);
+                var lat = GetTerminatorLatitude(lon, subLatDeg, subLonDeg);
+                var (x, y) = EquirectangularProjection.GeoToPixel(lat, lon, w, h);
+                sgc.LineTo(new Point(x, y));
+            }
+
+            if (isNightBelow)
+            {
+                sgc.LineTo(new Point(w, h));
+                sgc.LineTo(new Point(0, h));
+            }
+            else
+            {
+                sgc.LineTo(new Point(w, 0));
+                sgc.LineTo(new Point(0, 0));
+            }
+        }
+
+        var nightBrush = new SolidColorBrush(Color.FromArgb(135, 2, 2, 20));
+        context.DrawGeometry(nightBrush, null, geom);
+    }
+
+    private static void DrawTerminatorLine(
+        DrawingContext context,
+        double w,
+        double h,
+        double subLatDeg,
+        double subLonDeg)
+    {
+        var ring = GraylineCalculator.GetTerminatorRingFromSubsolar(subLatDeg, subLonDeg, 720);
+        if (ring.Count < 2)
+            return;
+
+        var pen = new Pen(new SolidColorBrush(Color.FromArgb(180, 255, 220, 100)), 1.5);
+
+        var pixels = ring
+            .Select(p => EquirectangularProjection.GeoToPixel(p.LatDeg, p.LonDeg, w, h))
+            .ToList();
+
+        const double maxJump = 30;
+        for (var i = 0; i < pixels.Count - 1; i++)
+        {
+            var (x0, y0) = pixels[i];
+            var (x1, y1) = pixels[i + 1];
+            if (Math.Abs(x1 - x0) > maxJump)
+                continue;
+            context.DrawLine(pen, new Point(x0, y0), new Point(x1, y1));
+        }
     }
 
     private void EnsureMapLoaded()

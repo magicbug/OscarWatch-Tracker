@@ -51,6 +51,9 @@ public partial class SettingsViewModel : ViewModelBase
     private bool _showFootprintMotionArrows = true;
 
     [ObservableProperty]
+    private bool _showGrayline = true;
+
+    [ObservableProperty]
     private TleSourceOption? _tleSourceOption;
 
     [ObservableProperty]
@@ -424,6 +427,7 @@ public partial class SettingsViewModel : ViewModelBase
         _settings.Current.PassPredictionHours = PassPredictionHours;
         _settings.Current.Theme = ThemePreference;
         _settings.Current.ShowFootprintMotionArrows = ShowFootprintMotionArrows;
+        _settings.Current.ShowGrayline = ShowGrayline;
         _settings.Current.TleSource = new TleSourceSettings
         {
             Mode = TleSourceOption?.Mode ?? TleSourceMode.OscarWatch,
@@ -537,6 +541,7 @@ public partial class SettingsViewModel : ViewModelBase
             PassPredictionHours = _settings.Current.PassPredictionHours;
             ThemePreference = _settings.Current.Theme;
             ShowFootprintMotionArrows = _settings.Current.ShowFootprintMotionArrows;
+            ShowGrayline = _settings.Current.ShowGrayline;
             var tleSource = _settings.Current.TleSource ?? new TleSourceSettings();
             TleSourceOption = TleSourceOptions.FirstOrDefault(o => o.Mode == tleSource.Mode)
                 ?? TleSourceOptions[0];
@@ -969,6 +974,15 @@ public partial class SettingsViewModel : ViewModelBase
 
         if (App.MainWindow?.DataContext is MainViewModel main)
             main.ShowFootprintMotionArrows = value;
+    }
+
+    partial void OnShowGraylineChanged(bool value)
+    {
+        if (_isSynchronizing)
+            return;
+
+        if (App.MainWindow?.DataContext is MainViewModel main)
+            main.ShowGrayline = value;
     }
 
     partial void OnGridSquareChanged(string value)

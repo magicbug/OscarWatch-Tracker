@@ -166,6 +166,9 @@ public partial class MainViewModel : ViewModelBase
     private bool _showFootprintMotionArrows = true;
 
     [ObservableProperty]
+    private bool _showGrayline = true;
+
+    [ObservableProperty]
     private bool _isSkyPlotExpanded = true;
 
     public MainViewModel(
@@ -255,6 +258,7 @@ public partial class MainViewModel : ViewModelBase
         AppThemeManager.Apply(_settings.Current.Theme);
         RefreshGroundStationFromSettings();
         ShowFootprintMotionArrows = _settings.Current.ShowFootprintMotionArrows;
+        ShowGrayline = _settings.Current.ShowGrayline;
         IsSkyPlotExpanded = _settings.Current.SkyPlotExpanded;
         RigCatPaused = _settings.Current.Rig.CatUpdatesPaused;
 

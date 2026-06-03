@@ -19,6 +19,7 @@ public sealed class AppSettings
     public AppThemePreference Theme { get; set; } = AppThemePreference.System;
     /// <summary>Show ground-track direction arrows inside satellite footprints on the world map.</summary>
     public bool ShowFootprintMotionArrows { get; set; } = true;
+    public bool ShowGrayline { get; set; } = true;
     public VoiceAnnouncementSettings VoiceAnnouncements { get; set; } = new();
     public Dictionary<string, SatelliteFrequencySelection> FrequencySelections { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public double FrequencyOverlayX { get; set; } = 12;

@@ -70,7 +70,8 @@
                                 RemoteStation="{Binding DxStation.RemoteCoordinate}"
                                 FocusedNoradId="{Binding FocusedNoradId, Mode=TwoWay}"
                                 SoloFocusedSatellite="{Binding SoloFocusedSatellite}"
-                                ShowFootprintMotionArrows="{Binding ShowFootprintMotionArrows}" />
+                                ShowFootprintMotionArrows="{Binding ShowFootprintMotionArrows}"
+                                ShowGrayline="{Binding ShowGrayline}" />
         </Grid>
         <ctrl:FrequencyOverlayControl DataContext="{Binding Frequencies}"
                                       ZIndex="1"
