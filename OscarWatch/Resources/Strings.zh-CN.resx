@@ -5,37 +5,37 @@
   <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
   <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
   <data name="About.Copyright">
-    <value>版权所有 © 2025–2026 彼得·古霍尔 (MM9SQL)</value>
+    <value>版权所有©2025–2026 Peter Goodhall (MM9SQL)</value>
   </data>
   <data name="About.Description">
-    <value>供业余无线电操作员使用的桌面卫星跟踪。来自 OscarWatch 卫星数据库的轨道通行证、多普勒校正 CAT 控制、旋转器跟踪和转发器模式。</value>
+    <value>面向业余无线电爱好者的桌面卫星跟踪软件。可预报卫星过境、多普勒频偏修正CAT电台程控、天线旋转器跟踪，依托OscarWatch卫星数据库获取各类转发器参数。</value>
   </data>
   <data name="About.DonateNote">
-    <value>如果您捐款，请让彼得知道您的呼号，以便我们感谢您。</value>
+    <value>如果您进行捐助，请告知作者您的呼号，以便致谢。</value>
   </data>
   <data name="About.Github">
     <value>github.com/magicbug/OscarWatch-Tracker</value>
   </data>
   <data name="About.License">
-    <value>根据 GNU Affero 通用公共许可证 v3.0 或更高版本（AGPL-3.0 或更高版本）获得许可。请参阅源存储库中的 LICENSE.md。</value>
+    <value>基于GNU Affero通用公共许可证v3.0及更高版本开源（AGPL-3.0-or-later），详情查阅源码仓库内的LICENSE.md。</value>
   </data>
   <data name="About.PayPal">
     <value>PayPal</value>
   </data>
   <data name="About.SponsorGithub">
-    <value>GitHub 上的赞助商</value>
+    <value>在GitHub赞助</value>
   </data>
   <data name="About.SupportIntro">
-    <value>OscarWatch 是免费且开源的。如果您发现它有用，您可以支持正在进行的开发：</value>
+    <value>OscarWatch为免费开源软件，若您觉得实用，可资助项目持续开发：</value>
   </data>
   <data name="About.Supporters">
-    <value>支持者</value>
+    <value>捐助者</value>
   </data>
   <data name="About.Title">
-    <value>关于奥斯卡观察</value>
+    <value>关于OscarWatch</value>
   </data>
   <data name="About.TleSource">
-    <value>TLE 目录：tle.oscarwatch.org</value>
+    <value>TLE轨道数据源：tle.oscarwatch.org</value>
   </data>
   <data name="App.Title">
     <value>OscarWatch</value>
@@ -56,625 +56,625 @@
     <value>删除</value>
   </data>
   <data name="Common.Now">
-    <value>现在</value>
+    <value>当前</value>
   </data>
   <data name="Common.Ok">
-    <value>好的</value>
+    <value>确定</value>
   </data>
   <data name="Common.Refresh">
     <value>刷新</value>
   </data>
   <data name="Common.Save">
-    <value>节省</value>
+    <value>保存</value>
   </data>
   <data name="Common.Show">
-    <value>展示</value>
+    <value>显示</value>
   </data>
   <data name="Main.Alt">
-    <value>· 替代</value>
+    <value>  · 距离 </value>
   </data>
   <data name="Main.Az">
-    <value>氮</value>
+    <value>方位 </value>
   </data>
   <data name="Main.Eclipse">
-    <value>蚀</value>
+    <value>地影区</value>
   </data>
   <data name="Main.El">
-    <value>·埃尔</value>
+    <value>  · 仰角 </value>
   </data>
   <data name="Main.Elevation.BelowHorizon">
-    <value>地平线以下</value>
+    <value>在地平线下</value>
   </data>
   <data name="Main.Live">
-    <value>居住</value>
+    <value>实时</value>
   </data>
   <data name="Main.MapTimeStatus.Live">
-    <value>居住</value>
+    <value>实时</value>
   </data>
   <data name="Main.Pass.AosIn">
-    <value>{0} {1} 中的 AOS</value>
+    <value>{0} 将在{1}后升起(AOS)</value>
   </data>
   <data name="Main.Pass.InProgress">
-    <value>{0} — 进行中</value>
+    <value>{0} — 正在过境</value>
   </data>
   <data name="Main.Pass.None">
-    <value>没有即将到来的通行证</value>
+    <value>无即将过境卫星</value>
   </data>
   <data name="Main.Passes">
-    <value>即将到来的通行证</value>
+    <value>即将过境</value>
   </data>
   <data name="Pass.Rec">
-    <value>记录</value>
+    <value>录制</value>
   </data>
   <data name="Pass.Passing">
-    <value>通过</value>
+    <value>过境中</value>
   </data>
   <data name="Pass.TimeRange">
-    <value>{0}至{1}</value>
+    <value>{0} 至 {1}</value>
   </data>
   <data name="Pass.Details">
-    <value>持续时间：{0} |最大海拔：{1}</value>
+    <value>持续时长：{0}｜最大仰角：{1}</value>
   </data>
   <data name="Pass.DurationMinutes">
     <value>{0} 分钟</value>
   </data>
   <data name="Pass.DurationOneMinute">
-    <value>1分钟</value>
+    <value>1 分钟</value>
   </data>
   <data name="ComPort.DualRadioSamePort">
-    <value>下行链路和上行链路无线电均使用{0}。为每个无线电使用不同的 COM 端口。</value>
+    <value>下行与上行电台共用串口{0}，两台电台请使用不同COM端口。</value>
   </data>
   <data name="ComPort.RotatorAndDownlink">
-    <value>旋转器和下行无线电都使用{0}。使用不同的 COM 端口或禁用一台设备。</value>
+    <value>旋转器与下行电台共用串口{0}，更换端口或停用其中一台设备。</value>
   </data>
   <data name="ComPort.RotatorAndUplink">
-    <value>旋转器和上行链路无线电都使用{0}。使用不同的 COM 端口或禁用一台设备。</value>
+    <value>旋转器与上行电台共用串口{0}，更换端口或停用其中一台设备。</value>
   </data>
   <data name="ComPort.RotatorAndRadio">
-    <value>旋转器和收音机都使用{0}。使用不同的 COM 端口或禁用一台设备。</value>
+    <value>旋转器与电台共用串口{0}，更换端口或停用其中一台设备。</value>
   </data>
   <data name="A11y.SatelliteSunlight">
-    <value>阳光下的卫星</value>
+    <value>卫星处于日照区</value>
   </data>
   <data name="A11y.SatelliteEclipse">
-    <value>日食中的卫星</value>
+    <value>卫星处于地影区</value>
   </data>
   <data name="Main.Radio">
-    <value>收音机</value>
+    <value>电台</value>
   </data>
   <data name="Main.Radio.CatPause">
-    <value>暂停CAT</value>
+    <value>暂停CAT程控</value>
   </data>
   <data name="Main.Radio.CatPauseTip">
-    <value>停止向收音机发送频率更新，以便您可以手动调谐。</value>
+    <value>停止向电台下发频率，可手动调谐。</value>
   </data>
   <data name="Main.Radio.CatResume">
-    <value>恢复CAT</value>
+    <value>恢复CAT程控</value>
   </data>
   <data name="Main.Radio.Rx">
-    <value>RX</value>
+    <value>接收(RX)</value>
   </data>
   <data name="Main.Radio.Tx">
-    <value>TX</value>
+    <value>发射(TX)</value>
   </data>
   <data name="Main.Range">
-    <value>范围</value>
+    <value>距离 </value>
   </data>
   <data name="Main.Rotator">
     <value>旋转器</value>
   </data>
   <data name="Main.Rotator.Az">
-    <value>氮</value>
+    <value>方位</value>
   </data>
   <data name="Main.Rotator.El">
-    <value>埃尔</value>
+    <value>仰角</value>
   </data>
   <data name="Main.Rotator.Park">
-    <value>公园</value>
+    <value>暂停</value>
   </data>
   <data name="Main.Rotator.Parked">
-    <value>停放</value>
+    <value>已暂停</value>
   </data>
   <data name="Main.Satellite">
     <value>卫星</value>
   </data>
   <data name="Main.SkyPlot">
-    <value>天空图</value>
+    <value>星图</value>
   </data>
   <data name="Main.SkyPlot.Hint">
-    <value>单击地图或天空图上的卫星，或在聚焦时使用箭头键。</value>
+    <value>点击地图或星图上的卫星，也可选中后使用方向键切换。</value>
   </data>
   <data name="Main.Standby.Hint">
-    <value>仅浏览 — 旋转器停止，CAT 暂停</value>
+    <value>仅浏览模式：天线驻车、CAT程控暂停</value>
   </data>
   <data name="Main.Standby.Pause">
-    <value>支持</value>
+    <value>待命</value>
   </data>
   <data name="Main.Standby.Resume">
-    <value>恢复</value>
+    <value>继续跟踪</value>
   </data>
   <data name="Main.Sunlight">
-    <value>阳光</value>
+    <value>日照</value>
   </data>
   <data name="MapTime.Back15">
-    <value>−15m</value>
+    <value>−15分</value>
   </data>
   <data name="MapTime.Back5">
-    <value>−5m</value>
+    <value>−5分</value>
   </data>
   <data name="MapTime.Forward15">
-    <value>+15m</value>
+    <value>+15分</value>
   </data>
   <data name="MapTime.Forward5">
-    <value>+5m</value>
+    <value>+5分</value>
   </data>
   <data name="MapTime.FromNow">
-    <value>从现在起{0}</value>
+    <value>当前往后{0}</value>
   </data>
   <data name="MapTime.Live">
-    <value>居住</value>
+    <value>实时</value>
   </data>
   <data name="MapTime.Tip.Back15">
-    <value>提前 15 分钟显示地图</value>
+    <value>地图回溯15分钟</value>
   </data>
   <data name="MapTime.Tip.Back5">
-    <value>提前 5 分钟显示地图</value>
+    <value>地图回溯5分钟</value>
   </data>
   <data name="MapTime.Tip.Forward15">
-    <value>15分钟后显示地图</value>
+    <value>地图快进15分钟</value>
   </data>
   <data name="MapTime.Tip.Forward5">
-    <value>5分钟后显示地图</value>
+    <value>地图快进5分钟</value>
   </data>
   <data name="MapTime.Tip.Now">
-    <value>返回实时地图</value>
+    <value>地图切回实时时间</value>
   </data>
   <data name="Menu.File">
-    <value>_文件</value>
+    <value>文件(F)</value>
   </data>
   <data name="Menu.File.Close">
-    <value>_关闭</value>
+    <value>关闭(C)</value>
   </data>
   <data name="Menu.Help">
-    <value>_帮助</value>
+    <value>帮助(H)</value>
   </data>
   <data name="Menu.Help.About">
-    <value>_关于奥斯卡观察</value>
+    <value>关于OscarWatch(A)</value>
   </data>
   <data name="Menu.Help.Logs">
-    <value>打开_logs文件夹</value>
+    <value>打开日志目录(L)</value>
   </data>
   <data name="Menu.Help.OperatorGuide">
-    <value>操作指南</value>
+    <value>使用帮助</value>
   </data>
   <data name="Menu.Help.Recordings">
-    <value>打开_recordings文件夹</value>
+    <value>打开录音目录(R)</value>
   </data>
   <data name="Menu.Passes">
-    <value>_通行证</value>
+    <value>过境(P)</value>
   </data>
   <data name="Menu.Passes.Mutual">
-    <value>_互通规划师</value>
+    <value>双向共视预报(M)</value>
   </data>
   <data name="Menu.Passes.Planner">
-    <value>_通行证规划师</value>
+    <value>过境规划(P)</value>
   </data>
   <data name="Menu.Passes.Sunlight">
-    <value>_日照预测</value>
+    <value>日照时段预报(S)</value>
   </data>
   <data name="Menu.Rotator">
-    <value>_旋转器</value>
+    <value>旋转器(R)</value>
   </data>
   <data name="Menu.Satellites">
-    <value>_卫星</value>
+    <value>卫星(S)</value>
   </data>
   <data name="Menu.Satellites.ManageDatabase">
-    <value>_管理应答器数据库</value>
+    <value>转发器数据库管理(M)</value>
   </data>
   <data name="Menu.Satellites.RefreshTles">
-    <value>_刷新 TLE</value>
+    <value>刷新TLE轨道数据(R)</value>
   </data>
   <data name="Menu.Satellites.Select">
-    <value>_选择卫星</value>
+    <value>选择卫星(S)</value>
   </data>
   <data name="Menu.Satellites.UpdateDatabase">
-    <value>更新应答器_数据库...</value>
+    <value>更新转发器数据库(D)…</value>
   </data>
   <data name="Menu.Settings">
-    <value>_设置</value>
+    <value>设置(S)</value>
   </data>
   <data name="Picker.SelectAll">
-    <value>选择全部</value>
+    <value>全选</value>
   </data>
   <data name="Picker.SelectNone">
-    <value>选择无</value>
+    <value>取消全选</value>
   </data>
   <data name="Picker.StaleTle">
-    <value>过时的 TLE</value>
+    <value>TLE数据过期</value>
   </data>
   <data name="Picker.Title">
     <value>选择卫星</value>
   </data>
   <data name="Settings.FootprintArrows">
-    <value>显示足迹运动箭头</value>
+    <value>显示星下点轨迹箭头</value>
   </data>
   <data name="Settings.FootprintArrows.Note">
-    <value>在世界地图上的每个卫星足迹内绘制一个小箭头，显示地面轨道方向。</value>
+    <value>在世界地图卫星覆盖区域内绘制箭头，标识卫星地面运行方向。</value>
   </data>
   <data name="Settings.Language">
     <value>语言</value>
   </data>
   <data name="Settings.Language.English">
-    <value>英语</value>
+    <value>English</value>
   </data>
   <data name="Settings.Language.Japanese">
-    <value>日本语</value>
+    <value>日本語</value>
   </data>
   <data name="Settings.Language.PortugueseBrazil">
-    <value>葡萄牙语（巴西）</value>
+    <value>Português (Brasil)</value>
   </data>
   <data name="Settings.Language.SimplifiedChinese">
     <value>简体中文</value>
   </data>
   <data name="Settings.Language.RestartNote">
-    <value>语言在您重新启动 OscarWatch 后应用。</value>
+    <value>修改语言后重启OscarWatch生效。</value>
   </data>
   <data name="Settings.Tab.Appearance">
-    <value>外貌</value>
+    <value>外观</value>
   </data>
   <data name="Settings.Tab.Cloudlog">
-    <value>Cloudlog</value>
+    <value>Cloudlog日志</value>
   </data>
   <data name="Settings.Tab.Radio">
-    <value>收音机</value>
+    <value>电台</value>
   </data>
   <data name="Settings.Tab.Recording">
-    <value>记录</value>
+    <value>录音</value>
   </data>
   <data name="Settings.Tab.Rotator">
     <value>旋转器</value>
   </data>
   <data name="Settings.Tab.Station">
-    <value>车站</value>
+    <value>本地台站</value>
   </data>
   <data name="Settings.Tab.Tle">
-    <value>TLE</value>
+    <value>TLE轨道</value>
   </data>
   <data name="Settings.Tab.Tracking">
-    <value>追踪</value>
+    <value>跟踪参数</value>
   </data>
   <data name="Settings.Tab.Voice">
-    <value>嗓音</value>
+    <value>语音播报</value>
   </data>
   <data name="Settings.Theme">
     <value>主题</value>
   </data>
   <data name="Settings.Theme.Note">
-    <value>系统遵循您的操作系统明/暗设置。目前，世界地图图像在所有模式下都保持明亮状态。</value>
+    <value>跟随系统明暗配色；世界地图图像暂固定为亮色。</value>
   </data>
   <data name="Settings.Title">
-    <value>设置</value>
+    <value>参数设置</value>
   </data>
   <data name="Status.ComputingPasses">
-    <value>计算通过...</value>
+    <value>正在计算过境数据…</value>
   </data>
   <data name="Status.HelpMissing">
-    <value>找不到帮助文件 - 重新安装或从已发布的版本运行</value>
+    <value>帮助文档缺失，请重装或使用正式发行版</value>
   </data>
   <data name="Status.LoadingSettings">
-    <value>开始…</value>
+    <value>启动中…</value>
   </data>
   <data name="Status.LoadingSettingsFull">
-    <value>正在加载设置...</value>
+    <value>加载配置文件…</value>
   </data>
   <data name="Status.LoadingTle">
-    <value>正在加载 TLE 目录...</value>
+    <value>正在载入TLE轨道库…</value>
   </data>
   <data name="Status.LogsFolderFailed">
     <value>无法打开日志文件夹</value>
   </data>
   <data name="Status.NoSatellites">
-    <value>{0} | 0 已启用 — 卫星菜单 → 启用一些</value>
+    <value>{0} | 0颗启用卫星 — 前往卫星菜单勾选启用</value>
   </data>
   <data name="Status.NoTle">
-    <value>无 TLE 数据 — 检查设置 → TLE 或使用卫星 → 刷新 TLE</value>
+    <value>无TLE轨道数据 — 设置→TLE或卫星菜单刷新轨道</value>
   </data>
   <data name="Status.RecordingsFolderFailed">
-    <value>无法打开录音文件夹</value>
+    <value>无法打开录音目录</value>
   </data>
   <data name="Status.RefreshingTle">
-    <value>刷新 TLE...</value>
+    <value>正在刷新TLE数据…</value>
   </data>
   <data name="Status.SatellitesEnabled">
-    <value>{0} | {1} 卫星已启用</value>
+    <value>{0} | 已启用{1}颗卫星</value>
   </data>
   <data name="Status.TleAge">
-    <value>TLE {0} 前 ({1})</value>
+    <value>TLE距今{0}（{1}）</value>
   </data>
   <data name="Status.TleCached">
-    <value>TLE 已缓存 ({0})</value>
+    <value>已缓存TLE（{0}）</value>
   </data>
   <data name="Status.TleNotLoaded">
-    <value>TLE 未加载</value>
+    <value>TLE未加载</value>
   </data>
   <data name="Status.TleRefreshFailed">
-    <value>TLE 刷新失败：{0}</value>
+    <value>TLE刷新失败：{0}</value>
   </data>
   <data name="Status.TleReloadFailed">
-    <value>TLE 重新加载失败：{0}</value>
+    <value>TLE重载失败：{0}</value>
   </data>
   <data name="Status.TransponderChecking">
-    <value>正在检查应答器数据库...</value>
+    <value>正在校验转发器数据库…</value>
   </data>
   <data name="Status.TransponderUpToDate">
-    <value>应答器数据库是最新的。</value>
+    <value>转发器数据库已是最新版本。</value>
   </data>
   <data name="Status.TransponderUpdated">
-    <value>应答器数据库已更新。</value>
+    <value>转发器数据库更新完成。</value>
   </data>
   <data name="Status.TleNotLoadedShort">
-    <value>TLE 未加载</value>
+    <value>TLE未加载</value>
   </data>
   <data name="Status.LineNoSatellites">
-    <value>{0} | 0 已启用 — 卫星菜单 → 启用一些</value>
+    <value>{0} | 0颗启用卫星 — 前往卫星菜单勾选启用</value>
   </data>
   <data name="Status.CloudlogError">
-    <value>云日志：{0}</value>
+    <value>Cloudlog异常：{0}</value>
   </data>
   <data name="Status.TransponderUpdateFailed">
-    <value>应答器更新失败：{0}</value>
+    <value>转发器数据库更新失败：{0}</value>
   </data>
   <data name="Rig.Connected">
     <value>已连接</value>
   </data>
   <data name="Rig.Disconnected">
-    <value>已断开连接</value>
+    <value>断开连接</value>
   </data>
   <data name="Rig.CatPaused">
-    <value>CAT 暂停（手动调整）</value>
+    <value>CAT已暂停（手动调谐模式）</value>
   </data>
   <data name="Rig.Tracking">
-    <value>追踪</value>
+    <value>跟踪中</value>
   </data>
   <data name="Rig.NoComPort">
-    <value>未选择 COM 端口</value>
+    <value>未选择串口COM</value>
   </data>
   <data name="Rig.SelectDualComPorts">
-    <value>选择下行链路和上行链路无线电的 COM 端口</value>
+    <value>分别为上下行电台指定COM串口</value>
   </data>
   <data name="Rig.NotConnected">
-    <value>设备未连接</value>
+    <value>电台未连接</value>
   </data>
   <data name="Rig.NotConnectedPort">
-    <value>设备未连接 ({0})</value>
+    <value>电台未连接（{0}）</value>
   </data>
   <data name="Rig.DualNotConnected">
-    <value>双无线电未连接</value>
+    <value>双电台连接失败</value>
   </data>
   <data name="Rig.DualNotConnectedDetail">
-    <value>双无线电未连接：{0}</value>
+    <value>双电台连接异常：{0}</value>
   </data>
   <data name="Rig.NotConnectedDetail">
-    <value>设备未连接：{0}</value>
+    <value>电台连接失败：{0}</value>
   </data>
   <data name="Rig.NotConnectedPortDetail">
-    <value>设备未连接 ({0}): {1}</value>
+    <value>串口{0}电台连接失败：{1}</value>
   </data>
   <data name="Window.PassPlanner.Title">
-    <value>通行证规划师</value>
+    <value>过境规划器</value>
   </data>
   <data name="Window.MutualPass.Title">
-    <value>相互通行证查找器</value>
+    <value>双向共视查询</value>
   </data>
   <data name="Window.Sunlight.Title">
-    <value>阳光预测</value>
+    <value>卫星日照预报</value>
   </data>
   <data name="Window.RotatorManual.Title">
-    <value>手动旋转控制</value>
+    <value>旋转器手动控制</value>
   </data>
   <data name="Window.SatelliteDatabase.Title">
-    <value>应答器数据库</value>
+    <value>转发器数据库</value>
   </data>
   <data name="Dx.Title">
-    <value>DX站</value>
+    <value>远端台站(DX)</value>
   </data>
   <data name="Dx.GridWatermark">
-    <value>梅登黑德网格（例如 JO22 或 JO22lk）</value>
+    <value>梅登黑德网格（例：JO22 或 JO22lk）</value>
   </data>
   <data name="Dx.AzTheirSky">
-    <value>Az（他们的天空）</value>
+    <value>对方方位</value>
   </data>
   <data name="Dx.ElTheirSky">
-    <value>El（他们的天空）</value>
+    <value>对方仰角</value>
   </data>
   <data name="Dx.Clear">
-    <value>清除</value>
+    <value>清空</value>
   </data>
   <data name="Dx.CollapseExpand">
-    <value>展开 DX 站面板</value>
+    <value>展开远端台站面板</value>
   </data>
   <data name="Dx.CollapseCompact">
-    <value>折叠为紧凑视图</value>
+    <value>收缩为简洁视图</value>
   </data>
   <data name="Dx.MapLauncher.Active">
-    <value>显示 DX 站监视器</value>
+    <value>打开远端台站监视面板</value>
   </data>
   <data name="Dx.MapLauncher.Inactive">
-    <value>进入远程站网格广场</value>
+    <value>填入远端台站网格码</value>
   </data>
   <data name="Dx.Validation.MinChars">
-    <value>输入至少 4 个字符（例如 JO22 或 JO22lk）。</value>
+    <value>最少输入4位网格（如JO22/JO22lk）。</value>
   </data>
   <data name="Dx.Validation.InvalidGrid">
-    <value>无效的梅登黑德网格方格。</value>
+    <value>无效梅登黑德网格坐标。</value>
   </data>
   <data name="Dx.Collapsed.BelowHorizon">
-    <value>{0}·地平线以下</value>
+    <value>{0} · 地平线以下</value>
   </data>
   <data name="Dx.Collapsed.AzElPending">
-    <value>{0} · Az — · El —</value>
+    <value>{0} · 方位无数据 · 仰角无数据</value>
   </data>
   <data name="Dx.Collapsed.AzEl">
-    <value>{0} · 阿兹{1} · 艾尔{2}</value>
+    <value>{0} · 方位{1} · 仰角{2}</value>
   </data>
   <data name="Freq.SelectSatellite">
     <value>选择卫星</value>
   </data>
   <data name="Freq.SelectSatelliteHint">
-    <value>在地图上或从即将到来的通行证中选择卫星。</value>
+    <value>在地图或过境列表选中目标卫星。</value>
   </data>
   <data name="Freq.NoTransponder">
-    <value>没有该卫星的转发器数据</value>
+    <value>暂无该卫星转发器参数</value>
   </data>
   <data name="Freq.CollapsedNoTransponder">
-    <value>{0} · 无应答器数据</value>
+    <value>{0} · 无转发器数据</value>
   </data>
   <data name="Freq.CwSuffix">
-    <value>· 连续波</value>
+    <value> · 等幅报(CW)</value>
   </data>
   <data name="Freq.CollapseExpand">
     <value>展开频率面板</value>
   </data>
   <data name="Freq.CollapseCompact">
-    <value>折叠为紧凑视图</value>
+    <value>收缩简洁视图</value>
   </data>
   <data name="Freq.TransponderMode">
-    <value>应答器模式</value>
+    <value>转发器制式</value>
   </data>
   <data name="Freq.UplinkTx">
-    <value>上行链路（TX）</value>
+    <value>上行(发射TX)</value>
   </data>
   <data name="Freq.DownlinkRx">
-    <value>下行链路（RX）</value>
+    <value>下行(接收RX)</value>
   </data>
   <data name="Freq.Sat">
-    <value>Sat</value>
+    <value>卫星</value>
   </data>
   <data name="Freq.Radio">
-    <value>收音机</value>
+    <value>电台</value>
   </data>
   <data name="Freq.DopplerFull">
-    <value>满的</value>
+    <value>全多普勒</value>
   </data>
   <data name="Freq.DopplerTx">
-    <value>TX</value>
+    <value>发射固定</value>
   </data>
   <data name="Freq.DopplerRx">
-    <value>RX</value>
+    <value>接收固定</value>
   </data>
   <data name="Freq.DopplerTxFixedToolTip">
-    <value>TX 固定 — 仅下行链路多普勒 (SatPC32 TX-Fixed)。上行链路停留在您的 CQ 位置。</value>
+    <value>发射频点固定，仅下行做多普勒补偿（SatPC32发射固定模式），上行保持CQ频点不变。</value>
   </data>
   <data name="Freq.DopplerRxFixedToolTip">
-    <value>RX 固定 — 仅上行链路多普勒 (SatPC32 RX-Fixed)。下行链路保持不变。</value>
+    <value>接收频点固定，仅上行做多普勒补偿（SatPC32接收固定模式），下行频率锁定。</value>
   </data>
   <data name="Freq.Ctcss">
-    <value>CTCSS</value>
+    <value>亚音(CTCSS)</value>
   </data>
   <data name="Freq.CtcssAccess">
-    <value>使用权</value>
+    <value>开启亚音</value>
   </data>
   <data name="Freq.CtcssArm">
-    <value>手臂</value>
+    <value>发射亚音</value>
   </data>
   <data name="Freq.RxOffsetKHz">
-    <value>接收偏移（kHz）</value>
+    <value>接收频偏(kHz)</value>
   </data>
   <data name="Freq.StoreOffset">
-    <value>存储偏移量</value>
+    <value>保存频偏</value>
   </data>
   <data name="Freq.Voice">
-    <value>嗓音</value>
+    <value>语音模式</value>
   </data>
   <data name="Freq.StoredOffsetCleared">
-    <value>存储的偏移量已清除。</value>
+    <value>已清空保存的频偏。</value>
   </data>
   <data name="Freq.StoredOffsetClearedCw">
-    <value>存储的 CW 偏移已清除。</value>
+    <value>已清空CW频偏。</value>
   </data>
   <data name="Freq.StoredOffset">
-    <value>存储 {0} Hz 偏移。</value>
+    <value>已存储频偏{0}赫兹。</value>
   </data>
   <data name="Freq.StoredOffsetCw">
-    <value>存储的 CW {0} Hz 偏移。</value>
+    <value>已存储CW频偏{0}赫兹。</value>
   </data>
   <data name="Freq.OffsetOnDownlinkTuneUplink">
-    <value>{0} 下行链路。调整 Main 以进行上行链路。</value>
+    <value>下行频偏{0}，主旋钮调节上行。</value>
   </data>
   <data name="Freq.OffsetOnDownlink">
-    <value>{0} 下行链路。</value>
+    <value>下行频偏{0}。</value>
   </data>
   <data name="Freq.DownlinkOnlyTuneUplink">
-    <value>仅下行。调整 Main 以进行上行链路。</value>
+    <value>仅下行补偿，主旋钮调上行频率。</value>
   </data>
   <data name="Freq.OffsetsDownlinkOnly">
-    <value>仅偏移下行链路。</value>
+    <value>只启用下行多普勒补偿。</value>
   </data>
   <data name="Freq.TxFixedOffsetHint">
-    <value>TX 固定（仅限下行多普勒）。 {0}</value>
+    <value>发射固定（仅下行多普勒）{0}</value>
   </data>
   <data name="Freq.RxFixedOffsetHint">
-    <value>RX 固定（仅限上行多普勒）。 {0}</value>
+    <value>接收固定（仅上行多普勒）{0}</value>
   </data>
   <data name="Freq.DopplerFullHint">
-    <value>完整 — 上行链路和下行链路均跟踪多普勒。</value>
+    <value>全补偿：上行下行全部跟随多普勒偏移。</value>
   </data>
   <data name="Freq.DopplerTxFixedHint">
-    <value>TX 固定 — 上行链路保持不变；下行链路跟踪多普勒（流动CQ）。</value>
+    <value>发射固定：上行频率不动，下行自动多普勒。</value>
   </data>
   <data name="Freq.DopplerRxFixedHint">
-    <value>RX 固定 — 下行链路保持不变；上行链路跟踪多普勒。</value>
+    <value>接收固定：下行频率不动，上行自动多普勒。</value>
   </data>
   <data name="Freq.OperatingCwSideband">
-    <value>上行连续波；接收保持USB/LSB。 Ctrl+W 进行切换。</value>
+    <value>上行CW发射，接收保持边带USB/LSB；Ctrl+W切换。</value>
   </data>
   <data name="Freq.OperatingCwBoth">
-    <value>上行链路和下行链路上的 CW。 Ctrl+W 进行切换。</value>
+    <value>上下行均为CW；Ctrl+W切换。</value>
   </data>
   <data name="Freq.OperatingVoice">
-    <value>语音使用数据库模式。 Ctrl+W 切换 CW。</value>
+    <value>语音使用数据库制式；Ctrl+W切换CW。</value>
   </data>
   <data name="Settings.Station.DisplayName">
-    <value>显示名称</value>
+    <value>台站名称</value>
   </data>
   <data name="Settings.Station.Latitude">
-    <value>纬度（°）</value>
+    <value>纬度(°)</value>
   </data>
   <data name="Settings.Station.Longitude">
-    <value>经度（°）</value>
+    <value>经度(°)</value>
   </data>
   <data name="Settings.Station.GridSquare">
-    <value>梅登黑德网格广场</value>
+    <value>梅登黑德网格码</value>
   </data>
   <data name="Settings.Station.Altitude">
-    <value>海拔高度 (米)</value>
+    <value>海拔高度(米)</value>
   </data>
   <data name="Settings.Tle.Source">
-    <value>TLE 目录源</value>
+    <value>TLE轨道数据源</value>
   </data>
   <data name="Settings.Tle.SourceNote">
-    <value>OscarWatch 是默认的面向 AMSAT 的目录。 AMSAT.org 使用已发布的 nasabare.txt 集。如果您维护自己的 TLE 集，请使用自定义 URL 或本地文件。</value>
+    <value>OscarWatch默认面向AMSAT卫星库；AMSAT.org使用nasabare.txt；可自定义网络地址或本地TLE文件。</value>
   </data>
   <data name="Settings.Tle.DownloadUrl">
     <value>下载地址</value>
   </data>
   <data name="Settings.Tle.LocalFile">
-    <value>本地 TLE 文件</value>
+    <value>本地TLE文件</value>
   </data>
   <data name="Settings.Tle.LocalFileWatermark">
-    <value>.txt 或 .tle 文件的路径</value>
+    <value>TXT/TLE文件路径</value>
   </data>
   <data name="Settings.Tle.Updates">
-    <value>TLE 更新</value>
+    <value>TLE更新规则</value>
   </data>
   <data name="Settings.Tle.UpdatesNote">
-    <value>自动下载仅适用于 OscarWatch 和自定义 URL。当您保存设置或选择卫星 → 刷新 TLE 时，将重新读取本地文件。</value>
+    <value>自动下载仅适用于OscarWatch与自定义网址，本地文件在保存设置或手动刷新时重读。</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
-    <value>奥斯卡观察 (tle.oscarwatch.org)</value>
+    <value>OscarWatch(tle.oscarwatch.org)</value>
   </data>
   <data name="Settings.Tle.Source.Amsat">
-    <value>AMSAT.org (nasabare.txt)</value>
+    <value>AMSAT.org(nasabare.txt)</value>
   </data>
   <data name="Settings.Tle.Source.CustomUrl">
     <value>自定义网址</value>
@@ -683,190 +683,190 @@
     <value>本地文件</value>
   </data>
   <data name="Settings.Tle.Update.Manual">
-    <value>仅手动</value>
+    <value>仅手动更新</value>
   </data>
   <data name="Settings.Tle.Update.OnStartup">
-    <value>启动时（如果超过 6 小时）</value>
+    <value>启动时（超过6小时自动更新）</value>
   </data>
   <data name="Settings.Tle.Update.EverySixHours">
-    <value>跑步时每 6 小时一次</value>
+    <value>运行中每6小时自动更新</value>
   </data>
   <data name="Settings.Tracking.MinElevation">
-    <value>最低海拔（°）</value>
+    <value>最低跟踪仰角(°)</value>
   </data>
   <data name="Settings.Tracking.PassWindow">
-    <value>通过预测窗口（小时）</value>
+    <value>过境预报时长(小时)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>用于即将到来的通行证列表并作为通行证规划器中的默认值。</value>
+    <value>用于过境列表与规划器默认参数。</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
-    <value>启动时检查应答器数据库更新</value>
+    <value>启动时检查转发器库更新</value>
   </data>
   <data name="Settings.Tracking.TransponderCheckNote">
-    <value>当更新可用时下载 tle.oscarwatch.org/卫星_database.json。提供新的卫星和模式进行合并；除非您接受已发布的更改，否则您的本地编辑将被保留。</value>
+    <value>联网下载卫星参数json，新增卫星与参数可选择性合并，本地修改内容保留。</value>
   </data>
   <data name="Settings.Theme.System">
-    <value>系统</value>
+    <value>跟随系统</value>
   </data>
   <data name="Settings.Theme.Light">
-    <value>光</value>
+    <value>浅色</value>
   </data>
   <data name="Settings.Theme.Dark">
-    <value>黑暗的</value>
+    <value>深色</value>
   </data>
   <data name="Settings.Voice.Enable">
-    <value>启用语音通知</value>
+    <value>开启语音播报</value>
   </data>
   <data name="Settings.Voice.EnableNote">
-    <value>当每颗启用的卫星在上升过程中越过海拔阈值时，每次通过时都会宣布一次，例如：Alpha Oscar 零七正在上升。</value>
+    <value>启用卫星抬升至设定仰角时语音播报，例：AO-07卫星升起。</value>
   </data>
   <data name="Settings.Voice.AnnounceElevation">
-    <value>宣布海拔高度(°)</value>
+    <value>播报触发仰角(°)</value>
   </data>
   <data name="Settings.Voice.AnnounceElevationNote">
-    <value>默认值为 -3°。当海拔上升超过该值时（负值在卫星离开地平线之前捕获卫星），就会触发该通知。</value>
+    <value>默认-3°，负值可在地平线升起前播报。</value>
   </data>
   <data name="Settings.Voice.VoiceLabel">
-    <value>嗓音</value>
+    <value>播报语音</value>
   </data>
   <data name="Settings.Voice.SpeechUnavailable">
-    <value>此系统不支持文本转语音功能。</value>
+    <value>当前系统不支持语音朗读。</value>
   </data>
   <data name="Settings.Voice.Preview">
     <value>预览</value>
   </data>
   <data name="Settings.Voice.TestAnnouncement">
-    <value>测试公告</value>
+    <value>播报测试</value>
   </data>
   <data name="Settings.Radio.Enable">
-    <value>启用无线电控制</value>
+    <value>启用电台程控(CAT)</value>
   </data>
   <data name="Settings.Radio.DualEnable">
-    <value>双无线电（单独的下行链路和上行链路 - FT-817/818、FT-991(A)、IC-705 或混合）</value>
+    <value>双电台独立收发（FT-817/818、FT991A、IC705等机型适用）</value>
   </data>
   <data name="Settings.Radio.Driver">
-    <value>无线电驱动器</value>
+    <value>电台驱动</value>
   </data>
   <data name="Settings.Radio.Label">
-    <value>收音机</value>
+    <value>电台设置</value>
   </data>
   <data name="Settings.Radio.SerialPort">
-    <value>串口</value>
+    <value>串行端口</value>
   </data>
   <data name="Settings.Radio.SelectComPort">
-    <value>选择COM端口</value>
+    <value>选择COM串口</value>
   </data>
   <data name="Settings.Radio.BaudRate">
     <value>波特率</value>
   </data>
   <data name="Settings.Radio.CivAddress">
-    <value>CI-V 地址（十六进制）</value>
+    <value>CI-V设备地址(十六进制)</value>
   </data>
   <data name="Settings.Radio.CivHint">
-    <value>IC-9700 默认 A2，IC-910 默认 7C（十六进制）。如果您的收音机在 CI-V 菜单中如此设置，请使用 60。</value>
+    <value>IC9700默认A2、IC910默认7C，机型菜单设为60则输入60。</value>
   </data>
   <data name="Settings.Radio.Ft847Hint">
-    <value>FT-847：在无线电菜单#37 中设置 CAT 波特率（通常为 57600）。使用带有电平转换器的 CAT/LINEAR 插孔（例如 CT-62）。</value>
+    <value>FT847：菜单37项设置CAT速率，常用57600，使用CT62电平转换线接CAT口。</value>
   </data>
   <data name="Settings.Radio.Ts2000Hint">
-    <value>TS-2000：CAT 57600 8N1。跟踪前在收音机上选择 SAT 并关闭存储模式；OscarWatch 然后通过 CAT 启用 SATL（SA/FA/FB 布局），自动 VHF/UHF 频段交换。</value>
+    <value>TS2000：CAT 57600 8N1；开机SAT模式关闭存储，软件自动SATL频段切换。</value>
   </data>
   <data name="Settings.Radio.Region">
-    <value>地区</value>
+    <value>制式区域</value>
   </data>
   <data name="Settings.Radio.RegionNote">
-    <value>欧盟使用语气；美国使用音调静噪（亚音）。</value>
+    <value>欧洲常规亚音，美国使用亚音静噪。</value>
   </data>
   <data name="Settings.Radio.CatDelay">
-    <value>CAT 延迟（毫秒）</value>
+    <value>CAT指令间隔(毫秒)</value>
   </data>
   <data name="Settings.Radio.CatDelayNote">
-    <value>CAT 命令之间的最小间隔，用于保护串口链路。</value>
+    <value>指令最短间隔，保护串口通信。</value>
   </data>
   <data name="Settings.Radio.Downlink">
-    <value>下行电台</value>
+    <value>下行接收电台</value>
   </data>
   <data name="Settings.Radio.Uplink">
-    <value>上行电台</value>
+    <value>上行发射电台</value>
   </data>
   <data name="Settings.Radio.Ic705CivHint">
-    <value>IC-705出厂默认A4。必须与无线电 CI-V 菜单匹配。</value>
+    <value>IC705默认A4，参数必须和机身CI-V菜单一致。</value>
   </data>
   <data name="Settings.Radio.RefreshComPorts">
-    <value>刷新 COM 端口</value>
+    <value>刷新串口列表</value>
   </data>
   <data name="Settings.Radio.Ft817Hint">
-    <value>FT-817 / FT-818：在每部电台上将菜单 #14 设为 4800 波特（38400 亦可）。8N2 CAT — 每个频段一个 COM。线性模式：旋转下行调谐过境频段；FM 在跟踪时锁定旋钮。</value>
+    <value>FT817/818：菜单14设4800/38400波特，8N2协议，上下行分串口，FM模式跟踪时锁频。</value>
   </data>
   <data name="Settings.Radio.Ic705Hint">
-    <value>IC-705：设置连接器 → CI-V → CI-V USB 端口以链接到 [CI-V]（非远程）。 Match CI-V baud in 设置 (default 115200). One COM port per leg — use the port labeled CI-V when two appear.</value>
+    <value>IC705：连接器-CI-V设链接CI-V，非REMOTE，波特率匹配设置，上下行分开COM。</value>
   </data>
   <data name="Settings.Radio.Ft991Hint">
-    <value>FT-991 / FT-991A：将菜单 031 CAT RATE 与设置相匹配（默认 38400）。带有硬件 RTS 的 8N2 ASCII CAT — 使用 USB CAT COM 端口。每条腿一个 COM。 FM 在跟踪时锁定 VFO-A 转盘。</value>
+    <value>FT991/991A：菜单031匹配CAT速率，默认38400，硬件RTS，FM跟踪锁定A频。</value>
   </data>
   <data name="Settings.Radio.CwSideband">
-    <value>线性 CW：在 USB/LSB 中保持接收（仅发送 CW）</value>
+    <value>线性SSB卫星CW：接收保持边带，仅发射CW</value>
   </data>
   <data name="Settings.Radio.CwSidebandNote">
-    <value>当线性 SSB 卫星上的频率面板设置为 CW 时适用。检查的是通常的拆分（CW TX、USB/LSB RX）。取消选中将两个 VFO 设置为 CW。</value>
+    <value>勾选：CW发射、边带接收；取消勾选收发全部CW，用于线性转发器。</value>
   </data>
   <data name="Settings.Radio.DopplerFm">
-    <value>多普勒阈值 FM (Hz)</value>
+    <value>FM多普勒更新阈值(Hz)</value>
   </data>
   <data name="Settings.Radio.DopplerFmNote">
-    <value>FM / ISS 跨频段：较低 = 更多 CAT 更新（默认 350 Hz）。</value>
+    <value>FM/ISS跨段：数值越小更新越频繁，默认350Hz。</value>
   </data>
   <data name="Settings.Radio.DopplerSsb">
-    <value>多普勒阈值 SSB/CW (Hz)</value>
+    <value>SSB/CW多普勒阈值(Hz)</value>
   </data>
   <data name="Settings.Radio.DopplerSsbNote">
-    <value>仅当漂移超过此间隔（SatPC32 样式）时，频率才会发送到无线电。</value>
+    <value>频偏超过阈值才下发CAT调频，兼容SatPC32逻辑。</value>
   </data>
   <data name="Settings.Rotator.Enable">
-    <value>启用旋转器</value>
+    <value>启用天线旋转器</value>
   </data>
   <data name="Settings.Rotator.Type">
-    <value>转子类型</value>
+    <value>旋转器协议</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 用于八重洲和克隆。 SP 模式下控制器的 SPID (Rot1Prog / Rot2Prog)。适用于 EC 模式的 EasyComm — SPID、M2 和其他文本协议控制器。</value>
+    <value>GS232适用八重洲及兼容机型；SPID用于RotProg控制器；EasyComm兼容SPID/M2等文本协议。</value>
   </data>
   <data name="Settings.Rotator.SmartAzimuth">
-    <value>智能 450° 方位角（北上最短路径）</value>
+    <value>450°智能方位（就近正北转向）</value>
   </data>
   <data name="Settings.Rotator.SmartAzimuthNote">
-    <value>在 450° 旋转器（例如 Yaesu G-5500）上，当跟踪越过北方时，命令 361-450° 可以避免长时间回转到 0°。</value>
+    <value>G5500等450°旋转器，361~450°避免绕整圈掉头。</value>
   </data>
   <data name="Settings.Rotator.ElevationRange">
-    <value>海拔范围</value>
+    <value>仰角行程范围</value>
   </data>
   <data name="Settings.Rotator.TrackStart">
-    <value>开始追踪高度 (°)</value>
+    <value>起始跟踪仰角(°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>默认值为 -3°（地平线以下）。范围 -90° 至 90°。当跟踪的卫星升到该高度以上时，旋转器开始旋转，一旦下降到该高度以下，旋转器就停止旋转。</value>
+    <value>默认-3°（地平线下方），范围-90~90，高于阈值开始转动，低于则驻车。</value>
   </data>
   <data name="Settings.Rotator.ParkAzimuth">
-    <value>停放方位角(°)</value>
+    <value>驻车方位角(°)</value>
   </data>
   <data name="Settings.Rotator.ParkElevation">
-    <value>公园海拔(°)</value>
+    <value>驻车仰角角(°)</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>当没有卫星高于跟踪阈值时，使用停泊位置。自动跟踪聚焦的传球或实时卫星。</value>
+    <value>无卫星达标时自动驻车，选中过境/实时卫星自动跟踪。</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
-    <value>校准偏移 (°)</value>
+    <value>机械校准偏移(°)</value>
   </data>
   <data name="Settings.Rotator.AzimuthOffset">
-    <value>方位角偏移</value>
+    <value>方位补偿</value>
   </data>
   <data name="Settings.Rotator.ElevationOffset">
-    <value>高程偏移</value>
+    <value>仰角补偿</value>
   </data>
   <data name="Settings.Rotator.OffsetNote">
-    <value>添加了通过跟踪和手动旋转命令（不是停车）。如果光束未到达目标，则使用正值；如果超调则为负。</value>
+    <value>仅跟踪/手动旋转生效，驻车不补偿；不到目标加正值，过冲加负值。</value>
   </data>
   <data name="Settings.Rotator.AzimuthRange360">
     <value>0–360°</value>
@@ -881,64 +881,64 @@
     <value>0–180°</value>
   </data>
   <data name="Settings.Recording.Enable">
-    <value>启用自动通行记录</value>
+    <value>过境自动录音</value>
   </data>
   <data name="Settings.Recording.EnableNote">
-    <value>当聚焦卫星位于起始高度上方时，从选定的输入设备录制 WAV 音频。文件以 UTC 时间戳保存。</value>
+    <value>卫星高于设定仰角时录制WAV音频，文件名带UTC时间戳。</value>
   </data>
   <data name="Settings.Recording.InputDevice">
-    <value>输入设备</value>
+    <value>音频输入设备</value>
   </data>
   <data name="Settings.Recording.Format">
-    <value>格式</value>
+    <value>音频格式</value>
   </data>
   <data name="Settings.Recording.StartElevation">
-    <value>开始记录海拔高度 (°)</value>
+    <value>启动录音仰角(°)</value>
   </data>
   <data name="Settings.Recording.StopElevation">
-    <value>低于海拔 (°) 时停止记录</value>
+    <value>停止录音仰角(°)</value>
   </data>
   <data name="Settings.Recording.StopNote">
-    <value>停止高度应等于或低于起始高度，以避免在阈值附近扑动。</value>
+    <value>停止仰角≤启动仰角，避免临界频繁启停。</value>
   </data>
   <data name="Settings.Recording.OutputFolder">
-    <value>输出文件夹</value>
+    <value>录音保存目录</value>
   </data>
   <data name="Settings.Recording.OutputWatermark">
-    <value>默认值：%AppData%/OscarWatch/recordings</value>
+    <value>默认：%AppData%/OscarWatch/recordings</value>
   </data>
   <data name="Settings.Recording.TestButton">
-    <value>测试录音（5秒）</value>
+    <value>5秒录音测试</value>
   </data>
   <data name="Settings.Recording.Unavailable">
-    <value>该系统不支持录音。</value>
+    <value>当前系统无法使用音频录制。</value>
   </data>
   <data name="Settings.Recording.SelectDeviceFirst">
-    <value>首先选择输入设备。</value>
+    <value>请先选择输入设备。</value>
   </data>
   <data name="Settings.Recording.TestInProgress">
-    <value>录制 5 秒测试剪辑...</value>
+    <value>正在录制5秒测试音频…</value>
   </data>
   <data name="Settings.Recording.TestSaved">
-    <value>已将测试剪辑保存到{0}</value>
+    <value>测试音频已保存至{0}</value>
   </data>
   <data name="Settings.Recording.Format.Mono44100">
-    <value>单声道 44.1 kHz</value>
+    <value>单声道44.1kHz</value>
   </data>
   <data name="Settings.Recording.Format.Mono48000">
-    <value>单声道 48 kHz</value>
+    <value>单声道48kHz</value>
   </data>
   <data name="Settings.Recording.Format.Stereo44100">
-    <value>立体声 44.1 kHz</value>
+    <value>立体声44.1kHz</value>
   </data>
   <data name="Settings.Cloudlog.Intro">
-    <value>当您选择卫星或频率更新时，将卫星 TX/RX 发布到 Cloudlog CAT (API v2 /index.php/api/radio)。</value>
+    <value>选中卫星/频率变更时，自动把收发频点上传Cloudlog电台API(v2)。</value>
   </data>
   <data name="Settings.Cloudlog.Enable">
-    <value>启用 Cloudlog radio API（实时更新所需）</value>
+    <value>启用Cloudlog电台API（实时数据上传必需）</value>
   </data>
   <data name="Settings.Cloudlog.BaseUrl">
-    <value>Cloudlog 基本 URL</value>
+    <value>Cloudlog站点地址</value>
   </data>
   <data name="Settings.Cloudlog.BaseUrlWatermark">
     <value>https://your.cloudlog.site</value>
@@ -947,549 +947,549 @@
     <value>API密钥</value>
   </data>
   <data name="Settings.Cloudlog.ApiKeyWatermark">
-    <value>读/写 API 密钥</value>
+    <value>读写密钥</value>
   </data>
   <data name="Settings.Cloudlog.RadioName">
-    <value>Cloudlog 中的无线电名称</value>
+    <value>Cloudlog内电台名称</value>
   </data>
   <data name="Settings.Cloudlog.RadioNameWatermark">
     <value>OscarWatch</value>
   </data>
   <data name="Settings.Cloudlog.RadioNameNote">
-    <value>默认为 OscarWatch。必须与 Cloudlog 可以分配 QSO 的无线电条目匹配。</value>
+    <value>默认OscarWatch，需和后台电台配置一致用于QSO记录。</value>
   </data>
   <data name="Settings.Cloudlog.MinInterval">
-    <value>最小更新间隔（毫秒）</value>
+    <value>最小上传间隔(毫秒)</value>
   </data>
   <data name="Settings.Cloudlog.TestConnection">
-    <value>测试连接</value>
+    <value>连通测试</value>
   </data>
   <data name="Settings.Cloudlog.Testing">
-    <value>测试...</value>
+    <value>正在测试…</value>
   </data>
   <data name="Settings.Cloudlog.EnterCredentials">
-    <value>输入 URL 和 API 密钥（跳出每个字段或再次单击“测试”）。</value>
+    <value>输入地址与密钥，光标移出输入框或重新测试。</value>
   </data>
   <data name="Settings.Cloudlog.ConnectionOk">
-    <value>连接正常 — 将测试 CAT 发布到{0}</value>
+    <value>连接正常，测试数据已提交至{0}</value>
   </data>
   <data name="Settings.Cloudlog.ConnectionFailed">
     <value>连接失败。</value>
   </data>
   <data name="Settings.Browse.RecordingFolder">
-    <value>选择录音输出文件夹</value>
+    <value>选择录音保存目录</value>
   </data>
   <data name="Settings.Browse.TleFile">
     <value>选择TLE文件</value>
   </data>
   <data name="Settings.SaveFailed.Title">
-    <value>无法保存设置</value>
+    <value>配置保存失败</value>
   </data>
   <data name="Pass.Time.Local">
-    <value>当地时间</value>
+    <value>本地时间</value>
   </data>
   <data name="Pass.Time.Utc">
-    <value>世界标准时间</value>
+    <value>世界时UTC</value>
   </data>
   <data name="Pass.TimesShownIn">
-    <value>时间显示在</value>
+    <value>时间显示格式</value>
   </data>
   <data name="Pass.MinElevation">
-    <value>最小仰角（°）</value>
+    <value>最低仰角(°)</value>
   </data>
   <data name="Pass.MinDuration">
-    <value>最短持续时间（分钟）</value>
+    <value>最短过境时长(分钟)</value>
   </data>
   <data name="Pass.HoursAhead">
-    <value>提前几个小时</value>
+    <value>预报时长(小时)</value>
   </data>
   <data name="Pass.Computing">
-    <value>计算通过...</value>
+    <value>正在计算过境…</value>
   </data>
   <data name="Pass.ComputingMutual">
-    <value>计算相互通行证...</value>
+    <value>正在计算双向共视…</value>
   </data>
   <data name="Pass.CountPasses">
-    <value>{0} 在接下来的 {1} 小时内通过</value>
+    <value>未来{1}小时共{0}次过境</value>
   </data>
   <data name="Pass.CountMutual">
-    <value>{0} 在接下来的 {1} h 中相互传递</value>
+    <value>未来{1}小时共{0}次双向共视</value>
   </data>
   <data name="Pass.Failed">
-    <value>通过预测失败：{0}</value>
+    <value>过境计算失败：{0}</value>
   </data>
   <data name="Pass.FailedMutual">
-    <value>互传预测失败：{0}</value>
+    <value>共视计算失败：{0}</value>
   </data>
   <data name="Planner.Section.StationFilters">
-    <value>站和过滤器</value>
+    <value>台站与筛选</value>
   </data>
   <data name="Planner.UseActiveStation">
-    <value>用作活动站</value>
+    <value>设为当前使用台站</value>
   </data>
   <data name="Planner.DisplayNameWatermark">
-    <value>显示名称</value>
+    <value>台站名称</value>
   </data>
   <data name="Planner.Maidenhead">
-    <value>梅登黑德</value>
+    <value>网格码</value>
   </data>
   <data name="Planner.AltAsl">
-    <value>替代 ASL（米）</value>
+    <value>海拔(米)</value>
   </data>
   <data name="Planner.RefreshPasses">
-    <value>刷新通行证</value>
+    <value>刷新过境</value>
   </data>
   <data name="Planner.FiltersNote">
-    <value>当您关闭时，过滤器将应用于此列表和主窗口。</value>
+    <value>筛选同时作用于本页面与主界面。</value>
   </data>
   <data name="Planner.PassesHeader">
-    <value>通行证</value>
+    <value>过境列表</value>
   </data>
   <data name="Planner.Col.Satellite">
     <value>卫星</value>
   </data>
   <data name="Planner.Col.AosLos">
-    <value>AOS – LOS</value>
+    <value>升起AOS–落下LOS</value>
   </data>
   <data name="Planner.Col.Tca">
-    <value>三氯乙酸</value>
+    <value>过顶TCA</value>
   </data>
   <data name="Planner.Col.Azimuth">
-    <value>方位角</value>
+    <value>方位</value>
   </data>
   <data name="Planner.Col.MaxEl">
-    <value>麦克斯·埃尔</value>
+    <value>最大仰角</value>
   </data>
   <data name="Planner.Col.Duration">
-    <value>期间</value>
+    <value>时长</value>
   </data>
   <data name="Planner.Col.Calendar">
     <value>日历</value>
   </data>
   <data name="Planner.AddToCalendar">
-    <value>添加到日历</value>
+    <value>添加至日历</value>
   </data>
   <data name="Planner.Export.CalendarTip">
-    <value>将此卫星的所有通行证导出到 iCalendar (.ics) 文件</value>
+    <value>导出该卫星全部过境为ICS日历文件</value>
   </data>
   <data name="Planner.PortableName">
-    <value>便携式{0}</value>
+    <value>便携版{0}</value>
   </data>
   <data name="Planner.Export.RefreshFirst">
-    <value>导出前刷新通行证。</value>
+    <value>导出前请刷新过境数据。</value>
   </data>
   <data name="Planner.Export.Title">
-    <value>导出{0}通行证</value>
+    <value>导出{0}条过境记录</value>
   </data>
   <data name="Planner.Export.FileType">
-    <value>日历</value>
+    <value>iCalendar日历</value>
   </data>
   <data name="Planner.Export.CalendarTitle">
-    <value>奥斯卡观看 — {0} @ {1}</value>
+    <value>OscarWatch — {0} @ {1}</value>
   </data>
   <data name="Planner.Export.Done">
-    <value>已导出 {0} {1} 通行证</value>
+    <value>成功导出{0}条过境</value>
   </data>
   <data name="Planner.Export.SatelliteFile">
     <value>卫星</value>
   </data>
   <data name="Mutual.Section.StationsFilters">
-    <value>站和过滤器</value>
+    <value>台站与筛选条件</value>
   </data>
   <data name="Mutual.YourStation">
-    <value>你的电台</value>
+    <value>本机台站</value>
   </data>
   <data name="Mutual.RemoteOperator">
-    <value>远程操作员</value>
+    <value>远端台站</value>
   </data>
   <data name="Mutual.RemoteOperatorWatermark">
-    <value>呼号或姓名（可选）</value>
+    <value>呼号或名称(选填)</value>
   </data>
   <data name="Mutual.RemoteGrid">
-    <value>远程梅登黑德电网</value>
+    <value>远端梅登黑德网格</value>
   </data>
   <data name="Mutual.Description">
-    <value>当卫星同时高于您所在站和远程网格方格的最低海拔时，查找通行证。</value>
+    <value>计算卫星同时在本机与远端台站地平线以上的共视时段。</value>
   </data>
   <data name="Mutual.FindPasses">
-    <value>寻找相互通行证</value>
+    <value>查询共视过境</value>
   </data>
   <data name="Mutual.MinPassDuration">
-    <value>最短通过时间（分钟）</value>
+    <value>最短单站过境(分钟)</value>
   </data>
   <data name="Mutual.MinOverlap">
-    <value>最小重叠（分钟）</value>
+    <value>最小共视时长(分钟)</value>
   </data>
   <data name="Mutual.PassesHeader">
-    <value>相互通行证</value>
+    <value>双向共视列表</value>
   </data>
   <data name="Mutual.Col.Satellite">
     <value>卫星</value>
   </data>
   <data name="Mutual.Col.MutualWindow">
-    <value>互助窗口</value>
+    <value>共视区间</value>
   </data>
   <data name="Mutual.Col.Overlap">
-    <value>重叠</value>
+    <value>重合时长</value>
   </data>
   <data name="Mutual.Col.YourMaxEl">
-    <value>你的最大</value>
+    <value>本机最大仰角</value>
   </data>
   <data name="Mutual.Col.RemoteMaxEl">
-    <value>远程最大EL</value>
+    <value>远端最大仰角</value>
   </data>
   <data name="Mutual.Col.YourPass">
-    <value>你的通行证</value>
+    <value>本机过境</value>
   </data>
   <data name="Mutual.Col.RemotePass">
-    <value>远程通行证</value>
+    <value>远端过境</value>
   </data>
   <data name="Mutual.Status.EnterGrid">
-    <value>输入远程操作员的梅登黑德网格方块（至少 4 个字符）。</value>
+    <value>输入远端台站网格码（最少4位字符）。</value>
   </data>
   <data name="Mutual.Status.NoPasses">
-    <value>{1} 和{2} 在接下来的{0} 小时内没有相互传递。</value>
+    <value>{1}与{2}未来{0}小时无共视过境。</value>
   </data>
   <data name="Mutual.Status.InvalidGrid">
-    <value>无效的梅登黑德网格方格。</value>
+    <value>无效梅登黑德网格。</value>
   </data>
   <data name="Sunlight.Section.SatelliteRange">
-    <value>卫星及范围</value>
+    <value>卫星与时间范围</value>
   </data>
   <data name="Sunlight.Satellite">
     <value>卫星</value>
   </data>
   <data name="Sunlight.StartDateUtc">
-    <value>开始日期（世界标准时间）</value>
+    <value>起始日期(UTC)</value>
   </data>
   <data name="Sunlight.DaysAhead">
-    <value>未来几天</value>
+    <value>预报天数</value>
   </data>
   <data name="Sunlight.Predict">
-    <value>预测</value>
+    <value>开始计算</value>
   </data>
   <data name="Sunlight.Legend.Sunlight">
-    <value>阳光</value>
+    <value>日照区</value>
   </data>
   <data name="Sunlight.Legend.Eclipse">
-    <value>蚀</value>
+    <value>地影区</value>
   </data>
   <data name="Sunlight.ContinuousPeriods">
-    <value>连续日照时间</value>
+    <value>连续日照时段</value>
   </data>
   <data name="Sunlight.MinDuration">
-    <value>最短持续时间（分钟）</value>
+    <value>最小时长(分钟)</value>
   </data>
   <data name="Sunlight.Col.StartLocal">
-    <value>启动（本地）</value>
+    <value>开始(本地时)</value>
   </data>
   <data name="Sunlight.Col.EndLocal">
-    <value>结束（本地）</value>
+    <value>结束(本地时)</value>
   </data>
   <data name="Sunlight.Col.Duration">
-    <value>期间</value>
+    <value>时长</value>
   </data>
   <data name="Sunlight.Status.SelectPredict">
-    <value>选择卫星并单击预测。</value>
+    <value>选中卫星后点击计算。</value>
   </data>
   <data name="Sunlight.Status.NoSatellites">
-    <value>没有启用的卫星 — 使用卫星 → 首先选择卫星。</value>
+    <value>未启用卫星，前往卫星菜单勾选启用。</value>
   </data>
   <data name="Sunlight.Status.Computing">
-    <value>计算{0}的照度...</value>
+    <value>正在计算{0}光照数据…</value>
   </data>
   <data name="Sunlight.Status.Segments">
-    <value>{0} {1} 天的照明段。</value>
+    <value>{1}天内共{0}段光照周期。</value>
   </data>
   <data name="Sunlight.Status.Cancelled">
-    <value>预测取消。</value>
+    <value>计算已取消。</value>
   </data>
   <data name="Sunlight.Status.Failed">
-    <value>预测失败：{0}</value>
+    <value>光照计算失败：{0}</value>
   </data>
   <data name="Sunlight.Summary.SunlitPercent">
-    <value>总体阳光下 {0}%</value>
+    <value>整体日照占比{0}%</value>
   </data>
   <data name="Sunlight.Summary.LongestSun">
-    <value>最长连续日照{0} ({1} – {2})</value>
+    <value>最长连续日照{0}（{1} – {2}）</value>
   </data>
   <data name="Sunlight.Summary.LongestEclipse">
-    <value>最长的日食{0}</value>
+    <value>最长地影时长{0}</value>
   </data>
   <data name="Picker.SearchWatermark">
-    <value>搜索卫星...</value>
+    <value>搜索卫星…</value>
   </data>
   <data name="Picker.Filter.All">
     <value>全部</value>
   </data>
   <data name="Picker.Filter.Selected">
-    <value>已选择</value>
+    <value>已启用</value>
   </data>
   <data name="Picker.Filter.NotSelected">
-    <value>未选择</value>
+    <value>未启用</value>
   </data>
   <data name="DbEditor.Intro">
-    <value>管理卫星转发器模式（频率以 kHz 为单位）。保存到您的用户 AppData 文件夹。</value>
+    <value>管理卫星转发器参数（频率单位kHz），配置保存在用户应用数据目录。</value>
   </data>
   <data name="DbEditor.Path.User">
     <value>用户数据库：{0}</value>
   </data>
   <data name="DbEditor.Path.Shipped">
-    <value>发货默认值：{0}</value>
+    <value>软件默认库：{0}</value>
   </data>
   <data name="DbEditor.SearchWatermark">
-    <value>搜索卫星...</value>
+    <value>搜索卫星…</value>
   </data>
   <data name="DbEditor.ImportJson">
-    <value>导入 JSON...</value>
+    <value>导入JSON…</value>
   </data>
   <data name="DbEditor.ExportJson">
-    <value>导出 JSON...</value>
+    <value>导出JSON…</value>
   </data>
   <data name="DbEditor.CheckUpdates">
     <value>检查更新</value>
   </data>
   <data name="DbEditor.AddSatellite">
-    <value>添加卫星</value>
+    <value>新增卫星</value>
   </data>
   <data name="DbEditor.RestoreDefaults">
-    <value>恢复默认设置</value>
+    <value>恢复默认参数</value>
   </data>
   <data name="DbEditor.RemoveSatellite">
-    <value>移除卫星</value>
+    <value>删除卫星</value>
   </data>
   <data name="DbEditor.Satellite">
     <value>卫星</value>
   </data>
   <data name="DbEditor.NameWatermark">
-    <value>名称（尽可能匹配 TLE 名称）</value>
+    <value>名称（尽量与TLE命名一致）</value>
   </data>
   <data name="DbEditor.ModesHeader">
-    <value>应答器模式</value>
+    <value>转发器参数列表</value>
   </data>
   <data name="DbEditor.AddMode">
-    <value>添加模式</value>
+    <value>新增制式</value>
   </data>
   <data name="DbEditor.Duplicate">
     <value>复制</value>
   </data>
   <data name="DbEditor.Remove">
-    <value>消除</value>
+    <value>删除</value>
   </data>
   <data name="DbEditor.ModeDetails">
-    <value>模式详情</value>
+    <value>制式详情</value>
   </data>
   <data name="DbEditor.TypeLabel">
-    <value>类型/标签</value>
+    <value>类型/备注</value>
   </data>
   <data name="DbEditor.DownlinkKhz">
-    <value>下行链路（kHz）</value>
+    <value>下行频率(kHz)</value>
   </data>
   <data name="DbEditor.UplinkKhz">
-    <value>上行链路（kHz）</value>
+    <value>上行频率(kHz)</value>
   </data>
   <data name="DbEditor.DownlinkMode">
-    <value>下行模式</value>
+    <value>下行调制模式</value>
   </data>
   <data name="DbEditor.UplinkMode">
-    <value>上行模式</value>
+    <value>上行调制模式</value>
   </data>
   <data name="DbEditor.Doppler">
-    <value>多普勒</value>
+    <value>多普勒模式</value>
   </data>
   <data name="DbEditor.CtcssAccess">
-    <value>CTCSS 接入（赫兹）</value>
+    <value>接收亚音(Hz)</value>
   </data>
   <data name="DbEditor.CtcssArm">
-    <value>CTCSS 臂 (Hz)</value>
+    <value>发射亚音(Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>对于仅信标，将上行链路设置为 0。将 CTCSS 保留为 0 表示无。 FM 模式使用 Hz（例如 67.0）。</value>
+    <value>仅信标卫星上行填0；无亚音参数填0；FM亚音单位赫兹，例67.0。</value>
   </data>
   <data name="DbEditor.FileType.Json">
-    <value>JSON</value>
+    <value>JSON格式</value>
   </data>
   <data name="DbEditor.Mode.NewMode">
-    <value>新模式</value>
+    <value>新建制式</value>
   </data>
   <data name="DbEditor.Mode.CopySuffix">
-    <value>复制</value>
+    <value>副本</value>
   </data>
   <data name="DbEditor.Status.Loaded">
-    <value>{0} 卫星已加载。</value>
+    <value>载入{0}颗卫星参数。</value>
   </data>
   <data name="DbEditor.Status.AddCancelled">
-    <value>添加卫星已取消。</value>
+    <value>取消添加卫星。</value>
   </data>
   <data name="DbEditor.Status.AlreadyExists">
-    <value>卫星“{0}”已在数据库中。</value>
+    <value>卫星“{0}”已存在数据库。</value>
   </data>
   <data name="DbEditor.Status.Added">
-    <value>添加{0}。</value>
+    <value>已添加{0}。</value>
   </data>
   <data name="DbEditor.Status.RemovedSatellite">
-    <value>删除了卫星。</value>
+    <value>卫星已删除。</value>
   </data>
   <data name="DbEditor.Status.AddedMode">
-    <value>添加应答器模式。</value>
+    <value>新增转发器制式。</value>
   </data>
   <data name="DbEditor.Status.RemovedMode">
-    <value>删除了应答器模式。</value>
+    <value>删除转发器制式。</value>
   </data>
   <data name="DbEditor.Status.DuplicatedMode">
-    <value>复制模式。</value>
+    <value>复制制式完成。</value>
   </data>
   <data name="DbEditor.Status.Saved">
-    <value>已保存。</value>
+    <value>参数已保存。</value>
   </data>
   <data name="DbEditor.Status.Restored">
-    <value>已恢复发货数据库。</value>
+    <value>已恢复原厂默认数据库。</value>
   </data>
   <data name="DbEditor.Export.Title">
     <value>导出转发器数据库</value>
   </data>
   <data name="DbEditor.Status.Exported">
-    <value>将 {0} 卫星导出为 JSON。</value>
+    <value>成功导出{0}颗卫星至JSON。</value>
   </data>
   <data name="DbEditor.Status.ExportFailed">
     <value>导出失败：{0}</value>
   </data>
   <data name="DbEditor.Import.Title">
-    <value>导入应答器数据库</value>
+    <value>导入转发器数据库</value>
   </data>
   <data name="DbEditor.Status.ReadingImport">
-    <value>正在读取导入文件...</value>
+    <value>正在读取导入文件…</value>
   </data>
   <data name="DbEditor.Status.InvalidDatabase">
-    <value>无效的数据库：{0}</value>
+    <value>数据库格式错误：{0}</value>
   </data>
   <data name="DbEditor.Status.ImportNoChanges">
-    <value>导入文件与编辑器匹配（没有新的或更改的条目）。</value>
+    <value>导入文件与本地完全一致，无变更。</value>
   </data>
   <data name="DbEditor.Status.ImportCancelled">
-    <value>导入已取消。</value>
+    <value>取消导入。</value>
   </data>
   <data name="DbEditor.Status.ImportApplied">
-    <value>导入应用于编辑器 - 按“保存”写入您的用户数据库。</value>
+    <value>导入数据已载入编辑器，保存才会写入本地库。</value>
   </data>
   <data name="DbEditor.Status.ImportFailed">
     <value>导入失败：{0}</value>
   </data>
   <data name="DbEditor.Status.CheckingUpdates">
-    <value>检查应答器数据库更新...</value>
+    <value>正在校验转发器库更新…</value>
   </data>
   <data name="DbEditor.Status.UpToDate">
-    <value>应答器数据库是最新的。</value>
+    <value>转发器数据库已是最新版。</value>
   </data>
   <data name="DbEditor.Status.UpdatesApplied">
-    <value>已应用更新。</value>
+    <value>更新已应用。</value>
   </data>
   <data name="DbEditor.Status.NoChangesApplied">
-    <value>未应用任何更改。</value>
+    <value>无参数更新。</value>
   </data>
   <data name="DbEditor.Status.UpdateCheckFailed">
-    <value>更新检查失败：{0}</value>
+    <value>更新校验失败：{0}</value>
   </data>
   <data name="DbEditor.Status.InEditor">
-    <value>{0} 编辑器中的卫星。</value>
+    <value>编辑器现有{0}颗卫星。</value>
   </data>
   <data name="DbMerge.Title.Remote">
-    <value>应答器数据库更新</value>
+    <value>转发器数据库在线更新</value>
   </data>
   <data name="DbMerge.Title.Import">
-    <value>合并导入的应答器数据库</value>
+    <value>合并导入数据库</value>
   </data>
   <data name="DbMerge.ApplySelected">
-    <value>应用选定的</value>
+    <value>应用选中项</value>
   </data>
   <data name="DbMerge.NewSatellites">
-    <value>新卫星</value>
+    <value>新增卫星</value>
   </data>
   <data name="DbMerge.NewModes">
-    <value>新应答器模式</value>
+    <value>新增转发器制式</value>
   </data>
   <data name="DbMerge.Conflicts">
-    <value>冲突</value>
+    <value>参数冲突</value>
   </data>
   <data name="DbMerge.YoursFormat">
-    <value>你的：{0}</value>
+    <value>本地：{0}</value>
   </data>
   <data name="DbMerge.Source.Import">
-    <value>导入的文件</value>
+    <value>导入文件</value>
   </data>
   <data name="DbMerge.Source.Remote">
-    <value>tle.oscarwatch.org</value>
+    <value>tle.oscarwatch.org官方库</value>
   </data>
   <data name="DbMerge.UseImported">
-    <value>使用导入版本</value>
+    <value>采用导入版本</value>
   </data>
   <data name="DbMerge.UsePublished">
-    <value>使用已发布的版本</value>
+    <value>采用官方版本</value>
   </data>
   <data name="DbMerge.Prefix.Imported">
-    <value>进口</value>
+    <value>导入：</value>
   </data>
   <data name="DbMerge.Prefix.Published">
-    <value>已发表</value>
+    <value>官方：</value>
   </data>
   <data name="DbMerge.Intro.Import">
-    <value>默认情况下会选择新条目。除非您选择导入的版本，否则冲突会保留您的编辑器副本。</value>
+    <value>新项目默认勾选；冲突项默认保留本地，可手动切换导入参数。</value>
   </data>
   <data name="DbMerge.Intro.Remote">
-    <value>默认情况下会选择新条目。除非您选择发布的版本，否则冲突将保留您的本地副本。</value>
+    <value>新项目默认勾选；冲突默认保留本地，可选替换为官方参数。</value>
   </data>
   <data name="DbMerge.Summary.Matches">
-    <value>您的应答器数据库与{0}匹配。</value>
+    <value>本地数据库与{0}完全一致。</value>
   </data>
   <data name="DbMerge.Summary.OneNewSatellite">
-    <value>{0}新卫星</value>
+    <value>新增1颗卫星</value>
   </data>
   <data name="DbMerge.Summary.ManyNewSatellites">
-    <value>{0}新卫星</value>
+    <value>新增{0}颗卫星</value>
   </data>
   <data name="DbMerge.Summary.OneNewMode">
-    <value>{0}新模式</value>
+    <value>新增1组转发器参数</value>
   </data>
   <data name="DbMerge.Summary.ManyNewModes">
-    <value>{0}新模式</value>
+    <value>新增{0}组转发器参数</value>
   </data>
   <data name="DbMerge.Summary.OneConflict">
-    <value>{0}冲突</value>
+    <value>1处参数冲突</value>
   </data>
   <data name="DbMerge.Summary.ManyConflicts">
-    <value>{0}冲突</value>
+    <value>{0}处参数冲突</value>
   </data>
   <data name="DbMerge.Summary.FromSuffix">
-    <value>来自{0}。</value>
+    <value>，来源{0}。</value>
   </data>
   <data name="DbMerge.Item.SatelliteOneMode">
-    <value>{0}（1 模式）</value>
+    <value>{0}（1组参数）</value>
   </data>
   <data name="DbMerge.Item.SatelliteManyModes">
-    <value>{0}（{1}模式）</value>
+    <value>{0}（{1}组参数）</value>
   </data>
   <data name="DbMerge.Item.ModeLine">
-    <value>{0}·{1}</value>
+    <value>{0} · {1}</value>
   </data>
   <data name="DbAdd.Title">
     <value>添加卫星</value>
   </data>
   <data name="DbAdd.Intro.WithCatalog">
-    <value>从您的 TLE 目录中选择卫星，或在下面输入自定义名称。</value>
+    <value>从TLE库选择卫星，或手动自定义名称。</value>
   </data>
   <data name="DbAdd.Intro.NoCatalog">
-    <value>每颗 TLE 卫星均已在此数据库中。在下面输入自定义名称。</value>
+    <value>TLE内卫星已全部入库，可手动自定义添加。</value>
   </data>
   <data name="DbAdd.SearchWatermark">
-    <value>搜索 TLE 目录...</value>
+    <value>检索TLE卫星…</value>
   </data>
   <data name="DbAdd.CustomNameLabel">
-    <value>自定义名称（如果您在上面选择，则可选）</value>
+    <value>自定义名称（选中卫星时选填）</value>
   </data>
   <data name="DbAdd.CustomNameWatermark">
-    <value>如果不在列表中，请输入名称...</value>
+    <value>无匹配卫星时手动输入…</value>
   </data>
   <data name="DbAdd.Error.PickOne">
-    <value>选择 TLE 卫星或输入自定义名称。</value>
+    <value>请选择TLE卫星或输入自定义名称。</value>
   </data>
 </root>
