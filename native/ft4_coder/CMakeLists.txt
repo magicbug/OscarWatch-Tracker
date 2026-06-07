@@ -12,9 +12,11 @@ if(APPLE AND CMAKE_OSX_ARCHITECTURES)
   set(CMAKE_Fortran_FLAGS_INIT "${_ft4_osx_arch_flags}")
 endif()
 
-project(ft4_coder C Fortran)
+project(ft4_coder C CXX Fortran)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include(FetchContent)
@@ -61,16 +63,20 @@ set_source_files_properties("${WSJTX_LIB_DIR}/lib/decoder.f90" PROPERTIES
 list(LENGTH WSJTX_FORTRAN _wsjtx_fortran_count)
 list(LENGTH WSJTX_C _wsjtx_c_count)
 message(STATUS "ft4_coder: ${_wsjtx_fortran_count} Fortran + ${_wsjtx_c_count} C sources (curated wsjtx_lib list)")
-if(_wsjtx_fortran_count GREATER 245 OR _wsjtx_c_count GREATER 25)
+if(_wsjtx_fortran_count GREATER 246 OR _wsjtx_c_count GREATER 26)
   message(FATAL_ERROR "Unexpected wsjtx source count; expected curated cmake/WsjtxLibSources.cmake")
 endif()
 
 add_library(ft4_coder SHARED
   src/ft4_coder_shim.c
+  src/wsjtx_decode_stubs.c
   ${WSJTX_FORTRAN}
   ${WSJTX_C}
   ${WSJTX_CPP}
 )
+
+# gfortran must not drive the shared-library link: it omits C/C++/FFTW objects.
+set_target_properties(ft4_coder PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_definitions(ft4_coder PRIVATE FT4_CODER_BUILD)
 if(NOT WIN32)
@@ -80,11 +86,24 @@ if(NOT WIN32)
   )
 endif()
 
+find_path(BOOST_INCLUDE_DIR NAMES boost/crc.hpp
+  HINTS
+    $ENV{MINGW_PREFIX}/include
+    /usr/include
+    /usr/local/include
+    /opt/homebrew/include
+    /usr/local/opt/boost/include
+)
+if(NOT BOOST_INCLUDE_DIR)
+  message(FATAL_ERROR "boost/crc.hpp not found; install Boost headers (e.g. libboost-dev, mingw-w64-x86_64-boost)")
+endif()
+
 target_include_directories(ft4_coder
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${WSJTX_LIB_DIR}
     ${WSJTX_LIB_DIR}/lib
+    ${BOOST_INCLUDE_DIR}
 )
 
 if(APPLE)
@@ -143,27 +162,29 @@ else()
   find_library(FFTW3F_LIB NAMES fftw3f libfftw3f HINTS ${_ft4_fftw_lib_hints} REQUIRED)
 endif()
 
-target_link_libraries(ft4_coder PRIVATE ${FFTW3F_LIB} Threads::Threads)
+target_link_libraries(ft4_coder PUBLIC ${FFTW3F_LIB} Threads::Threads)
 
-if(NOT WIN32)
-  if(FFTW3F_THREADS_LIB)
-    if(NOT EXISTS "${FFTW3F_THREADS_LIB}")
-      message(FATAL_ERROR "FFTW3F_THREADS_LIB does not exist: ${FFTW3F_THREADS_LIB}")
-    endif()
-  else()
-    find_library(FFTW3F_THREADS_LIB NAMES fftw3f_threads libfftw3f_threads HINTS ${_ft4_fftw_lib_hints})
+if(FFTW3F_THREADS_LIB)
+  if(NOT EXISTS "${FFTW3F_THREADS_LIB}")
+    message(FATAL_ERROR "FFTW3F_THREADS_LIB does not exist: ${FFTW3F_THREADS_LIB}")
   endif()
-  if(FFTW3F_THREADS_LIB)
-    target_link_libraries(ft4_coder PRIVATE ${FFTW3F_THREADS_LIB})
-  endif()
+else()
+  find_library(FFTW3F_THREADS_LIB NAMES fftw3f_threads libfftw3f_threads HINTS ${_ft4_fftw_lib_hints})
+endif()
+if(FFTW3F_THREADS_LIB)
+  target_link_libraries(ft4_coder PUBLIC ${FFTW3F_THREADS_LIB})
+endif()
+
+if(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
+  target_link_libraries(ft4_coder PUBLIC ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
 endif()
 
 if(WIN32)
-  target_link_libraries(ft4_coder PRIVATE quadmath)
+  target_link_libraries(ft4_coder PUBLIC quadmath)
 endif()
 
 if(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES)
-  target_link_libraries(ft4_coder PRIVATE ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES})
+  target_link_libraries(ft4_coder PUBLIC ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES})
 endif()
 
 add_executable(ft4_smoke smoke/ft4_smoke.c)

@@ -59,18 +59,19 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-fftw
+            mingw-w64-x86_64-boost
             mingw-w64-x86_64-make
 
       - name: Install Linux packages
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build g++ gfortran libfftw3-dev
+          sudo apt-get install -y cmake ninja-build g++ gfortran libfftw3-dev libboost-dev
 
       - name: Install macOS packages
         if: runner.os == 'macOS'
         run: |
-          brew install gcc ninja
+          brew install gcc ninja boost
           if [ "${{ matrix.rid }}" != "osx-x64" ]; then
             brew install fftw
           fi
@@ -108,6 +109,10 @@ jobs:
         shell: bash
         run: |
           test -f native/ft4_coder/cmake/WsjtxLibSources.cmake
+          test -f native/ft4_coder/src/wsjtx_decode_stubs.c
+          grep -q 'lib/fst4/fastosd240_74.f90' native/ft4_coder/cmake/WsjtxLibSources.cmake
+          grep -q 'lib/gran.c' native/ft4_coder/cmake/WsjtxLibSources.cmake
+          grep -q 'LINKER_LANGUAGE CXX' native/ft4_coder/CMakeLists.txt
           cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
           cmake --build build-ft4
           ctest --test-dir build-ft4 --output-on-failure
@@ -118,22 +123,54 @@ jobs:
         env:
           CMAKE_OSX_ARCHITECTURES: ${{ matrix.cmake_osx_arch }}
         run: |
-          unset CC CXX FC
-          GFORTRAN="$(brew --prefix gcc)/bin/$(ls "$(brew --prefix gcc)/bin" | sed -n 's/^\(gfortran-[0-9]*\)$/\1/p' | sort -V | tail -1)"
+          GCC_PREFIX="$(brew --prefix gcc)"
+          GCC_MAJOR="$(ls "${GCC_PREFIX}/bin" | sed -n 's/^gcc-\([0-9]*\)$/\1/p' | sort -V | tail -1)"
+          GFORTRAN="${GCC_PREFIX}/bin/gfortran-${GCC_MAJOR}"
           if [ ! -x "$GFORTRAN" ]; then
-            echo "gfortran not found under $(brew --prefix gcc)/bin"
-            ls -la "$(brew --prefix gcc)/bin"
+            echo "gfortran not found under ${GCC_PREFIX}/bin"
+            ls -la "${GCC_PREFIX}/bin"
             exit 1
           fi
-          echo "Using Fortran compiler: $GFORTRAN"
+
           CMAKE_ARGS=(
             -S native/ft4_coder
             -B build-ft4
             -G Ninja
             -DCMAKE_BUILD_TYPE=Release
-            -DCMAKE_Fortran_COMPILER="$GFORTRAN"
             -DCMAKE_OSX_ARCHITECTURES="${CMAKE_OSX_ARCHITECTURES}"
           )
+
+          # GitHub macOS runners are Apple Silicon; osx-x64 must cross-compile with -arch x86_64
+          # or CMake rejects arm64 Homebrew gfortran when CMAKE_OSX_ARCHITECTURES=x86_64.
+          if [ "${{ matrix.rid }}" = "osx-x64" ]; then
+            WRAPPER_DIR="${RUNNER_TEMP}/ft4-compiler-wrappers"
+            mkdir -p "${WRAPPER_DIR}"
+            for tool in gcc g++ gfortran; do
+              printf '%s\n' '#!/usr/bin/env bash' \
+                "exec \"${GCC_PREFIX}/bin/${tool}-${GCC_MAJOR}\" -arch x86_64 \"\$@\"" \
+                > "${WRAPPER_DIR}/${tool}"
+              chmod +x "${WRAPPER_DIR}/${tool}"
+            done
+            echo "Cross-compiling osx-x64 with wrappers in ${WRAPPER_DIR}"
+            CMAKE_ARGS+=(
+              -DCMAKE_C_COMPILER="${WRAPPER_DIR}/gcc"
+              -DCMAKE_CXX_COMPILER="${WRAPPER_DIR}/g++"
+              -DCMAKE_Fortran_COMPILER="${WRAPPER_DIR}/gfortran"
+            )
+          else
+            unset CC CXX FC
+            echo "Using Homebrew GCC Fortran/C++: gfortran-${GCC_MAJOR}, g++-${GCC_MAJOR}"
+            CMAKE_ARGS+=(
+              -DCMAKE_Fortran_COMPILER="$GFORTRAN"
+              -DCMAKE_CXX_COMPILER="${GCC_PREFIX}/bin/g++-${GCC_MAJOR}"
+            )
+          fi
+
+          test -f native/ft4_coder/src/wsjtx_decode_stubs.c
+          grep -q 'lib/fst4/fastosd240_74.f90' native/ft4_coder/cmake/WsjtxLibSources.cmake
+          grep -q 'lib/gran.c' native/ft4_coder/cmake/WsjtxLibSources.cmake
+          grep -q 'LINKER_LANGUAGE CXX' native/ft4_coder/CMakeLists.txt
+
           if [ "${{ matrix.rid }}" = "osx-arm64" ]; then
             CMAKE_ARGS+=(-DFFTW3_PREFIX="$(brew --prefix fftw)")
           elif [ -n "${FFTW3_PREFIX:-}" ]; then

@@ -1,7 +1,7 @@
 # Fortran/C sources mirrored from paulh002/wsjtx_lib CMakeLists.txt (wsjt_FSRCS + support C/C++).
 # Omit from wsjtx_lib's full list:
 # - Standalone PROGRAM sources (multiple `main` when linking SHARED)
-# - Duplicate symbols (sleep_msec, fastosd240_74)
+# - Duplicate symbols (sleep_msec; osd240_74 vs fastosd240_74 — keep fastosd for decode240_74)
 # - Astro/JPL ephemeris (jplsubs.f fails gfortran 16 SPLIT intrinsic clash; not used by FT4 codec)
 
 set(WSJTX_FORTRAN_REL
@@ -38,6 +38,7 @@ set(WSJTX_FORTRAN_REL
   lib/ana932.f90
   lib/analytic.f90
   lib/avecho.f90
+  lib/echo_snr.f90
   lib/averms.f90
   lib/azdist.f90
   lib/ft8/baseline.f90
@@ -241,7 +242,7 @@ set(WSJTX_FORTRAN_REL
   lib/fst4/get_fst4_bitmetrics.f90
   lib/fst4/get_fst4_bitmetrics2.f90
   lib/fst4/osd240_101.f90
-  lib/fst4/osd240_74.f90
+  lib/fst4/fastosd240_74.f90
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
 )
@@ -258,6 +259,7 @@ set(WSJTX_C_REL
   lib/qra/q65/qra15_65_64_irr_e23.c
   lib/qra/q65/qracodes.c
   lib/igray.c
+  lib/gran.c
   lib/ftrsd/ftrsd2.c
   lib/ftrsd/ftrsdap.c
   lib/ftrsd/sfrsd3.c
