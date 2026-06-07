@@ -30,6 +30,11 @@ artifacts/
 .build-out/
 .test-out/
 
+## Native FT4 codec build
+native/ft4_coder/build/
+native/ft4_coder/_deps/
+build-ft4/
+
 ## App data (local dev only)
 *.local.json
 

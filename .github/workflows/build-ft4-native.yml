@@ -1,0 +1,120 @@
+# Build native ft4_coder (WSJT-X Fortran + shim) for all OscarWatch publish RIDs.
+# Manual run: Actions → Build FT4 native → Run workflow.
+
+name: Build FT4 native
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - "native/ft4_coder/**"
+      - ".github/workflows/build-ft4-native.yml"
+  pull_request:
+    paths:
+      - "native/ft4_coder/**"
+      - ".github/workflows/build-ft4-native.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.display_name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            os: windows-latest
+            display_name: Windows x64
+          - rid: linux-x64
+            os: ubuntu-latest
+            display_name: Linux x64
+          - rid: linux-arm64
+            os: ubuntu-24.04-arm
+            display_name: Linux ARM64
+          - rid: osx-x64
+            os: macos-latest
+            display_name: macOS Intel
+            cmake_osx_arch: x86_64
+          - rid: osx-arm64
+            os: macos-latest
+            display_name: macOS Apple Silicon
+            cmake_osx_arch: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MSYS2 toolchain (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-gfortran
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-fftw
+            mingw-w64-x86_64-make
+
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++ gfortran libfftw3-dev
+
+      - name: Install macOS packages
+        if: runner.os == 'macOS'
+        run: |
+          brew install gcc fftw ninja
+          echo "$(brew --prefix gcc)/bin" >> "$GITHUB_PATH"
+
+      - name: Configure and build (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ft4
+          ctest --test-dir build-ft4 --output-on-failure
+
+      - name: Configure and build (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        env:
+          CMAKE_OSX_ARCHITECTURES: ${{ matrix.cmake_osx_arch }}
+        run: |
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            GCC_PREFIX="$(brew --prefix gcc)"
+            export CC="${GCC_PREFIX}/bin/gcc"
+            export CXX="${GCC_PREFIX}/bin/g++"
+            export FC="${GCC_PREFIX}/bin/gfortran"
+          fi
+          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ft4
+          ctest --test-dir build-ft4 --output-on-failure
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          mkdir -p dist/${{ matrix.rid }}
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp build-ft4/ft4_coder.dll dist/${{ matrix.rid }}/
+            cp build-ft4/ft4_smoke.exe dist/${{ matrix.rid }}/
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            cp build-ft4/libft4_coder.dylib dist/${{ matrix.rid }}/ft4_coder.dylib
+            cp build-ft4/ft4_smoke dist/${{ matrix.rid }}/
+          else
+            cp build-ft4/libft4_coder.so dist/${{ matrix.rid }}/ft4_coder.so
+            cp build-ft4/ft4_smoke dist/${{ matrix.rid }}/
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft4_coder-${{ matrix.rid }}
+          path: dist/${{ matrix.rid }}
+          if-no-files-found: error
