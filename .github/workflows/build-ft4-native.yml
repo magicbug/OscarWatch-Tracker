@@ -112,7 +112,18 @@ jobs:
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
-          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          FFTW3F_LIB="${MINGW_PREFIX}/lib/libfftw3f.dll.a"
+          FFTW3F_THREADS_LIB="${MINGW_PREFIX}/lib/libfftw3f_threads.dll.a"
+          for _lib in "${FFTW3F_LIB}" "${FFTW3F_THREADS_LIB}"; do
+            if [ ! -f "${_lib}" ]; then
+              echo "Missing ${_lib}"
+              ls -la "${MINGW_PREFIX}/lib"/libfftw3f* || true
+              exit 1
+            fi
+          done
+          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DFFTW3F_LIB="${FFTW3F_LIB}" \
+            -DFFTW3F_THREADS_LIB="${FFTW3F_THREADS_LIB}"
           cmake --build build-ft4
           ctest --test-dir build-ft4 --output-on-failure
 
@@ -125,7 +136,21 @@ jobs:
           grep -q 'lib/fst4/fastosd240_74.f90' native/ft4_coder/cmake/WsjtxLibSources.cmake
           grep -q 'lib/gran.c' native/ft4_coder/cmake/WsjtxLibSources.cmake
           grep -q 'LINKER_LANGUAGE CXX' native/ft4_coder/CMakeLists.txt
-          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          grep -q '_ft4_append_fftw_link_libs' native/ft4_coder/CMakeLists.txt
+          FFTW_LIBDIR=""
+          for _dir in /usr/lib/aarch64-linux-gnu /usr/lib/x86_64-linux-gnu /usr/lib; do
+            if [ -f "${_dir}/libfftw3f.so" ]; then
+              FFTW_LIBDIR="${_dir}"
+              break
+            fi
+          done
+          if [ -z "${FFTW_LIBDIR}" ]; then
+            echo "libfftw3f.so not found"
+            exit 1
+          fi
+          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DFFTW3F_LIB="${FFTW_LIBDIR}/libfftw3f.so" \
+            -DFFTW3F_THREADS_LIB="${FFTW_LIBDIR}/libfftw3f_threads.so"
           cmake --build build-ft4
           ctest --test-dir build-ft4 --output-on-failure
 
@@ -168,11 +193,21 @@ jobs:
 
             if [ -n "$fftw_prefix_arg" ]; then
               CMAKE_ARGS+=(-DFFTW3_PREFIX="$fftw_prefix_arg")
-            fi
-            if [ -n "${FFTW3F_LIB:-}" ]; then
+              for _lib in libfftw3f.dylib libfftw3f_threads.dylib; do
+                if [ ! -f "${fftw_prefix_arg}/lib/${_lib}" ]; then
+                  echo "Missing ${fftw_prefix_arg}/lib/${_lib}"
+                  ls -la "${fftw_prefix_arg}/lib" || true
+                  exit 1
+                fi
+              done
+              CMAKE_ARGS+=(
+                -DFFTW3F_LIB="${fftw_prefix_arg}/lib/libfftw3f.dylib"
+                -DFFTW3F_THREADS_LIB="${fftw_prefix_arg}/lib/libfftw3f_threads.dylib"
+              )
+            elif [ -n "${FFTW3F_LIB:-}" ]; then
               CMAKE_ARGS+=(-DFFTW3F_LIB="${FFTW3F_LIB}")
             fi
-            if [ -n "${FFTW3F_THREADS_LIB:-}" ]; then
+            if [ -z "$fftw_prefix_arg" ] && [ -n "${FFTW3F_THREADS_LIB:-}" ]; then
               CMAKE_ARGS+=(-DFFTW3F_THREADS_LIB="${FFTW3F_THREADS_LIB}")
             fi
 

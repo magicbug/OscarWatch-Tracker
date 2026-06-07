@@ -124,8 +124,11 @@ endif()
 find_package(Threads REQUIRED)
 
 set(FFTW3_PREFIX "" CACHE PATH "Optional FFTW install prefix (Homebrew: brew --prefix fftw)")
+# CACHE FILEPATH defaults must not be set to "" before find_library — CMake treats the
+# empty cache as authoritative and skips the search (CI logged FFTW3F_LIB= with no link).
 set(FFTW3F_LIB "" CACHE FILEPATH "Path to libfftw3f (optional; used for osx-x64 cross-build CI)")
 set(FFTW3F_THREADS_LIB "" CACHE FILEPATH "Path to libfftw3f_threads (optional)")
+mark_as_advanced(FFTW3F_LIB FFTW3F_THREADS_LIB)
 
 set(_ft4_fftw_hints)
 if(FFTW3_PREFIX)
@@ -156,37 +159,36 @@ set(_ft4_fftw_lib_hints)
 foreach(_hint IN LISTS _ft4_fftw_hints)
   list(APPEND _ft4_fftw_lib_hints "${_hint}/lib")
 endforeach()
-
-if(FFTW3F_LIB)
-  if(NOT EXISTS "${FFTW3F_LIB}")
-    message(FATAL_ERROR "FFTW3F_LIB does not exist: ${FFTW3F_LIB}")
-  endif()
-else()
-  find_library(FFTW3F_LIB NAMES fftw3f libfftw3f HINTS ${_ft4_fftw_lib_hints} REQUIRED)
+if(UNIX AND NOT APPLE)
+  list(APPEND _ft4_fftw_lib_hints /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu)
 endif()
 
-if(FFTW3F_THREADS_LIB)
-  if(NOT EXISTS "${FFTW3F_THREADS_LIB}")
-    message(FATAL_ERROR "FFTW3F_THREADS_LIB does not exist: ${FFTW3F_THREADS_LIB}")
+function(_ft4_resolve_fftw_lib _var)
+  set(_names ${ARGN})
+  set(_resolved "")
+  if(${_var} AND EXISTS "${${_var}}")
+    set(_resolved "${${_var}}")
+  else()
+    unset(${_var} CACHE)
+    find_library(_resolved NAMES ${_names} HINTS ${_ft4_fftw_lib_hints} REQUIRED)
   endif()
-else()
-  find_library(
-    FFTW3F_THREADS_LIB
-    NAMES fftw3f_threads libfftw3f_threads
-    HINTS ${_ft4_fftw_lib_hints}
-    REQUIRED
-  )
-endif()
+  if(NOT _resolved OR NOT EXISTS "${_resolved}")
+    message(FATAL_ERROR "${_var} not found (searched ${_ft4_fftw_lib_hints}); install FFTW or set FFTW3_PREFIX")
+  endif()
+  set(${_var} "${_resolved}" PARENT_SCOPE)
+  set(${_var} "${_resolved}" CACHE FILEPATH "" FORCE)
+endfunction()
 
+_ft4_resolve_fftw_lib(FFTW3F_LIB fftw3f libfftw3f)
+_ft4_resolve_fftw_lib(FFTW3F_THREADS_LIB fftw3f_threads libfftw3f_threads)
+
+if(NOT FFTW3F_LIB OR NOT FFTW3F_THREADS_LIB)
+  message(FATAL_ERROR "FFTW float libraries unresolved after configure")
+endif()
 message(STATUS "FFTW3F_LIB=${FFTW3F_LIB}")
 message(STATUS "FFTW3F_THREADS_LIB=${FFTW3F_THREADS_LIB}")
 
 target_link_libraries(ft4_coder PUBLIC Threads::Threads)
-
-if(UNIX AND NOT APPLE)
-  # CXX link of a mixed Fortran/C/C++ shared lib drops -lfftw3f with --as-needed.
-  target_link_options(ft4_coder PRIVATE "LINKER:--no-as-needed" "LINKER:-z,defs")
-endif()
 
 if(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
   target_link_libraries(ft4_coder PUBLIC ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
@@ -200,13 +202,33 @@ if(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES)
   target_link_libraries(ft4_coder PUBLIC ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES})
 endif()
 
-# Link FFTW last: CXX linker on mixed Fortran targets often omits IMPORTED deps
-# placed before gfortran runtime libraries (Windows + macOS; Linux also needs this order).
-target_link_libraries(ft4_coder PRIVATE "${FFTW3F_LIB}" "${FFTW3F_THREADS_LIB}")
+# CXX+Fortran SHARED libs: target_link_libraries is dropped from link.rsp; LINK_OPTIONS
+# land before .o files (too early for GNU ld). Append to LINK_LIBRARIES so FFTW follows objects.
+function(_ft4_append_fftw_link_libs _target)
+  if(NOT FFTW3F_LIB OR NOT FFTW3F_THREADS_LIB)
+    message(FATAL_ERROR "Cannot link FFTW to ${_target}: unresolved library paths")
+  endif()
+  if(UNIX AND NOT APPLE)
+    set_property(TARGET ${_target} APPEND PROPERTY LINK_LIBRARIES
+      "-Wl,--no-as-needed"
+      "${FFTW3F_LIB}"
+      "${FFTW3F_THREADS_LIB}"
+      "-Wl,-z,defs"
+    )
+  else()
+    set_property(TARGET ${_target} APPEND PROPERTY LINK_LIBRARIES
+      "${FFTW3F_LIB}"
+      "${FFTW3F_THREADS_LIB}"
+    )
+  endif()
+endfunction()
+
+_ft4_append_fftw_link_libs(ft4_coder)
 
 add_executable(ft4_smoke smoke/ft4_smoke.c)
 target_include_directories(ft4_smoke PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(ft4_smoke PRIVATE ft4_coder "${FFTW3F_LIB}" "${FFTW3F_THREADS_LIB}")
+target_link_libraries(ft4_smoke PRIVATE ft4_coder)
+_ft4_append_fftw_link_libs(ft4_smoke)
 
 if(WIN32)
   get_filename_component(_ft4_fftw_root "${FFTW3F_LIB}" DIRECTORY)
