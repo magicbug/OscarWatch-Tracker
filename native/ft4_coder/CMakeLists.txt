@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include(FetchContent)
-set(WSJTX_LIB_GIT_TAG "5872315ecfa5a8d0f9bb43e1439d36788213d4a3" CACHE STRING "wsjtx_lib commit")
+set(WSJTX_LIB_GIT_TAG "8f182a126620459314eb26a3647cb7e542cd7d62" CACHE STRING "wsjtx_lib commit (full git SHA, not a blob id)")
 FetchContent_Declare(
   wsjtx_lib
   GIT_REPOSITORY https://github.com/paulh002/wsjtx_lib.git
