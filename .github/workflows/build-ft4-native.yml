@@ -70,21 +70,32 @@ jobs:
 
       - name: Install macOS packages
         if: runner.os == 'macOS'
+        shell: bash
         run: |
-          brew install gcc ninja boost
-          if [ "${{ matrix.rid }}" != "osx-x64" ]; then
-            brew install fftw
+          if [ "${{ matrix.rid }}" = "osx-x64" ]; then
+            # GitHub macOS runners are Apple Silicon; osx-x64 needs Rosetta + x86_64 Homebrew.
+            # arm64 Homebrew GCC ignores -arch x86_64 (gfortran: "does not support x86").
+            sudo /usr/sbin/softwareupdate --install-rosetta --agree-to-license || true
+            if [ ! -x /usr/local/bin/brew ]; then
+              echo "Installing x86_64 Homebrew under Rosetta..."
+              NONINTERACTIVE=1 arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            fi
+            arch -x86_64 /usr/local/bin/brew install gcc cmake ninja boost
+          else
+            brew install gcc ninja boost fftw
           fi
 
       - name: Build x86_64 FFTW (macOS Intel RID)
         if: runner.os == 'macOS' && matrix.rid == 'osx-x64'
         shell: bash
         run: |
-          GCC_PREFIX="$(brew --prefix gcc)"
-          GCC_MAJOR="$(ls "${GCC_PREFIX}/bin" | sed -n 's/^gcc-\([0-9]*\)$/\1/p' | sort -n | tail -1)"
-          export CC="${GCC_PREFIX}/bin/gcc-${GCC_MAJOR} -arch x86_64"
-          export CXX="${GCC_PREFIX}/bin/g++-${GCC_MAJOR} -arch x86_64"
-          export F77="${GCC_PREFIX}/bin/gfortran-${GCC_MAJOR} -arch x86_64"
+          arch -x86_64 /bin/bash <<'EOF'
+          set -euo pipefail
+          GCC_PREFIX="$("/usr/local/bin/brew" --prefix gcc)"
+          GCC_MAJOR="$(ls "${GCC_PREFIX}/bin" | sed -n 's/^gcc-\([0-9]*\)$/\1/p' | sort -V | tail -1)"
+          export CC="${GCC_PREFIX}/bin/gcc-${GCC_MAJOR}"
+          export CXX="${GCC_PREFIX}/bin/g++-${GCC_MAJOR}"
+          export F77="${GCC_PREFIX}/bin/gfortran-${GCC_MAJOR}"
           FFTW_PREFIX="${RUNNER_TEMP}/fftw-x86_64"
           curl -fsSL https://www.fftw.org/fftw-3.3.10.tar.gz -o "${RUNNER_TEMP}/fftw.tar.gz"
           tar -xzf "${RUNNER_TEMP}/fftw.tar.gz" -C "${RUNNER_TEMP}"
@@ -92,9 +103,10 @@ jobs:
           ./configure --prefix="${FFTW_PREFIX}" --enable-float --enable-shared --disable-static --enable-threads
           make -j"$(sysctl -n hw.ncpu)"
           make install
-          echo "FFTW3_PREFIX=${FFTW_PREFIX}" >> "$GITHUB_ENV"
-          echo "FFTW3F_LIB=${FFTW_PREFIX}/lib/libfftw3f.dylib" >> "$GITHUB_ENV"
-          echo "FFTW3F_THREADS_LIB=${FFTW_PREFIX}/lib/libfftw3f_threads.dylib" >> "$GITHUB_ENV"
+          EOF
+          echo "FFTW3_PREFIX=${RUNNER_TEMP}/fftw-x86_64" >> "$GITHUB_ENV"
+          echo "FFTW3F_LIB=${RUNNER_TEMP}/fftw-x86_64/lib/libfftw3f.dylib" >> "$GITHUB_ENV"
+          echo "FFTW3F_THREADS_LIB=${RUNNER_TEMP}/fftw-x86_64/lib/libfftw3f_threads.dylib" >> "$GITHUB_ENV"
 
       - name: Configure and build (Windows)
         if: runner.os == 'Windows'
@@ -122,69 +134,60 @@ jobs:
         shell: bash
         env:
           CMAKE_OSX_ARCHITECTURES: ${{ matrix.cmake_osx_arch }}
+          MATRIX_RID: ${{ matrix.rid }}
         run: |
-          GCC_PREFIX="$(brew --prefix gcc)"
-          GCC_MAJOR="$(ls "${GCC_PREFIX}/bin" | sed -n 's/^gcc-\([0-9]*\)$/\1/p' | sort -V | tail -1)"
-          GFORTRAN="${GCC_PREFIX}/bin/gfortran-${GCC_MAJOR}"
-          if [ ! -x "$GFORTRAN" ]; then
-            echo "gfortran not found under ${GCC_PREFIX}/bin"
-            ls -la "${GCC_PREFIX}/bin"
-            exit 1
-          fi
-
-          CMAKE_ARGS=(
-            -S native/ft4_coder
-            -B build-ft4
-            -G Ninja
-            -DCMAKE_BUILD_TYPE=Release
-            -DCMAKE_OSX_ARCHITECTURES="${CMAKE_OSX_ARCHITECTURES}"
-          )
-
-          # GitHub macOS runners are Apple Silicon; osx-x64 must cross-compile with -arch x86_64
-          # or CMake rejects arm64 Homebrew gfortran when CMAKE_OSX_ARCHITECTURES=x86_64.
-          if [ "${{ matrix.rid }}" = "osx-x64" ]; then
-            WRAPPER_DIR="${RUNNER_TEMP}/ft4-compiler-wrappers"
-            mkdir -p "${WRAPPER_DIR}"
-            for tool in gcc g++ gfortran; do
-              printf '%s\n' '#!/usr/bin/env bash' \
-                "exec \"${GCC_PREFIX}/bin/${tool}-${GCC_MAJOR}\" -arch x86_64 \"\$@\"" \
-                > "${WRAPPER_DIR}/${tool}"
-              chmod +x "${WRAPPER_DIR}/${tool}"
-            done
-            echo "Cross-compiling osx-x64 with wrappers in ${WRAPPER_DIR}"
-            CMAKE_ARGS+=(
-              -DCMAKE_C_COMPILER="${WRAPPER_DIR}/gcc"
-              -DCMAKE_CXX_COMPILER="${WRAPPER_DIR}/g++"
-              -DCMAKE_Fortran_COMPILER="${WRAPPER_DIR}/gfortran"
-            )
-          else
-            unset CC CXX FC
-            echo "Using Homebrew GCC Fortran/C++: gfortran-${GCC_MAJOR}, g++-${GCC_MAJOR}"
-            CMAKE_ARGS+=(
-              -DCMAKE_Fortran_COMPILER="$GFORTRAN"
-              -DCMAKE_CXX_COMPILER="${GCC_PREFIX}/bin/g++-${GCC_MAJOR}"
-            )
-          fi
-
+          set -euo pipefail
           test -f native/ft4_coder/src/wsjtx_decode_stubs.c
           grep -q 'lib/fst4/fastosd240_74.f90' native/ft4_coder/cmake/WsjtxLibSources.cmake
           grep -q 'lib/gran.c' native/ft4_coder/cmake/WsjtxLibSources.cmake
           grep -q 'LINKER_LANGUAGE CXX' native/ft4_coder/CMakeLists.txt
 
-          if [ "${{ matrix.rid }}" = "osx-arm64" ]; then
-            CMAKE_ARGS+=(-DFFTW3_PREFIX="$(brew --prefix fftw)")
-          elif [ -n "${FFTW3_PREFIX:-}" ]; then
-            CMAKE_ARGS+=(-DFFTW3_PREFIX="${FFTW3_PREFIX}")
+          build_macos() {
+            local brew_cmd="$1"
+            local fftw_prefix_arg="${2:-}"
+
+            GCC_PREFIX="$("$brew_cmd" --prefix gcc)"
+            GCC_MAJOR="$(ls "${GCC_PREFIX}/bin" | sed -n 's/^gcc-\([0-9]*\)$/\1/p' | sort -V | tail -1)"
+            GFORTRAN="${GCC_PREFIX}/bin/gfortran-${GCC_MAJOR}"
+            if [ ! -x "$GFORTRAN" ]; then
+              echo "gfortran not found under ${GCC_PREFIX}/bin"
+              ls -la "${GCC_PREFIX}/bin"
+              exit 1
+            fi
+
+            CMAKE_ARGS=(
+              -S native/ft4_coder
+              -B build-ft4
+              -G Ninja
+              -DCMAKE_BUILD_TYPE=Release
+              -DCMAKE_OSX_ARCHITECTURES="${CMAKE_OSX_ARCHITECTURES}"
+              -DCMAKE_C_COMPILER="${GCC_PREFIX}/bin/gcc-${GCC_MAJOR}"
+              -DCMAKE_CXX_COMPILER="${GCC_PREFIX}/bin/g++-${GCC_MAJOR}"
+              -DCMAKE_Fortran_COMPILER="$GFORTRAN"
+            )
+
+            if [ -n "$fftw_prefix_arg" ]; then
+              CMAKE_ARGS+=(-DFFTW3_PREFIX="$fftw_prefix_arg")
+            fi
+            if [ -n "${FFTW3F_LIB:-}" ]; then
+              CMAKE_ARGS+=(-DFFTW3F_LIB="${FFTW3F_LIB}")
+            fi
+            if [ -n "${FFTW3F_THREADS_LIB:-}" ]; then
+              CMAKE_ARGS+=(-DFFTW3F_THREADS_LIB="${FFTW3F_THREADS_LIB}")
+            fi
+
+            echo "Using ${GCC_PREFIX}/bin/gcc-${GCC_MAJOR} (CMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES})"
+            cmake "${CMAKE_ARGS[@]}"
+            cmake --build build-ft4
+            ctest --test-dir build-ft4 --output-on-failure
+          }
+
+          if [ "$MATRIX_RID" = "osx-x64" ]; then
+            echo "Building osx-x64 under Rosetta with x86_64 Homebrew GCC"
+            arch -x86_64 /bin/bash -c "$(declare -f build_macos); build_macos /usr/local/bin/brew '${FFTW3_PREFIX:-}'"
+          else
+            build_macos brew "$(brew --prefix fftw)"
           fi
-          if [ -n "${FFTW3F_LIB:-}" ]; then
-            CMAKE_ARGS+=(-DFFTW3F_LIB="${FFTW3F_LIB}")
-          fi
-          if [ -n "${FFTW3F_THREADS_LIB:-}" ]; then
-            CMAKE_ARGS+=(-DFFTW3F_THREADS_LIB="${FFTW3F_THREADS_LIB}")
-          fi
-          cmake "${CMAKE_ARGS[@]}"
-          cmake --build build-ft4
-          ctest --test-dir build-ft4 --output-on-failure
 
       - name: Collect artifacts
         shell: bash

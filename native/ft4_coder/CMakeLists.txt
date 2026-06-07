@@ -63,7 +63,7 @@ set_source_files_properties("${WSJTX_LIB_DIR}/lib/decoder.f90" PROPERTIES
 list(LENGTH WSJTX_FORTRAN _wsjtx_fortran_count)
 list(LENGTH WSJTX_C _wsjtx_c_count)
 message(STATUS "ft4_coder: ${_wsjtx_fortran_count} Fortran + ${_wsjtx_c_count} C sources (curated wsjtx_lib list)")
-if(_wsjtx_fortran_count GREATER 246 OR _wsjtx_c_count GREATER 26)
+if(_wsjtx_fortran_count GREATER 246 OR _wsjtx_c_count GREATER 27)
   message(FATAL_ERROR "Unexpected wsjtx source count; expected curated cmake/WsjtxLibSources.cmake")
 endif()
 
@@ -139,6 +139,9 @@ endif()
 if(APPLE)
   list(APPEND _ft4_fftw_hints /opt/homebrew/opt/fftw /usr/local/opt/fftw)
 endif()
+if(WIN32 AND DEFINED ENV{MINGW_PREFIX})
+  list(APPEND _ft4_fftw_hints "$ENV{MINGW_PREFIX}")
+endif()
 
 find_path(FFTW3_INCLUDE_DIR NAMES fftw3.h
   HINTS ${_ft4_fftw_hints}
@@ -162,17 +165,27 @@ else()
   find_library(FFTW3F_LIB NAMES fftw3f libfftw3f HINTS ${_ft4_fftw_lib_hints} REQUIRED)
 endif()
 
-target_link_libraries(ft4_coder PUBLIC ${FFTW3F_LIB} Threads::Threads)
-
 if(FFTW3F_THREADS_LIB)
   if(NOT EXISTS "${FFTW3F_THREADS_LIB}")
     message(FATAL_ERROR "FFTW3F_THREADS_LIB does not exist: ${FFTW3F_THREADS_LIB}")
   endif()
 else()
-  find_library(FFTW3F_THREADS_LIB NAMES fftw3f_threads libfftw3f_threads HINTS ${_ft4_fftw_lib_hints})
+  find_library(
+    FFTW3F_THREADS_LIB
+    NAMES fftw3f_threads libfftw3f_threads
+    HINTS ${_ft4_fftw_lib_hints}
+    REQUIRED
+  )
 endif()
-if(FFTW3F_THREADS_LIB)
-  target_link_libraries(ft4_coder PUBLIC ${FFTW3F_THREADS_LIB})
+
+message(STATUS "FFTW3F_LIB=${FFTW3F_LIB}")
+message(STATUS "FFTW3F_THREADS_LIB=${FFTW3F_THREADS_LIB}")
+
+target_link_libraries(ft4_coder PUBLIC Threads::Threads)
+
+if(UNIX AND NOT APPLE)
+  # CXX link of a mixed Fortran/C/C++ shared lib drops -lfftw3f with --as-needed.
+  target_link_options(ft4_coder PRIVATE "LINKER:--no-as-needed" "LINKER:-z,defs")
 endif()
 
 if(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
@@ -187,9 +200,33 @@ if(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES)
   target_link_libraries(ft4_coder PUBLIC ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES})
 endif()
 
+# Link FFTW last: CXX linker on mixed Fortran targets often omits IMPORTED deps
+# placed before gfortran runtime libraries (Windows + macOS; Linux also needs this order).
+target_link_libraries(ft4_coder PRIVATE "${FFTW3F_LIB}" "${FFTW3F_THREADS_LIB}")
+
 add_executable(ft4_smoke smoke/ft4_smoke.c)
 target_include_directories(ft4_smoke PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(ft4_smoke PRIVATE ft4_coder)
+target_link_libraries(ft4_smoke PRIVATE ft4_coder "${FFTW3F_LIB}" "${FFTW3F_THREADS_LIB}")
+
+if(WIN32)
+  get_filename_component(_ft4_fftw_root "${FFTW3F_LIB}" DIRECTORY)
+  get_filename_component(_ft4_fftw_root "${_ft4_fftw_root}" DIRECTORY)
+  set(_ft4_fftw_bindir "${_ft4_fftw_root}/bin")
+  foreach(_dll IN ITEMS libfftw3f-3.dll libfftw3f_threads-3.dll)
+    if(EXISTS "${_ft4_fftw_bindir}/${_dll}")
+      add_custom_command(TARGET ft4_smoke POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${_ft4_fftw_bindir}/${_dll}" "$<TARGET_FILE_DIR:ft4_smoke>"
+        COMMENT "Copy ${_dll} for ft4_smoke"
+      )
+      add_custom_command(TARGET ft4_coder POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${_ft4_fftw_bindir}/${_dll}" "$<TARGET_FILE_DIR:ft4_coder>"
+        COMMENT "Copy ${_dll} for ft4_coder"
+      )
+    endif()
+  endforeach()
+endif()
 
 enable_testing()
 add_test(NAME encode_smoke COMMAND ft4_smoke)
