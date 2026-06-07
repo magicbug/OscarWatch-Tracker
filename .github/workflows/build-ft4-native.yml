@@ -6,7 +6,7 @@ name: Build FT4 native
 on:
   workflow_dispatch:
   push:
-    branches: [main, master]
+    branches: [ft4]
     paths:
       - "native/ft4_coder/**"
       - ".github/workflows/build-ft4-native.yml"
