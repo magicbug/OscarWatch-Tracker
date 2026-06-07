@@ -231,6 +231,14 @@ jobs:
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp build-ft4/ft4_coder.dll dist/${{ matrix.rid }}/
             cp build-ft4/ft4_smoke.exe dist/${{ matrix.rid }}/
+            # FFTW runtime DLLs (POST_BUILD copies them beside the codec; include for local smoke tests)
+            for _dll in libfftw3f-3.dll libfftw3f_threads-3.dll; do
+              if [ -f "build-ft4/${_dll}" ]; then
+                cp "build-ft4/${_dll}" "dist/${{ matrix.rid }}/"
+              else
+                echo "Warning: build-ft4/${_dll} missing from artifact bundle"
+              fi
+            done
           elif [ "${{ runner.os }}" = "macOS" ]; then
             cp build-ft4/libft4_coder.dylib dist/${{ matrix.rid }}/ft4_coder.dylib
             cp build-ft4/ft4_smoke dist/${{ matrix.rid }}/
