@@ -69,7 +69,31 @@ jobs:
 
       - name: Install macOS packages
         if: runner.os == 'macOS'
-        run: brew install gcc fftw ninja
+        run: |
+          brew install gcc ninja
+          if [ "${{ matrix.rid }}" != "osx-x64" ]; then
+            brew install fftw
+          fi
+
+      - name: Build x86_64 FFTW (macOS Intel RID)
+        if: runner.os == 'macOS' && matrix.rid == 'osx-x64'
+        shell: bash
+        run: |
+          GCC_PREFIX="$(brew --prefix gcc)"
+          GCC_MAJOR="$(ls "${GCC_PREFIX}/bin" | sed -n 's/^gcc-\([0-9]*\)$/\1/p' | sort -n | tail -1)"
+          export CC="${GCC_PREFIX}/bin/gcc-${GCC_MAJOR} -arch x86_64"
+          export CXX="${GCC_PREFIX}/bin/g++-${GCC_MAJOR} -arch x86_64"
+          export F77="${GCC_PREFIX}/bin/gfortran-${GCC_MAJOR} -arch x86_64"
+          FFTW_PREFIX="${RUNNER_TEMP}/fftw-x86_64"
+          curl -fsSL https://www.fftw.org/fftw-3.3.10.tar.gz -o "${RUNNER_TEMP}/fftw.tar.gz"
+          tar -xzf "${RUNNER_TEMP}/fftw.tar.gz" -C "${RUNNER_TEMP}"
+          cd "${RUNNER_TEMP}/fftw-3.3.10"
+          ./configure --prefix="${FFTW_PREFIX}" --enable-float --enable-shared --disable-static --enable-threads
+          make -j"$(sysctl -n hw.ncpu)"
+          make install
+          echo "FFTW3_PREFIX=${FFTW_PREFIX}" >> "$GITHUB_ENV"
+          echo "FFTW3F_LIB=${FFTW_PREFIX}/lib/libfftw3f.dylib" >> "$GITHUB_ENV"
+          echo "FFTW3F_THREADS_LIB=${FFTW_PREFIX}/lib/libfftw3f_threads.dylib" >> "$GITHUB_ENV"
 
       - name: Configure and build (Windows)
         if: runner.os == 'Windows'
@@ -102,10 +126,26 @@ jobs:
             exit 1
           fi
           echo "Using Fortran compiler: $GFORTRAN"
-          cmake -S native/ft4_coder -B build-ft4 -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_Fortran_COMPILER="$GFORTRAN" \
+          CMAKE_ARGS=(
+            -S native/ft4_coder
+            -B build-ft4
+            -G Ninja
+            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_Fortran_COMPILER="$GFORTRAN"
             -DCMAKE_OSX_ARCHITECTURES="${CMAKE_OSX_ARCHITECTURES}"
+          )
+          if [ "${{ matrix.rid }}" = "osx-arm64" ]; then
+            CMAKE_ARGS+=(-DFFTW3_PREFIX="$(brew --prefix fftw)")
+          elif [ -n "${FFTW3_PREFIX:-}" ]; then
+            CMAKE_ARGS+=(-DFFTW3_PREFIX="${FFTW3_PREFIX}")
+          fi
+          if [ -n "${FFTW3F_LIB:-}" ]; then
+            CMAKE_ARGS+=(-DFFTW3F_LIB="${FFTW3F_LIB}")
+          fi
+          if [ -n "${FFTW3F_THREADS_LIB:-}" ]; then
+            CMAKE_ARGS+=(-DFFTW3F_THREADS_LIB="${FFTW3F_THREADS_LIB}")
+          fi
+          cmake "${CMAKE_ARGS[@]}"
           cmake --build build-ft4
           ctest --test-dir build-ft4 --output-on-failure
 

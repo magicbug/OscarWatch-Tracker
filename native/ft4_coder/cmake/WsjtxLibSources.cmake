@@ -1,4 +1,8 @@
 # Fortran/C sources mirrored from paulh002/wsjtx_lib CMakeLists.txt (wsjt_FSRCS + support C/C++).
+# Omit from wsjtx_lib's full list:
+# - Standalone PROGRAM sources (multiple `main` when linking SHARED)
+# - Duplicate symbols (sleep_msec, fastosd240_74)
+# - Astro/JPL ephemeris (jplsubs.f fails gfortran 16 SPLIT intrinsic clash; not used by FT4 codec)
 
 set(WSJTX_FORTRAN_REL
   lib/types.f90
@@ -33,9 +37,6 @@ set(WSJTX_FORTRAN_REL
   lib/ana64.f90
   lib/ana932.f90
   lib/analytic.f90
-  lib/astro.f90
-  lib/astrosub.f90
-  lib/astro0.f90
   lib/avecho.f90
   lib/averms.f90
   lib/azdist.f90
@@ -80,7 +81,6 @@ set(WSJTX_FORTRAN_REL
   lib/ft8/encode174_91.f90
   lib/ft8/encode174_91_nocrc.f90
   lib/entail.f90
-  lib/ephem.f90
   lib/extract.f90
   lib/extract4.f90
   lib/extractmessage77.f90
@@ -112,9 +112,7 @@ set(WSJTX_FORTRAN_REL
   lib/freqcal.f90
   lib/ft8/ft8apset.f90
   lib/ft8/ft8b.f90
-  lib/ft8/ft8code.f90
   lib/ft8/ft8_downsample.f90
-  lib/ft8/ft8sim.f90
   lib/gen4.f90
   lib/gen65.f90
   lib/gen9.f90
@@ -123,7 +121,6 @@ set(WSJTX_FORTRAN_REL
   lib/qra/q65/genq65.f90
   lib/genmsk_128_90.f90
   lib/genmsk40.f90
-  lib/ft4/ft4code.f90
   lib/ft4/genft4.f90
   lib/ft4/gen_ft4wave.f90
   lib/ft8/gen_ft8wave.f90
@@ -137,7 +134,6 @@ set(WSJTX_FORTRAN_REL
   lib/ft2/gfsk_pulse.f90
   lib/graycode.f90
   lib/graycode65.f90
-  lib/grayline.f90
   lib/grid2deg.f90
   lib/ft8/h1.f90
   lib/hash.f90
@@ -149,17 +145,14 @@ set(WSJTX_FORTRAN_REL
   lib/interleave63.f90
   lib/interleave9.f90
   lib/inter_wspr.f90
-  lib/jplsubs.f
   lib/jt9fano.f90
   lib/jtmsg.f90
-  lib/libration.f90
   lib/lorentzian.f90
   lib/fst4/lorentzian_fading.f90
   lib/lpf1.f90
   lib/map65_mmdec.f90
   lib/mixlpf.f90
   lib/makepings.f90
-  lib/moondopjpl.f90
   lib/morse.f90
   lib/move.f90
   lib/msk40decodeframe.f90
@@ -172,10 +165,7 @@ set(WSJTX_FORTRAN_REL
   lib/msk144_freq_search.f90
   lib/mskrtd.f90
   lib/msk144signalquality.f90
-  lib/msk144sim.f90
   lib/nuttal_window.f90
-  lib/ft4/ft4sim.f90
-  lib/ft4/ft4sim_mult.f90
   lib/ft4/ft4_downsample.f90
   lib/77bit/my_hash.f90
   lib/wsprd/osdwspr.f90
@@ -200,8 +190,6 @@ set(WSJTX_FORTRAN_REL
   lib/setup65.f90
   lib/sh65.f90
   lib/sh65snr.f90
-  lib/slasubs.f
-  lib/sleep_msec.f90
   lib/slope.f90
   lib/smo.f90
   lib/smo121.f90
@@ -215,7 +203,6 @@ set(WSJTX_FORTRAN_REL
   lib/subtract65.f90
   lib/ft8/subtractft8.f90
   lib/ft4/subtractft4.f90
-  lib/sun.f90
   lib/symspec.f90
   lib/symspec2.f90
   lib/symspec65.f90
@@ -249,16 +236,12 @@ set(WSJTX_FORTRAN_REL
   lib/fst4/decode240_74.f90
   lib/fst4/encode240_101.f90
   lib/fst4/encode240_74.f90
-  lib/fst4/fst4sim.f90
   lib/fst4/gen_fst4wave.f90
   lib/fst4/genfst4.f90
   lib/fst4/get_fst4_bitmetrics.f90
   lib/fst4/get_fst4_bitmetrics2.f90
-  lib/fst4/ldpcsim240_101.f90
-  lib/fst4/ldpcsim240_74.f90
   lib/fst4/osd240_101.f90
   lib/fst4/osd240_74.f90
-  lib/fst4/fastosd240_74.f90
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
 )

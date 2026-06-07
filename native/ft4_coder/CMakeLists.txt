@@ -1,4 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
+
+# Apple Silicon CI runners cross-build osx-x64 with Homebrew arm64 GCC; arch flags
+# must be set before project() so Fortran compiler detection matches CMAKE_OSX_ARCHITECTURES.
+if(APPLE AND CMAKE_OSX_ARCHITECTURES)
+  set(_ft4_osx_arch_flags "")
+  foreach(_arch IN LISTS CMAKE_OSX_ARCHITECTURES)
+    set(_ft4_osx_arch_flags "${_ft4_osx_arch_flags} -arch ${_arch}")
+  endforeach()
+  set(CMAKE_C_FLAGS_INIT "${_ft4_osx_arch_flags}")
+  set(CMAKE_CXX_FLAGS_INIT "${_ft4_osx_arch_flags}")
+  set(CMAKE_Fortran_FLAGS_INIT "${_ft4_osx_arch_flags}")
+endif()
+
 project(ft4_coder C Fortran)
 
 set(CMAKE_C_STANDARD 11)
@@ -48,7 +61,7 @@ set_source_files_properties("${WSJTX_LIB_DIR}/lib/decoder.f90" PROPERTIES
 list(LENGTH WSJTX_FORTRAN _wsjtx_fortran_count)
 list(LENGTH WSJTX_C _wsjtx_c_count)
 message(STATUS "ft4_coder: ${_wsjtx_fortran_count} Fortran + ${_wsjtx_c_count} C sources (curated wsjtx_lib list)")
-if(_wsjtx_fortran_count GREATER 280 OR _wsjtx_c_count GREATER 25)
+if(_wsjtx_fortran_count GREATER 245 OR _wsjtx_c_count GREATER 25)
   message(FATAL_ERROR "Unexpected wsjtx source count; expected curated cmake/WsjtxLibSources.cmake")
 endif()
 
@@ -90,12 +103,56 @@ else()
 endif()
 
 find_package(Threads REQUIRED)
-find_library(FFTW3F_LIB NAMES fftw3f libfftw3f REQUIRED)
+
+set(FFTW3_PREFIX "" CACHE PATH "Optional FFTW install prefix (Homebrew: brew --prefix fftw)")
+set(FFTW3F_LIB "" CACHE FILEPATH "Path to libfftw3f (optional; used for osx-x64 cross-build CI)")
+set(FFTW3F_THREADS_LIB "" CACHE FILEPATH "Path to libfftw3f_threads (optional)")
+
+set(_ft4_fftw_hints)
+if(FFTW3_PREFIX)
+  list(APPEND _ft4_fftw_hints "${FFTW3_PREFIX}")
+endif()
+if(FFTW3F_LIB)
+  get_filename_component(_ft4_fftw_lib_dir "${FFTW3F_LIB}" DIRECTORY)
+  get_filename_component(_ft4_fftw_prefix_from_lib "${_ft4_fftw_lib_dir}" DIRECTORY)
+  list(APPEND _ft4_fftw_hints "${_ft4_fftw_prefix_from_lib}")
+endif()
+if(APPLE)
+  list(APPEND _ft4_fftw_hints /opt/homebrew/opt/fftw /usr/local/opt/fftw)
+endif()
+
+find_path(FFTW3_INCLUDE_DIR NAMES fftw3.h
+  HINTS ${_ft4_fftw_hints}
+  PATH_SUFFIXES include
+)
+if(NOT FFTW3_INCLUDE_DIR)
+  message(FATAL_ERROR "fftw3.h not found; install FFTW dev package or set FFTW3_PREFIX")
+endif()
+target_include_directories(ft4_coder PRIVATE ${FFTW3_INCLUDE_DIR})
+
+set(_ft4_fftw_lib_hints)
+foreach(_hint IN LISTS _ft4_fftw_hints)
+  list(APPEND _ft4_fftw_lib_hints "${_hint}/lib")
+endforeach()
+
+if(FFTW3F_LIB)
+  if(NOT EXISTS "${FFTW3F_LIB}")
+    message(FATAL_ERROR "FFTW3F_LIB does not exist: ${FFTW3F_LIB}")
+  endif()
+else()
+  find_library(FFTW3F_LIB NAMES fftw3f libfftw3f HINTS ${_ft4_fftw_lib_hints} REQUIRED)
+endif()
 
 target_link_libraries(ft4_coder PRIVATE ${FFTW3F_LIB} Threads::Threads)
 
 if(NOT WIN32)
-  find_library(FFTW3F_THREADS_LIB NAMES fftw3f_threads libfftw3f_threads)
+  if(FFTW3F_THREADS_LIB)
+    if(NOT EXISTS "${FFTW3F_THREADS_LIB}")
+      message(FATAL_ERROR "FFTW3F_THREADS_LIB does not exist: ${FFTW3F_THREADS_LIB}")
+    endif()
+  else()
+    find_library(FFTW3F_THREADS_LIB NAMES fftw3f_threads libfftw3f_threads HINTS ${_ft4_fftw_lib_hints})
+  endif()
   if(FFTW3F_THREADS_LIB)
     target_link_libraries(ft4_coder PRIVATE ${FFTW3F_THREADS_LIB})
   endif()
