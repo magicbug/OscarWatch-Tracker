@@ -1,4 +1,3 @@
-#define FT4_CODER_BUILD
 #include "ft4_coder_api.h"
 
 #include <fftw3.h>

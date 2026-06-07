@@ -24,20 +24,33 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wno-unused-dummy-argument")
 endif()
 
-file(GLOB_RECURSE WSJTX_FORTRAN
-  CONFIGURE_DEPENDS
-  "${WSJTX_LIB_DIR}/lib/*.f90"
-  "${WSJTX_LIB_DIR}/lib/*.f"
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/WsjtxLibSources.cmake)
+
+set(WSJTX_FORTRAN)
+foreach(rel IN LISTS WSJTX_FORTRAN_REL)
+  list(APPEND WSJTX_FORTRAN "${WSJTX_LIB_DIR}/${rel}")
+endforeach()
+
+set(WSJTX_C)
+foreach(rel IN LISTS WSJTX_C_REL)
+  list(APPEND WSJTX_C "${WSJTX_LIB_DIR}/${rel}")
+endforeach()
+
+set(WSJTX_CPP)
+foreach(rel IN LISTS WSJTX_CPP_REL)
+  list(APPEND WSJTX_CPP "${WSJTX_LIB_DIR}/${rel}")
+endforeach()
+
+set_source_files_properties("${WSJTX_LIB_DIR}/lib/decoder.f90" PROPERTIES
+  COMPILE_FLAGS "-Wno-unused-dummy-argument"
 )
-file(GLOB_RECURSE WSJTX_C
-  CONFIGURE_DEPENDS
-  "${WSJTX_LIB_DIR}/lib/*.c"
-)
-file(GLOB WSJTX_CPP
-  "${WSJTX_LIB_DIR}/lib/crc10.cpp"
-  "${WSJTX_LIB_DIR}/lib/crc13.cpp"
-  "${WSJTX_LIB_DIR}/lib/crc14.cpp"
-)
+
+list(LENGTH WSJTX_FORTRAN _wsjtx_fortran_count)
+list(LENGTH WSJTX_C _wsjtx_c_count)
+message(STATUS "ft4_coder: ${_wsjtx_fortran_count} Fortran + ${_wsjtx_c_count} C sources (curated wsjtx_lib list)")
+if(_wsjtx_fortran_count GREATER 280 OR _wsjtx_c_count GREATER 25)
+  message(FATAL_ERROR "Unexpected wsjtx source count; expected curated cmake/WsjtxLibSources.cmake")
+endif()
 
 add_library(ft4_coder SHARED
   src/ft4_coder_shim.c

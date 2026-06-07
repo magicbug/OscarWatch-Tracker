@@ -55,7 +55,7 @@ jobs:
           update: true
           install: >-
             mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-gfortran
+            mingw-w64-x86_64-gcc-fortran
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-fftw
@@ -69,9 +69,7 @@ jobs:
 
       - name: Install macOS packages
         if: runner.os == 'macOS'
-        run: |
-          brew install gcc fftw ninja
-          echo "$(brew --prefix gcc)/bin" >> "$GITHUB_PATH"
+        run: brew install gcc fftw ninja
 
       - name: Configure and build (Windows)
         if: runner.os == 'Windows'
@@ -81,19 +79,33 @@ jobs:
           cmake --build build-ft4
           ctest --test-dir build-ft4 --output-on-failure
 
-      - name: Configure and build (Unix)
-        if: runner.os != 'Windows'
+      - name: Configure and build (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          test -f native/ft4_coder/cmake/WsjtxLibSources.cmake
+          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-ft4
+          ctest --test-dir build-ft4 --output-on-failure
+
+      - name: Configure and build (macOS)
+        if: runner.os == 'macOS'
         shell: bash
         env:
           CMAKE_OSX_ARCHITECTURES: ${{ matrix.cmake_osx_arch }}
         run: |
-          if [ "${{ runner.os }}" = "macOS" ]; then
-            GCC_PREFIX="$(brew --prefix gcc)"
-            export CC="${GCC_PREFIX}/bin/gcc"
-            export CXX="${GCC_PREFIX}/bin/g++"
-            export FC="${GCC_PREFIX}/bin/gfortran"
+          unset CC CXX FC
+          GFORTRAN="$(brew --prefix gcc)/bin/$(ls "$(brew --prefix gcc)/bin" | sed -n 's/^\(gfortran-[0-9]*\)$/\1/p' | sort -V | tail -1)"
+          if [ ! -x "$GFORTRAN" ]; then
+            echo "gfortran not found under $(brew --prefix gcc)/bin"
+            ls -la "$(brew --prefix gcc)/bin"
+            exit 1
           fi
-          cmake -S native/ft4_coder -B build-ft4 -G Ninja -DCMAKE_BUILD_TYPE=Release
+          echo "Using Fortran compiler: $GFORTRAN"
+          cmake -S native/ft4_coder -B build-ft4 -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_Fortran_COMPILER="$GFORTRAN" \
+            -DCMAKE_OSX_ARCHITECTURES="${CMAKE_OSX_ARCHITECTURES}"
           cmake --build build-ft4
           ctest --test-dir build-ft4 --output-on-failure
 
