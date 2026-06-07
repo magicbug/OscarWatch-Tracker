@@ -8,6 +8,9 @@ using OscarWatch.Core.Services;
 using OscarWatch.Orbit;
 using OscarWatch.Core.Models;
 using OscarWatch.Cloudlog;
+using OscarWatch.Audio;
+using OscarWatch.Ft4.Core.Coding;
+using OscarWatch.Ft4.Core.Services;
 using OscarWatch.Recording;
 using OscarWatch.Rig;
 using OscarWatch.Rotator;
@@ -39,6 +42,9 @@ public partial class App : Application
         services.AddSingleton<ISpeechService, PlatformSpeechService>();
         services.AddSingleton<PortAudioRecordingService>();
         services.AddSingleton<IAudioRecordingService>(sp => sp.GetRequiredService<PortAudioRecordingService>());
+        services.AddSingleton<PortAudioFt4AudioService>();
+        services.AddSingleton<IFt4AudioService>(sp => sp.GetRequiredService<PortAudioFt4AudioService>());
+        services.AddSingleton<IFt4Coder>(_ => Ft4CoderFactory.CreatePreferNative());
         services.AddSingleton<IRecordingTaskScheduler, LoggingRecordingTaskScheduler>();
         services.AddSingleton<RisingPassAnnouncer>();
         services.AddSingleton<PassRecordingCoordinator>();
@@ -73,6 +79,7 @@ public partial class App : Application
         services.AddTransient<SunlightPredictionViewModel>();
         services.AddTransient<SatelliteDatabaseEditorViewModel>();
         services.AddTransient<RotatorManualViewModel>();
+        services.AddTransient<Ft4ConsoleViewModel>();
 
         Services = services.BuildServiceProvider();
 

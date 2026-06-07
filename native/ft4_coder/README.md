@@ -7,7 +7,7 @@ Cross-platform FT4 codec shared library for OscarWatch. Phase 0 builds the libra
 Compiles WSJT-X Fortran from [paulh002/wsjtx_lib](https://github.com/paulh002/wsjtx_lib) (GPLv3, K1JT et al.) at configure time via CMake `FetchContent`, then exposes a thin C shim:
 
 - `encode_ft4` — implemented (48 kHz, 241920 samples)
-- `decode_ft4` — exported stub in Phase 0 (full decoder wiring follows)
+- `decode_ft4` — implemented via `multimode_decoder_` / FT4 Fortran path (48 kHz, 290304 samples)
 
 ## Local build
 

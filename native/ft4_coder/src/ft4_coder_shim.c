@@ -57,6 +57,15 @@ void encode_ft4(unsigned char message[37], float *tx_audio_frequency, float audi
   gen_ft4wave_(itone, &nsym, &nsps, &fsample, &f0, audio_samples, audio_samples, &icmplx, &nwave);
 }
 
+void ft4_run_decode(
+  const float *audio_samples,
+  Ft4QsoStage *qso_progress,
+  int *nfqso,
+  int *nfb,
+  const unsigned char *mycall,
+  const unsigned char *hiscall,
+  Ft4DecodedMessageCallback callback);
+
 void decode_ft4(
   float audio_samples[290304],
   Ft4QsoStage *qso_progress,
@@ -66,18 +75,5 @@ void decode_ft4(
   unsigned char hiscall[12],
   Ft4DecodedMessageCallback callback)
 {
-  (void)audio_samples;
-  (void)mycall;
-  (void)hiscall;
-  (void)callback;
-
-  if (qso_progress) {
-    *qso_progress = FT4_QSO_CALLING;
-  }
-  if (nfqso) {
-    *nfqso = 1500;
-  }
-  if (nfb) {
-    *nfb = 4000;
-  }
+  ft4_run_decode(audio_samples, qso_progress, nfqso, nfb, mycall, hiscall, callback);
 }

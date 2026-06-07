@@ -1,3 +1,5 @@
+using OscarWatch.Ft4.Core.Models;
+
 namespace OscarWatch.Core.Models;
 
 public sealed class AppSettings
@@ -51,4 +53,5 @@ public sealed class AppSettings
     public RigSettings Rig { get; set; } = new();
     public CloudlogSettings Cloudlog { get; set; } = new();
     public PassRecordingSettings PassRecording { get; set; } = new();
+    public Ft4Settings Ft4 { get; set; } = new();
 }

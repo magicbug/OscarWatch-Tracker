@@ -36,7 +36,7 @@ add_definitions(-DBIGSYM=1 -DFFTW_ENABLE_FLOAT -DCMAKE_BUILD)
 
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fno-f2c")
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wno-unused-dummy-argument")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wno-unused-dummy-argument -fshort-logical")
 endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/WsjtxLibSources.cmake)
@@ -69,7 +69,7 @@ endif()
 
 add_library(ft4_coder SHARED
   src/ft4_coder_shim.c
-  src/wsjtx_decode_stubs.c
+  src/ft4_decode_bridge.c
   ${WSJTX_FORTRAN}
   ${WSJTX_C}
   ${WSJTX_CPP}

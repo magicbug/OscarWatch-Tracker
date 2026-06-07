@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Version>0.8.4</Version>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>icons\OscarWatch.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -33,7 +34,23 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OscarWatch.Core\OscarWatch.Core.csproj" />
+    <ProjectReference Include="..\OscarWatch.Ft4.Core\OscarWatch.Ft4.Core.csproj" />
     <ProjectReference Include="..\OscarWatch.Orbit\OscarWatch.Orbit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Content Include="..\runtimes\ft4_coder-win-x64\ft4_coder.dll">
+      <Link>ft4_coder.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\runtimes\ft4_coder-win-x64\libfftw3f-3.dll">
+      <Link>libfftw3f-3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\runtimes\ft4_coder-win-x64\libfftw3f_threads-3.dll">
+      <Link>libfftw3f_threads-3.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -4,4 +4,8 @@
     <Nullable>enable</Nullable>
     <RootNamespace>OscarWatch.Core</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OscarWatch.Ft4.Core\OscarWatch.Ft4.Core.csproj" />
+  </ItemGroup>
 </Project>

@@ -801,6 +801,17 @@ public partial class MainViewModel : ViewModelBase
         UpdateRotatorDisplay();
     }
 
+    [RelayCommand]
+    private void OpenFt4Console()
+    {
+        if (App.MainWindow is null)
+            return;
+
+        var vm = App.Services.GetRequiredService<Ft4ConsoleViewModel>();
+        var window = new Ft4ConsoleWindow { DataContext = vm };
+        window.Show(App.MainWindow);
+    }
+
     [RelayCommand(CanExecute = nameof(CanToggleRigCatPause))]
     private void ToggleRigCatPause() => RigCatPaused = !RigCatPaused;
 

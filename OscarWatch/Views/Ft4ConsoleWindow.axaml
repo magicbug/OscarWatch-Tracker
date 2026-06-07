@@ -1,0 +1,123 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:ctrl="using:OscarWatch.Controls"
+        x:Class="OscarWatch.Views.Ft4ConsoleWindow"
+        x:DataType="vm:Ft4ConsoleViewModel"
+        Title="FT4 Console"
+        Width="980" Height="720"
+        MinWidth="760" MinHeight="520"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="12">
+    <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,12,0,0">
+      <TextBlock Text="{Binding StatusText}"
+                 FontFamily="Consolas,Courier New,monospace"
+                 FontSize="12" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Start" Command="{Binding ToggleRunCommand}" IsVisible="{Binding !IsRunning}" />
+        <Button Content="Stop" Command="{Binding ToggleRunCommand}" IsVisible="{Binding IsRunning}" />
+        <TextBlock VerticalAlignment="Center"
+                   Margin="8,0,0,0"
+                   Text="{Binding IsNativeCodec, StringFormat='Native codec: {0}'}" />
+      </StackPanel>
+    </StackPanel>
+
+    <Grid RowDefinitions="2*,*" ColumnDefinitions="3*,2*" RowSpacing="8" ColumnSpacing="8">
+      <ctrl:Ft4WaterfallControl x:Name="Waterfall"
+                                Grid.Row="0"
+                                Grid.ColumnSpan="2"
+                                MinHeight="180"
+                                RxFrequencyHz="{Binding RxFrequencyHz}"
+                                TxFrequencyHz="{Binding TxFrequencyHz}" />
+
+      <ListBox Grid.Row="1"
+               Grid.Column="0"
+               ItemsSource="{Binding Messages}"
+               DoubleTapped="OnMessageDoubleTapped">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:Ft4MessageListItem">
+            <TextBlock Text="{Binding DisplayText}"
+                       FontFamily="Consolas,Courier New,monospace"
+                       FontSize="12" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <ScrollViewer Grid.Row="1" Grid.Column="1">
+        <StackPanel Spacing="10">
+          <ctrl:Ft4TimeBarControl Height="18"
+                                  SlotProgress="{Binding SlotProgress}"
+                                  TxWindowProgress="{Binding TxWindowProgress}"
+                                  IsOddSlot="{Binding IsOddSlot}"
+                                  IsTransmitting="{Binding IsTransmitting}" />
+
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Enable TX" Command="{Binding ToggleTxCommand}" />
+            <Button Content="Halt TX" Command="{Binding HaltTxCommand}" />
+            <Button Content="Tune" Command="{Binding TuneCommand}" />
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <RadioButton Content="TX Odd" IsChecked="{Binding TxOdd, Mode=TwoWay}" GroupName="TxSlot" />
+            <RadioButton Content="TX Even" IsChecked="{Binding TxEven, Mode=TwoWay}" GroupName="TxSlot" />
+          </StackPanel>
+
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="6">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Call" VerticalAlignment="Center" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Callsign, Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Grid" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GridSquare, Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="RX Hz" VerticalAlignment="Center" />
+            <NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding RxFrequencyHz}" Minimum="200" Maximum="3500" Increment="10" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="TX Hz" VerticalAlignment="Center" />
+            <NumericUpDown Grid.Row="3" Grid.Column="1" Value="{Binding TxFrequencyHz}" Minimum="200" Maximum="3500" Increment="10" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="TX gain" VerticalAlignment="Center" />
+            <Slider Grid.Row="4" Grid.Column="1" Minimum="0.1" Maximum="1.5" Value="{Binding TxGain}" />
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Input" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="5" Grid.Column="1"
+                      ItemsSource="{Binding InputDevices}"
+                      SelectedValue="{Binding SelectedInputDeviceId}"
+                      SelectedValueBinding="{Binding Id}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Output" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="6" Grid.Column="1"
+                      ItemsSource="{Binding OutputDevices}"
+                      SelectedValue="{Binding SelectedOutputDeviceId}"
+                      SelectedValueBinding="{Binding Id}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding DisplayName}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </Grid>
+
+          <TextBlock Text="TX message" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding CurrentTxMessage}"
+                     FontFamily="Consolas,Courier New,monospace"
+                     TextWrapping="Wrap" />
+
+          <UniformGrid Columns="3" Rows="2">
+            <Button Content="CQ" Command="{Binding MacroCqCommand}" Margin="2" />
+            <Button Content="DE" Command="{Binding MacroDeCommand}" Margin="2" IsEnabled="{Binding CanMacroDe}" />
+            <Button Content="dB" Command="{Binding MacroDbCommand}" Margin="2" IsEnabled="{Binding CanMacroDb}" />
+            <Button Content="R-dB" Command="{Binding MacroRDbCommand}" Margin="2" IsEnabled="{Binding CanMacroRDb}" />
+            <Button Content="RR73" Command="{Binding MacroRr73Command}" Margin="2" IsEnabled="{Binding CanMacroRr73}" />
+            <Button Content="73" Command="{Binding Macro73Command}" Margin="2" IsEnabled="{Binding CanMacro73}" />
+          </UniformGrid>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</Window>

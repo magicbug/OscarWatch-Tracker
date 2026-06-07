@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="OscarWatch.Core/OscarWatch.Core.csproj" />
+  <Project Path="OscarWatch.Ft4.Core/OscarWatch.Ft4.Core.csproj" />
   <Project Path="OscarWatch.Orbit/OscarWatch.Orbit.csproj" />
   <Project Path="OscarWatch/OscarWatch.csproj" />
   <Project Path="OscarWatch.Tests/OscarWatch.Tests.csproj" />
