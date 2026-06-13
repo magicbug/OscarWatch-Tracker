@@ -76,6 +76,7 @@ public sealed class RigController : IRigController, IDisposable
     private bool _blockKnobCapture;
     private DateTime _ignoreDialUntilUtc = DateTime.MinValue;
     private DateTime _lastDialChangeUtc = DateTime.MinValue;
+    private int _previousRangeRateSign;
     private DateTime _suspendDopplerUntilUtc = DateTime.MinValue;
     private DateTime _suspendConnectUntilUtc = DateTime.MinValue;
     private string? _lastConnectError;
@@ -439,6 +440,7 @@ public sealed class RigController : IRigController, IDisposable
         _lastPassDownlinkOnVhf = null;
         _receiveVfo = RigVfo.VfoA;
         _suspendDopplerUntilUtc = DateTime.MinValue;
+        _previousRangeRateSign = 0;
     }
 
     private void RunLoopIteration(bool ignoreDopplerSuspend = false)
@@ -738,6 +740,23 @@ public sealed class RigController : IRigController, IDisposable
         _forceFrequencyApply = false;
         var thresholdHz = _thresholdHz;
         var strategy = context.DopplerStrategy;
+
+        if (!forceApply && settings.DopplerCatLeadEnabled && _propagator is not null && context.TrackState.LookAngles is not null)
+        {
+            var site = _settingsService?.Current.GroundStation ?? new GroundStation();
+            var slope = DopplerCatLead.ComputeRangeRateSlopeKmPerSec2(
+                _propagator, context.TrackState.NoradId, site, DateTime.UtcNow,
+                context.TrackState.LookAngles.RangeRateKmPerSec);
+            var timeSinceLastWrite = (DateTime.UtcNow - _lastWriteUtc).TotalMilliseconds;
+            var dopplerReversed = DetectDopplerReversal(context.TrackState.LookAngles.RangeRateKmPerSec);
+
+            if (DopplerWritePacer.ShouldDeferWrite(slope, settings.ReceiveCatDelayMs(), timeSinceLastWrite, dopplerReversed))
+                return false;
+
+            // Use adaptive threshold on steep legs
+            thresholdHz = DopplerWritePacer.AdaptiveThresholdHz(thresholdHz, slope);
+        }
+
         if (!forceApply && !ShouldWrite(thresholdHz, rxHz, txHz, strategy))
             return false;
 
@@ -822,6 +841,12 @@ public sealed class RigController : IRigController, IDisposable
             _lastWriteUtc = DateTime.UtcNow;
             MarkProgrammaticFrequencySettle();
             FinishOffsetKnobCaptureBlock();
+
+            if (context.TrackState.LookAngles is not null)
+            {
+                var rate = context.TrackState.LookAngles.RangeRateKmPerSec;
+                _previousRangeRateSign = rate > 0 ? 1 : rate < 0 ? -1 : 0;
+            }
         }
 
         if ((writeRx && !wroteRx) || (writeTx && !wroteTx))
@@ -1557,6 +1582,18 @@ public sealed class RigController : IRigController, IDisposable
             site,
             context.TrackState,
             DateTime.UtcNow);
+    }
+
+    /// <summary>
+    /// Detects whether the Doppler direction has reversed since the last successful write.
+    /// Does not update state — state is updated after a successful write.
+    /// </summary>
+    private bool DetectDopplerReversal(double rangeRateKmPerSec)
+    {
+        var currentSign = rangeRateKmPerSec > 0 ? 1 : rangeRateKmPerSec < 0 ? -1 : 0;
+        if (_previousRangeRateSign == 0 || currentSign == 0)
+            return false; // No previous state or zero-crossing not yet confirmed
+        return currentSign != _previousRangeRateSign;
     }
 
     private static long ToHz(double kHz) => (long)Math.Round(kHz * 1000.0);

@@ -172,7 +172,7 @@ public static class DopplerCatLead
         return RecedingAssistMaxBlend * rateFactor * slopeFactor;
     }
 
-    internal static double ComputeRangeRateSlopeKmPerSec2(
+    public static double ComputeRangeRateSlopeKmPerSec2(
         IOrbitPropagator propagator,
         string noradId,
         GroundStation site,
