@@ -367,11 +367,52 @@ public partial class PassPlanningViewModel : ViewModelBase
             RebuildDisplayedPasses();
 
             StatusText = _l.Get("Pass.CountPasses", Passes.Count, FilterPredictionHours);
+
+            // Run conflict detection on background thread
+            _ = DetectConflictsAsync(passes);
         }
         catch (Exception ex)
         {
             StatusText = _l.Get("Pass.Failed", ex.Message);
         }
+    }
+
+    private async Task DetectConflictsAsync(IReadOnlyList<PassInfo> passes)
+    {
+        try
+        {
+            var threshold = TimeSpan.FromSeconds(_settings.Current.PassConflictMinOverlapSeconds);
+            var result = await Task.Run(() => PassConflictDetector.Detect(passes, threshold));
+
+            foreach (var row in Passes)
+            {
+                row.HasConflict = result.HasConflicts(row.Source.NoradId, row.Source.AosUtc);
+                row.ConflictTooltip = FormatConflictTooltip(
+                    result.GetConflictsFor(row.Source.NoradId, row.Source.AosUtc),
+                    row.Source.NoradId);
+            }
+        }
+        catch
+        {
+            // Conflict detection failure is non-critical
+        }
+    }
+
+    private static string FormatConflictTooltip(IReadOnlyList<PassConflict> conflicts, string thisNoradId)
+    {
+        if (conflicts.Count == 0)
+            return "";
+
+        return string.Join("\n", conflicts.Select(c =>
+        {
+            var other = string.Equals(c.PassA.NoradId, thisNoradId, StringComparison.Ordinal)
+                ? c.PassB : c.PassA;
+            var duration = c.OverlapDuration;
+            var formatted = duration.TotalMinutes >= 1
+                ? $"{(int)duration.TotalMinutes}m {duration.Seconds:D2}s"
+                : $"{(int)duration.TotalSeconds}s";
+            return $"Conflicts with {other.SatelliteName} ({formatted} overlap)";
+        }));
     }
 
     public async Task<bool> ExportSatelliteIcsAsync(Window owner, PassPlanningPassRow row)
@@ -543,6 +584,8 @@ public sealed class PassPlanningPassRow
     public string Duration { get; init; } = "";
     public string AzimuthSummary { get; init; } = "";
     public string AosLosLine { get; init; } = "";
+    public bool HasConflict { get; set; }
+    public string ConflictTooltip { get; set; } = "";
 
     public static PassPlanningPassRow From(PassInfo p, bool useUtc, bool use24HourClock)
     {

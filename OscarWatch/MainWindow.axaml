@@ -561,6 +561,19 @@
                                  Text="{Binding DetailsLine}"
                                  TextTrimming="CharacterEllipsis"
                                  Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                      <StackPanel Orientation="Horizontal"
+                                  Spacing="4"
+                                  IsVisible="{Binding HasConflict}"
+                                  ToolTip.Tip="{Binding ConflictTooltip}">
+                        <TextBlock Text="⚠"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.Name="Scheduling conflict" />
+                        <TextBlock Text="Conflict"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+                      </StackPanel>
                     </StackPanel>
                   </Border>
                 </DataTemplate>

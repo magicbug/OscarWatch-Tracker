@@ -244,6 +244,25 @@
                                 Width="96"
                                 MinWidth="88"
                                 FontFamily="Consolas,Courier New,monospace" />
+            <DataGridTemplateColumn Header="Status"
+                                    Width="80"
+                                    MinWidth="70">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:PassPlanningPassRow">
+                  <StackPanel Orientation="Horizontal"
+                              Spacing="4"
+                              IsVisible="{Binding HasConflict}"
+                              VerticalAlignment="Center"
+                              ToolTip.Tip="{Binding ConflictTooltip}">
+                    <TextBlock Text="⚠"
+                               FontSize="13"
+                               AutomationProperties.Name="Scheduling conflict" />
+                    <TextBlock Text="Conflict"
+                               FontSize="12" />
+                  </StackPanel>
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
             <DataGridTemplateColumn Header="{loc:Localize Key=Planner.Col.Calendar}"
                                     Width="128"
                                     MinWidth="120">

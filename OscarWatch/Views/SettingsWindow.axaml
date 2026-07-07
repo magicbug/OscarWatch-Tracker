@@ -145,6 +145,13 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Tracking.PassWindowNote}" />
+            <TextBlock Text="Minimum overlap to flag (seconds)" Margin="0,8,0,0" />
+            <NumericUpDown Value="{Binding PassConflictMinOverlapSeconds, Mode=TwoWay}"
+                           Minimum="0" Maximum="600" FormatString="F0" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       Text="Overlapping passes with less than this overlap will not be flagged as conflicts." />
             <CheckBox Content="{loc:Localize Key=Settings.Tracking.TransponderCheck}"
                       IsChecked="{Binding TransponderDatabaseCheckOnStartup, Mode=TwoWay}"
                       Margin="0,8,0,0" />

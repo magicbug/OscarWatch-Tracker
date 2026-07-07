@@ -2160,11 +2160,59 @@ public partial class MainViewModel : ViewModelBase
                 Apply();
             else
                 await Dispatcher.UIThread.InvokeAsync(Apply);
+
+            // Run conflict detection on background thread, then update UI
+            _ = DetectPassConflictsAsync();
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             Log.Warning(ex, "Upcoming pass list refresh failed");
         }
+    }
+
+    private async Task DetectPassConflictsAsync()
+    {
+        try
+        {
+            var passInfos = Dispatcher.UIThread.CheckAccess()
+                ? Passes.OfType<PassRowViewModel>().Select(p => p.Source).ToList()
+                : await Dispatcher.UIThread.InvokeAsync(() =>
+                    Passes.OfType<PassRowViewModel>().Select(p => p.Source).ToList());
+
+            var threshold = TimeSpan.FromSeconds(_settings.Current.PassConflictMinOverlapSeconds);
+            var result = await Task.Run(() => PassConflictDetector.Detect(passInfos, threshold));
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                foreach (var row in Passes.OfType<PassRowViewModel>())
+                {
+                    row.HasConflict = result.HasConflicts(row.NoradId, row.AosUtc);
+                    row.ConflictTooltip = FormatConflictTooltip(result.GetConflictsFor(row.NoradId, row.AosUtc));
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Pass conflict detection failed");
+        }
+    }
+
+    private static string FormatConflictTooltip(IReadOnlyList<PassConflict> conflicts)
+    {
+        if (conflicts.Count == 0)
+            return "";
+
+        return string.Join("\n", conflicts.Select(c =>
+        {
+            var otherName = c.PassA.SatelliteName;
+            // Determine which satellite is the "other" one (not the one we're formatting for)
+            // We show both for clarity
+            var duration = c.OverlapDuration;
+            var formatted = duration.TotalMinutes >= 1
+                ? $"{(int)duration.TotalMinutes}m {duration.Seconds:D2}s"
+                : $"{(int)duration.TotalSeconds}s";
+            return $"Conflicts with {c.PassA.SatelliteName} / {c.PassB.SatelliteName} ({formatted} overlap)";
+        }));
     }
 }
 
@@ -2186,6 +2234,12 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
 
     [ObservableProperty]
     private bool _showBadge;
+
+    [ObservableProperty]
+    private bool _hasConflict;
+
+    [ObservableProperty]
+    private string _conflictTooltip = "";
 
     public PassInfo Source { get; init; } = null!;
     public string SatelliteName { get; init; } = "";
@@ -2296,7 +2350,9 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
             DetailsLine = DetailsLine,
             Highlight = Highlight,
             BadgeText = BadgeText,
-            ShowBadge = ShowBadge
+            ShowBadge = ShowBadge,
+            HasConflict = HasConflict,
+            ConflictTooltip = ConflictTooltip
         };
     }
 

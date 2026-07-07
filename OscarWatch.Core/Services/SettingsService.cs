@@ -245,6 +245,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.Rig.DopplerCatLeadMs = Math.Clamp(settings.Rig.DopplerCatLeadMs, 0, DopplerCatLead.UserLeadMsMax);
         settings.Cloudlog ??= new CloudlogSettings();
         settings.PassRecording ??= new PassRecordingSettings();
+        settings.PassConflictMinOverlapSeconds = Math.Clamp(settings.PassConflictMinOverlapSeconds, 0, 600);
         settings.QsoLogbook ??= new QsoLogbookSettings();
         settings.QsoLogbook.HistoryColumnWidthsPx ??=
             new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);

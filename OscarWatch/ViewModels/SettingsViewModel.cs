@@ -53,6 +53,9 @@ public partial class SettingsViewModel : ViewModelBase
     private int _passPredictionHours = 48;
 
     [ObservableProperty]
+    private int _passConflictMinOverlapSeconds = 30;
+
+    [ObservableProperty]
     private AppThemePreference _themePreference = AppThemePreference.System;
 
     [ObservableProperty]
@@ -719,6 +722,7 @@ public partial class SettingsViewModel : ViewModelBase
         };
         _settings.Current.MinimumElevationDeg = MinimumElevationDeg;
         _settings.Current.PassPredictionHours = PassPredictionHours;
+        _settings.Current.PassConflictMinOverlapSeconds = Math.Clamp(PassConflictMinOverlapSeconds, 0, 600);
         _settings.Current.Theme = ThemePreference;
         _settings.Current.UiLanguage = newLanguage;
         _settings.Current.ShowFootprintMotionArrows = ShowFootprintMotionArrows;
@@ -879,6 +883,7 @@ public partial class SettingsViewModel : ViewModelBase
             GridSquare = NormalizeGridSquare(_draft.GridSquare);
             MinimumElevationDeg = _settings.Current.MinimumElevationDeg;
             PassPredictionHours = _settings.Current.PassPredictionHours;
+            PassConflictMinOverlapSeconds = _settings.Current.PassConflictMinOverlapSeconds;
             ThemePreference = _settings.Current.Theme;
             SelectedThemeOption = ThemeOptions.FirstOrDefault(o => o.Value == ThemePreference)
                 ?? ThemeOptions[0];

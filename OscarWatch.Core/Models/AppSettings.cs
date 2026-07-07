@@ -60,6 +60,8 @@ public sealed class AppSettings
     public RigSettings Rig { get; set; } = new();
     public CloudlogSettings Cloudlog { get; set; } = new();
     public PassRecordingSettings PassRecording { get; set; } = new();
+    /// <summary>Minimum overlap in seconds before a pass conflict is flagged. Clamped to [0, 600].</summary>
+    public int PassConflictMinOverlapSeconds { get; set; } = 30;
     public QsoLogbookSettings QsoLogbook { get; set; } = new();
     /// <summary>Transponder conflicts the user confirmed keeping locally instead of the published version.</summary>
     public List<TransponderConflictAcknowledgment> TransponderConflictAcknowledgments { get; set; } = [];
