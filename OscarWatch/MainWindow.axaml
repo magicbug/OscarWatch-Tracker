@@ -479,7 +479,7 @@
             <ListBox x:Name="PassesListBox"
                      ItemsSource="{Binding Passes}"
                      TabIndex="3"
-                     Padding="0"
+                     Padding="0,0,4,0"
                      MinWidth="0"
                      MinHeight="0"
                      HorizontalAlignment="Stretch"
@@ -548,10 +548,31 @@
                                      FontFamily="Consolas,Courier New,monospace"
                                      Foreground="{Binding Highlight, Converter={x:Static theme:PassRowBadgeForegroundConverter.Instance}}" />
                         </Border>
-                        <TextBlock Text="{Binding SatelliteName}"
-                                   FontWeight="SemiBold"
-                                   FontSize="16"
-                                   TextTrimming="CharacterEllipsis" />
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="4"
+                                    VerticalAlignment="Center">
+                          <Border Background="Transparent"
+                                  Padding="2,0"
+                                  VerticalAlignment="Center"
+                                  IsVisible="{Binding HasConflict}"
+                                  ToolTip.Placement="Bottom"
+                                  ToolTip.ShowDelay="250"
+                                  AutomationProperties.Name="Scheduling conflict">
+                            <ToolTip.Tip>
+                              <TextBlock Text="{Binding ConflictTooltip}"
+                                         TextWrapping="Wrap"
+                                         MaxWidth="260" />
+                            </ToolTip.Tip>
+                            <TextBlock Text="⚠"
+                                       FontSize="14"
+                                       VerticalAlignment="Center" />
+                          </Border>
+                          <TextBlock Text="{Binding SatelliteName}"
+                                     FontWeight="SemiBold"
+                                     FontSize="16"
+                                     VerticalAlignment="Center"
+                                     TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
                       </DockPanel>
                       <TextBlock FontSize="15"
                                  Text="{Binding TimeRangeLine}"
@@ -561,19 +582,6 @@
                                  Text="{Binding DetailsLine}"
                                  TextTrimming="CharacterEllipsis"
                                  Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                      <StackPanel Orientation="Horizontal"
-                                  Spacing="4"
-                                  IsVisible="{Binding HasConflict}"
-                                  ToolTip.Tip="{Binding ConflictTooltip}">
-                        <TextBlock Text="⚠"
-                                   FontSize="14"
-                                   VerticalAlignment="Center"
-                                   AutomationProperties.Name="Scheduling conflict" />
-                        <TextBlock Text="Conflict"
-                                   FontSize="13"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                      </StackPanel>
                     </StackPanel>
                   </Border>
                 </DataTemplate>
