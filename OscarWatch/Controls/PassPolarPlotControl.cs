@@ -48,6 +48,26 @@ public class PassPolarPlotControl : ThemeAwareControl
         PointerExited += OnPointerExited;
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (Application.Current is not null)
+            Application.Current.ActualThemeVariantChanged += OnThemeChangedClearCache;
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (Application.Current is not null)
+            Application.Current.ActualThemeVariantChanged -= OnThemeChangedClearCache;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    private void OnThemeChangedClearCache(object? sender, EventArgs e)
+    {
+        _renderCache.Clear();
+        _textCache.Clear();
+    }
+
     public PassPolarPlotData? PlotData
     {
         get => GetValue(PlotDataProperty);
