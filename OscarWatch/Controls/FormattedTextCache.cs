@@ -10,7 +10,7 @@ namespace OscarWatch.Controls;
 /// </summary>
 internal sealed class FormattedTextCache
 {
-    private readonly Dictionary<(string Name, double FontSize), FormattedText> _cache = new();
+    private readonly Dictionary<(string Name, double FontSize, Color Foreground), FormattedText> _cache = new();
     private SolidColorBrush? _labelBrush;
     private SolidColorBrush? _backgroundBrush;
     private Typeface? _typeface;
@@ -33,7 +33,7 @@ internal sealed class FormattedTextCache
     /// </summary>
     public FormattedText Get(string name, double fontSize, Color foreground)
     {
-        var key = (name, fontSize);
+        var key = (name, fontSize, foreground);
         if (!_cache.TryGetValue(key, out var text))
         {
             text = new FormattedText(
@@ -103,7 +103,7 @@ internal sealed class FormattedTextCache
         if (_cache.Count == 0)
             return;
 
-        var keysToRemove = new List<(string Name, double FontSize)>();
+        var keysToRemove = new List<(string Name, double FontSize, Color Foreground)>();
 
         foreach (var key in _cache.Keys)
         {
