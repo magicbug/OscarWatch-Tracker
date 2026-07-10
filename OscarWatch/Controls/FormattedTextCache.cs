@@ -24,6 +24,15 @@ internal sealed class FormattedTextCache
     /// </summary>
     public FormattedText Get(string name, double fontSize, UiPalette palette)
     {
+        return Get(name, fontSize, palette.MapLabelForeground);
+    }
+
+    /// <summary>
+    /// Returns a cached FormattedText for the given name, font size, and explicit foreground colour.
+    /// Creates the text on first request; returns the cached instance on subsequent calls with the same key.
+    /// </summary>
+    public FormattedText Get(string name, double fontSize, Color foreground)
+    {
         var key = (name, fontSize);
         if (!_cache.TryGetValue(key, out var text))
         {
@@ -33,7 +42,7 @@ internal sealed class FormattedTextCache
                 FlowDirection.LeftToRight,
                 GetTypeface(),
                 fontSize,
-                GetLabelBrush(palette))
+                new SolidColorBrush(foreground))
             {
                 MaxTextWidth = 120
             };

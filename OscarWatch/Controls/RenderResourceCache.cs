@@ -11,6 +11,7 @@ internal sealed class RenderResourceCache
     private readonly Dictionary<Color, SolidColorBrush> _brushes = new();
     private readonly Dictionary<(Color Color, double Thickness), Pen> _pens = new();
     private readonly Dictionary<(Color Color, double Thickness), Pen> _dashedPens = new();
+    private readonly Dictionary<(Color Color, double Thickness), Pen> _roundCapPens = new();
 
     /// <summary>
     /// Returns a cached SolidColorBrush for the given colour, creating one on first request.
@@ -57,6 +58,26 @@ internal sealed class RenderResourceCache
     }
 
     /// <summary>
+    /// Returns a cached Pen with LineCap = Round and LineJoin = Round for the given colour and thickness.
+    /// Used for pass path segments that need rounded line endings.
+    /// </summary>
+    public Pen GetRoundCapPen(Color color, double thickness)
+    {
+        var key = (color, thickness);
+        if (!_roundCapPens.TryGetValue(key, out var pen))
+        {
+            pen = new Pen(GetBrush(color), thickness)
+            {
+                LineCap = PenLineCap.Round,
+                LineJoin = PenLineJoin.Round
+            };
+            _roundCapPens[key] = pen;
+        }
+
+        return pen;
+    }
+
+    /// <summary>
     /// Clears all cached brushes and pens. Called when track states composition changes
     /// or the colour palette changes (theme switch).
     /// </summary>
@@ -65,5 +86,6 @@ internal sealed class RenderResourceCache
         _brushes.Clear();
         _pens.Clear();
         _dashedPens.Clear();
+        _roundCapPens.Clear();
     }
 }

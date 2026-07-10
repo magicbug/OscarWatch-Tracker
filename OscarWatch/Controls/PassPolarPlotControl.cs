@@ -21,6 +21,7 @@ public class PassPolarPlotControl : ThemeAwareControl
 
     private PassPolarPlotHitTest.HoverPoint? _hoverPoint;
     private readonly RenderResourceCache _renderCache = new();
+    private readonly FormattedTextCache _textCache = new();
 
     public static readonly StyledProperty<PassPolarPlotData?> PlotDataProperty =
         AvaloniaProperty.Register<PassPolarPlotControl, PassPolarPlotData?>(nameof(PlotData));
@@ -82,7 +83,7 @@ public class PassPolarPlotControl : ThemeAwareControl
         var local = new Rect(0, 0, w, h);
         var (cx, cy, plotRadius) = GetPlotGeometry(w, h);
 
-        context.FillRectangle(new SolidColorBrush(palette.SkyPlotBackground), local);
+        context.FillRectangle(_renderCache.GetBrush(palette.SkyPlotBackground), local);
         DrawHorizonDisk(context, cx, cy, plotRadius, palette);
         DrawElevationRing(context, cx, cy, plotRadius, 30, palette.SkyPlotRing30, 1);
         DrawElevationRing(context, cx, cy, plotRadius, 60, palette.SkyPlotRing60, 1);
@@ -103,11 +104,7 @@ public class PassPolarPlotControl : ThemeAwareControl
                 continue;
 
             var color = segment.IsSunlit ? palette.SunlightTimeline : EclipsePathColor;
-            var pen = new Pen(new SolidColorBrush(color), 2.5)
-            {
-                LineCap = PenLineCap.Round,
-                LineJoin = PenLineJoin.Round
-            };
+            var pen = _renderCache.GetRoundCapPen(color, 2.5);
 
             var first = segment.Points[0];
             if (!SkyPlotControl.TryAzElToPoint(cx, cy, plotRadius, first.AzimuthDeg, first.ElevationDeg, out var prev))
@@ -162,16 +159,16 @@ public class PassPolarPlotControl : ThemeAwareControl
         return (cx, cy, plotRadius);
     }
 
-    private static void DrawHorizonDisk(DrawingContext context, double cx, double cy, double plotRadius, UiPalette palette)
+    private void DrawHorizonDisk(DrawingContext context, double cx, double cy, double plotRadius, UiPalette palette)
     {
         var disk = new Rect(cx - plotRadius, cy - plotRadius, plotRadius * 2, plotRadius * 2);
         context.DrawEllipse(
-            new SolidColorBrush(palette.SkyPlotBackground),
-            new Pen(new SolidColorBrush(palette.SkyPlotBorder), 1.5),
+            _renderCache.GetBrush(palette.SkyPlotBackground),
+            _renderCache.GetPen(palette.SkyPlotBorder, 1.5),
             disk);
     }
 
-    private static void DrawElevationRing(
+    private void DrawElevationRing(
         DrawingContext context,
         double cx,
         double cy,
@@ -182,16 +179,16 @@ public class PassPolarPlotControl : ThemeAwareControl
         bool dashed = false)
     {
         var r = (90.0 - Math.Clamp(elevationDeg, 0, 90)) / 90.0 * plotRadius;
-        var pen = new Pen(new SolidColorBrush(color), thickness);
-        if (dashed)
-            pen.DashStyle = DashStyle.Dash;
+        var pen = dashed
+            ? _renderCache.GetDashedPen(color, thickness)
+            : _renderCache.GetPen(color, thickness);
 
         context.DrawEllipse(null, pen, new Rect(cx - r, cy - r, r * 2, r * 2));
     }
 
-    private static void DrawAzimuthSpokes(DrawingContext context, double cx, double cy, double plotRadius, UiPalette palette)
+    private void DrawAzimuthSpokes(DrawingContext context, double cx, double cy, double plotRadius, UiPalette palette)
     {
-        var pen = new Pen(new SolidColorBrush(palette.SkyPlotSpoke), 1);
+        var pen = _renderCache.GetPen(palette.SkyPlotSpoke, 1);
         for (var az = 0; az < 360; az += 45)
         {
             if (!SkyPlotControl.TryAzElToPoint(cx, cy, plotRadius, az, 0, out var spokeEnd))
@@ -201,7 +198,7 @@ public class PassPolarPlotControl : ThemeAwareControl
         }
     }
 
-    private static void DrawCardinalLabels(DrawingContext context, double cx, double cy, double plotRadius, UiPalette palette)
+    private void DrawCardinalLabels(DrawingContext context, double cx, double cy, double plotRadius, UiPalette palette)
     {
         DrawLabel(context, "N", cx, cy - plotRadius - 14, palette);
         DrawLabel(context, "S", cx, cy + plotRadius + 4, palette);
@@ -223,21 +220,15 @@ public class PassPolarPlotControl : ThemeAwareControl
             HoverMarkerRadiusPx * 2,
             HoverMarkerRadiusPx * 2);
         context.DrawEllipse(
-            new SolidColorBrush(HoverMarkerFill),
-            new Pen(new SolidColorBrush(HoverMarkerOutline), 2),
+            _renderCache.GetBrush(HoverMarkerFill),
+            _renderCache.GetPen(HoverMarkerOutline, 2),
             rect);
-        context.DrawEllipse(null, new Pen(Brushes.White, 1.5), rect);
+        context.DrawEllipse(null, _renderCache.GetPen(Colors.White, 1.5), rect);
     }
 
-    private static void DrawLabel(DrawingContext context, string text, double x, double y, UiPalette palette)
+    private void DrawLabel(DrawingContext context, string text, double x, double y, UiPalette palette)
     {
-        var ft = new FormattedText(
-            text,
-            System.Globalization.CultureInfo.CurrentCulture,
-            FlowDirection.LeftToRight,
-            new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.SemiBold),
-            12,
-            new SolidColorBrush(palette.SkyPlotLabel));
+        var ft = _textCache.Get(text, 12, palette.SkyPlotLabel);
         context.DrawText(ft, new Point(x, y));
     }
 
