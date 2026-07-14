@@ -37,6 +37,7 @@
       </MenuItem>
       <MenuItem Header="{loc:Localize Key=Menu.Passes}">
         <MenuItem Header="{loc:Localize Key=Menu.Passes.Planner}" Command="{Binding OpenPassPlanningCommand}" />
+        <MenuItem Header="{loc:Localize Key=Menu.Passes.SessionPlanner}" Command="{Binding OpenSessionPlannerCommand}" />
         <MenuItem Header="{loc:Localize Key=Menu.Passes.Mutual}" Command="{Binding OpenMutualPassFinderCommand}" />
         <Separator />
         <MenuItem Header="{loc:Localize Key=Menu.Passes.Sunlight}" Command="{Binding OpenSunlightPredictionCommand}" />

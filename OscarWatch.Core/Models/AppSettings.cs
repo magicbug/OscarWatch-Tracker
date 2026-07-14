@@ -72,4 +72,8 @@ public sealed class AppSettings
     public QsoLogbookSettings QsoLogbook { get; set; } = new();
     /// <summary>Transponder conflicts the user confirmed keeping locally instead of the published version.</summary>
     public List<TransponderConflictAcknowledgment> TransponderConflictAcknowledgments { get; set; } = [];
+    /// <summary>Operator-assigned satellite priority (1=highest, 10=lowest). Key: satellite name.</summary>
+    public Dictionary<string, int> SatellitePriorities { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>Pre-alert lead time in minutes for session planner (1–15, default 3).</summary>
+    public int SessionPlannerPreAlertMinutes { get; set; } = 3;
 }

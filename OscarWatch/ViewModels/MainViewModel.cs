@@ -1824,6 +1824,18 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task OpenSessionPlannerAsync()
+    {
+        var vm = App.Services.GetRequiredService<SessionPlannerViewModel>();
+        vm.Initialize();
+        var window = new SessionPlannerWindow { DataContext = vm };
+        if (App.MainWindow is null)
+            return;
+
+        await window.ShowDialog(App.MainWindow);
+    }
+
+    [RelayCommand]
     private void ToggleSoloFocusedSatellite()
     {
         if (!SoloFocusedSatellite)

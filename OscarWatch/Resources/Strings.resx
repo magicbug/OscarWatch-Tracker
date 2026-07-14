@@ -459,6 +459,9 @@ Continue?</value>
   <data name="Menu.Passes.Planner">
     <value>_Pass Planner</value>
   </data>
+  <data name="Menu.Passes.SessionPlanner">
+    <value>_Session Planner</value>
+  </data>
   <data name="Menu.Passes.Sunlight">
     <value>_Sunlight Prediction</value>
   </data>

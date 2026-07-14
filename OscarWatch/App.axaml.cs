@@ -100,6 +100,10 @@ public partial class App : Application
         services.AddTransient<QsoLogbookViewModel>();
         services.AddTransient<CreateLogbookViewModel>();
         services.AddTransient<LogbookSettingsViewModel>();
+        services.AddSingleton<OscarWatch.Core.SessionPlanner.SessionPlannerService>();
+        services.AddSingleton<OscarWatch.Core.SessionPlanner.PlanExecutor>(sp =>
+            new OscarWatch.Core.SessionPlanner.PlanExecutor(sp.GetRequiredService<ILiveTrackingService>()));
+        services.AddTransient<SessionPlannerViewModel>();
 
         Services = services.BuildServiceProvider();
 

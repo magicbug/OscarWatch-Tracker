@@ -1,0 +1,154 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        x:Class="OscarWatch.Views.SessionPlannerWindow"
+        x:DataType="vm:SessionPlannerViewModel"
+        Title="Session Planner"
+        Width="1100" Height="620"
+        MinWidth="900" MinHeight="480"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="12">
+
+    <!-- Status bar and close button -->
+    <Border DockPanel.Dock="Bottom"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="0,1,0,0"
+            Padding="0,10,0,0"
+            Margin="0,10,0,0">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0"
+                   Text="{Binding StatusText}"
+                   VerticalAlignment="Center"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+          <Button Content="Close" Click="OnCloseClick" MinWidth="80" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+      <!-- Row 0: Session time window -->
+      <Border Grid.Row="0"
+              Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+              CornerRadius="4"
+              Padding="12,8"
+              Margin="0,0,0,8">
+        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+              ColumnSpacing="8">
+          <TextBlock Grid.Column="0" Text="Start:" VerticalAlignment="Center" FontWeight="SemiBold" />
+          <CalendarDatePicker Grid.Column="1" SelectedDate="{Binding SessionStartDate}" MinWidth="130" />
+          <TimePicker Grid.Column="2" SelectedTime="{Binding SessionStartTimeOfDay}" MinuteIncrement="5" MinWidth="100" ClockIdentifier="24HourClock" />
+          <TextBlock Grid.Column="3" Text="End:" VerticalAlignment="Center" FontWeight="SemiBold" />
+          <CalendarDatePicker Grid.Column="4" SelectedDate="{Binding SessionEndDate}" MinWidth="130" />
+          <TimePicker Grid.Column="5" SelectedTime="{Binding SessionEndTimeOfDay}" MinuteIncrement="5" MinWidth="100" ClockIdentifier="24HourClock" />
+          <Button Grid.Column="6"
+                  Content="Generate Plan"
+                  Command="{Binding GeneratePlanCommand}"
+                  Classes="accent"
+                  MinWidth="120" />
+          <Button Grid.Column="7"
+                  Content="Reset"
+                  Command="{Binding ResetAdjustmentsCommand}"
+                  MinWidth="70" />
+        </Grid>
+      </Border>
+
+      <!-- Row 1: Execution controls and progress -->
+      <Border Grid.Row="1"
+              Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+              CornerRadius="4"
+              Padding="12,8"
+              Margin="0,0,0,8">
+        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto">
+          <Button Grid.Column="0" Content="▶ Start" Command="{Binding StartExecutionCommand}" MinWidth="70"
+                  IsEnabled="{Binding ActivePlan, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          <Button Grid.Column="1" Content="⏸ Pause" Command="{Binding PauseExecutionCommand}" MinWidth="70" Margin="4,0" />
+          <Button Grid.Column="2" Content="▶ Resume" Command="{Binding ResumeExecutionCommand}" MinWidth="70" />
+          <Button Grid.Column="3" Content="⏹ Stop" Command="{Binding StopExecutionCommand}" MinWidth="70" Margin="4,0" />
+          <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="12,0,0,0">
+            <TextBlock Text="{Binding CurrentPassDisplay}" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding NextPassDisplay}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+          </StackPanel>
+          <TextBlock Grid.Column="5" Text="{Binding CountdownText}" FontFamily="Consolas,Courier New,monospace" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="6" Text="{Binding ProgressText}" VerticalAlignment="Center" Margin="12,0,0,0"
+                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        </Grid>
+      </Border>
+
+      <!-- Row 2: Timeline / schedule list -->
+      <DataGrid Grid.Row="2"
+                x:Name="ScheduleDataGrid"
+                ItemsSource="{Binding ScheduledPasses}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                CanUserResizeColumns="False"
+                CanUserReorderColumns="False"
+                CanUserSortColumns="False"
+                GridLinesVisibility="Horizontal"
+                HeadersVisibility="Column"
+                MinHeight="120"
+                BorderThickness="0">
+        <DataGrid.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Exclude Pass"
+                      Command="{Binding ExcludePassCommand}"
+                      CommandParameter="{Binding #ScheduleDataGrid.SelectedItem}" />
+            <MenuItem Header="Force Include Pass"
+                      Command="{Binding ForceIncludePassCommand}"
+                      CommandParameter="{Binding #ScheduleDataGrid.SelectedItem}" />
+          </ContextMenu>
+        </DataGrid.ContextMenu>
+        <DataGrid.Styles>
+          <Style Selector="DataGridColumnHeader">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Padding" Value="4,6" />
+          </Style>
+          <Style Selector="DataGridCell">
+            <Setter Property="Padding" Value="4,3" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+          </Style>
+        </DataGrid.Styles>
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Satellite"
+                              Binding="{Binding SatelliteName, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto" />
+          <DataGridTextColumn Header="AOS"
+                              Binding="{Binding AosDisplay, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto"
+                              FontFamily="Consolas,Courier New,monospace" />
+          <DataGridTextColumn Header="LOS"
+                              Binding="{Binding LosDisplay, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto"
+                              FontFamily="Consolas,Courier New,monospace" />
+          <DataGridTextColumn Header="Elev"
+                              Binding="{Binding MaxElevation, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto"
+                              FontFamily="Consolas,Courier New,monospace" />
+          <DataGridTextColumn Header="Score"
+                              Binding="{Binding CompositeScore, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto"
+                              FontFamily="Consolas,Courier New,monospace" />
+          <DataGridTextColumn Header="Duration"
+                              Binding="{Binding Duration, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto"
+                              FontFamily="Consolas,Courier New,monospace" />
+          <DataGridTextColumn Header="Gap"
+                              Binding="{Binding GapBefore, DataType={x:Type vm:SessionPlanPassRow}}"
+                              Width="Auto"
+                              FontFamily="Consolas,Courier New,monospace" />
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <!-- Row 3: Export buttons -->
+      <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,8,0,0">
+        <Button Content="Export CSV" Command="{Binding ExportCsvCommand}" Click="OnExportCsvClick" MinWidth="90" />
+        <Button Content="Export ICS" Command="{Binding ExportIcsCommand}" Click="OnExportIcsClick" MinWidth="90" />
+        <Button Content="Save Plan" Command="{Binding SavePlanCommand}" Click="OnSavePlanClick" MinWidth="90" />
+        <Button Content="Load Plan" Click="OnLoadPlanClick" MinWidth="90" />
+      </StackPanel>
+    </Grid>
+  </DockPanel>
+</Window>

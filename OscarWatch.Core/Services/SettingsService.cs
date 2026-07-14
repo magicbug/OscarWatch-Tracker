@@ -255,6 +255,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.TleSource ??= new TleSourceSettings();
         settings.TleSource = TleSourceResolver.NormalizeLegacyCustomUrl(settings.TleSource);
         settings.TransponderConflictAcknowledgments ??= [];
+        settings.SatellitePriorities ??= new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
