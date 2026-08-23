@@ -17,7 +17,7 @@ public sealed class TrackingOrchestrator
     private readonly SatelliteVisualCache _visualCache = new();
     private readonly HashSet<string> _loggedLookAngleSkips = new(StringComparer.Ordinal);
     private readonly HashSet<string> _loggedStateSkips = new(StringComparer.Ordinal);
-    private IReadOnlyList<SatelliteCatalogEntry> _cachedEnabledSats = Array.Empty<SatelliteCatalogEntry>();
+    private List<SatelliteCatalogEntry> _cachedEnabledSats = new();
     private int _lastNonFocusedRecomputeIndex;
 
     private List<SatelliteTrackState> _bufferA = new(32);
@@ -49,7 +49,7 @@ public sealed class TrackingOrchestrator
         _bufferA.Clear();
         _bufferB.Clear();
         var sats = _tleService.GetEnabledSatellites(_settings.Current);
-        _cachedEnabledSats = sats;
+        _cachedEnabledSats = new List<SatelliteCatalogEntry>(sats);
         foreach (var sat in sats)
             _propagator.LoadSatellite(sat);
     }
@@ -63,8 +63,7 @@ public sealed class TrackingOrchestrator
             return; // Already loaded
 
         _propagator.LoadSatellite(satellite);
-        var newList = new List<SatelliteCatalogEntry>(_cachedEnabledSats) { satellite };
-        _cachedEnabledSats = newList;
+        _cachedEnabledSats.Add(satellite);
     }
 
     /// <summary>
@@ -76,7 +75,16 @@ public sealed class TrackingOrchestrator
         _visualCache.Remove(noradId);
         _loggedLookAngleSkips.Remove(noradId);
         _loggedStateSkips.Remove(noradId);
-        _cachedEnabledSats = _cachedEnabledSats.Where(s => s.NoradId != noradId).ToList();
+        
+        // Optimized: in-place removal instead of LINQ allocation
+        for (int i = _cachedEnabledSats.Count - 1; i >= 0; i--)
+        {
+            if (_cachedEnabledSats[i].NoradId == noradId)
+            {
+                _cachedEnabledSats.RemoveAt(i);
+                break; // Assuming unique NORAD IDs
+            }
+        }
     }
 
     /// <summary>Clears cached ground tracks and footprints (e.g. after map-time scrub).</summary>
