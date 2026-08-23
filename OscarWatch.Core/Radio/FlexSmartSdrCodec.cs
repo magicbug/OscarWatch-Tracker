@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace OscarWatch.Core.Radio;
@@ -413,17 +414,44 @@ public static class FlexSmartSdrCodec
     private static Dictionary<string, string> ParseKeyValues(string text)
     {
         var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var token in text.Split([' ', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+        
+        // Optimized: Use ReadOnlySpan<char> to avoid string allocations during parsing
+        var span = text.AsSpan();
+        var pos = 0;
+        
+        while (pos < span.Length)
         {
-            var eq = token.IndexOf('=');
-            if (eq <= 0 || eq >= token.Length - 1)
+            // Skip whitespace
+            while (pos < span.Length && IsWhitespace(span[pos]))
+                pos++;
+                
+            if (pos >= span.Length)
+                break;
+                
+            // Find end of token (next whitespace or end)
+            var tokenStart = pos;
+            while (pos < span.Length && !IsWhitespace(span[pos]))
+                pos++;
+                
+            var token = span.Slice(tokenStart, pos - tokenStart);
+            
+            // Find equals sign in token
+            var eqIndex = token.IndexOf('=');
+            if (eqIndex <= 0 || eqIndex >= token.Length - 1)
                 continue;
-
-            fields[token[..eq]] = token[(eq + 1)..];
+                
+            // Extract key and value using spans, then convert to strings only when storing
+            var keySpan = token.Slice(0, eqIndex);
+            var valueSpan = token.Slice(eqIndex + 1);
+            
+            fields[keySpan.ToString()] = valueSpan.ToString();
         }
-
+        
         return fields;
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsWhitespace(char c) => c == ' ' || c == '\t' || c == '\r' || c == '\n';
 
     private static int GetInt(Dictionary<string, string> fields, string key, int fallback)
     {
