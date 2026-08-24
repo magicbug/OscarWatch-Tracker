@@ -95,6 +95,15 @@
 
       <h2>Voice</h2>
       <p>Optional spoken alert when a satellite rises above a set elevation (e.g. “Alpha Oscar Zero Seven is rising”). Choose a voice and test it. On Linux, install <code>espeak-ng</code> (recommended) or legacy <code>espeak</code>; <code>speech-dispatcher</code> with <code>spd-say</code> is also supported if eSpeak is not installed.</p>
+      <h3>Scheduled passes</h3>
+      <p>
+        Mark specific passes as <strong>Scheduled</strong> in Upcoming Passes or Pass Planner.
+        While OscarWatch is running, each scheduled pass can play a ding and show an alert window
+        a configurable number of minutes before AOS. Use <strong>Test sound</strong> to check the ding.
+        The ding is the same generated tone on Windows, macOS, and Linux (system player, ffmpeg, or
+        PortAudio as available). This is separate from voice rising announcements (which follow elevation
+        for all enabled satellites).
+      </p>
 
       <h2 id="recording">Recording</h2>
       <p>

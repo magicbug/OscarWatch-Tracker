@@ -41,6 +41,10 @@ public sealed class AppSettings
     /// <summary>Centre longitude when <see cref="MapCentreMode"/> is <see cref="MapCentreMode.Custom"/> (−180…180).</summary>
     public double MapCentreLongitudeDeg { get; set; }
     public VoiceAnnouncementSettings VoiceAnnouncements { get; set; } = new();
+    /// <summary>Lead time and sound/alert options for scheduled upcoming passes.</summary>
+    public PassScheduleSettings PassSchedule { get; set; } = new();
+    /// <summary>Passes marked Scheduled on the upcoming list (NORAD id + AOS UTC).</summary>
+    public List<ScheduledPassEntry> ScheduledPasses { get; set; } = [];
     public Dictionary<string, SatelliteFrequencySelection> FrequencySelections { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public double FrequencyOverlayX { get; set; } = 12;
     public double FrequencyOverlayY { get; set; } = 12;

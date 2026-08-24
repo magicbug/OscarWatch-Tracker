@@ -201,8 +201,8 @@
                   HeadersVisibility="Column"
                   MinHeight="120"
                   BorderThickness="0">
-          <DataGrid.ContextMenu>
-            <ContextMenu>
+            <DataGrid.ContextMenu>
+            <ContextMenu Opening="OnPassesContextMenuOpening">
               <MenuItem Header="{loc:Localize Key=Planner.ContextMenu.CopySatelliteDetails}"
                         Command="{Binding CopySatelliteDetailsCommand}"
                         CommandParameter="{Binding #PassesDataGrid.SelectedItem}" />
@@ -211,6 +211,9 @@
                         CommandParameter="{Binding #PassesDataGrid.SelectedItem}" />
               <MenuItem Header="{loc:Localize Key=Planner.ContextMenu.OpenPassRadarGallery}"
                         Command="{Binding OpenPassRadarGalleryForSatelliteCommand}"
+                        CommandParameter="{Binding #PassesDataGrid.SelectedItem}" />
+              <MenuItem x:Name="SchedulePassMenuItem"
+                        Command="{Binding TogglePassScheduledCommand}"
                         CommandParameter="{Binding #PassesDataGrid.SelectedItem}" />
             </ContextMenu>
           </DataGrid.ContextMenu>
@@ -256,6 +259,22 @@
                                 Width="96"
                                 MinWidth="88"
                                 FontFamily="Consolas,Courier New,monospace" />
+            <DataGridTemplateColumn Header="{loc:Localize Key=Planner.Col.Schedule}"
+                                    Width="108"
+                                    MinWidth="96">
+              <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate x:DataType="vm:PassPlanningPassRow">
+                  <Button Content="{Binding ScheduleLabel}"
+                          FontSize="10"
+                          Padding="6,3"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Tag="{Binding}"
+                          Click="OnToggleScheduleClick"
+                          ToolTip.Tip="{Binding ScheduleToolTip}" />
+                </DataTemplate>
+              </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
             <DataGridTemplateColumn Header="{loc:Localize Key=Planner.Col.Calendar}"
                                     Width="128"
                                     MinWidth="120">

@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using OscarWatch.Localization;
 using OscarWatch.ViewModels;
 
 namespace OscarWatch.Views;
@@ -17,6 +19,23 @@ public partial class PassPlanningWindow : Window
         Opened -= OnOpened;
         if (DataContext is PassPlanningViewModel vm)
             await vm.RefreshPassesCommand.ExecuteAsync(null);
+    }
+
+    private void OnPassesContextMenuOpening(object? sender, CancelEventArgs e)
+    {
+        if (PassesDataGrid.SelectedItem is not PassPlanningPassRow row)
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        if (SchedulePassMenuItem is not null)
+        {
+            var l = LocalizationService.Instance;
+            SchedulePassMenuItem.Header = row.IsScheduled
+                ? l.Get("Pass.Schedule.Remove")
+                : l.Get("Pass.Schedule.Add");
+        }
     }
 
     private async void OnEditHorizonMaskClick(object? sender, RoutedEventArgs e)
@@ -39,6 +58,15 @@ public partial class PassPlanningWindow : Window
             return;
 
         await vm.ExportSatelliteIcsAsync(this, row);
+    }
+
+    private void OnToggleScheduleClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: PassPlanningPassRow row }
+            || DataContext is not PassPlanningViewModel vm)
+            return;
+
+        vm.TogglePassScheduledCommand.Execute(row);
     }
 
     private async void OnOpenPassRadarGalleryClick(object? sender, RoutedEventArgs e)

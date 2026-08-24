@@ -226,6 +226,30 @@
   <data name="Pass.OpenVisualizer">
     <value>查看过境图</value>
   </data>
+  <data name="Pass.Schedule.Add">
+    <value>安排过境</value>
+  </data>
+  <data name="Pass.Schedule.Remove">
+    <value>从安排中移除</value>
+  </data>
+  <data name="Pass.Schedule.AddShort">
+    <value>安排</value>
+  </data>
+  <data name="Pass.Schedule.RemoveShort">
+    <value>已安排</value>
+  </data>
+  <data name="Pass.Schedule.AddTooltip">
+    <value>安排此过境，以便在 AOS 前发出提示音和警报</value>
+  </data>
+  <data name="Pass.Schedule.RemoveTooltip">
+    <value>从此过境安排中移除</value>
+  </data>
+  <data name="Pass.Schedule.AlertTitle">
+    <value>已安排的过境</value>
+  </data>
+  <data name="Pass.Schedule.AlertMessage">
+    <value>{0} 还有 {1} 到 AOS（{2}）</value>
+  </data>
   <data name="Pass.Visualizer.Heading">
     <value>{0} — {1}</value>
   </data>
@@ -1998,6 +2022,24 @@
   <data name="Settings.Voice.TestAnnouncement">
     <value>测试播报</value>
   </data>
+  <data name="Settings.PassSchedule.Section">
+    <value>已安排的过境</value>
+  </data>
+  <data name="Settings.PassSchedule.Note">
+    <value>在即将过境或过境规划中将过境标记为已安排。OscarWatch 在应用运行时会在 AOS 前提示音并显示警报。</value>
+  </data>
+  <data name="Settings.PassSchedule.LeadMinutes">
+    <value>AOS 前多少分钟提醒</value>
+  </data>
+  <data name="Settings.PassSchedule.SoundEnabled">
+    <value>播放提示音</value>
+  </data>
+  <data name="Settings.PassSchedule.AlertEnabled">
+    <value>显示警报窗口</value>
+  </data>
+  <data name="Settings.PassSchedule.TestSound">
+    <value>测试声音</value>
+  </data>
   <data name="Settings.Radio.Enable">
     <value>启用电台控制</value>
   </data>
@@ -2828,6 +2870,9 @@
   </data>
   <data name="Planner.Col.Calendar">
     <value>日历</value>
+  </data>
+  <data name="Planner.Col.Schedule">
+    <value>安排</value>
   </data>
   <data name="Planner.AddToCalendar">
     <value>添加到日历</value>

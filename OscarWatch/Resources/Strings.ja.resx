@@ -166,6 +166,30 @@
   <data name="Pass.OpenVisualizer">
     <value>パスプロットを表示</value>
   </data>
+  <data name="Pass.Schedule.Add">
+    <value>パスをスケジュール</value>
+  </data>
+  <data name="Pass.Schedule.Remove">
+    <value>スケジュールから削除</value>
+  </data>
+  <data name="Pass.Schedule.AddShort">
+    <value>スケジュール</value>
+  </data>
+  <data name="Pass.Schedule.RemoveShort">
+    <value>予定済み</value>
+  </data>
+  <data name="Pass.Schedule.AddTooltip">
+    <value>AOS前に音とアラートで通知するよう、このパスをスケジュールします</value>
+  </data>
+  <data name="Pass.Schedule.RemoveTooltip">
+    <value>このパスをスケジュールから削除します</value>
+  </data>
+  <data name="Pass.Schedule.AlertTitle">
+    <value>スケジュール済みパス</value>
+  </data>
+  <data name="Pass.Schedule.AlertMessage">
+    <value>{0} の AOS まで {1}（{2}）</value>
+  </data>
   <data name="Pass.Visualizer.Heading">
     <value>{0} — {1}</value>
   </data>
@@ -1130,6 +1154,24 @@
   </data>
   <data name="Settings.Voice.TestAnnouncement">
     <value>テストアナウンス</value>
+  </data>
+  <data name="Settings.PassSchedule.Section">
+    <value>スケジュール済みパス</value>
+  </data>
+  <data name="Settings.PassSchedule.Note">
+    <value>今後のパスまたはパスプランナーでパスをスケジュール済みにします。アプリ実行中、AOS前に音とアラートで通知します。</value>
+  </data>
+  <data name="Settings.PassSchedule.LeadMinutes">
+    <value>AOS何分前に通知するか</value>
+  </data>
+  <data name="Settings.PassSchedule.SoundEnabled">
+    <value>通知音を再生</value>
+  </data>
+  <data name="Settings.PassSchedule.AlertEnabled">
+    <value>アラートウィンドウを表示</value>
+  </data>
+  <data name="Settings.PassSchedule.TestSound">
+    <value>音をテスト</value>
   </data>
   <data name="Settings.Radio.Enable">
     <value>無線機制御を有効</value>
@@ -2732,6 +2774,9 @@
   </data>
   <data name="Planner.Col.Calendar">
     <value>カレンダー</value>
+  </data>
+  <data name="Planner.Col.Schedule">
+    <value>スケジュール</value>
   </data>
   <data name="Planner.AddToCalendar">
     <value>カレンダーに追加</value>

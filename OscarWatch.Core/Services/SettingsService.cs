@@ -301,6 +301,10 @@ public sealed class SettingsService : ISettingsService, IDisposable
     {
         settings.GroundStation ??= new GroundStation();
         settings.VoiceAnnouncements ??= new VoiceAnnouncementSettings();
+        settings.PassSchedule ??= new PassScheduleSettings();
+        settings.PassSchedule.LeadMinutesBeforeAos =
+            PassScheduleSettings.ClampLeadMinutes(settings.PassSchedule.LeadMinutesBeforeAos);
+        settings.ScheduledPasses ??= [];
         settings.FrequencySelections ??= new Dictionary<string, SatelliteFrequencySelection>(StringComparer.OrdinalIgnoreCase);
         foreach (var selection in settings.FrequencySelections.Values)
         {

@@ -226,6 +226,30 @@
   <data name="Pass.OpenVisualizer">
     <value>Ver gráfico da passagem</value>
   </data>
+  <data name="Pass.Schedule.Add">
+    <value>Agendar passagem</value>
+  </data>
+  <data name="Pass.Schedule.Remove">
+    <value>Remover da agenda</value>
+  </data>
+  <data name="Pass.Schedule.AddShort">
+    <value>Agendar</value>
+  </data>
+  <data name="Pass.Schedule.RemoveShort">
+    <value>Agendada</value>
+  </data>
+  <data name="Pass.Schedule.AddTooltip">
+    <value>Agendar esta passagem para um aviso sonoro e um alerta antes do AOS</value>
+  </data>
+  <data name="Pass.Schedule.RemoveTooltip">
+    <value>Remover esta passagem da agenda</value>
+  </data>
+  <data name="Pass.Schedule.AlertTitle">
+    <value>Passagem agendada</value>
+  </data>
+  <data name="Pass.Schedule.AlertMessage">
+    <value>{0} AOS em {1} (às {2})</value>
+  </data>
   <data name="Pass.Visualizer.Heading">
     <value>{0} — {1}</value>
   </data>
@@ -1998,6 +2022,24 @@ Continuar?</value>
   <data name="Settings.Voice.TestAnnouncement">
     <value>Testar anúncio</value>
   </data>
+  <data name="Settings.PassSchedule.Section">
+    <value>Passagens agendadas</value>
+  </data>
+  <data name="Settings.PassSchedule.Note">
+    <value>Marque passagens como Agendadas em Próximas passagens ou no Planejador. O OscarWatch toca um aviso e mostra um alerta antes do AOS enquanto o aplicativo está em execução.</value>
+  </data>
+  <data name="Settings.PassSchedule.LeadMinutes">
+    <value>Minutos de alerta antes do AOS</value>
+  </data>
+  <data name="Settings.PassSchedule.SoundEnabled">
+    <value>Tocar aviso sonoro</value>
+  </data>
+  <data name="Settings.PassSchedule.AlertEnabled">
+    <value>Mostrar janela de alerta</value>
+  </data>
+  <data name="Settings.PassSchedule.TestSound">
+    <value>Testar som</value>
+  </data>
   <data name="Settings.Radio.Enable">
     <value>Habilitar controle de rádio</value>
   </data>
@@ -2828,6 +2870,9 @@ Continuar?</value>
   </data>
   <data name="Planner.Col.Calendar">
     <value>Calendário</value>
+  </data>
+  <data name="Planner.Col.Schedule">
+    <value>Agenda</value>
   </data>
   <data name="Planner.AddToCalendar">
     <value>Adicionar ao Calendário</value>

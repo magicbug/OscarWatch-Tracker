@@ -81,6 +81,7 @@ public sealed class SettingsRecordingDevicesTests
             settings,
             LocalizationService.Instance,
             new StubSpeechService(),
+            new StubAlertSoundService(),
             recording,
             new StubCloudlogRadioSyncService(),
             new StubCloudlogLookupService(),
@@ -163,6 +164,11 @@ public sealed class SettingsRecordingDevicesTests
         public IReadOnlyList<SpeechVoiceOption> GetAvailableVoices() => [];
         public Task SpeakAsync(string text, string? voiceName = null, CancellationToken cancellationToken = default) =>
             Task.CompletedTask;
+    }
+
+    private sealed class StubAlertSoundService : IAlertSoundService
+    {
+        public void PlayAlert() { }
     }
 
     private sealed class StubCloudlogRadioSyncService : ICloudlogRadioSyncService

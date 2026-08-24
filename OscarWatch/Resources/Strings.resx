@@ -226,6 +226,30 @@
   <data name="Pass.OpenVisualizer">
     <value>View Pass Plot</value>
   </data>
+  <data name="Pass.Schedule.Add">
+    <value>Schedule pass</value>
+  </data>
+  <data name="Pass.Schedule.Remove">
+    <value>Remove from schedule</value>
+  </data>
+  <data name="Pass.Schedule.AddShort">
+    <value>Schedule</value>
+  </data>
+  <data name="Pass.Schedule.RemoveShort">
+    <value>Scheduled</value>
+  </data>
+  <data name="Pass.Schedule.AddTooltip">
+    <value>Schedule this pass for a ding and alert before AOS</value>
+  </data>
+  <data name="Pass.Schedule.RemoveTooltip">
+    <value>Remove this pass from the schedule</value>
+  </data>
+  <data name="Pass.Schedule.AlertTitle">
+    <value>Scheduled pass</value>
+  </data>
+  <data name="Pass.Schedule.AlertMessage">
+    <value>{0} AOS in {1} (at {2})</value>
+  </data>
   <data name="Pass.Visualizer.Heading">
     <value>{0} — {1}</value>
   </data>
@@ -2091,6 +2115,24 @@ Continue?</value>
   <data name="Settings.Voice.TestAnnouncement">
     <value>Test announcement</value>
   </data>
+  <data name="Settings.PassSchedule.Section">
+    <value>Scheduled passes</value>
+  </data>
+  <data name="Settings.PassSchedule.Note">
+    <value>Mark passes as Scheduled in Upcoming Passes or Pass Planner. OscarWatch plays a ding and shows an alert before AOS while the app is running.</value>
+  </data>
+  <data name="Settings.PassSchedule.LeadMinutes">
+    <value>Alert minutes before AOS</value>
+  </data>
+  <data name="Settings.PassSchedule.SoundEnabled">
+    <value>Play ding sound</value>
+  </data>
+  <data name="Settings.PassSchedule.AlertEnabled">
+    <value>Show alert window</value>
+  </data>
+  <data name="Settings.PassSchedule.TestSound">
+    <value>Test sound</value>
+  </data>
   <data name="Settings.Radio.Enable">
     <value>Enable radio control</value>
   </data>
@@ -2945,6 +2987,9 @@ Continue?</value>
   </data>
   <data name="Planner.Col.Calendar">
     <value>Calendar</value>
+  </data>
+  <data name="Planner.Col.Schedule">
+    <value>Schedule</value>
   </data>
   <data name="Planner.AddToCalendar">
     <value>Add to Calendar</value>

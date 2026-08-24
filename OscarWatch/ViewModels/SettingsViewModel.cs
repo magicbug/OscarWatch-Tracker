@@ -24,6 +24,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private readonly ISettingsService _settings;
     private readonly ILocalizationService _l;
     private readonly ISpeechService _speech;
+    private readonly IAlertSoundService _alertSound;
     private readonly IAudioRecordingService _recording;
     private readonly OscarWatch.Core.Recording.FfmpegLocator _ffmpegLocator;
     private readonly ICloudlogRadioSyncService _cloudlog;
@@ -148,6 +149,15 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private SpeechVoiceOption? _selectedSpeechVoice;
+
+    [ObservableProperty]
+    private int _passScheduleLeadMinutes = PassScheduleSettings.DefaultLeadMinutesBeforeAos;
+
+    [ObservableProperty]
+    private bool _passScheduleSoundEnabled = true;
+
+    [ObservableProperty]
+    private bool _passScheduleAlertEnabled = true;
 
     [ObservableProperty]
     private bool _passRecordingEnabled;
@@ -747,6 +757,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         ISettingsService settings,
         ILocalizationService localization,
         ISpeechService speech,
+        IAlertSoundService alertSound,
         IAudioRecordingService recording,
         ICloudlogRadioSyncService cloudlog,
         ICloudlogLookupService cloudlogLookup,
@@ -891,6 +902,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         ];
         _settings = settings;
         _speech = speech;
+        _alertSound = alertSound;
         _recording = recording;
         _cloudlog = cloudlog;
         SpeechAvailable = speech.IsAvailable;
@@ -1128,6 +1140,12 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             AnnounceElevationDeg = AnnounceElevationDeg,
             VoiceName = SelectedSpeechVoice?.Id ?? ""
         };
+        _settings.Current.PassSchedule = new PassScheduleSettings
+        {
+            LeadMinutesBeforeAos = PassScheduleSettings.ClampLeadMinutes(PassScheduleLeadMinutes),
+            SoundEnabled = PassScheduleSoundEnabled,
+            AlertEnabled = PassScheduleAlertEnabled
+        };
         var stopElevation = Math.Min(RecordingStopElevationDeg, RecordingStartElevationDeg);
         _settings.Current.PassRecording = new PassRecordingSettings
         {
@@ -1295,6 +1313,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     private bool CanTestVoiceAnnouncement() => SpeechAvailable;
 
+    [RelayCommand]
+    private void TestPassScheduleSound() => _alertSound.PlayAlert();
+
     private void LoadFromDraft()
     {
         _isSynchronizing = true;
@@ -1342,6 +1363,11 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             AnnounceElevationDeg = voice.AnnounceElevationDeg;
             SelectedSpeechVoice = SpeechVoiceOptions.FirstOrDefault(v => v.Id == voice.VoiceName)
                 ?? SpeechVoiceOptions.FirstOrDefault();
+
+            var passSchedule = _settings.Current.PassSchedule ?? new PassScheduleSettings();
+            PassScheduleLeadMinutes = PassScheduleSettings.ClampLeadMinutes(passSchedule.LeadMinutesBeforeAos);
+            PassScheduleSoundEnabled = passSchedule.SoundEnabled;
+            PassScheduleAlertEnabled = passSchedule.AlertEnabled;
 
             var recording = _settings.Current.PassRecording ?? new PassRecordingSettings();
             PassRecordingEnabled = recording.Enabled;

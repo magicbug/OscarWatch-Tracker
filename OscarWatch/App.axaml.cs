@@ -46,6 +46,9 @@ public partial class App : Application
         services.AddSingleton<ITleService>(sp =>
             new TleService(sp.GetRequiredService<ISettingsService>()));
         services.AddSingleton<ISpeechService, PlatformSpeechService>();
+        services.AddSingleton<IAlertSoundService>(sp =>
+            new PlatformAlertSoundService(sp.GetRequiredService<FfmpegLocator>()));
+        services.AddSingleton<ScheduledPassReminder>();
         services.AddSingleton<FfmpegLocator>();
         services.AddSingleton(sp => new FfmpegMp3Converter(locator: sp.GetRequiredService<FfmpegLocator>()));
         services.AddSingleton(sp => new PortAudioRecordingService(

@@ -313,6 +313,25 @@
                     IsEnabled="{Binding SpeechAvailable}"
                     HorizontalAlignment="Left"
                     MinWidth="140" />
+
+            <TextBlock Text="{loc:Localize Key=Settings.PassSchedule.Section}"
+                       Margin="0,16,0,0" FontWeight="SemiBold" FontSize="13" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       Text="{loc:Localize Key=Settings.PassSchedule.Note}" />
+            <TextBlock Text="{loc:Localize Key=Settings.PassSchedule.LeadMinutes}" Margin="0,8,0,0" />
+            <NumericUpDown Value="{Binding PassScheduleLeadMinutes, Mode=TwoWay}"
+                           Minimum="1" Maximum="60"
+                           Increment="1" FormatString="0" />
+            <CheckBox Content="{loc:Localize Key=Settings.PassSchedule.SoundEnabled}"
+                      IsChecked="{Binding PassScheduleSoundEnabled, Mode=TwoWay}" />
+            <CheckBox Content="{loc:Localize Key=Settings.PassSchedule.AlertEnabled}"
+                      IsChecked="{Binding PassScheduleAlertEnabled, Mode=TwoWay}" />
+            <Button Content="{loc:Localize Key=Settings.PassSchedule.TestSound}"
+                    Command="{Binding TestPassScheduleSoundCommand}"
+                    HorizontalAlignment="Left"
+                    MinWidth="140" />
           </StackPanel>
         </ScrollViewer>
       </TabItem>
