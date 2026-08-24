@@ -354,6 +354,9 @@ public partial class MainViewModel : ViewModelBase
         _settings.Current.HamsAt.Enabled
         && !string.IsNullOrWhiteSpace(_settings.Current.HamsAt.ApiKey);
 
+    public bool HasHamsAtApiKey =>
+        !string.IsNullOrWhiteSpace(_settings.Current.HamsAt.ApiKey);
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMapTimeScrubbing))]
     [NotifyPropertyChangedFor(nameof(MapTimeStatusText))]
@@ -635,6 +638,7 @@ public partial class MainViewModel : ViewModelBase
             HamsAtRovesMinPanelHeight,
             HamsAtRovesMaxPanelHeight);
         OnPropertyChanged(nameof(ShowHamsAtRovesPanel));
+        OnPropertyChanged(nameof(HasHamsAtApiKey));
         SidebarLayoutInvalidated?.Invoke();
     }
 
@@ -663,6 +667,38 @@ public partial class MainViewModel : ViewModelBase
             FileName = row.Url,
             UseShellExecute = true
         });
+    }
+
+    public async Task PostHamsAtActivationAsync(PassRowViewModel row)
+    {
+        if (App.MainWindow is null)
+            return;
+
+        await HamsAtActivationCoordinator.PostAsync(
+            App.MainWindow,
+            row.Source,
+            GroundStation,
+            _settings.Current.GroundStation.Callsign,
+            _settings.Current.HamsAt,
+            _hamsAtRoves,
+            _l,
+            row.TimeRangeLine,
+            row.DetailsLine,
+            Frequencies,
+            status => StatusText = status,
+            RefreshHamsAtRovesAfterActivationAsync,
+            App.Services.GetRequiredService<ISatelliteDatabaseService>(),
+            _settings.Current.FrequencySelections,
+            _settings.Current.Rig?.CwKeepSidebandDownlink == true).ConfigureAwait(true);
+    }
+
+    private async Task RefreshHamsAtRovesAfterActivationAsync()
+    {
+        if (!ShowHamsAtRovesPanel)
+            return;
+
+        _hamsAtRoves.InvalidateCache();
+        await RefreshHamsAtRovesAsync(bypassCache: true).ConfigureAwait(false);
     }
 
     private void RefreshRigUi(SatelliteTrackState? focused)
@@ -1605,7 +1641,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private async Task RefreshHamsAtRovesAsync()
+    private async Task RefreshHamsAtRovesAsync(bool bypassCache = false)
     {
         if (!ShowHamsAtRovesPanel)
         {
@@ -1614,7 +1650,9 @@ public partial class MainViewModel : ViewModelBase
             return;
         }
 
-        var result = await _hamsAtRoves.FetchUpcomingAsync(_settings.Current.HamsAt).ConfigureAwait(false);
+        var result = await _hamsAtRoves.FetchUpcomingAsync(
+            _settings.Current.HamsAt,
+            bypassCache: bypassCache).ConfigureAwait(false);
         if (!result.Ok)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -1848,9 +1886,7 @@ public partial class MainViewModel : ViewModelBase
         var clockFormat = PassDisplayFormat.FromSettings(_settings.Current.Use24HourClock);
         var aosText = PassDisplayFormat.FormatLocal(pass.AosUtc, clockFormat, useUtc: useUtc);
         var countdown = PassDisplayFormat.FormatCountdownToAos(DateTime.UtcNow, pass.AosUtc);
-        var title = _l.Get("Pass.Schedule.AlertTitle");
-        var message = _l.Get("Pass.Schedule.AlertMessage", pass.SatelliteName, countdown, aosText);
-        ScheduledPassAlertWindow.Show(owner, title, message);
+        ScheduledPassAlertWindow.Show(owner, pass.SatelliteName, countdown, aosText);
     }
 
     public void TogglePassScheduled(PassRowViewModel row)

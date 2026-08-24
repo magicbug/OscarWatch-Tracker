@@ -244,8 +244,35 @@
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Quitar este pase de la programación</value>
   </data>
+  <data name="Pass.HamsAt.PostActivation">
+    <value>Publicar activación en hams.at</value>
+  </data>
+  <data name="Pass.HamsAt.EnterApiKey">
+    <value>Introduce primero tu clave API de hams.at en Configuración.</value>
+  </data>
+  <data name="Pass.HamsAt.InvalidNorad">
+    <value>Este pase no tiene un número NORAD válido.</value>
+  </data>
+  <data name="Pass.HamsAt.Posted">
+    <value>Activación publicada en hams.at.</value>
+  </data>
+  <data name="Pass.HamsAt.Failed">
+    <value>No se pudo publicar la activación en hams.at: {0}</value>
+  </data>
+  <data name="Pass.HamsAt.OpenAfterPost">
+    <value>Abrir la alerta en hams.at después de publicar</value>
+  </data>
   <data name="Pass.Schedule.AlertTitle">
     <value>Pase programado</value>
+  </data>
+  <data name="Pass.Schedule.AlertBadge">
+    <value>Aviso</value>
+  </data>
+  <data name="Pass.Schedule.AlertCountdown">
+    <value>AOS en {0}</value>
+  </data>
+  <data name="Pass.Schedule.AlertAosAt">
+    <value>a las {0}</value>
   </data>
   <data name="Pass.Schedule.AlertMessage">
     <value>{0} AOS en {1} (a las {2})</value>
@@ -1845,6 +1872,12 @@
   <data name="Settings.Station.DisplayName">
     <value>Nombre de la estación</value>
   </data>
+  <data name="Settings.Station.Callsign">
+    <value>Indicativo</value>
+  </data>
+  <data name="Settings.Station.CallsignNote">
+    <value>Se usa al publicar activaciones satelitales en hams.at. Puedes editarlo en el diálogo de publicación.</value>
+  </data>
   <data name="Settings.Station.Latitude">
     <value>Latitud (°)</value>
   </data>
@@ -2552,6 +2585,66 @@
   </data>
   <data name="Settings.HamsAt.ConnectionFailed">
     <value>Conexión fallida — {0}</value>
+  </data>
+  <data name="HamsAt.Activation.Title">
+    <value>Publicar activación en hams.at</value>
+  </data>
+  <data name="HamsAt.Activation.PassSummary">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="HamsAt.Activation.Callsign">
+    <value>Indicativo</value>
+  </data>
+  <data name="HamsAt.Activation.Grids">
+    <value>Cuadrículas activadas (1–4, separadas por comas)</value>
+  </data>
+  <data name="HamsAt.Activation.Mode">
+    <value>Modo (FM, USB, CW, etc.)</value>
+  </data>
+  <data name="HamsAt.Activation.FrequencyOptional">
+    <value>Frecuencia (opcional)</value>
+  </data>
+  <data name="HamsAt.Activation.IncludeUplinkMhz">
+    <value>Subida</value>
+  </data>
+  <data name="HamsAt.Activation.IncludeDownlinkMhz">
+    <value>Bajada</value>
+  </data>
+  <data name="HamsAt.Activation.UplinkMhz">
+    <value>Subida (MHz)</value>
+  </data>
+  <data name="HamsAt.Activation.DownlinkMhz">
+    <value>Bajada (MHz)</value>
+  </data>
+  <data name="HamsAt.Activation.Mhz">
+    <value>MHz (opcional)</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection">
+    <value>Dirección</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection.Up">
+    <value>Subida</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection.Down">
+    <value>Bajada</value>
+  </data>
+  <data name="HamsAt.Activation.Comment">
+    <value>Comentario (opcional, máx. 50 caracteres)</value>
+  </data>
+  <data name="HamsAt.Activation.Submit">
+    <value>Publicar activación</value>
+  </data>
+  <data name="HamsAt.Activation.Error.CallsignRequired">
+    <value>Introduce un indicativo de al menos tres caracteres.</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridsRequired">
+    <value>Introduce al menos una cuadrícula Maidenhead.</value>
+  </data>
+  <data name="HamsAt.Activation.Error.ModeRequired">
+    <value>Introduce un modo de operación.</value>
+  </data>
+  <data name="HamsAt.Activation.Error.MhzInvalid">
+    <value>Introduce un valor MHz válido o deja el campo en blanco.</value>
   </data>
   <data name="Settings.SatelliteStatus.Section">
     <value>OscarWatch</value>

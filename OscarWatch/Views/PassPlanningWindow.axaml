@@ -215,6 +215,10 @@
               <MenuItem x:Name="SchedulePassMenuItem"
                         Command="{Binding TogglePassScheduledCommand}"
                         CommandParameter="{Binding #PassesDataGrid.SelectedItem}" />
+              <MenuItem x:Name="PostHamsAtActivationMenuItem"
+                        Header="{loc:Localize Key=Pass.HamsAt.PostActivation}"
+                        Command="{Binding PostHamsAtActivationCommand}"
+                        CommandParameter="{Binding #PassesDataGrid.SelectedItem}" />
             </ContextMenu>
           </DataGrid.ContextMenu>
           <DataGrid.Styles>

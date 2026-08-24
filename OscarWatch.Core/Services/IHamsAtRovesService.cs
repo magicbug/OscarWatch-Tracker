@@ -31,4 +31,11 @@ public interface IHamsAtRovesService
     Task<(bool Ok, string Message)> TestConnectionAsync(
         HamsAtSettings settings,
         CancellationToken cancellationToken = default);
+
+    Task<HamsAtCreateAlertResult> CreateAlertAsync(
+        HamsAtSettings settings,
+        HamsAtCreateAlertRequest request,
+        CancellationToken cancellationToken = default);
+
+    void InvalidateCache();
 }

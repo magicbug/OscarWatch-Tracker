@@ -183,6 +183,22 @@ public partial class MainWindow : Window
                 ? l.Get("Pass.Schedule.Remove")
                 : l.Get("Pass.Schedule.Add");
         }
+
+        if (PostHamsAtActivationMenuItem is not null && DataContext is MainViewModel vm)
+            PostHamsAtActivationMenuItem.IsVisible = vm.HasHamsAtApiKey;
+    }
+
+    private async void OnPostHamsAtActivationClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        var row = _passListContextRow ?? PassesListBox.SelectedItem as PassRowViewModel;
+        if (row is null)
+            return;
+
+        await vm.PostHamsAtActivationAsync(row).ConfigureAwait(true);
+        _passListContextRow = null;
     }
 
     private void OnOpenPassVisualizerClick(object? sender, RoutedEventArgs e) =>

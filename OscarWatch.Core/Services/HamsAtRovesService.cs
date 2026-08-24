@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using OscarWatch.Core.Net;
 using System.Text.Json.Serialization;
@@ -10,6 +11,7 @@ namespace OscarWatch.Core.Services;
 public sealed class HamsAtRovesService : IHamsAtRovesService
 {
     public const string UpcomingAlertsUrl = "https://hams.at/api/alerts/upcoming";
+    public const string CreateAlertUrl = "https://hams.at/api/alerts";
 
     private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(5);
 
@@ -78,6 +80,212 @@ public sealed class HamsAtRovesService : IHamsAtRovesService
         }
 
         return (false, result.ErrorMessage ?? HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.Generic));
+    }
+
+    public void InvalidateCache()
+    {
+        lock (_cacheLock)
+        {
+            _cachedAlerts = null;
+            _cachedApiKey = null;
+        }
+    }
+
+    public async Task<HamsAtCreateAlertResult> CreateAlertAsync(
+        HamsAtSettings settings,
+        HamsAtCreateAlertRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var apiKey = settings.ApiKey?.Trim() ?? "";
+        if (string.IsNullOrEmpty(apiKey))
+        {
+            return HamsAtCreateAlertResult.Failure(
+                HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.MissingApiKey),
+                0,
+                HamsAtFetchErrorKind.MissingApiKey);
+        }
+
+        try
+        {
+            var requestJson = SerializeCreateAlertPayload(request);
+            using var httpRequest = BuildCreateAlertRequest(apiKey, requestJson);
+            using var response = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+            var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                return HamsAtCreateAlertResult.Failure(
+                    ResolveFailureMessage(body, HamsAtFetchErrorKind.InvalidApiKey),
+                    (int)response.StatusCode,
+                    HamsAtFetchErrorKind.InvalidApiKey,
+                    requestJson);
+            }
+
+            if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
+            {
+                return HamsAtCreateAlertResult.Failure(
+                    ResolveFailureMessage(body, HamsAtFetchErrorKind.Generic),
+                    (int)response.StatusCode,
+                    HamsAtFetchErrorKind.Generic,
+                    requestJson);
+            }
+
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                return HamsAtCreateAlertResult.Failure(
+                    ResolveFailureMessage(body, HamsAtFetchErrorKind.RateLimited),
+                    (int)response.StatusCode,
+                    HamsAtFetchErrorKind.RateLimited,
+                    requestJson);
+            }
+
+            if ((int)response.StatusCode >= 500)
+            {
+                return HamsAtCreateAlertResult.Failure(
+                    ResolveFailureMessage(body, HamsAtFetchErrorKind.Unavailable),
+                    (int)response.StatusCode,
+                    HamsAtFetchErrorKind.Unavailable,
+                    requestJson);
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return HamsAtCreateAlertResult.Failure(
+                    ResolveFailureMessage(body, HamsAtFetchErrorKind.UnexpectedResponse),
+                    (int)response.StatusCode,
+                    HamsAtFetchErrorKind.UnexpectedResponse,
+                    requestJson);
+            }
+
+            var alertUrl = ParseAlertUrl(body);
+            if (string.IsNullOrWhiteSpace(alertUrl))
+            {
+                return HamsAtCreateAlertResult.Failure(
+                    HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.UnexpectedResponse),
+                    (int)response.StatusCode,
+                    HamsAtFetchErrorKind.UnexpectedResponse,
+                    requestJson);
+            }
+
+            InvalidateCache();
+            return HamsAtCreateAlertResult.Success(alertUrl, (int)response.StatusCode);
+        }
+        catch (HttpRequestException ex)
+        {
+            var kind = HamsAtErrorHelper.FromHttpException(ex);
+            return HamsAtCreateAlertResult.Failure(
+                HamsAtErrorHelper.ToEnglish(kind),
+                0,
+                kind,
+                SerializeCreateAlertPayload(request));
+        }
+        catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            return HamsAtCreateAlertResult.Failure(
+                HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.Timeout),
+                0,
+                HamsAtFetchErrorKind.Timeout,
+                SerializeCreateAlertPayload(request));
+        }
+        catch (JsonException)
+        {
+            return HamsAtCreateAlertResult.Failure(
+                HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.UnexpectedResponse),
+                0,
+                HamsAtFetchErrorKind.UnexpectedResponse,
+                SerializeCreateAlertPayload(request));
+        }
+        catch (Exception) when (!cancellationToken.IsCancellationRequested)
+        {
+            return HamsAtCreateAlertResult.Failure(
+                HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.Generic),
+                0,
+                HamsAtFetchErrorKind.Generic,
+                SerializeCreateAlertPayload(request));
+        }
+    }
+
+    public static string SerializeCreateAlertPayload(HamsAtCreateAlertRequest request)
+    {
+        var payload = BuildCreateAlertPayload(request);
+        return JsonSerializer.Serialize(payload, JsonOptions);
+    }
+
+    private static Dictionary<string, object?> BuildCreateAlertPayload(HamsAtCreateAlertRequest request)
+    {
+        var payload = new Dictionary<string, object?>
+        {
+            ["satellite_number"] = request.SatelliteNumber,
+            ["observer_lat"] = request.ObserverLat,
+            ["observer_lon"] = request.ObserverLon,
+            ["max_at"] = request.MaxAtUtc.ToUniversalTime().ToString("O"),
+            ["callsign"] = request.Callsign,
+            ["grids"] = request.Grids.ToArray()
+        };
+
+        if (!string.IsNullOrWhiteSpace(request.Mode))
+            payload["mode"] = request.Mode.Trim();
+
+        if (!string.IsNullOrWhiteSpace(request.Comment))
+            payload["comment"] = request.Comment.Trim();
+
+        if (request.Mhz is > 0)
+            payload["mhz"] = request.Mhz.Value;
+
+        if (!string.IsNullOrWhiteSpace(request.MhzDirection))
+            payload["mhz_direction"] = request.MhzDirection.Trim();
+
+        if (request.ChatEnabled is not null)
+            payload["chat_enabled"] = request.ChatEnabled.Value;
+
+        return payload;
+    }
+
+    private static HttpRequestMessage BuildCreateAlertRequest(string apiKey, string requestJson)
+    {
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, CreateAlertUrl)
+        {
+            Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+        };
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        return httpRequest;
+    }
+
+    internal static IReadOnlyList<string> ParseErrorMessages(string body)
+    {
+        try
+        {
+            var payload = JsonSerializer.Deserialize<HamsAtErrorResponseDto>(body, JsonOptions);
+            if (payload?.Errors is not { Count: > 0 } errors)
+                return [];
+
+            return errors
+                .Where(error => !string.IsNullOrWhiteSpace(error))
+                .Select(error => error.Trim())
+                .ToArray();
+        }
+        catch (JsonException)
+        {
+            return [];
+        }
+    }
+
+    internal static string FormatErrorMessages(IReadOnlyList<string> errors) =>
+        errors.Count == 0 ? "" : string.Join("; ", errors);
+
+    private static string ResolveFailureMessage(string body, HamsAtFetchErrorKind fallbackKind)
+    {
+        var errors = ParseErrorMessages(body);
+        if (errors.Count > 0)
+            return FormatErrorMessages(errors);
+
+        return HamsAtErrorHelper.ToEnglish(fallbackKind);
+    }
+
+    private static string? ParseAlertUrl(string body)
+    {
+        var payload = JsonSerializer.Deserialize<HamsAtAlertResponseDto>(body, JsonOptions);
+        return payload?.Data?.Url;
     }
 
     private bool TryGetCached(string apiKey, out IReadOnlyList<HamsAtUpcomingAlert> alerts)
@@ -205,5 +413,23 @@ public sealed class HamsAtRovesService : IHamsAtRovesService
 
         [JsonPropertyName("number")]
         public int Number { get; init; }
+    }
+
+    private sealed class HamsAtAlertResponseDto
+    {
+        [JsonPropertyName("data")]
+        public HamsAtAlertDto? Data { get; init; }
+    }
+
+    private sealed class HamsAtAlertDto
+    {
+        [JsonPropertyName("url")]
+        public string? Url { get; init; }
+    }
+
+    private sealed class HamsAtErrorResponseDto
+    {
+        [JsonPropertyName("errors")]
+        public List<string>? Errors { get; init; }
     }
 }

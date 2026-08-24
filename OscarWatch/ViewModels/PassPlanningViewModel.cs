@@ -10,6 +10,7 @@ using OscarWatch.Core.Display;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Services;
 using OscarWatch.Localization;
+using OscarWatch.Services;
 using OscarWatch.Views;
 
 namespace OscarWatch.ViewModels;
@@ -19,6 +20,7 @@ public partial class PassPlanningViewModel : ViewModelBase
     private readonly ISettingsService _settings;
     private readonly ITleService _tleService;
     private readonly TrackingOrchestrator _tracking;
+    private readonly IHamsAtRovesService _hamsAtRoves;
     private readonly ILocalizationService _l;
     private bool _isSynchronizing;
 
@@ -69,15 +71,20 @@ public partial class PassPlanningViewModel : ViewModelBase
     [ObservableProperty]
     private bool _useUtcTime;
 
+    public bool HasHamsAtApiKey =>
+        !string.IsNullOrWhiteSpace(_settings.Current.HamsAt.ApiKey);
+
     public PassPlanningViewModel(
         ISettingsService settings,
         ITleService tleService,
         TrackingOrchestrator tracking,
+        IHamsAtRovesService hamsAtRoves,
         ILocalizationService localization)
     {
         _settings = settings;
         _tleService = tleService;
         _tracking = tracking;
+        _hamsAtRoves = hamsAtRoves;
         _l = localization;
         TimeDisplayLabels =
         [
@@ -225,6 +232,7 @@ public partial class PassPlanningViewModel : ViewModelBase
         var profile = new StationProfile
         {
             DisplayName = _l.Get("Planner.PortableName", Stations.Count + 1),
+            Callsign = home?.Callsign ?? "",
             LatitudeDeg = home?.LatitudeDeg ?? 51.5,
             LongitudeDeg = home?.LongitudeDeg ?? -0.1,
             AltitudeMetersAsl = home?.AltitudeMetersAsl ?? 50,
@@ -553,6 +561,47 @@ public partial class PassPlanningViewModel : ViewModelBase
         _settings.Current.PassPredictionHours = FilterPredictionHours;
         _settings.Current.PassPlannerUseUtcTime = UseUtcTime;
         await _settings.SaveAsync();
+    }
+
+    [RelayCommand]
+    private async Task PostHamsAtActivationAsync(PassPlanningPassRow? row)
+    {
+        if (row is null || App.MainWindow is null)
+            return;
+
+        ApplyEditableFieldsToSelectedStation();
+        var observer = SelectedStation?.ToGroundStation() ?? _settings.Current.GroundStation;
+        var timeRange = _l.Get("Pass.TimeRange", row.AosLocal, row.LosLocal);
+        var details = _l.Get(
+            "Pass.Details",
+            FormatPlannerPassDuration(row.Source.Duration),
+            $"{row.Source.MaxElevationDeg:F0}°");
+
+        await HamsAtActivationCoordinator.PostAsync(
+            App.MainWindow,
+            row.Source,
+            observer,
+            _settings.Current.GroundStation.Callsign,
+            _settings.Current.HamsAt,
+            _hamsAtRoves,
+            _l,
+            timeRange,
+            details,
+            frequencies: null,
+            status => StatusText = status,
+            satelliteDatabase: App.Services.GetRequiredService<ISatelliteDatabaseService>(),
+            frequencySelections: _settings.Current.FrequencySelections,
+            cwKeepSidebandDownlink: _settings.Current.Rig?.CwKeepSidebandDownlink == true).ConfigureAwait(true);
+    }
+
+    private string FormatPlannerPassDuration(TimeSpan duration)
+    {
+        var minutes = duration.TotalSeconds < 30
+            ? 0
+            : (int)Math.Round(duration.TotalMinutes, MidpointRounding.AwayFromZero);
+        return minutes == 1
+            ? _l.Get("Pass.DurationOneMinute")
+            : _l.Get("Pass.DurationMinutes", minutes);
     }
 
     [RelayCommand]

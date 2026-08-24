@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        x:Class="OscarWatch.Views.HamsAtActivationWindow"
+        x:DataType="vm:HamsAtActivationViewModel"
+        Title="{loc:Localize Key=HamsAt.Activation.Title}"
+        Width="460"
+        SizeToContent="Height"
+        MinWidth="400"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="20">
+    <StackPanel DockPanel.Dock="Bottom"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8"
+                Margin="0,16,0,0">
+      <Button Content="{loc:Localize Key=Common.Cancel}"
+              Classes="dialog-footer"
+              Click="OnCancelClick"
+              IsCancel="True" />
+      <Button Content="{loc:Localize Key=HamsAt.Activation.Submit}"
+              Classes="dialog-footer accent"
+              Click="OnSubmitClick"
+              IsDefault="True" />
+    </StackPanel>
+
+    <StackPanel Spacing="12">
+      <TextBlock Text="{Binding PassSummary}"
+                 FontSize="13"
+                 TextWrapping="Wrap" />
+
+      <TextBlock Text="{loc:Localize Key=HamsAt.Activation.Callsign}"
+                 FontWeight="SemiBold"
+                 FontSize="13" />
+      <TextBox Text="{Binding Callsign, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="20" />
+
+      <TextBlock Text="{loc:Localize Key=HamsAt.Activation.Grids}"
+                 FontWeight="SemiBold"
+                 FontSize="13" />
+      <TextBox Text="{Binding Grids, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="40" />
+
+      <TextBlock Text="{loc:Localize Key=HamsAt.Activation.Mode}"
+                 FontWeight="SemiBold"
+                 FontSize="13" />
+      <TextBox Text="{Binding Mode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="40" />
+
+      <TextBlock Text="{loc:Localize Key=HamsAt.Activation.FrequencyOptional}"
+                 FontWeight="SemiBold"
+                 FontSize="13" />
+      <StackPanel Spacing="6">
+        <CheckBox Content="{loc:Localize Key=HamsAt.Activation.IncludeUplinkMhz}"
+                  IsChecked="{Binding IncludeUplinkMhz, Mode=TwoWay}"
+                  IsEnabled="{Binding HasUplinkMhz}" />
+        <CheckBox Content="{loc:Localize Key=HamsAt.Activation.IncludeDownlinkMhz}"
+                  IsChecked="{Binding IncludeDownlinkMhz, Mode=TwoWay}"
+                  IsEnabled="{Binding HasDownlinkMhz}" />
+      </StackPanel>
+      <TextBox Text="{Binding SelectedMhzText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="12"
+               IsVisible="{Binding ShowMhzInput}" />
+
+      <TextBlock Text="{loc:Localize Key=HamsAt.Activation.Comment}"
+                 FontWeight="SemiBold"
+                 FontSize="13" />
+      <TextBox Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               MaxLength="50"
+               AcceptsReturn="False" />
+
+      <CheckBox Content="{loc:Localize Key=Pass.HamsAt.OpenAfterPost}"
+                IsChecked="{Binding OpenOnHamsAtAfterPost, Mode=TwoWay}" />
+
+      <TextBlock Text="{Binding ErrorText}"
+                 TextWrapping="Wrap"
+                 FontSize="12"
+                 MinHeight="18"
+                 Foreground="{DynamicResource SystemControlErrorTextColorBrush}"
+                 IsVisible="{Binding HasErrorText}" />
+    </StackPanel>
+  </DockPanel>
+</Window>

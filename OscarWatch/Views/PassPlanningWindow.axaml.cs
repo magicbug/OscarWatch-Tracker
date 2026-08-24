@@ -36,6 +36,9 @@ public partial class PassPlanningWindow : Window
                 ? l.Get("Pass.Schedule.Remove")
                 : l.Get("Pass.Schedule.Add");
         }
+
+        if (PostHamsAtActivationMenuItem is not null && DataContext is PassPlanningViewModel vm)
+            PostHamsAtActivationMenuItem.IsVisible = vm.HasHamsAtApiKey;
     }
 
     private async void OnEditHorizonMaskClick(object? sender, RoutedEventArgs e)

@@ -184,8 +184,35 @@
   <data name="Pass.Schedule.RemoveTooltip">
     <value>このパスをスケジュールから削除します</value>
   </data>
+  <data name="Pass.HamsAt.PostActivation">
+    <value>hams.at にアクティベーションを投稿</value>
+  </data>
+  <data name="Pass.HamsAt.EnterApiKey">
+    <value>先に設定で hams.at APIキーを入力してください。</value>
+  </data>
+  <data name="Pass.HamsAt.InvalidNorad">
+    <value>このパスに有効な NORAD カタログ番号がありません。</value>
+  </data>
+  <data name="Pass.HamsAt.Posted">
+    <value>hams.at にアクティベーションを投稿しました。</value>
+  </data>
+  <data name="Pass.HamsAt.Failed">
+    <value>hams.at への投稿に失敗しました: {0}</value>
+  </data>
+  <data name="Pass.HamsAt.OpenAfterPost">
+    <value>投稿後に hams.at でアラートを開く</value>
+  </data>
   <data name="Pass.Schedule.AlertTitle">
     <value>スケジュール済みパス</value>
+  </data>
+  <data name="Pass.Schedule.AlertBadge">
+    <value>リマインダー</value>
+  </data>
+  <data name="Pass.Schedule.AlertCountdown">
+    <value>AOS まで {0}</value>
+  </data>
+  <data name="Pass.Schedule.AlertAosAt">
+    <value>{0}</value>
   </data>
   <data name="Pass.Schedule.AlertMessage">
     <value>{0} の AOS まで {1}（{2}）</value>
@@ -954,6 +981,12 @@
   <data name="Settings.Station.DisplayName">
     <value>表示名</value>
   </data>
+  <data name="Settings.Station.Callsign">
+    <value>コールサイン</value>
+  </data>
+  <data name="Settings.Station.CallsignNote">
+    <value>hams.at へ衛星アクティベーションを投稿するときに使用します。投稿ダイアログでも編集できます。</value>
+  </data>
   <data name="Settings.Station.Latitude">
     <value>緯度 (°)</value>
   </data>
@@ -1664,6 +1697,66 @@
   </data>
   <data name="Settings.HamsAt.ConnectionFailed">
     <value>接続失敗 — {0}</value>
+  </data>
+  <data name="HamsAt.Activation.Title">
+    <value>hams.at にアクティベーションを投稿</value>
+  </data>
+  <data name="HamsAt.Activation.PassSummary">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="HamsAt.Activation.Callsign">
+    <value>コールサイン</value>
+  </data>
+  <data name="HamsAt.Activation.Grids">
+    <value>アクティベーションするグリッド (1–4、カンマ区切り)</value>
+  </data>
+  <data name="HamsAt.Activation.Mode">
+    <value>モード (FM、USB、CW など)</value>
+  </data>
+  <data name="HamsAt.Activation.FrequencyOptional">
+    <value>周波数 (任意)</value>
+  </data>
+  <data name="HamsAt.Activation.IncludeUplinkMhz">
+    <value>アップリンク</value>
+  </data>
+  <data name="HamsAt.Activation.IncludeDownlinkMhz">
+    <value>ダウンリンク</value>
+  </data>
+  <data name="HamsAt.Activation.UplinkMhz">
+    <value>アップリンク (MHz)</value>
+  </data>
+  <data name="HamsAt.Activation.DownlinkMhz">
+    <value>ダウンリンク (MHz)</value>
+  </data>
+  <data name="HamsAt.Activation.Mhz">
+    <value>MHz (任意)</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection">
+    <value>方向</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection.Up">
+    <value>上</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection.Down">
+    <value>下</value>
+  </data>
+  <data name="HamsAt.Activation.Comment">
+    <value>コメント (任意、最大 50 文字)</value>
+  </data>
+  <data name="HamsAt.Activation.Submit">
+    <value>アクティベーションを投稿</value>
+  </data>
+  <data name="HamsAt.Activation.Error.CallsignRequired">
+    <value>3 文字以上のコールサインを入力してください。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridsRequired">
+    <value>少なくとも 1 つの Maidenhead グリッドを入力してください。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.ModeRequired">
+    <value>運用モードを入力してください。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.MhzInvalid">
+    <value>有効な MHz 値を入力するか、空欄のままにしてください。</value>
   </data>
   <data name="Settings.SatelliteStatus.Section">
     <value>OscarWatch</value>

@@ -55,6 +55,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private string _displayName = "";
 
     [ObservableProperty]
+    private string _callsign = "";
+
+    [ObservableProperty]
     private double _latitudeDeg;
 
     [ObservableProperty]
@@ -1107,6 +1110,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         _settings.Current.GroundStation = new GroundStation
         {
             DisplayName = DisplayName,
+            Callsign = MaidenheadLocator.NormalizeCallsign(Callsign),
             LatitudeDeg = LatitudeDeg,
             LongitudeDeg = LongitudeDeg,
             AltitudeMetersAsl = AltitudeMeters,
@@ -1322,6 +1326,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         try
         {
             DisplayName = _draft.DisplayName;
+            Callsign = MaidenheadLocator.NormalizeCallsign(_draft.Callsign);
             LatitudeDeg = _draft.LatitudeDeg;
             LongitudeDeg = _draft.LongitudeDeg;
             AltitudeMeters = _draft.AltitudeMetersAsl;
@@ -2362,6 +2367,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private static void CopyGroundStation(GroundStation source, GroundStation target)
     {
         target.DisplayName = source.DisplayName;
+        target.Callsign = MaidenheadLocator.NormalizeCallsign(source.Callsign);
         target.LatitudeDeg = source.LatitudeDeg;
         target.LongitudeDeg = source.LongitudeDeg;
         target.AltitudeMetersAsl = source.AltitudeMetersAsl;
@@ -2397,6 +2403,29 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             return;
 
         _draft.DisplayName = value;
+    }
+
+    partial void OnCallsignChanged(string value)
+    {
+        if (_isSynchronizing)
+            return;
+
+        var normalized = MaidenheadLocator.NormalizeCallsign(value);
+        if (!string.Equals(normalized, value, StringComparison.Ordinal))
+        {
+            _isSynchronizing = true;
+            try
+            {
+                Callsign = normalized;
+            }
+            finally
+            {
+                _isSynchronizing = false;
+            }
+            return;
+        }
+
+        _draft.Callsign = normalized;
     }
 
     partial void OnLatitudeDegChanged(double value)

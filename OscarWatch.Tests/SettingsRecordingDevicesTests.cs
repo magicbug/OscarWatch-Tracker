@@ -212,6 +212,14 @@ public sealed class SettingsRecordingDevicesTests
             HamsAtSettings settings,
             CancellationToken cancellationToken = default) =>
             Task.FromResult((true, "ok"));
+
+        public Task<HamsAtCreateAlertResult> CreateAlertAsync(
+            HamsAtSettings settings,
+            HamsAtCreateAlertRequest request,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(HamsAtCreateAlertResult.Success("https://hams.at/alerts/test", 201));
+
+        public void InvalidateCache() { }
     }
 
     private sealed class StubGpsService : IGpsService

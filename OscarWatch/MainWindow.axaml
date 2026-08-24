@@ -598,6 +598,9 @@
                             Click="OnOpenPassVisualizerClick" />
                   <MenuItem x:Name="SchedulePassMenuItem"
                             Click="OnToggleSchedulePassClick" />
+                  <MenuItem x:Name="PostHamsAtActivationMenuItem"
+                            Header="{loc:Localize Key=Pass.HamsAt.PostActivation}"
+                            Click="OnPostHamsAtActivationClick" />
                 </ContextMenu>
               </ListBox.ContextMenu>
               <ListBox.ItemsPanel>

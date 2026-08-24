@@ -244,8 +244,35 @@
   <data name="Pass.Schedule.RemoveTooltip">
     <value>从此过境安排中移除</value>
   </data>
+  <data name="Pass.HamsAt.PostActivation">
+    <value>向 hams.at 发布激活</value>
+  </data>
+  <data name="Pass.HamsAt.EnterApiKey">
+    <value>请先在设置中输入 hams.at API 密钥。</value>
+  </data>
+  <data name="Pass.HamsAt.InvalidNorad">
+    <value>此过境没有有效的 NORAD 目录编号。</value>
+  </data>
+  <data name="Pass.HamsAt.Posted">
+    <value>已向 hams.at 发布激活。</value>
+  </data>
+  <data name="Pass.HamsAt.Failed">
+    <value>无法向 hams.at 发布激活：{0}</value>
+  </data>
+  <data name="Pass.HamsAt.OpenAfterPost">
+    <value>发布后打开 hams.at 上的警报</value>
+  </data>
   <data name="Pass.Schedule.AlertTitle">
     <value>已安排的过境</value>
+  </data>
+  <data name="Pass.Schedule.AlertBadge">
+    <value>提醒</value>
+  </data>
+  <data name="Pass.Schedule.AlertCountdown">
+    <value>还有 {0} 到 AOS</value>
+  </data>
+  <data name="Pass.Schedule.AlertAosAt">
+    <value>{0}</value>
   </data>
   <data name="Pass.Schedule.AlertMessage">
     <value>{0} 还有 {1} 到 AOS（{2}）</value>
@@ -1821,6 +1848,12 @@
   <data name="Settings.Station.DisplayName">
     <value>显示名称</value>
   </data>
+  <data name="Settings.Station.Callsign">
+    <value>呼号</value>
+  </data>
+  <data name="Settings.Station.CallsignNote">
+    <value>向 hams.at 发布卫星激活时使用。您仍可在发布对话框中编辑。</value>
+  </data>
   <data name="Settings.Station.Latitude">
     <value>纬度（°）</value>
   </data>
@@ -2528,6 +2561,66 @@
   </data>
   <data name="Settings.HamsAt.ConnectionFailed">
     <value>连接失败 — {0}</value>
+  </data>
+  <data name="HamsAt.Activation.Title">
+    <value>向 hams.at 发布激活</value>
+  </data>
+  <data name="HamsAt.Activation.PassSummary">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="HamsAt.Activation.Callsign">
+    <value>呼号</value>
+  </data>
+  <data name="HamsAt.Activation.Grids">
+    <value>激活网格（1–4 个，逗号分隔）</value>
+  </data>
+  <data name="HamsAt.Activation.Mode">
+    <value>模式（FM、USB、CW 等）</value>
+  </data>
+  <data name="HamsAt.Activation.FrequencyOptional">
+    <value>频率（可选）</value>
+  </data>
+  <data name="HamsAt.Activation.IncludeUplinkMhz">
+    <value>上行</value>
+  </data>
+  <data name="HamsAt.Activation.IncludeDownlinkMhz">
+    <value>下行</value>
+  </data>
+  <data name="HamsAt.Activation.UplinkMhz">
+    <value>上行 (MHz)</value>
+  </data>
+  <data name="HamsAt.Activation.DownlinkMhz">
+    <value>下行 (MHz)</value>
+  </data>
+  <data name="HamsAt.Activation.Mhz">
+    <value>MHz（可选）</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection">
+    <value>方向</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection.Up">
+    <value>上行</value>
+  </data>
+  <data name="HamsAt.Activation.MhzDirection.Down">
+    <value>下行</value>
+  </data>
+  <data name="HamsAt.Activation.Comment">
+    <value>备注（可选，最多 50 个字符）</value>
+  </data>
+  <data name="HamsAt.Activation.Submit">
+    <value>发布激活</value>
+  </data>
+  <data name="HamsAt.Activation.Error.CallsignRequired">
+    <value>请输入至少三个字符的呼号。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridsRequired">
+    <value>请输入至少一个 Maidenhead 网格。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.ModeRequired">
+    <value>请输入操作模式。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.MhzInvalid">
+    <value>请输入有效的 MHz 值或留空。</value>
   </data>
   <data name="Settings.SatelliteStatus.Section">
     <value>OscarWatch</value>

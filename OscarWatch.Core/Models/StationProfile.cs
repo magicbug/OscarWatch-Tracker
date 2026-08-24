@@ -1,9 +1,12 @@
+using OscarWatch.Core.Geo;
+
 namespace OscarWatch.Core.Models;
 
 public sealed class StationProfile
 {
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public string DisplayName { get; set; } = "Home";
+    public string Callsign { get; set; } = "";
     public double LatitudeDeg { get; set; } = 51.5;
     public double LongitudeDeg { get; set; } = -0.1;
     public double AltitudeMetersAsl { get; set; } = 50;
@@ -15,6 +18,7 @@ public sealed class StationProfile
     public GroundStation ToGroundStation() => new()
     {
         DisplayName = DisplayName,
+        Callsign = MaidenheadLocator.NormalizeCallsign(Callsign),
         LatitudeDeg = LatitudeDeg,
         LongitudeDeg = LongitudeDeg,
         AltitudeMetersAsl = AltitudeMetersAsl,
@@ -26,6 +30,7 @@ public sealed class StationProfile
     {
         Id = id ?? Guid.NewGuid().ToString("N"),
         DisplayName = gs.DisplayName,
+        Callsign = MaidenheadLocator.NormalizeCallsign(gs.Callsign),
         LatitudeDeg = gs.LatitudeDeg,
         LongitudeDeg = gs.LongitudeDeg,
         AltitudeMetersAsl = gs.AltitudeMetersAsl,

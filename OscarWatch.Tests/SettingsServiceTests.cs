@@ -28,6 +28,49 @@ public sealed class SettingsServiceTests
     }
 
     [Fact]
+    public void Load_persists_ground_station_callsign_via_saved_stations()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"oscarwatch-callsign-{Guid.NewGuid():N}.json");
+        try
+        {
+            var service = new SettingsService(path);
+            service.Current.GroundStation.Callsign = "mm9sql";
+            service.Current.SavedStations =
+            [
+                StationProfile.FromGroundStation(service.Current.GroundStation, "home1")
+            ];
+            service.Current.ActiveStationId = "home1";
+            service.SaveAsync().GetAwaiter().GetResult();
+
+            var reloaded = new SettingsService(path);
+            reloaded.Load();
+
+            Assert.Equal("MM9SQL", reloaded.Current.GroundStation.Callsign);
+            Assert.Equal("MM9SQL", reloaded.Current.SavedStations[0].Callsign);
+        }
+        finally
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void SyncActiveStationFromGroundStation_copies_callsign()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"oscarwatch-callsign-sync-{Guid.NewGuid():N}.json");
+        var service = new SettingsService(path);
+        service.Current.GroundStation.Callsign = "G0ABC";
+        service.EnsureSavedStations();
+        service.Current.GroundStation.Callsign = "MM9SQL";
+
+        service.SyncActiveStationFromGroundStation();
+
+        var profile = service.Current.SavedStations.First(s => s.Id == service.Current.ActiveStationId);
+        Assert.Equal("MM9SQL", profile.Callsign);
+    }
+
+    [Fact]
     public void TryParse_round_trips_serialized_settings()
     {
         var path = Path.Combine(Path.GetTempPath(), $"oscarwatch-parse-{Guid.NewGuid():N}.json");
