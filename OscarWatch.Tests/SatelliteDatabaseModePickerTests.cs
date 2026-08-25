@@ -34,7 +34,7 @@ public sealed class SatelliteDatabaseModePickerTests
     }
 
     [Fact]
-    public void ToActivationHints_uses_operating_modes_and_uplink_downlink_for_ssb()
+    public void ToActivationHints_maps_ssb_satellite_to_api_modes()
     {
         var mode = new SatelliteTransponderMode
         {
@@ -48,21 +48,14 @@ public sealed class SatelliteDatabaseModePickerTests
 
         var hints = SatelliteDatabaseModePicker.ToActivationHints(mode);
 
-        Assert.Equal("LSB", hints.UplinkMode);
-        Assert.Equal("USB", hints.DownlinkMode);
+        Assert.Equal(HamsAtApiModes.Ssb, hints.SuggestedMode);
+        Assert.Equal(HamsAtApiModes.Linear, hints.AvailableModes);
         Assert.Equal(145.95265, hints.UplinkMhz);
         Assert.Equal(435.85045, hints.DownlinkMhz);
-        Assert.Equal("up", hints.UplinkMhzDirection);
-        Assert.Equal("down", hints.DownlinkMhzDirection);
-        Assert.Equal("USB", SatelliteDatabaseModePicker.ResolveDefaultActivationMode(
-            hints.UplinkMode,
-            hints.DownlinkMode,
-            hasUplink: true,
-            hasDownlink: true));
     }
 
     [Fact]
-    public void ToActivationHints_uses_fm_mode_for_fm_satellites()
+    public void ToActivationHints_maps_fm_satellite_to_fm_only()
     {
         var mode = new SatelliteTransponderMode
         {
@@ -76,16 +69,14 @@ public sealed class SatelliteDatabaseModePickerTests
 
         var hints = SatelliteDatabaseModePicker.ToActivationHints(mode);
 
-        Assert.Equal("FM", hints.UplinkMode);
-        Assert.Equal("FM", hints.DownlinkMode);
+        Assert.Equal(HamsAtApiModes.Fm, hints.SuggestedMode);
+        Assert.Equal(HamsAtApiModes.FmOnly, hints.AvailableModes);
         Assert.Equal(145.85, hints.UplinkMhz);
         Assert.Equal(436.795, hints.DownlinkMhz);
-        Assert.Equal("up", hints.UplinkMhzDirection);
-        Assert.Equal("down", hints.DownlinkMhzDirection);
     }
 
     [Fact]
-    public void ToActivationHints_uses_beacon_downlink_mode()
+    public void ToActivationHints_maps_beacon_to_cw()
     {
         var mode = new SatelliteTransponderMode
         {
@@ -99,13 +90,20 @@ public sealed class SatelliteDatabaseModePickerTests
 
         var hints = SatelliteDatabaseModePicker.ToActivationHints(mode);
 
-        Assert.Equal("CW", hints.UplinkMode);
-        Assert.Equal("CW", hints.DownlinkMode);
+        Assert.Equal(HamsAtApiModes.Cw, hints.SuggestedMode);
+        Assert.Equal(HamsAtApiModes.CwOnly, hints.AvailableModes);
         Assert.Null(hints.UplinkMhz);
         Assert.Equal(435.795, hints.DownlinkMhz);
-        Assert.Null(hints.UplinkMhzDirection);
-        Assert.Equal("down", hints.DownlinkMhzDirection);
     }
+
+    [Theory]
+    [InlineData("USB", "SSB")]
+    [InlineData("LSB", "SSB")]
+    [InlineData("CW", "CW")]
+    [InlineData("FMN", "FM")]
+    [InlineData("DATA-USB", "Data")]
+    public void ToApiMode_maps_cat_modes(string input, string expected) =>
+        Assert.Equal(expected, SatelliteDatabaseModePicker.ToApiMode(input));
 
     private sealed class StubDatabase(IReadOnlyList<SatelliteRadioEntry> entries) : ISatelliteDatabaseService
     {

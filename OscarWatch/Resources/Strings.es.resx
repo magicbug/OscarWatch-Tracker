@@ -2596,7 +2596,7 @@
     <value>Indicativo</value>
   </data>
   <data name="HamsAt.Activation.Grids">
-    <value>Cuadrículas activadas (1–4, separadas por comas)</value>
+    <value>Cuadrículas activadas (1–4, cada una de 4 o 6 caracteres)</value>
   </data>
   <data name="HamsAt.Activation.Mode">
     <value>Modo (FM, USB, CW, etc.)</value>
@@ -2641,7 +2641,10 @@
     <value>Introduce al menos una cuadrícula Maidenhead.</value>
   </data>
   <data name="HamsAt.Activation.Error.ModeRequired">
-    <value>Introduce un modo de operación.</value>
+    <value>Selecciona un modo de operación (SSB, CW, Data o FM).</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridLength">
+    <value>La cuadrícula '{0}' debe tener 4 o 6 caracteres para hams.at.</value>
   </data>
   <data name="HamsAt.Activation.Error.MhzInvalid">
     <value>Introduce un valor MHz válido o deja el campo en blanco.</value>

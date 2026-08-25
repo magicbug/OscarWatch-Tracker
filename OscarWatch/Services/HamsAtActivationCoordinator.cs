@@ -11,7 +11,7 @@ namespace OscarWatch.Services;
 
 public static class HamsAtActivationCoordinator
 {
-    public static async Task PostAsync(
+    public static async Task<bool> PostAsync(
         Window owner,
         PassInfo pass,
         GroundStation observer,
@@ -31,7 +31,7 @@ public static class HamsAtActivationCoordinator
         if (string.IsNullOrWhiteSpace(hamsAtSettings.ApiKey))
         {
             setStatus(localization.Get("Pass.HamsAt.EnterApiKey"));
-            return;
+            return false;
         }
 
         var hints = ResolveFrequencyHints(
@@ -50,10 +50,10 @@ public static class HamsAtActivationCoordinator
             hints));
 
         if (await dialog.ShowDialog<bool?>(owner).ConfigureAwait(true) != true)
-            return;
+            return false;
 
         if (!dialog.TryBuildRequest(out var request) || request is null)
-            return;
+            return false;
 
         HamsAtCreateAlertResult result;
         try
@@ -71,7 +71,7 @@ public static class HamsAtActivationCoordinator
                 request.Callsign,
                 requestJson);
             setStatus(localization.Get("Pass.HamsAt.Failed", ex.Message));
-            return;
+            return false;
         }
 
         if (!result.Ok)
@@ -81,7 +81,7 @@ public static class HamsAtActivationCoordinator
                 pass.SatelliteName,
                 request.SatelliteNumber,
                 request.Callsign,
-                request.Mode,
+                request.Mode ?? "",
                 string.Join(", ", request.Grids),
                 result.HttpStatusCode,
                 result.ErrorMessage ?? localization.Get("Main.HamsAtRoves.LoadFailed"),
@@ -89,7 +89,7 @@ public static class HamsAtActivationCoordinator
             setStatus(localization.Get(
                 "Pass.HamsAt.Failed",
                 result.ErrorMessage ?? localization.Get("Main.HamsAtRoves.LoadFailed")));
-            return;
+            return false;
         }
 
         Log.Information(
@@ -97,7 +97,7 @@ public static class HamsAtActivationCoordinator
             pass.SatelliteName,
             request.SatelliteNumber,
             request.Callsign,
-            request.Mode,
+            request.Mode ?? "",
             string.Join(", ", request.Grids),
             result.AlertUrl);
 
@@ -114,6 +114,8 @@ public static class HamsAtActivationCoordinator
                 UseShellExecute = true
             });
         }
+
+        return true;
     }
 
     public static HamsAtActivationHints ResolveFrequencyHints(

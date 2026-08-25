@@ -150,6 +150,20 @@ public class ScheduledPassReminderTests
     }
 
     [Fact]
+    public void EnsureScheduled_adds_when_missing_and_is_idempotent()
+    {
+        var aos = new DateTime(2026, 8, 24, 12, 0, 0, DateTimeKind.Utc);
+
+        var first = ScheduledPassReminder.EnsureScheduled([], "25544", aos);
+        Assert.Single(first);
+        Assert.True(ScheduledPassReminder.IsScheduled(first, "25544", aos));
+
+        var second = ScheduledPassReminder.EnsureScheduled(first, "25544", aos.AddSeconds(30));
+        Assert.Single(second);
+        Assert.True(ScheduledPassReminder.IsScheduled(second, "25544", aos));
+    }
+
+    [Fact]
     public void ClampLeadMinutes_bounds_values()
     {
         Assert.Equal(1, PassScheduleSettings.ClampLeadMinutes(0));

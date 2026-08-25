@@ -46,8 +46,10 @@
       <TextBlock Text="{loc:Localize Key=HamsAt.Activation.Mode}"
                  FontWeight="SemiBold"
                  FontSize="13" />
-      <TextBox Text="{Binding Mode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-               MaxLength="40" />
+      <ComboBox ItemsSource="{Binding AvailableModes}"
+                SelectedItem="{Binding SelectedMode, Mode=TwoWay}"
+                HorizontalAlignment="Stretch"
+                MinHeight="32" />
 
       <TextBlock Text="{loc:Localize Key=HamsAt.Activation.FrequencyOptional}"
                  FontWeight="SemiBold"

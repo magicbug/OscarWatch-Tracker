@@ -577,7 +577,7 @@ public partial class PassPlanningViewModel : ViewModelBase
             FormatPlannerPassDuration(row.Source.Duration),
             $"{row.Source.MaxElevationDeg:F0}°");
 
-        await HamsAtActivationCoordinator.PostAsync(
+        var posted = await HamsAtActivationCoordinator.PostAsync(
             App.MainWindow,
             row.Source,
             observer,
@@ -592,6 +592,26 @@ public partial class PassPlanningViewModel : ViewModelBase
             satelliteDatabase: App.Services.GetRequiredService<ISatelliteDatabaseService>(),
             frequencySelections: _settings.Current.FrequencySelections,
             cwKeepSidebandDownlink: _settings.Current.Rig?.CwKeepSidebandDownlink == true).ConfigureAwait(true);
+
+        if (posted)
+            EnsurePassScheduled(row);
+    }
+
+    private void EnsurePassScheduled(PassPlanningPassRow row)
+    {
+        var current = _settings.Current.ScheduledPasses ?? [];
+        if (ScheduledPassReminder.IsScheduled(current, row.Source.NoradId, row.Source.AosUtc))
+        {
+            ApplyScheduledFlags();
+            return;
+        }
+
+        _settings.Current.ScheduledPasses = ScheduledPassReminder.EnsureScheduled(
+            current,
+            row.Source.NoradId,
+            row.Source.AosUtc);
+        _settings.RequestSave();
+        ApplyScheduledFlags();
     }
 
     private string FormatPlannerPassDuration(TimeSpan duration)

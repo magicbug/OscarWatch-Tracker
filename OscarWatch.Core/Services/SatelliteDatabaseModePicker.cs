@@ -32,19 +32,15 @@ public static class SatelliteDatabaseModePicker
             mode,
             cwUplink,
             cwKeepSidebandDownlink);
-        uplinkMode = NormalizeHamsAtMode(uplinkMode);
-        downlinkMode = NormalizeHamsAtMode(downlinkMode);
 
-        var uplinkMhz = ToMhz(mode.UplinkKHz);
-        var downlinkMhz = ToMhz(mode.DownlinkKHz);
+        var available = ResolveAvailableApiModes(mode, uplinkMode, downlinkMode);
+        var suggested = ResolveSuggestedApiMode(mode, uplinkMode, downlinkMode, cwUplink, available);
 
         return new HamsAtActivationHints(
-            string.IsNullOrWhiteSpace(uplinkMode) ? null : uplinkMode,
-            string.IsNullOrWhiteSpace(downlinkMode) ? null : downlinkMode,
-            uplinkMhz,
-            downlinkMhz,
-            uplinkMhz is > 0 ? MhzDirectionForBand(mode, uplink: true) : null,
-            downlinkMhz is > 0 ? MhzDirectionForBand(mode, uplink: false) : null);
+            suggested,
+            available,
+            ToMhz(mode.UplinkKHz),
+            ToMhz(mode.DownlinkKHz));
     }
 
     private static SatelliteFrequencySelection ResolveFrequencySelection(
@@ -80,53 +76,137 @@ public static class SatelliteDatabaseModePicker
         return byType ?? modes[0];
     }
 
-    public static string? ResolveDefaultActivationMode(
-        string? uplinkMode,
-        string? downlinkMode,
-        bool hasUplink,
-        bool hasDownlink)
+    /// <summary>
+    /// Maps CAT/database mode names to hams.at API values: SSB, CW, Data, FM.
+    /// </summary>
+    public static string? ToApiMode(string? mode)
     {
-        uplinkMode = NormalizeOptionalHamsAtMode(uplinkMode);
-        downlinkMode = NormalizeOptionalHamsAtMode(downlinkMode);
+        if (string.IsNullOrWhiteSpace(mode))
+            return null;
 
-        if (!hasUplink)
-            return downlinkMode;
-
-        if (!hasDownlink)
-            return uplinkMode;
-
-        if (string.IsNullOrWhiteSpace(uplinkMode))
-            return downlinkMode;
-
-        if (string.IsNullOrWhiteSpace(downlinkMode))
-            return uplinkMode;
-
-        if (string.Equals(uplinkMode, downlinkMode, StringComparison.OrdinalIgnoreCase))
-            return uplinkMode;
-
-        return downlinkMode;
-    }
-
-    internal static string NormalizeHamsAtMode(string mode)
-    {
         var normalized = TransponderCatModes.Normalize(mode);
-        return normalized switch
+        if (string.IsNullOrWhiteSpace(normalized))
+            return null;
+
+        if (normalized.Contains("FM", StringComparison.OrdinalIgnoreCase))
+            return HamsAtApiModes.Fm;
+
+        if (normalized.Equals("CW", StringComparison.OrdinalIgnoreCase))
+            return HamsAtApiModes.Cw;
+
+        if (normalized.Contains("DATA", StringComparison.OrdinalIgnoreCase)
+            || normalized.Contains("DIGI", StringComparison.OrdinalIgnoreCase)
+            || normalized.Contains("PACKET", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("RTTY", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("FT8", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("FT4", StringComparison.OrdinalIgnoreCase))
         {
-            "FMN" => "FM",
-            _ => normalized
-        };
+            return HamsAtApiModes.Data;
+        }
+
+        if (normalized.Equals("USB", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("LSB", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("SSB", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("AM", StringComparison.OrdinalIgnoreCase))
+        {
+            return HamsAtApiModes.Ssb;
+        }
+
+        return null;
     }
 
-    internal static string? NormalizeOptionalHamsAtMode(string? mode) =>
-        string.IsNullOrWhiteSpace(mode) ? null : NormalizeHamsAtMode(mode);
+    internal static IReadOnlyList<string> ResolveAvailableApiModes(
+        SatelliteTransponderMode mode,
+        string uplinkMode,
+        string downlinkMode)
+    {
+        if (mode.IsFmMode)
+            return HamsAtApiModes.FmOnly;
+
+        var mapped = new HashSet<string>(StringComparer.Ordinal);
+        var uplinkApi = ToApiMode(uplinkMode);
+        var downlinkApi = ToApiMode(downlinkMode);
+        if (uplinkApi is not null)
+            mapped.Add(uplinkApi);
+        if (downlinkApi is not null)
+            mapped.Add(downlinkApi);
+
+        if (mode.IsBeaconOnly)
+        {
+            if (mapped.Contains(HamsAtApiModes.Cw))
+                return HamsAtApiModes.CwOnly;
+            if (mapped.Contains(HamsAtApiModes.Data))
+                return HamsAtApiModes.DataOnly;
+            if (mapped.Contains(HamsAtApiModes.Fm))
+                return HamsAtApiModes.FmOnly;
+            return mapped.Count > 0 ? mapped.OrderBy(RankApiMode).ToArray() : HamsAtApiModes.CwOnly;
+        }
+
+        // Linear / multi-mode birds: hams.at accepts SSB, CW, and Data.
+        if (mapped.Contains(HamsAtApiModes.Ssb)
+            || mapped.Contains(HamsAtApiModes.Cw)
+            || LooksLinear(mode))
+        {
+            return HamsAtApiModes.Linear;
+        }
+
+        if (mapped.Count == 1 && mapped.Contains(HamsAtApiModes.Data))
+            return HamsAtApiModes.DataOnly;
+
+        if (mapped.Count == 1 && mapped.Contains(HamsAtApiModes.Fm))
+            return HamsAtApiModes.FmOnly;
+
+        return mapped.Count > 0
+            ? mapped.OrderBy(RankApiMode).ToArray()
+            : HamsAtApiModes.All;
+    }
+
+    internal static string? ResolveSuggestedApiMode(
+        SatelliteTransponderMode mode,
+        string uplinkMode,
+        string downlinkMode,
+        bool cwUplink,
+        IReadOnlyList<string> available)
+    {
+        if (available.Count == 0)
+            return null;
+
+        if (cwUplink && available.Contains(HamsAtApiModes.Cw))
+            return HamsAtApiModes.Cw;
+
+        var downlinkApi = ToApiMode(downlinkMode);
+        if (downlinkApi is not null && available.Contains(downlinkApi))
+            return downlinkApi;
+
+        var uplinkApi = ToApiMode(uplinkMode);
+        if (uplinkApi is not null && available.Contains(uplinkApi))
+            return uplinkApi;
+
+        if (mode.IsFmMode && available.Contains(HamsAtApiModes.Fm))
+            return HamsAtApiModes.Fm;
+
+        if (available.Contains(HamsAtApiModes.Ssb))
+            return HamsAtApiModes.Ssb;
+
+        return available[0];
+    }
+
+    private static bool LooksLinear(SatelliteTransponderMode mode)
+    {
+        var type = mode.Type ?? "";
+        return type.Contains("SSB", StringComparison.OrdinalIgnoreCase)
+            || type.Contains("Linear", StringComparison.OrdinalIgnoreCase)
+            || type.Contains("Transponder", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static int RankApiMode(string mode) => mode switch
+    {
+        HamsAtApiModes.Ssb => 0,
+        HamsAtApiModes.Cw => 1,
+        HamsAtApiModes.Data => 2,
+        HamsAtApiModes.Fm => 3,
+        _ => 9
+    };
 
     internal static double? ToMhz(double kHz) => kHz > 0 ? kHz / 1000.0 : null;
-
-    internal static string MhzDirectionForBand(SatelliteTransponderMode mode, bool uplink)
-    {
-        var reverse = mode.DopplerCorrection == DopplerCorrection.Reverse;
-        return uplink
-            ? reverse ? "up" : "down"
-            : reverse ? "down" : "up";
-    }
 }

@@ -665,11 +665,12 @@
                                      FontFamily="Consolas,Courier New,monospace"
                                      Foreground="{Binding Highlight, Converter={x:Static theme:PassRowBadgeForegroundConverter.Instance}}" />
                         </Border>
-                        <Button DockPanel.Dock="Left"
+                        <Button DockPanel.Dock="Right"
                                 Padding="4,2"
-                                Margin="0,0,6,0"
+                                Margin="6,0,0,0"
                                 MinWidth="28"
                                 VerticalAlignment="Center"
+                                IsVisible="{Binding ShowScheduleButton}"
                                 Click="OnPassScheduleToggleClick"
                                 ToolTip.Tip="{Binding ScheduleToolTip}"
                                 AutomationProperties.Name="{Binding ScheduleAutomationName}">

@@ -1708,7 +1708,7 @@
     <value>コールサイン</value>
   </data>
   <data name="HamsAt.Activation.Grids">
-    <value>アクティベーションするグリッド (1–4、カンマ区切り)</value>
+    <value>アクティベーションするグリッド (1–4、各 4 または 6 文字)</value>
   </data>
   <data name="HamsAt.Activation.Mode">
     <value>モード (FM、USB、CW など)</value>
@@ -1753,7 +1753,10 @@
     <value>少なくとも 1 つの Maidenhead グリッドを入力してください。</value>
   </data>
   <data name="HamsAt.Activation.Error.ModeRequired">
-    <value>運用モードを入力してください。</value>
+    <value>運用モードを選択してください（SSB、CW、Data、FM）。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridLength">
+    <value>グリッド '{0}' は hams.at では 4 または 6 文字である必要があります。</value>
   </data>
   <data name="HamsAt.Activation.Error.MhzInvalid">
     <value>有効な MHz 値を入力するか、空欄のままにしてください。</value>

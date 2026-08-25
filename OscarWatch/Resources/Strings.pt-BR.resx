@@ -2572,7 +2572,7 @@ Continuar?</value>
     <value>Indicativo</value>
   </data>
   <data name="HamsAt.Activation.Grids">
-    <value>Grids ativados (1–4, separados por vírgula)</value>
+    <value>Grids ativados (1–4, cada um com 4 ou 6 caracteres)</value>
   </data>
   <data name="HamsAt.Activation.Mode">
     <value>Modo (FM, USB, CW, etc.)</value>
@@ -2617,7 +2617,10 @@ Continuar?</value>
     <value>Insira pelo menos um quadrado Maidenhead.</value>
   </data>
   <data name="HamsAt.Activation.Error.ModeRequired">
-    <value>Insira um modo de operação.</value>
+    <value>Selecione um modo de operação (SSB, CW, Data ou FM).</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridLength">
+    <value>A grade '{0}' deve ter 4 ou 6 caracteres para o hams.at.</value>
   </data>
   <data name="HamsAt.Activation.Error.MhzInvalid">
     <value>Insira um valor MHz válido ou deixe o campo em branco.</value>

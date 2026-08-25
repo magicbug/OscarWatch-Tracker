@@ -2572,7 +2572,7 @@
     <value>呼号</value>
   </data>
   <data name="HamsAt.Activation.Grids">
-    <value>激活网格（1–4 个，逗号分隔）</value>
+    <value>激活网格（1–4 个，每个 4 或 6 个字符）</value>
   </data>
   <data name="HamsAt.Activation.Mode">
     <value>模式（FM、USB、CW 等）</value>
@@ -2617,7 +2617,10 @@
     <value>请输入至少一个 Maidenhead 网格。</value>
   </data>
   <data name="HamsAt.Activation.Error.ModeRequired">
-    <value>请输入操作模式。</value>
+    <value>请选择操作模式（SSB、CW、Data 或 FM）。</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridLength">
+    <value>网格“{0}”在 hams.at 上必须为 4 或 6 个字符。</value>
   </data>
   <data name="HamsAt.Activation.Error.MhzInvalid">
     <value>请输入有效的 MHz 值或留空。</value>

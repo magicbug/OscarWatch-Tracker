@@ -187,6 +187,26 @@ public sealed class ScheduledPassReminder
         return list;
     }
 
+    /// <summary>
+    /// Ensures the pass is scheduled. No-op if already scheduled within the AOS match tolerance.
+    /// </summary>
+    public static List<ScheduledPassEntry> EnsureScheduled(
+        IReadOnlyList<ScheduledPassEntry> scheduled,
+        string noradId,
+        DateTime aosUtc)
+    {
+        if (IsScheduled(scheduled, noradId, aosUtc))
+            return scheduled.ToList();
+
+        var list = scheduled.ToList();
+        list.Add(new ScheduledPassEntry
+        {
+            NoradId = noradId,
+            AosUtc = PassUtc.Normalize(aosUtc)
+        });
+        return list;
+    }
+
     private static DateTime RoundToMinute(DateTime utc) =>
         new(utc.Year, utc.Month, utc.Day, utc.Hour, utc.Minute, 0, DateTimeKind.Utc);
 

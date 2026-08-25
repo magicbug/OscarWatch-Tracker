@@ -1,12 +1,11 @@
 namespace OscarWatch.Core.Models;
 
 public sealed record HamsAtActivationHints(
-    string? UplinkMode,
-    string? DownlinkMode,
+    string? SuggestedMode,
+    IReadOnlyList<string> AvailableModes,
     double? UplinkMhz,
-    double? DownlinkMhz,
-    string? UplinkMhzDirection,
-    string? DownlinkMhzDirection)
+    double? DownlinkMhz)
 {
-    public static HamsAtActivationHints Empty { get; } = new(null, null, null, null, null, null);
+    public static HamsAtActivationHints Empty { get; } =
+        new(null, HamsAtApiModes.All, null, null);
 }

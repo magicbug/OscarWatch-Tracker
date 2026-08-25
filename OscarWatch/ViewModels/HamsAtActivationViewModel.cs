@@ -1,10 +1,10 @@
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OscarWatch.Core.Display;
 using OscarWatch.Core.Geo;
 using OscarWatch.Core.Models;
-using OscarWatch.Core.Services;
 using OscarWatch.Localization;
 
 namespace OscarWatch.ViewModels;
@@ -14,14 +14,8 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
     private readonly PassInfo _pass;
     private readonly GroundStation _observer;
     private readonly ILocalizationService _l;
-    private readonly string? _defaultUplinkMode;
-    private readonly string? _defaultDownlinkMode;
     private readonly double? _defaultUplinkMhz;
     private readonly double? _defaultDownlinkMhz;
-    private readonly string? _uplinkMhzDirection;
-    private readonly string? _downlinkMhzDirection;
-    private readonly bool _hasUplinkBand;
-    private readonly bool _hasDownlinkBand;
 
     public HamsAtActivationViewModel(
         PassInfo pass,
@@ -35,14 +29,8 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
         _pass = pass;
         _observer = observer;
         _l = localization;
-        _defaultUplinkMode = hints.UplinkMode;
-        _defaultDownlinkMode = hints.DownlinkMode;
         _defaultUplinkMhz = hints.UplinkMhz;
         _defaultDownlinkMhz = hints.DownlinkMhz;
-        _uplinkMhzDirection = hints.UplinkMhzDirection;
-        _downlinkMhzDirection = hints.DownlinkMhzDirection;
-        _hasUplinkBand = HasUplinkMhz;
-        _hasDownlinkBand = HasDownlinkMhz;
 
         PassSummary = _l.Get(
             "HamsAt.Activation.PassSummary",
@@ -52,17 +40,25 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
 
         Callsign = MaidenheadLocator.NormalizeCallsign(defaultCallsign);
         Grids = MaidenheadLocator.NormalizeGrids(observer.GridSquare);
-        Mode = SatelliteDatabaseModePicker.ResolveDefaultActivationMode(
-            _defaultUplinkMode,
-            _defaultDownlinkMode,
-            _hasUplinkBand,
-            _hasDownlinkBand) ?? "";
+
+        var available = hints.AvailableModes.Count > 0
+            ? hints.AvailableModes
+            : HamsAtApiModes.All;
+        foreach (var mode in available)
+            AvailableModes.Add(mode);
+
+        SelectedMode = hints.SuggestedMode is { } suggested && AvailableModes.Contains(suggested)
+            ? suggested
+            : AvailableModes.FirstOrDefault();
+
         Comment = "";
         OpenOnHamsAtAfterPost = true;
         GridIsValid = MaidenheadLocator.GetLiveValidationState(Grids);
     }
 
     public string PassSummary { get; }
+
+    public ObservableCollection<string> AvailableModes { get; } = [];
 
     public bool HasUplinkMhz => _defaultUplinkMhz is > 0;
 
@@ -77,7 +73,7 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
     private string _grids = "";
 
     [ObservableProperty]
-    private string _mode = "";
+    private string? _selectedMode;
 
     [ObservableProperty]
     private string _comment = "";
@@ -123,21 +119,12 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
         if (!value)
         {
             if (!IncludeDownlinkMhz)
-            {
                 SelectedMhzText = "";
-                Mode = SatelliteDatabaseModePicker.ResolveDefaultActivationMode(
-                    _defaultUplinkMode,
-                    _defaultDownlinkMode,
-                    _hasUplinkBand,
-                    _hasDownlinkBand) ?? "";
-            }
-
             return;
         }
 
         IncludeDownlinkMhz = false;
         SelectedMhzText = FormatMhz(_defaultUplinkMhz);
-        Mode = _defaultUplinkMode ?? Mode;
     }
 
     partial void OnIncludeDownlinkMhzChanged(bool value)
@@ -145,21 +132,12 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
         if (!value)
         {
             if (!IncludeUplinkMhz)
-            {
                 SelectedMhzText = "";
-                Mode = SatelliteDatabaseModePicker.ResolveDefaultActivationMode(
-                    _defaultUplinkMode,
-                    _defaultDownlinkMode,
-                    _hasUplinkBand,
-                    _hasDownlinkBand) ?? "";
-            }
-
             return;
         }
 
         IncludeUplinkMhz = false;
         SelectedMhzText = FormatMhz(_defaultDownlinkMhz);
-        Mode = _defaultDownlinkMode ?? Mode;
     }
 
     public bool TryConfirm([NotNullWhen(true)] out HamsAtCreateAlertRequest? request)
@@ -202,14 +180,23 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
             return false;
         }
 
+        foreach (var grid in gridList)
+        {
+            if (grid.Length is not (4 or 6))
+            {
+                ErrorText = _l.Get("HamsAt.Activation.Error.GridLength", grid);
+                return false;
+            }
+        }
+
         if (!int.TryParse(_pass.NoradId, out var norad) || norad <= 0)
         {
             ErrorText = _l.Get("Pass.HamsAt.InvalidNorad");
             return false;
         }
 
-        var mode = Mode.Trim();
-        if (string.IsNullOrWhiteSpace(mode))
+        var mode = SelectedMode?.Trim();
+        if (string.IsNullOrWhiteSpace(mode) || !HamsAtApiModes.All.Contains(mode))
         {
             ErrorText = _l.Get("HamsAt.Activation.Error.ModeRequired");
             return false;
@@ -226,7 +213,8 @@ public sealed partial class HamsAtActivationViewModel : ObservableObject
             }
 
             mhz = parsedMhz;
-            mhzDirection = IncludeUplinkMhz ? _uplinkMhzDirection : _downlinkMhzDirection;
+            // hams.at: mhz_direction says whether mhz is uplink or downlink (default "down").
+            mhzDirection = IncludeUplinkMhz ? "up" : "down";
         }
 
         var comment = Comment.Trim();

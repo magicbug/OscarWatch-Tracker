@@ -2689,7 +2689,7 @@ Continue?</value>
     <value>Callsign</value>
   </data>
   <data name="HamsAt.Activation.Grids">
-    <value>Grids activated (1–4, comma-separated)</value>
+    <value>Grids activated (1–4 grids, each 4 or 6 characters)</value>
   </data>
   <data name="HamsAt.Activation.Mode">
     <value>Mode (FM, USB, CW, etc.)</value>
@@ -2734,7 +2734,10 @@ Continue?</value>
     <value>Enter at least one Maidenhead grid square.</value>
   </data>
   <data name="HamsAt.Activation.Error.ModeRequired">
-    <value>Enter an operating mode.</value>
+    <value>Select an operating mode (SSB, CW, Data, or FM).</value>
+  </data>
+  <data name="HamsAt.Activation.Error.GridLength">
+    <value>Grid '{0}' must be 4 or 6 characters for hams.at.</value>
   </data>
   <data name="HamsAt.Activation.Error.MhzInvalid">
     <value>Enter a valid MHz value or leave the field blank.</value>

@@ -10,11 +10,13 @@ using OscarWatch.Core.Hardware;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Radio;
 using OscarWatch.Core.Rotator;
+using OscarWatch.Core.Orbit;
 using OscarWatch.Core.Services;
 using OscarWatch.Theme;
 using OscarWatch.Diagnostics;
 using OscarWatch.Help;
 using OscarWatch.Localization;
+using OscarWatch.Orbit;
 using OscarWatch.Services;
 using OscarWatch.Views;
 using Serilog;
@@ -674,7 +676,7 @@ public partial class MainViewModel : ViewModelBase
         if (App.MainWindow is null)
             return;
 
-        await HamsAtActivationCoordinator.PostAsync(
+        var posted = await HamsAtActivationCoordinator.PostAsync(
             App.MainWindow,
             row.Source,
             GroundStation,
@@ -690,6 +692,26 @@ public partial class MainViewModel : ViewModelBase
             App.Services.GetRequiredService<ISatelliteDatabaseService>(),
             _settings.Current.FrequencySelections,
             _settings.Current.Rig?.CwKeepSidebandDownlink == true).ConfigureAwait(true);
+
+        if (posted)
+            EnsurePassScheduled(row);
+    }
+
+    private void EnsurePassScheduled(PassRowViewModel row)
+    {
+        var current = _settings.Current.ScheduledPasses ?? [];
+        if (ScheduledPassReminder.IsScheduled(current, row.NoradId, row.AosUtc))
+        {
+            ApplyScheduledFlagsToPassList();
+            return;
+        }
+
+        _settings.Current.ScheduledPasses = ScheduledPassReminder.EnsureScheduled(
+            current,
+            row.NoradId,
+            row.AosUtc);
+        _settings.RequestSave();
+        ApplyScheduledFlagsToPassList();
     }
 
     private async Task RefreshHamsAtRovesAfterActivationAsync()
@@ -1886,7 +1908,47 @@ public partial class MainViewModel : ViewModelBase
         var clockFormat = PassDisplayFormat.FromSettings(_settings.Current.Use24HourClock);
         var aosText = PassDisplayFormat.FormatLocal(pass.AosUtc, clockFormat, useUtc: useUtc);
         var countdown = PassDisplayFormat.FormatCountdownToAos(DateTime.UtcNow, pass.AosUtc);
-        ScheduledPassAlertWindow.Show(owner, pass.SatelliteName, countdown, aosText);
+        var plotData = TryBuildScheduledPassPolarPlot(pass);
+        ScheduledPassAlertWindow.Show(
+            owner,
+            pass.SatelliteName,
+            countdown,
+            aosText,
+            plotData,
+            _settings.Current.MinimumElevationDeg,
+            GroundStation.HorizonMask,
+            useUtc,
+            _settings.Current.Use24HourClock);
+    }
+
+    private PassPolarPlotData? TryBuildScheduledPassPolarPlot(PassInfo pass)
+    {
+        try
+        {
+            var satellite = _tleService.Catalog.FirstOrDefault(s => s.NoradId == pass.NoradId);
+            if (satellite is null)
+                return null;
+
+            var propagator = App.Services.GetRequiredService<IOrbitPropagator>();
+            if (!propagator.HasSatellite(pass.NoradId))
+                propagator.LoadSatellite(satellite);
+
+            return PassPolarPlotBuilder.Build(
+                satellite,
+                propagator,
+                GroundStation,
+                pass,
+                useFullPass: true,
+                pass.AosUtc,
+                pass.LosUtc,
+                _settings.Current.MinimumElevationDeg,
+                includeMutualMarkers: false);
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "Scheduled pass polar plot build failed for {Satellite}", pass.SatelliteName);
+            return null;
+        }
     }
 
     public void TogglePassScheduled(PassRowViewModel row)
@@ -3317,6 +3379,7 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
 {
     private static ILocalizationService L => LocalizationService.Instance;
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowScheduleButton))]
     private PassRowHighlight _highlight;
 
     [ObservableProperty]
@@ -3362,6 +3425,10 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
     public string ScheduleAutomationName => IsScheduled
         ? L.Get("Pass.Schedule.Remove")
         : L.Get("Pass.Schedule.Add");
+
+    /// <summary>Hide schedule control once the pass has started (too late to mark).</summary>
+    public bool ShowScheduleButton =>
+        Highlight is not PassRowHighlight.InProgress and not PassRowHighlight.Recording;
 
     public bool CommunityStatusIsOn => CommunityStatusKind == SatelliteCommunityStatusKind.On;
     public bool CommunityStatusIsOff => CommunityStatusKind == SatelliteCommunityStatusKind.Off;
