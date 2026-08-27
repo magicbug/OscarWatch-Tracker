@@ -23,19 +23,29 @@ public sealed class SampledGroundGeometry : IGroundGeometry
         var usePropagator = _propagator.HasSatellite(satellite.NoradId);
         var orbit = usePropagator ? null : OrbitToolsMapping.CreateOrbit(satellite);
 
+        // Guard against invalid step values
+        if (step <= TimeSpan.Zero)
+            return [];
+
+        // Handle case where utcEnd is before utcStart (return empty like old implementation)
+        if (utcEnd < utcStart)
+            return [];
+
         // Optimized: Pre-calculate step count to avoid reallocations
         var timeSpan = utcEnd - utcStart;
         var stepCount = (int)(timeSpan.Ticks / step.Ticks) + 1;
         var rawPoints = new List<GeoCoordinate?>(stepCount);
 
         // Optimized: Use for-loop instead of while-loop to avoid DateTime addition in condition
+        // Preserve original DateTimeKind from utcStart instead of forcing UTC
         var stepTicks = step.Ticks;
         var startTicks = utcStart.Ticks;
         var endTicks = utcEnd.Ticks;
+        var originalKind = utcStart.Kind;
 
         for (var tickOffset = 0L; startTicks + tickOffset <= endTicks; tickOffset += stepTicks)
         {
-            var t = new DateTime(startTicks + tickOffset, DateTimeKind.Utc);
+            var t = new DateTime(startTicks + tickOffset, originalKind);
             try
             {
                 var point = usePropagator

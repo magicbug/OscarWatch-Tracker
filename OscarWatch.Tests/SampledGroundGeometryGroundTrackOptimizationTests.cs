@@ -6,7 +6,7 @@ namespace OscarWatch.Tests;
 
 /// <summary>
 /// Tests for the SampledGroundGeometry.GetGroundTrack optimization.
-/// Verifies functional equivalence and performance improvement.
+/// Verifies functional equivalence and correctness of optimized implementation.
 /// </summary>
 public class SampledGroundGeometryGroundTrackOptimizationTests
 {
@@ -153,6 +153,61 @@ public class SampledGroundGeometryGroundTrackOptimizationTests
         Assert.All(track, p => Assert.False(double.IsNaN(p.LatitudeDeg)));
     }
 
+    [Fact]
+    public void GetGroundTrack_with_utcEnd_before_utcStart_returns_empty_list()
+    {
+        // Arrange
+        var propagator = new MinimalPropagator();
+        propagator.LoadSatellite(TestSatellites.ISS);
+        var geometry = new SampledGroundGeometry(propagator);
+        
+        var utcStart = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
+        var utcEnd = utcStart.AddMinutes(-30); // End before start
+        var step = TimeSpan.FromMinutes(1);
+
+        // Act
+        var track = geometry.GetGroundTrack(TestSatellites.ISS, utcStart, utcEnd, step);
+
+        // Assert - Should return empty like original implementation
+        Assert.Empty(track);
+    }
+
+    [Fact]
+    public void GetGroundTrack_with_zero_step_returns_empty_list()
+    {
+        // Arrange
+        var propagator = new MinimalPropagator();
+        propagator.LoadSatellite(TestSatellites.ISS);
+        var geometry = new SampledGroundGeometry(propagator);
+        
+        var utcStart = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
+        var utcEnd = utcStart.AddMinutes(10);
+
+        // Act & Assert - Should handle zero and negative steps gracefully
+        Assert.Empty(geometry.GetGroundTrack(TestSatellites.ISS, utcStart, utcEnd, TimeSpan.Zero));
+        Assert.Empty(geometry.GetGroundTrack(TestSatellites.ISS, utcStart, utcEnd, TimeSpan.FromSeconds(-1)));
+    }
+
+    [Fact] 
+    public void GetGroundTrack_preserves_original_datetime_kind()
+    {
+        // Arrange
+        var propagator = new DateTimeKindCapturingPropagator();
+        propagator.LoadSatellite(TestSatellites.ISS);
+        var geometry = new SampledGroundGeometry(propagator);
+        
+        var utcStart = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Local);
+        var utcEnd = utcStart.AddMinutes(5);
+        var step = TimeSpan.FromMinutes(1);
+
+        // Act
+        var track = geometry.GetGroundTrack(TestSatellites.ISS, utcStart, utcEnd, step);
+
+        // Assert - Should preserve original DateTimeKind
+        Assert.True(track.Count > 0);
+        Assert.All(propagator.CapturedDateTimes, dt => Assert.Equal(DateTimeKind.Local, dt.Kind));
+    }
+
     private sealed class MinimalPropagator : IOrbitPropagator
     {
         private readonly HashSet<string> _loadedSatellites = new(StringComparer.Ordinal);
@@ -216,6 +271,44 @@ public class SampledGroundGeometryGroundTrackOptimizationTests
             if (_failForNoradIds.Contains(noradId))
                 throw new InvalidOperationException($"Simulated failure for {noradId}");
             return new EciPosition(0, 0, 6800);
+        }
+    }
+
+    private sealed class DateTimeKindCapturingPropagator : IOrbitPropagator
+    {
+        private readonly HashSet<string> _loadedSatellites = new(StringComparer.Ordinal);
+        
+        public IReadOnlyCollection<string> LoadedNoradIds => _loadedSatellites;
+        public List<DateTime> CapturedDateTimes { get; } = new();
+        
+        public void LoadSatellite(SatelliteCatalogEntry satellite) => _loadedSatellites.Add(satellite.NoradId);
+        public void RemoveSatellite(string noradId) => _loadedSatellites.Remove(noradId);
+        public bool HasSatellite(string noradId) => _loadedSatellites.Contains(noradId);
+        public void Clear() => _loadedSatellites.Clear();
+        
+        public LookAngles GetLookAngles(string noradId, GroundStation site, DateTime utc)
+        {
+            CapturedDateTimes.Add(utc);
+            return new(0, 45, 100, 0);
+        }
+        
+        public GeoCoordinate GetSubpoint(string noradId, DateTime utc)
+        {
+            CapturedDateTimes.Add(utc);
+            
+            // Simulate realistic subpoint movement over time
+            var hoursSinceEpoch = (utc - new DateTime(2024, 1, 1, 0, 0, 0, utc.Kind)).TotalHours;
+            var lat = 30.0 * Math.Sin(hoursSinceEpoch * 0.1);
+            var lon = (hoursSinceEpoch * 15.0) % 360.0; // 15 degrees per hour
+            if (lon > 180) lon -= 360;
+            
+            return new GeoCoordinate(lat, lon, 400);
+        }
+        
+        public EciPosition GetEciPosition(string noradId, DateTime utc)
+        {
+            CapturedDateTimes.Add(utc);
+            return new(0, 0, 6800);
         }
     }
 
