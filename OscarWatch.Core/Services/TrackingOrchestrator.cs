@@ -13,6 +13,7 @@ public sealed class TrackingOrchestrator
     private readonly IOrbitPropagator _propagator;
     private readonly IGroundGeometry _groundGeometry;
     private readonly IPassPredictor _passPredictor;
+    private readonly ISatelliteDatabaseService? _satelliteDatabase;
     private readonly ITrackingDiagnostics _diagnostics;
     private readonly SatelliteVisualCache _visualCache = new();
     private readonly HashSet<string> _loggedLookAngleSkips = new(StringComparer.Ordinal);
@@ -30,7 +31,8 @@ public sealed class TrackingOrchestrator
         IOrbitPropagator propagator,
         IGroundGeometry groundGeometry,
         IPassPredictor passPredictor,
-        ITrackingDiagnostics? diagnostics = null)
+        ITrackingDiagnostics? diagnostics = null,
+        ISatelliteDatabaseService? satelliteDatabase = null)
     {
         _settings = settings;
         _tleService = tleService;
@@ -38,6 +40,7 @@ public sealed class TrackingOrchestrator
         _groundGeometry = groundGeometry;
         _passPredictor = passPredictor;
         _diagnostics = diagnostics ?? NullTrackingDiagnostics.Instance;
+        _satelliteDatabase = satelliteDatabase;
     }
 
     public void ReloadEnabledSatellites()
@@ -190,7 +193,7 @@ public sealed class TrackingOrchestrator
                 var isSunlit = SatelliteIllumination.IsSunlit(satEci, sunEci);
                 states.Add(new SatelliteTrackState
                 {
-                    Name = sat.Name,
+                    Name = ResolveDisplayName(sat),
                     NoradId = sat.NoradId,
                     Subpoint = subpoint,
                     LookAngles = look,
@@ -365,6 +368,7 @@ public sealed class TrackingOrchestrator
             .Where(t => t.IsCompletedSuccessfully)
             .SelectMany(t => t.Result)
             .Where(p => p.Duration >= minDuration)
+            .Select(ApplyDisplayName)
             .OrderBy(p => p.AosUtc)
             .ToList();
     }
@@ -426,15 +430,36 @@ public sealed class TrackingOrchestrator
             .Where(t => t.IsCompletedSuccessfully)
             .SelectMany(t => t.Result)
             .Where(p => p.Duration >= minPassDuration)
+            .Select(ApplyDisplayName)
             .ToList();
 
         var remotePasses = remoteTasks
             .Where(t => t.IsCompletedSuccessfully)
             .SelectMany(t => t.Result)
             .Where(p => p.Duration >= minPassDuration)
+            .Select(ApplyDisplayName)
             .ToList();
 
-        return MutualPassFinder.FindOverlaps(localPasses, remotePasses, minMutualDuration);
+        return MutualPassFinder.FindOverlaps(localPasses, remotePasses, minMutualDuration)
+            .Select(ApplyDisplayName)
+            .ToList();
+    }
+
+    private string ResolveDisplayName(SatelliteCatalogEntry sat) =>
+        SatelliteDisplayName.Resolve(sat.Name, sat.NoradId, _satelliteDatabase);
+
+    private PassInfo ApplyDisplayName(PassInfo pass)
+    {
+        pass.SatelliteName = SatelliteDisplayName.Resolve(pass.SatelliteName, pass.NoradId, _satelliteDatabase);
+        return pass;
+    }
+
+    private MutualPassInfo ApplyDisplayName(MutualPassInfo pass)
+    {
+        pass.SatelliteName = SatelliteDisplayName.Resolve(pass.SatelliteName, pass.NoradId, _satelliteDatabase);
+        ApplyDisplayName(pass.LocalPass);
+        ApplyDisplayName(pass.RemotePass);
+        return pass;
     }
 
     private static double EstimatePeriodMinutes(SatelliteCatalogEntry sat)

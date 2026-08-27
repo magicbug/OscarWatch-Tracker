@@ -99,6 +99,49 @@ public sealed class SatelliteDatabaseServiceTests
         Assert.NotNull(fixture.Service.TryGetEntry("SAUDISAT 1C"));
     }
 
+    [Fact]
+    public void TryGetEntry_resolves_by_alternative_name()
+    {
+        using var fixture = CreateService(
+        [
+            new SatelliteRadioEntry
+            {
+                Name = "UmKA-1 (RS40-S)",
+                NoradId = "57172",
+                AlternativeNames = ["UmKA-1", "RS40-S"],
+                Modes = [Mode("FM")]
+            }
+        ]);
+
+        var byCatalog = fixture.Service.TryGetEntry("UmKA-1");
+        var byNickname = fixture.Service.TryGetEntry("RS40-S");
+
+        Assert.NotNull(byCatalog);
+        Assert.Equal("UmKA-1 (RS40-S)", byCatalog!.Name);
+        Assert.NotNull(byNickname);
+        Assert.Equal("UmKA-1 (RS40-S)", byNickname!.Name);
+    }
+
+    [Fact]
+    public void TryGetEntry_resolves_renamed_entry_by_norad_id()
+    {
+        using var fixture = CreateService(
+        [
+            new SatelliteRadioEntry
+            {
+                Name = "UmKA-1 (RS40-S)",
+                NoradId = "57172",
+                AlternativeNames = ["UmKA-1"],
+                Modes = [Mode("FM")]
+            }
+        ]);
+
+        var entry = fixture.Service.TryGetEntry("SOME OTHER TLE NAME", noradId: "57172");
+
+        Assert.NotNull(entry);
+        Assert.Equal("UmKA-1 (RS40-S)", entry!.Name);
+    }
+
     private static SatelliteTransponderMode Mode(string type) => new()
     {
         Type = type,
@@ -112,16 +155,17 @@ public sealed class SatelliteDatabaseServiceTests
     private static ServiceFixture CreateService(IReadOnlyList<SatelliteRadioEntry> entries)
     {
         var path = Path.Combine(Path.GetTempPath(), $"ow-db-{Guid.NewGuid():N}.json");
+        var missingUserPath = Path.Combine(Path.GetTempPath(), $"ow-db-missing-{Guid.NewGuid():N}.json");
         SatelliteDatabaseFile.Save(path, entries);
-        return new ServiceFixture(path);
+        return new ServiceFixture(path, missingUserPath);
     }
 
     private sealed class ServiceFixture : IDisposable
     {
-        public ServiceFixture(string path)
+        public ServiceFixture(string bundledPath, string userPath)
         {
-            Path = path;
-            Service = new SatelliteDatabaseService(path);
+            Path = bundledPath;
+            Service = new SatelliteDatabaseService(bundledPath, userPath);
         }
 
         public string Path { get; }

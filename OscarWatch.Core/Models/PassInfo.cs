@@ -2,7 +2,7 @@ namespace OscarWatch.Core.Models;
 
 public sealed class PassInfo
 {
-    public required string SatelliteName { get; init; }
+    public required string SatelliteName { get; set; }
     public required string NoradId { get; init; }
     public DateTime AosUtc { get; init; }
     public DateTime LosUtc { get; init; }

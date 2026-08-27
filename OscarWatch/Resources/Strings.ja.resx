@@ -3241,7 +3241,22 @@
     <value>衛星</value>
   </data>
   <data name="DbEditor.NameWatermark">
-    <value>名前（可能なら TLE 名と一致）</value>
+    <value>表示名（地図に表示）</value>
+  </data>
+  <data name="DbEditor.NoradIdLabel">
+    <value>NORAD ID</value>
+  </data>
+  <data name="DbEditor.NoradIdWatermark">
+    <value>任意: tle.oscarwatch.org と一致（例: 27607）</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesLabel">
+    <value>別名</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesWatermark">
+    <value>カンマ区切り（例: UmKA-1, RS40-S）</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesHint">
+    <value>表示名と異なる場合に TLE や公開データベースの名前と照合します。名前を変更すると以前の名前が自動的にここに残ります。別名を使う場合は NORAD ID の設定を推奨します。</value>
   </data>
   <data name="DbEditor.ModesHeader">
     <value>トランスポンダモード</value>
@@ -3320,6 +3335,9 @@
   </data>
   <data name="DbEditor.Status.Saved">
     <value>保存しました。</value>
+  </data>
+  <data name="DbEditor.Status.AliasesWithoutNorad">
+    <value>ヒント: 別名を使う場合は NORAD ID を設定すると、更新時にこの衛星との対応が保たれやすくなります。</value>
   </data>
   <data name="DbEditor.Status.Restored">
     <value>同梱データベースを復元しました。</value>

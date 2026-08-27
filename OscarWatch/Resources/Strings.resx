@@ -3436,13 +3436,22 @@ Continue?</value>
     <value>Satellite</value>
   </data>
   <data name="DbEditor.NameWatermark">
-    <value>Name (match TLE name when possible)</value>
+    <value>Preferred name (shown on the map)</value>
   </data>
   <data name="DbEditor.NoradIdLabel">
     <value>NORAD ID</value>
   </data>
   <data name="DbEditor.NoradIdWatermark">
-    <value>Optional — match tle.oscarwatch.org (e.g. 27607)</value>
+    <value>Optional: match tle.oscarwatch.org (e.g. 27607)</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesLabel">
+    <value>Alternative names</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesWatermark">
+    <value>Comma-separated (e.g. UmKA-1, RS40-S)</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesHint">
+    <value>Used to match TLE and published database names when they differ from the preferred name. Renaming keeps the previous name here automatically. A NORAD ID is recommended when aliases are set.</value>
   </data>
   <data name="DbEditor.ModesHeader">
     <value>Transponder modes</value>
@@ -3521,6 +3530,9 @@ Continue?</value>
   </data>
   <data name="DbEditor.Status.Saved">
     <value>Saved.</value>
+  </data>
+  <data name="DbEditor.Status.AliasesWithoutNorad">
+    <value>Tip: set a NORAD ID when using alternative names so updates keep matching this satellite.</value>
   </data>
   <data name="DbEditor.Status.Restored">
     <value>Restored shipped database.</value>

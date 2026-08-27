@@ -5,7 +5,7 @@ namespace OscarWatch.Core.Models;
 /// </summary>
 public sealed class MutualPassInfo
 {
-    public required string SatelliteName { get; init; }
+    public required string SatelliteName { get; set; }
     public required string NoradId { get; init; }
     public DateTime MutualStartUtc { get; init; }
     public DateTime MutualEndUtc { get; init; }

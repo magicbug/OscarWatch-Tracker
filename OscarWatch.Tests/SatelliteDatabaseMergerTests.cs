@@ -319,6 +319,81 @@ public class SatelliteDatabaseMergerTests
         Assert.Equal(437_350, entries[0].Modes[0].DownlinkKHz);
     }
 
+    [Fact]
+    public void BuildPlan_matches_renamed_local_by_norad_id()
+    {
+        var local = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UmKA-1 (RS40-S)",
+                NoradId = "57172",
+                AlternativeNames = ["UmKA-1"],
+                Modes = [Mode("FM VOICE", 436_795, 145_850, downlinkMode: "FM", uplinkMode: "FM")]
+            }
+        };
+
+        var remote = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UmKA-1",
+                NoradId = "57172",
+                Modes =
+                [
+                    Mode("FM VOICE", 436_795, 145_850, downlinkMode: "FM", uplinkMode: "FM"),
+                    Mode("Telemetry", 435_000, 0, downlinkMode: "FM", uplinkMode: "FM")
+                ]
+            }
+        };
+
+        var plan = SatelliteDatabaseMerger.BuildPlan(local, remote);
+
+        Assert.Empty(plan.NewSatellites);
+        Assert.Single(plan.NewModes);
+        Assert.Equal("UmKA-1 (RS40-S)", plan.NewModes[0].SatelliteName);
+        Assert.Equal("Telemetry", plan.NewModes[0].Mode.Type);
+
+        var merged = SatelliteDatabaseMerger.Apply(
+            local,
+            plan,
+            new SatelliteDatabaseMergeSelection { AcceptedNewModeKeys = { plan.NewModes[0].Key } });
+
+        var entry = Assert.Single(merged);
+        Assert.Equal("UmKA-1 (RS40-S)", entry.Name);
+        Assert.Equal(2, entry.Modes.Count);
+        Assert.Contains(entry.AlternativeNames ?? [], a => a == "UmKA-1");
+    }
+
+    [Fact]
+    public void BuildPlan_matches_renamed_local_by_alternative_name()
+    {
+        var local = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UmKA-1 (RS40-S)",
+                AlternativeNames = ["UmKA-1"],
+                Modes = [Mode("FM VOICE", 436_795, 145_850, downlinkMode: "FM", uplinkMode: "FM")]
+            }
+        };
+
+        var remote = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UmKA-1",
+                Modes = [Mode("FM VOICE", 436_795, 145_850, downlinkMode: "FM", uplinkMode: "FM")]
+            }
+        };
+
+        var plan = SatelliteDatabaseMerger.BuildPlan(local, remote);
+
+        Assert.Empty(plan.NewSatellites);
+        Assert.Empty(plan.NewModes);
+        Assert.Empty(plan.Conflicts);
+    }
+
     private static SatelliteRadioEntry Entry(string name, params SatelliteTransponderMode[] modes) =>
         new() { Name = name, Modes = modes.ToList() };
 

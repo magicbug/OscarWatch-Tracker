@@ -87,6 +87,15 @@
           <TextBox Watermark="{loc:Localize Key=DbEditor.NoradIdWatermark}"
                    Text="{Binding SatelliteNoradId, Mode=TwoWay}"
                    MaxLength="5" />
+          <TextBlock Text="{loc:Localize Key=DbEditor.AlternativeNamesLabel}" FontWeight="SemiBold" />
+          <TextBox Watermark="{loc:Localize Key=DbEditor.AlternativeNamesWatermark}"
+                   Text="{Binding SatelliteAlternativeNames, Mode=TwoWay}"
+                   TextWrapping="Wrap"
+                   AcceptsReturn="False" />
+          <TextBlock Text="{loc:Localize Key=DbEditor.AlternativeNamesHint}"
+                     FontSize="11"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
 
           <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
             <TextBlock Grid.Column="0" Text="{loc:Localize Key=DbEditor.ModesHeader}" FontWeight="SemiBold" VerticalAlignment="Center" />

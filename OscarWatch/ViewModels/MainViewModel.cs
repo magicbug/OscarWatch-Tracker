@@ -3245,6 +3245,7 @@ public partial class MainViewModel : ViewModelBase
         await window.ShowDialog<bool?>(App.MainWindow);
         Frequencies.ReloadFromDatabase();
         Tick();
+        await RefreshPassesAsync();
     }
 
     [RelayCommand]
@@ -3276,6 +3277,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 Frequencies.ReloadFromDatabase();
                 Tick();
+                await RefreshPassesAsync();
                 StatusText = _l.Get("Status.TransponderUpdated");
             }
             else

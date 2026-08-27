@@ -62,6 +62,15 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
 
             _byName[entry.Name.Trim()] = entry;
             RegisterParentheticalAlias(entry.Name.Trim());
+            foreach (var alias in entry.AlternativeNames ?? [])
+            {
+                if (string.IsNullOrWhiteSpace(alias))
+                    continue;
+
+                var trimmedAlias = alias.Trim();
+                _byName.TryAdd(trimmedAlias, entry);
+                RegisterParentheticalAlias(trimmedAlias);
+            }
         }
 
         _byNormalizedName = new Dictionary<string, SatelliteRadioEntry>(_byName.Count, StringComparer.Ordinal);

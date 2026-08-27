@@ -2,7 +2,7 @@ namespace OscarWatch.Core.Models;
 
 public sealed class SatelliteTrackState
 {
-    public required string Name { get; init; }
+    public required string Name { get; set; }
     public required string NoradId { get; init; }
     public required GeoCoordinate Subpoint { get; init; }
     public LookAngles? LookAngles { get; init; }

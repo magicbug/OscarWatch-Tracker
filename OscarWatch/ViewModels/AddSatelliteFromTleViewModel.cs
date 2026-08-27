@@ -35,11 +35,11 @@ public partial class AddSatelliteFromTleViewModel : ViewModelBase
 
     public AddSatelliteFromTleViewModel(
         IReadOnlyList<SatelliteCatalogEntry> catalog,
-        IEnumerable<string> existingNames,
+        IEnumerable<SatelliteRadioEntry> existingEntries,
         ILocalizationService localization)
     {
         _l = localization;
-        foreach (var entry in TransponderDatabaseTlePicker.ListAvailable(catalog, existingNames))
+        foreach (var entry in TransponderDatabaseTlePicker.ListAvailable(catalog, existingEntries))
         {
             _allCandidates.Add(new TleSatellitePickItem(entry.Name, entry.NoradId));
         }

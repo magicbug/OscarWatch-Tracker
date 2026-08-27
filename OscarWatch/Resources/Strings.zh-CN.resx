@@ -3319,7 +3319,22 @@
     <value>卫星</value>
   </data>
   <data name="DbEditor.NameWatermark">
-    <value>名称（尽可能匹配 TLE 名称）</value>
+    <value>首选名称（显示在地图上）</value>
+  </data>
+  <data name="DbEditor.NoradIdLabel">
+    <value>NORAD ID</value>
+  </data>
+  <data name="DbEditor.NoradIdWatermark">
+    <value>可选：与 tle.oscarwatch.org 匹配（例如 27607）</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesLabel">
+    <value>别名</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesWatermark">
+    <value>逗号分隔（例如 UmKA-1, RS40-S）</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesHint">
+    <value>当与首选名称不同时，用于匹配 TLE 和已发布数据库中的名称。重命名时会自动保留旧名称。设置别名时建议填写 NORAD ID。</value>
   </data>
   <data name="DbEditor.ModesHeader">
     <value>转发器模式</value>
@@ -3398,6 +3413,9 @@
   </data>
   <data name="DbEditor.Status.Saved">
     <value>已保存。</value>
+  </data>
+  <data name="DbEditor.Status.AliasesWithoutNorad">
+    <value>提示：使用别名时请填写 NORAD ID，以便更新时仍能匹配此卫星。</value>
   </data>
   <data name="DbEditor.Status.Restored">
     <value>已恢复预设数据库。</value>

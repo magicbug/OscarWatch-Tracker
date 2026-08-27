@@ -42,6 +42,9 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
     private string _satelliteNoradId = "";
 
     [ObservableProperty]
+    private string _satelliteAlternativeNames = "";
+
+    [ObservableProperty]
     private string _modeType = "";
 
     [ObservableProperty]
@@ -111,6 +114,7 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
         {
             SatelliteName = value?.Name ?? "";
             SatelliteNoradId = value?.NoradId ?? "";
+            SatelliteAlternativeNames = FormatAlternativeNames(value);
         }
         finally
         {
@@ -119,6 +123,7 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
 
         SelectedMode = value?.Modes.FirstOrDefault();
         OnPropertyChanged(nameof(HasSelectedSatellite));
+        RefreshAliasNoradHint();
     }
 
     partial void OnSelectedModeChanged(SatelliteTransponderMode? value)
@@ -132,7 +137,38 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
         if (_syncingSatelliteFields || SelectedSatellite is null)
             return;
 
-        SelectedSatellite.Name = value.Trim();
+        var previous = SelectedSatellite.Name.Trim();
+        var next = value.Trim();
+        SelectedSatellite.Name = next;
+
+        if (!string.IsNullOrEmpty(previous)
+            && !string.IsNullOrEmpty(next)
+            && !string.Equals(previous, next, StringComparison.OrdinalIgnoreCase))
+        {
+            SelectedSatellite.AlternativeNames ??= [];
+            if (!SelectedSatellite.AlternativeNames.Any(a =>
+                    string.Equals(a.Trim(), previous, StringComparison.OrdinalIgnoreCase))
+                && !string.Equals(previous, next, StringComparison.OrdinalIgnoreCase))
+            {
+                SelectedSatellite.AlternativeNames.Add(previous);
+            }
+
+            SelectedSatellite.AlternativeNames = SatelliteDatabaseFile.NormalizeAlternativeNames(
+                next,
+                SelectedSatellite.AlternativeNames);
+
+            _syncingSatelliteFields = true;
+            try
+            {
+                SatelliteAlternativeNames = FormatAlternativeNames(SelectedSatellite);
+            }
+            finally
+            {
+                _syncingSatelliteFields = false;
+            }
+        }
+
+        RefreshAliasNoradHint();
     }
 
     partial void OnSatelliteNoradIdChanged(string value)
@@ -141,6 +177,19 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
             return;
 
         SelectedSatellite.NoradId = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        RefreshAliasNoradHint();
+    }
+
+    partial void OnSatelliteAlternativeNamesChanged(string value)
+    {
+        if (_syncingSatelliteFields || SelectedSatellite is null)
+            return;
+
+        SelectedSatellite.AlternativeNames = ParseAlternativeNames(value);
+        SelectedSatellite.AlternativeNames = SatelliteDatabaseFile.NormalizeAlternativeNames(
+            SelectedSatellite.Name,
+            SelectedSatellite.AlternativeNames);
+        RefreshAliasNoradHint();
     }
 
     partial void OnModeTypeChanged(string value) => ApplyModeField(m => m.Type = value.Trim());
@@ -202,7 +251,11 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
             var filter = SearchText.Trim();
             return string.IsNullOrEmpty(filter)
                 ? Satellites
-                : Satellites.Where(s => s.Name.Contains(filter, StringComparison.OrdinalIgnoreCase));
+                : Satellites.Where(s =>
+                    s.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)
+                    || (s.AlternativeNames?.Any(a =>
+                        a.Contains(filter, StringComparison.OrdinalIgnoreCase)) ?? false)
+                    || (s.NoradId?.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false));
         }
     }
 
@@ -212,7 +265,7 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
         if (App.MainWindow is null)
             return;
 
-        var existing = Satellites.Select(s => s.Name).ToList();
+        var existing = Satellites.ToList();
         var pick = await AddSatelliteFromTleDialog.TryPickAsync(App.MainWindow, _tleService, existing)
             .ConfigureAwait(true);
 
@@ -337,6 +390,7 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
                 {
                     SatelliteName = SelectedSatellite.Name;
                     SatelliteNoradId = SelectedSatellite.NoradId ?? "";
+                    SatelliteAlternativeNames = FormatAlternativeNames(SelectedSatellite);
                 }
                 finally
                 {
@@ -524,11 +578,35 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
         StatusMessage = _l.Get("DbEditor.Status.InEditor", Satellites.Count);
     }
 
+    private void RefreshAliasNoradHint()
+    {
+        if (SelectedSatellite is null)
+            return;
+
+        var hasAliases = SelectedSatellite.AlternativeNames is { Count: > 0 };
+        var missingNorad = string.IsNullOrWhiteSpace(SelectedSatellite.NoradId);
+        if (hasAliases && missingNorad)
+            StatusMessage = _l.Get("DbEditor.Status.AliasesWithoutNorad");
+    }
+
+    private static string FormatAlternativeNames(SatelliteRadioEntry? entry)
+    {
+        if (entry?.AlternativeNames is not { Count: > 0 })
+            return "";
+
+        return string.Join(", ", entry.AlternativeNames);
+    }
+
+    private static List<string> ParseAlternativeNames(string raw) =>
+        raw.Split([',', ';'], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
     private static SatelliteRadioEntry CloneEntry(SatelliteRadioEntry source) =>
         new()
         {
             Name = source.Name,
             NoradId = source.NoradId,
+            AlternativeNames = source.AlternativeNames?.ToList() ?? [],
             Modes = source.Modes.Select(CloneMode).ToList()
         };
 

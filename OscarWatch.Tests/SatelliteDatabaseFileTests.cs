@@ -78,6 +78,42 @@ public class SatelliteDatabaseFileTests
     }
 
     [Fact]
+    public void NormalizeEntry_cleans_alternative_names()
+    {
+        var entry = new SatelliteRadioEntry
+        {
+            Name = "UmKA-1 (RS40-S)",
+            AlternativeNames = ["  UmKA-1  ", "RS40-S", "umka-1", "UmKA-1 (RS40-S)", ""],
+            Modes = [new SatelliteTransponderMode { Type = "FM", DownlinkKHz = 1, UplinkKHz = 1, DownlinkMode = "FM", UplinkMode = "FM" }]
+        };
+
+        SatelliteDatabaseFile.NormalizeEntry(entry);
+
+        Assert.Equal(["UmKA-1", "RS40-S"], entry.AlternativeNames);
+    }
+
+    [Fact]
+    public void ValidateEntries_rejects_duplicate_alternative_name()
+    {
+        var entries = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UmKA-1 (RS40-S)",
+                AlternativeNames = ["SO-50"],
+                Modes = [new SatelliteTransponderMode { Type = "FM", DownlinkKHz = 1, UplinkKHz = 1, DownlinkMode = "FM", UplinkMode = "FM" }]
+            },
+            new()
+            {
+                Name = "SO-50",
+                Modes = [new SatelliteTransponderMode { Type = "FM", DownlinkKHz = 1, UplinkKHz = 1, DownlinkMode = "FM", UplinkMode = "FM" }]
+            }
+        };
+
+        Assert.Contains("Duplicate", SatelliteDatabaseFile.ValidateEntries(entries), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void ValidateEntries_rejects_invalid_norad_id()
     {
         var entries = new List<SatelliteRadioEntry>

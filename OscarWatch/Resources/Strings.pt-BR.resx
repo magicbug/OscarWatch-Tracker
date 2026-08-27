@@ -3319,7 +3319,22 @@ Continuar?</value>
     <value>Satélite</value>
   </data>
   <data name="DbEditor.NameWatermark">
-    <value>Nome (use o nome TLE quando possível)</value>
+    <value>Nome preferido (mostrado no mapa)</value>
+  </data>
+  <data name="DbEditor.NoradIdLabel">
+    <value>ID NORAD</value>
+  </data>
+  <data name="DbEditor.NoradIdWatermark">
+    <value>Opcional: corresponder a tle.oscarwatch.org (ex.: 27607)</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesLabel">
+    <value>Nomes alternativos</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesWatermark">
+    <value>Separados por vírgula (ex.: UmKA-1, RS40-S)</value>
+  </data>
+  <data name="DbEditor.AlternativeNamesHint">
+    <value>Usados para corresponder a nomes TLE e da base publicada quando diferem do nome preferido. Renomear mantém o nome anterior aqui automaticamente. Recomenda-se um ID NORAD quando houver aliases.</value>
   </data>
   <data name="DbEditor.ModesHeader">
     <value>Modos de transmissores/transponder</value>
@@ -3398,6 +3413,9 @@ Continuar?</value>
   </data>
   <data name="DbEditor.Status.Saved">
     <value>Salvo.</value>
+  </data>
+  <data name="DbEditor.Status.AliasesWithoutNorad">
+    <value>Dica: defina um ID NORAD ao usar nomes alternativos para que as atualizações continuem a corresponder a este satélite.</value>
   </data>
   <data name="DbEditor.Status.Restored">
     <value>Banco de dados padrão restaurado.</value>

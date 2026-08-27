@@ -12,13 +12,13 @@ public static class AddSatelliteFromTleDialog
     public static async Task<AddSatellitePickResult?> TryPickAsync(
         Window owner,
         ITleService tleService,
-        IEnumerable<string> existingNames,
+        IEnumerable<SatelliteRadioEntry> existingEntries,
         CancellationToken cancellationToken = default)
     {
         await tleService.EnsureLoadedAsync(cancellationToken).ConfigureAwait(true);
         var vm = new AddSatelliteFromTleViewModel(
             tleService.Catalog,
-            existingNames,
+            existingEntries,
             Localization.LocalizationService.Instance);
         var window = new AddSatelliteFromTleWindow { DataContext = vm };
         return await window.ShowDialog<AddSatellitePickResult?>(owner).ConfigureAwait(true);

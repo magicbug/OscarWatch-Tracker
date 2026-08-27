@@ -28,8 +28,9 @@ The app loads **user → bundled** (see `SatelliteDatabaseService`).
 
 ```json
 {
-  "name": "SO-50",
-  "norad_id": "27607",
+  "name": "UmKA-1 (RS40-S)",
+  "norad_id": "57172",
+  "alternative_names": ["UmKA-1", "RS40-S"],
   "modes": [
     {
       "type": "FM VOICE",
@@ -47,8 +48,9 @@ The app loads **user → bundled** (see `SatelliteDatabaseService`).
 
 | Field | Notes |
 |-------|--------|
-| `name` | Must match the TLE catalogue name closely enough for lookup (see aliases in `SatelliteDatabaseService`) |
-| `norad_id` | Optional. NORAD catalogue number as a string (e.g. `"27607"`), matching [tle.oscarwatch.org](https://tle.oscarwatch.org/). Use when the display name differs from the TLE name (e.g. `RADFXSAT (FOX-1B)` → `43017` for AO-91). |
+| `name` | Preferred operator-facing label (map, passes, editor). Does not have to match the TLE catalogue name when `norad_id` or `alternative_names` link the entry. |
+| `norad_id` | Optional. NORAD catalogue number as a string (e.g. `"27607"`), matching [tle.oscarwatch.org](https://tle.oscarwatch.org/). Prefer this as the stable identity when the display name differs from the TLE name (e.g. `RADFXSAT (FOX-1B)` → `43017` for AO-91). |
+| `alternative_names` | Optional. Extra names for TLE / published-database matching (nicknames, previous names after a rename). Case-insensitive; must not duplicate `name` or another satellite’s name/alias. |
 | `type` | Label shown in the frequency panel mode list; unique per satellite |
 | `downlink` / `uplink` | kHz; use **`0` uplink** for beacon-only / receive-only (SSTV, telemetry, CW beacon). OscarWatch treats these as receive-only for CAT (no uplink doppler; ICOM rigs exit satellite mode and tune Main on the downlink band). |
 | `downlink_mode` / `uplink_mode` | Rig mode strings: `FM`, `FMN`, `USB`, `LSB`, `CW`, `DATA-USB`, `DATA-LSB`, `DATA-FM` (`FM-DATA` is accepted and stored as `DATA-FM`) |
@@ -63,7 +65,11 @@ The app loads **user → bundled** (see `SatelliteDatabaseService`).
 
 ## Name matching and TLEs
 
-The transponder database is keyed by **satellite name**, with **NORAD catalogue ID** as a fallback when TLE names differ (for example Celestrak `OBJECT_NAME` values such as `SAUDISAT 1C` matching database entry `SO-50` via NORAD ID `27607`). Names should align with [tle.oscarwatch.org](https://tle.oscarwatch.org/) TLE entries where possible. OscarWatch registers common aliases (e.g. `AO-7` → `AO-07`, `ISS (ZARYA)` → `ISS`, `FOX-1B` → `RADFXSAT (FOX-1B)`, `SAUDISAT 1C` → `SO-50`). Optional `norad_id` in the database JSON enables reliable cross-catalog matching. If a spacecraft has TLEs but no database entry, the frequency panel stays empty until an entry exists locally or via sync.
+Lookup and remote merge prefer **NORAD catalogue ID** when both sides have one, then match by **preferred name** or any **`alternative_names`** entry. That lets you rename a satellite for the map without the next published update treating it as a new spacecraft.
+
+For frequency lookup, OscarWatch also registers common static aliases (e.g. `AO-7` → `AO-07`, `ISS (ZARYA)` → `ISS`, `FOX-1B` → `RADFXSAT (FOX-1B)`, `SAUDISAT 1C` → `SO-50`) and parenthetical prefixes. Optional `norad_id` remains the most reliable cross-catalog link (for example Celestrak `SAUDISAT 1C` → database `SO-50` via `27607`).
+
+When a database entry is found, the map and pass list show the preferred `name` rather than the raw TLE catalogue name. If a spacecraft has TLEs but no database entry, the frequency panel stays empty until an entry exists locally or via sync, and the map keeps the TLE name.
 
 ## Contributing updates
 

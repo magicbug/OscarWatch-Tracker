@@ -51,6 +51,7 @@ public sealed class SatelliteDatabaseEditor : ISatelliteDatabaseEditor
         {
             Name = source.Name,
             NoradId = source.NoradId,
+            AlternativeNames = source.AlternativeNames?.ToList() ?? [],
             Modes = source.Modes.Select(CloneMode).ToList()
         };
 

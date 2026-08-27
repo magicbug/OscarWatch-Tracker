@@ -69,6 +69,20 @@
         frequencies in kHz, set mode names, Doppler type (normal or reverse), and CTCSS tones.
         Changes are saved to your AppData copy, not the application installation folder.
       </p>
+      <h3 id="names-and-aliases">Preferred names and alternative names</h3>
+      <p>
+        Many spacecraft have more than one common name (for example <strong>UmKA-1</strong> and <strong>RS40-S</strong>).
+        In the editor you can set:
+      </p>
+      <ul>
+        <li><strong>Preferred name</strong> — the label shown on the map, pass list, and frequency panel. Renaming here updates the map as soon as you save and close the editor.</li>
+        <li><strong>NORAD ID</strong> — the stable catalogue number. Use this whenever you can; OscarWatch prefers it when matching TLEs and when merging published database updates.</li>
+        <li><strong>Alternative names</strong> — comma-separated nicknames or older catalogue names used for matching. Renaming a satellite automatically keeps the previous preferred name in this list so the next <strong>Update transponder database…</strong> does not treat the published name as a new spacecraft.</li>
+      </ul>
+      <p>
+        Example: preferred name <code>UmKA-1 (RS40-S)</code>, NORAD ID filled in, alternative names
+        <code>UmKA-1, RS40-S</code>. The map shows your preferred label; sync and frequency lookup still find the entry via NORAD or those aliases.
+      </p>
       <p>
         OscarWatch publishes an updated transponder list at
         <a href="https://tle.oscarwatch.org/satellite_database.json">tle.oscarwatch.org/satellite_database.json</a>.
@@ -81,6 +95,7 @@
         <li><strong>Settings → Tracking</strong> — enable <em>Check for transponder database updates on startup</em> (on by default; this is separate from the TLE catalog source).</li>
         <li>New remote entries are selected by default in the merge dialogue; uncheck any you do not want.</li>
         <li>If a mode you already have differs from the published copy, choose <strong>Use local version</strong> and press <strong>Apply selected</strong> to confirm your edit (you will not be asked again unless you change the frequency or the published database changes). Choose <strong>Use published version</strong> to adopt the server copy instead.</li>
+        <li>Merge matches your local entry by <strong>NORAD ID</strong> first, then by preferred name or any alternative name. Your preferred name is kept; published updates add modes without renaming the satellite on your map.</li>
         <li><strong>Restore defaults</strong> reloads the database shipped with your app version, not the remote file.</li>
         <li>Set <strong>uplink to 0</strong> for receive-only modes (SSTV, beacons, telemetry).</li>
       </ul>

@@ -12,7 +12,8 @@ public static class SatelliteDatabaseMerger
         IReadOnlyList<SatelliteRadioEntry> localEntries,
         IReadOnlyList<SatelliteRadioEntry> remoteEntries)
     {
-        var localByName = IndexByName(localEntries);
+        var localByName = IndexByNameAndAliases(localEntries);
+        var localByNoradId = IndexByNoradId(localEntries);
         var newSatellites = new List<SatelliteDatabaseNewSatellite>();
         var newModes = new List<SatelliteDatabaseNewMode>();
         var conflicts = new List<SatelliteDatabaseMergeConflict>();
@@ -23,20 +24,23 @@ public static class SatelliteDatabaseMerger
             if (string.IsNullOrWhiteSpace(remoteEntry.Name))
                 continue;
 
-            var remoteName = remoteEntry.Name.Trim();
             var normalizedRemote = CloneEntry(SatelliteDatabaseFile.NormalizeEntry(remoteEntry));
-
-            if (!localByName.TryGetValue(remoteName, out var localEntry))
+            var localEntry = FindLocalMatch(normalizedRemote, localByNoradId, localByName);
+            if (localEntry is null)
             {
                 newSatellites.Add(new SatelliteDatabaseNewSatellite { Entry = normalizedRemote });
                 continue;
             }
 
+            // Prefer the local preferred name so Apply updates the renamed row,
+            // and so merge never overwrites a local display name with the remote name.
+            var localName = localEntry.Name.Trim();
+
             if (ShouldBackfillNoradId(localEntry.NoradId, normalizedRemote.NoradId))
             {
                 noradIdBackfills.Add(new SatelliteDatabaseNoradIdBackfill
                 {
-                    SatelliteName = remoteName,
+                    SatelliteName = localName,
                     NoradId = normalizedRemote.NoradId!.Trim()
                 });
             }
@@ -52,7 +56,7 @@ public static class SatelliteDatabaseMerger
                 {
                     newModes.Add(new SatelliteDatabaseNewMode
                     {
-                        SatelliteName = remoteName,
+                        SatelliteName = localName,
                         Mode = CloneMode(remoteMode)
                     });
                     continue;
@@ -62,7 +66,7 @@ public static class SatelliteDatabaseMerger
                 {
                     conflicts.Add(new SatelliteDatabaseMergeConflict
                     {
-                        SatelliteName = remoteName,
+                        SatelliteName = localName,
                         ModeType = typeKey,
                         LocalMode = CloneMode(localMode),
                         RemoteMode = CloneMode(remoteMode)
@@ -163,7 +167,7 @@ public static class SatelliteDatabaseMerger
         SatelliteDatabaseMergeSelection selection)
     {
         var result = localEntries.Select(CloneEntry).ToList();
-        var byName = IndexByName(result);
+        var byName = IndexByPrimaryName(result);
 
         foreach (var addition in plan.NewSatellites)
         {
@@ -245,7 +249,31 @@ public static class SatelliteDatabaseMerger
             : $"TX {tx:0.###} ↑ · RX {rx:0.###} ↓ · {mode.UplinkMode}/{mode.DownlinkMode} · {mode.Doppler}{tone}";
     }
 
-    private static Dictionary<string, SatelliteRadioEntry> IndexByName(IReadOnlyList<SatelliteRadioEntry> entries)
+    private static SatelliteRadioEntry? FindLocalMatch(
+        SatelliteRadioEntry remoteEntry,
+        IReadOnlyDictionary<string, SatelliteRadioEntry> localByNoradId,
+        IReadOnlyDictionary<string, SatelliteRadioEntry> localByName)
+    {
+        var remoteNorad = CanonicalNoradId(remoteEntry.NoradId);
+        if (remoteNorad is not null && localByNoradId.TryGetValue(remoteNorad, out var byNorad))
+            return byNorad;
+
+        if (localByName.TryGetValue(remoteEntry.Name.Trim(), out var byName))
+            return byName;
+
+        foreach (var alias in remoteEntry.AlternativeNames ?? [])
+        {
+            if (string.IsNullOrWhiteSpace(alias))
+                continue;
+
+            if (localByName.TryGetValue(alias.Trim(), out var byAlias))
+                return byAlias;
+        }
+
+        return null;
+    }
+
+    private static Dictionary<string, SatelliteRadioEntry> IndexByPrimaryName(IReadOnlyList<SatelliteRadioEntry> entries)
     {
         var map = new Dictionary<string, SatelliteRadioEntry>(StringComparer.OrdinalIgnoreCase);
         foreach (var entry in entries)
@@ -258,6 +286,48 @@ public static class SatelliteDatabaseMerger
 
         return map;
     }
+
+    private static Dictionary<string, SatelliteRadioEntry> IndexByNameAndAliases(IReadOnlyList<SatelliteRadioEntry> entries)
+    {
+        var map = new Dictionary<string, SatelliteRadioEntry>(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in entries)
+        {
+            if (string.IsNullOrWhiteSpace(entry.Name))
+                continue;
+
+            map.TryAdd(entry.Name.Trim(), entry);
+            foreach (var alias in entry.AlternativeNames ?? [])
+            {
+                if (string.IsNullOrWhiteSpace(alias))
+                    continue;
+
+                map.TryAdd(alias.Trim(), entry);
+            }
+        }
+
+        return map;
+    }
+
+    private static Dictionary<string, SatelliteRadioEntry> IndexByNoradId(IReadOnlyList<SatelliteRadioEntry> entries)
+    {
+        var map = new Dictionary<string, SatelliteRadioEntry>(StringComparer.Ordinal);
+        foreach (var entry in entries)
+        {
+            var noradId = CanonicalNoradId(entry.NoradId);
+            if (noradId is null)
+                continue;
+
+            map.TryAdd(noradId, entry);
+        }
+
+        return map;
+    }
+
+    private static string? CanonicalNoradId(string? noradId) =>
+        SatelliteDatabaseFile.NormalizeNoradId(noradId) is { } normalized
+        && SatelliteDatabaseFile.IsValidNoradId(normalized)
+            ? normalized
+            : null;
 
     private static Dictionary<string, SatelliteTransponderMode> IndexModesByType(SatelliteRadioEntry entry)
     {
@@ -309,6 +379,7 @@ public static class SatelliteDatabaseMerger
         {
             Name = source.Name,
             NoradId = source.NoradId,
+            AlternativeNames = source.AlternativeNames?.ToList() ?? [],
             Modes = source.Modes.Select(CloneMode).ToList()
         };
 

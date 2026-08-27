@@ -24,6 +24,33 @@ public class TransponderDatabaseTlePickerTests
     }
 
     [Fact]
+    public void ListAvailable_excludes_by_norad_id_and_alternative_name()
+    {
+        var catalog = new List<SatelliteCatalogEntry>
+        {
+            new() { Name = "UmKA-1", NoradId = "57172", Line1 = "1", Line2 = "2" },
+            new() { Name = "RS40-S", NoradId = "99999", Line1 = "1", Line2 = "2" },
+            new() { Name = "AO-07", NoradId = "07530", Line1 = "1", Line2 = "2" }
+        };
+
+        var existing = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UmKA-1 (RS40-S)",
+                NoradId = "57172",
+                AlternativeNames = ["RS40-S"],
+                Modes = [new SatelliteTransponderMode { Type = "FM", DownlinkKHz = 1, UplinkKHz = 1, DownlinkMode = "FM", UplinkMode = "FM" }]
+            }
+        };
+
+        var available = TransponderDatabaseTlePicker.ListAvailable(catalog, existing);
+
+        Assert.Single(available);
+        Assert.Equal("AO-07", available[0].Name);
+    }
+
+    [Fact]
     public void ResolveChosenName_prefers_custom_name_when_set()
     {
         Assert.Equal("CUSTOM-1", TransponderDatabaseTlePicker.ResolveChosenName("RS-44", "CUSTOM-1"));
