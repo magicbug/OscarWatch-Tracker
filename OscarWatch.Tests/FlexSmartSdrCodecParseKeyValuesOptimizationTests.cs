@@ -5,7 +5,7 @@ namespace OscarWatch.Tests;
 
 /// <summary>
 /// Tests for the FlexSmartSdrCodec.ParseKeyValues Span optimization.
-/// Verifies functional equivalence and performance improvement.
+/// Verifies functional equivalence and behavioral correctness.
 /// </summary>
 public class FlexSmartSdrCodecParseKeyValuesOptimizationTests
 {
@@ -195,6 +195,6 @@ public class FlexSmartSdrCodecParseKeyValuesOptimizationTests
         Assert.NotNull(method);
         
         var result = method.Invoke(null, [input]);
-        return (Dictionary<string, string>)result!;
+        return Assert.IsType<Dictionary<string, string>>(result);
     }
 }
