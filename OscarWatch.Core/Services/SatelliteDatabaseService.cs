@@ -60,16 +60,21 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
             if (string.IsNullOrWhiteSpace(entry.Name))
                 continue;
 
-            _byName[entry.Name.Trim()] = entry;
-            RegisterParentheticalAlias(entry.Name.Trim());
-            foreach (var alias in entry.AlternativeNames ?? [])
+            var trimmedName = entry.Name.Trim();
+            _byName[trimmedName] = entry;
+            RegisterParentheticalAlias(trimmedName);
+            
+            if (entry.AlternativeNames != null)
             {
-                if (string.IsNullOrWhiteSpace(alias))
-                    continue;
+                foreach (var alias in entry.AlternativeNames)
+                {
+                    if (string.IsNullOrWhiteSpace(alias))
+                        continue;
 
-                var trimmedAlias = alias.Trim();
-                _byName.TryAdd(trimmedAlias, entry);
-                RegisterParentheticalAlias(trimmedAlias);
+                    var trimmedAlias = alias.Trim();
+                    _byName.TryAdd(trimmedAlias, entry);
+                    RegisterParentheticalAlias(trimmedAlias);
+                }
             }
         }
 
@@ -118,12 +123,16 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
 
     private void RegisterParentheticalAlias(string name)
     {
-        var paren = name.IndexOf('(');
-        if (paren > 0)
+        var parenIndex = name.IndexOf('(');
+        if (parenIndex > 0)
         {
-            var prefix = name[..paren].Trim();
-            if (!_byName.ContainsKey(prefix))
-                _byName[prefix] = _byName[name];
+            var prefixSpan = name.AsSpan(0, parenIndex).TrimEnd();
+            if (prefixSpan.Length > 0)
+            {
+                var prefix = prefixSpan.ToString();
+                if (!_byName.ContainsKey(prefix))
+                    _byName[prefix] = _byName[name];
+            }
         }
     }
 
@@ -136,11 +145,13 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
             && _byName.TryGetValue(aliasKey, out var byAlias))
             return byAlias;
 
-        var paren = trimmed.IndexOf('(');
-        if (paren > 0)
+        var parenIndex = trimmed.IndexOf('(');
+        if (parenIndex > 0)
         {
-            var prefix = trimmed[..paren].Trim();
-            if (_byName.TryGetValue(prefix, out var byPrefix))
+            var prefix = trimmed.AsSpan(0, parenIndex);
+            // Trim the prefix span and convert to string only if needed
+            var trimmedPrefix = prefix.TrimEnd().ToString();
+            if (_byName.TryGetValue(trimmedPrefix, out var byPrefix))
                 return byPrefix;
         }
 
@@ -148,8 +159,21 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
         return _byNormalizedName.GetValueOrDefault(normalized);
     }
 
-    private static string NormalizeName(string name) =>
-        name.Replace(" ", "", StringComparison.Ordinal)
-            .Replace("-", "", StringComparison.Ordinal)
-            .ToUpperInvariant();
+    private static string NormalizeName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return string.Empty;
+
+        // Pre-allocate buffer for worst case (no chars removed)
+        Span<char> buffer = stackalloc char[name.Length];
+        var writeIndex = 0;
+
+        foreach (var c in name.AsSpan())
+        {
+            if (c != ' ' && c != '-')
+                buffer[writeIndex++] = char.ToUpperInvariant(c);
+        }
+
+        return buffer[..writeIndex].ToString();
+    }
 }
