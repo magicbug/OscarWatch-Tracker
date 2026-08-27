@@ -75,8 +75,15 @@ public sealed class HamsAtRovesService : IHamsAtRovesService
             .ConfigureAwait(false);
         if (result.Ok)
         {
-            var workable = result.Alerts.Count(a => a.IsWorkable);
-            return (true, $"{workable} workable alert(s) returned.");
+            // Optimized: Replace LINQ Count() with direct loop to avoid delegate allocation
+            var workableCount = 0;
+            for (int i = 0; i < result.Alerts.Count; i++)
+            {
+                if (result.Alerts[i].IsWorkable)
+                    workableCount++;
+            }
+            
+            return (true, $"{workableCount} workable alert(s) returned.");
         }
 
         return (false, result.ErrorMessage ?? HamsAtErrorHelper.ToEnglish(HamsAtFetchErrorKind.Generic));
@@ -220,7 +227,7 @@ public sealed class HamsAtRovesService : IHamsAtRovesService
             ["observer_lon"] = request.ObserverLon,
             ["max_at"] = request.MaxAtUtc.ToUniversalTime().ToString("O"),
             ["callsign"] = request.Callsign,
-            ["grids"] = request.Grids.ToArray()
+            ["grids"] = request.Grids // Already IReadOnlyList, no need to convert to array
         };
 
         if (!string.IsNullOrWhiteSpace(request.Mode))
@@ -259,10 +266,16 @@ public sealed class HamsAtRovesService : IHamsAtRovesService
             if (payload?.Errors is not { Count: > 0 } errors)
                 return [];
 
-            return errors
-                .Where(error => !string.IsNullOrWhiteSpace(error))
-                .Select(error => error.Trim())
-                .ToArray();
+            // Optimized: Replace LINQ chain with direct loop to avoid allocations
+            var validErrors = new List<string>(errors.Count);
+            for (int i = 0; i < errors.Count; i++)
+            {
+                var error = errors[i];
+                if (!string.IsNullOrWhiteSpace(error))
+                    validErrors.Add(error.Trim());
+            }
+
+            return validErrors;
         }
         catch (JsonException)
         {
@@ -332,7 +345,17 @@ public sealed class HamsAtRovesService : IHamsAtRovesService
         var payload = await JsonSerializer.DeserializeAsync<HamsAtUpcomingResponseDto>(stream, JsonOptions, cancellationToken)
             .ConfigureAwait(false);
 
-        return payload?.Data?.Select(MapAlert).ToArray() ?? [];
+        if (payload?.Data is null)
+            return [];
+
+        // Optimized: Replace LINQ Select().ToArray() with direct loop
+        var alerts = new HamsAtUpcomingAlert[payload.Data.Count];
+        for (int i = 0; i < payload.Data.Count; i++)
+        {
+            alerts[i] = MapAlert(payload.Data[i]);
+        }
+
+        return alerts;
     }
 
     private static HamsAtUpcomingAlert MapAlert(HamsAtUpcomingAlertDto dto) => new()
