@@ -23,6 +23,22 @@ public sealed class ScheduledPassReminder
 
         var now = PassUtc.Normalize(utcNow);
         var lead = TimeSpan.FromMinutes(PassScheduleSettings.ClampLeadMinutes(leadMinutesBeforeAos));
+
+        // Build dictionary for O(1) pass lookup by NoradId
+        var passesByNoradId = new Dictionary<string, List<PassInfo>>(StringComparer.Ordinal);
+        foreach (var pass in upcomingPasses)
+        {
+            if (string.IsNullOrWhiteSpace(pass.NoradId))
+                continue;
+                
+            if (!passesByNoradId.TryGetValue(pass.NoradId, out var passes))
+            {
+                passes = new List<PassInfo>(2); // Most satellites have 1-2 upcoming passes
+                passesByNoradId[pass.NoradId] = passes;
+            }
+            passes.Add(pass);
+        }
+
         var due = new List<PassInfo>();
 
         foreach (var entry in scheduled)
@@ -30,7 +46,10 @@ public sealed class ScheduledPassReminder
             if (string.IsNullOrWhiteSpace(entry.NoradId))
                 continue;
 
-            var pass = FindMatchingPass(upcomingPasses, entry.NoradId, entry.AosUtc);
+            if (!passesByNoradId.TryGetValue(entry.NoradId, out var candidatePasses))
+                continue;
+
+            var pass = FindBestMatchFromCandidates(candidatePasses, entry.AosUtc);
             if (pass is null)
                 continue;
 
@@ -54,6 +73,32 @@ public sealed class ScheduledPassReminder
         }
 
         return due;
+    }
+
+    /// <summary>
+    /// Optimized pass matching from a small candidate set (same NoradId).
+    /// </summary>
+    private static PassInfo? FindBestMatchFromCandidates(List<PassInfo> candidates, DateTime targetAosUtc)
+    {
+        var target = PassUtc.Normalize(targetAosUtc);
+        PassInfo? best = null;
+        var bestDelta = TimeSpan.MaxValue;
+
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            var candidate = candidates[i];
+            var delta = Abs(PassUtc.Normalize(candidate.AosUtc) - target);
+            if (delta > AosMatchTolerance)
+                continue;
+
+            if (delta < bestDelta)
+            {
+                bestDelta = delta;
+                best = candidate;
+            }
+        }
+
+        return best;
     }
 
     public static string AlertKey(string noradId, DateTime aosUtc)
@@ -91,25 +136,39 @@ public sealed class ScheduledPassReminder
         return best;
     }
 
-    /// <summary>
-    /// Rematch scheduled entries to current predictions (AOS may drift after TLE refresh),
-    /// update stored AOS, and drop entries past LOS or with no match.
-    /// </summary>
     public static List<ScheduledPassEntry> RematchAndPrune(
         IReadOnlyList<ScheduledPassEntry> scheduled,
         IReadOnlyList<PassInfo> upcomingPasses,
         DateTime utcNow)
     {
         var now = PassUtc.Normalize(utcNow);
-        var result = new List<ScheduledPassEntry>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var result = new List<ScheduledPassEntry>(scheduled.Count);
+        var seen = new HashSet<string>(scheduled.Count, StringComparer.Ordinal);
+
+        // Build pass lookup dictionary for efficiency
+        var passesByNoradId = new Dictionary<string, List<PassInfo>>(StringComparer.Ordinal);
+        foreach (var pass in upcomingPasses)
+        {
+            if (string.IsNullOrWhiteSpace(pass.NoradId))
+                continue;
+                
+            if (!passesByNoradId.TryGetValue(pass.NoradId, out var passes))
+            {
+                passes = new List<PassInfo>(2);
+                passesByNoradId[pass.NoradId] = passes;
+            }
+            passes.Add(pass);
+        }
 
         foreach (var entry in scheduled)
         {
             if (string.IsNullOrWhiteSpace(entry.NoradId))
                 continue;
 
-            var pass = FindMatchingPass(upcomingPasses, entry.NoradId, entry.AosUtc);
+            if (!passesByNoradId.TryGetValue(entry.NoradId, out var candidatePasses))
+                continue;
+
+            var pass = FindBestMatchFromCandidates(candidatePasses, entry.AosUtc);
             if (pass is null)
                 continue;
 
@@ -147,8 +206,9 @@ public sealed class ScheduledPassReminder
         ScheduledPassEntry? best = null;
         var bestDelta = TimeSpan.MaxValue;
 
-        foreach (var entry in scheduled)
+        for (int i = 0; i < scheduled.Count; i++)
         {
+            var entry = scheduled[i];
             if (!string.Equals(entry.NoradId, noradId, StringComparison.Ordinal))
                 continue;
 
@@ -171,34 +231,45 @@ public sealed class ScheduledPassReminder
         string noradId,
         DateTime aosUtc)
     {
-        var list = scheduled.ToList();
-        var existing = FindMatchingEntry(list, noradId, aosUtc);
-        if (existing is not null)
+        var list = new List<ScheduledPassEntry>(scheduled.Count + 1);
+        var existing = FindMatchingEntry(scheduled, noradId, aosUtc);
+        var foundMatch = false;
+        
+        foreach (var entry in scheduled)
         {
-            list.Remove(existing);
-            return list;
+            if (!foundMatch && ReferenceEquals(entry, existing))
+            {
+                foundMatch = true;
+                continue; // Skip the matching entry (remove it)
+            }
+            list.Add(entry);
         }
 
-        list.Add(new ScheduledPassEntry
+        if (!foundMatch)
         {
-            NoradId = noradId,
-            AosUtc = PassUtc.Normalize(aosUtc)
-        });
+            // No existing entry found, add new one
+            list.Add(new ScheduledPassEntry
+            {
+                NoradId = noradId,
+                AosUtc = PassUtc.Normalize(aosUtc)
+            });
+        }
+
         return list;
     }
 
-    /// <summary>
-    /// Ensures the pass is scheduled. No-op if already scheduled within the AOS match tolerance.
-    /// </summary>
     public static List<ScheduledPassEntry> EnsureScheduled(
         IReadOnlyList<ScheduledPassEntry> scheduled,
         string noradId,
         DateTime aosUtc)
     {
         if (IsScheduled(scheduled, noradId, aosUtc))
-            return scheduled.ToList();
+            return scheduled.Count == 0 ? new List<ScheduledPassEntry>() : new List<ScheduledPassEntry>(scheduled);
 
-        var list = scheduled.ToList();
+        var list = new List<ScheduledPassEntry>(scheduled.Count + 1);
+        foreach (var entry in scheduled)
+            list.Add(entry);
+            
         list.Add(new ScheduledPassEntry
         {
             NoradId = noradId,
