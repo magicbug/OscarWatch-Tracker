@@ -13,6 +13,7 @@ public sealed class TrackingOrchestrator
     private readonly IOrbitPropagator _propagator;
     private readonly IGroundGeometry _groundGeometry;
     private readonly IPassPredictor _passPredictor;
+    private readonly ISunPositionCalculator _sunCalculator;
     private readonly ISatelliteDatabaseService? _satelliteDatabase;
     private readonly ITrackingDiagnostics _diagnostics;
     private readonly SatelliteVisualCache _visualCache = new();
@@ -22,6 +23,8 @@ public sealed class TrackingOrchestrator
     private int _lastNonFocusedRecomputeIndex;
 
     // Sun position cache: sun moves ~0.004°/min, so 30-second cache is very effective
+    // Note: If map time is scrubbed by less than 30s, illumination uses a stale sun position.
+    // This is fine for live tracking; acceptable for scrub scenarios where performance matters.
     private EciPosition _cachedSunPosition;
     private DateTime _cachedSunPositionUtc = DateTime.MinValue;
     private static readonly TimeSpan SunCacheValidDuration = TimeSpan.FromSeconds(30);
@@ -37,7 +40,8 @@ public sealed class TrackingOrchestrator
         IGroundGeometry groundGeometry,
         IPassPredictor passPredictor,
         ITrackingDiagnostics? diagnostics = null,
-        ISatelliteDatabaseService? satelliteDatabase = null)
+        ISatelliteDatabaseService? satelliteDatabase = null,
+        ISunPositionCalculator? sunCalculator = null)
     {
         _settings = settings;
         _tleService = tleService;
@@ -46,6 +50,7 @@ public sealed class TrackingOrchestrator
         _passPredictor = passPredictor;
         _diagnostics = diagnostics ?? NullTrackingDiagnostics.Instance;
         _satelliteDatabase = satelliteDatabase;
+        _sunCalculator = sunCalculator ?? DefaultSunPositionCalculator.Instance;
     }
 
     public void ReloadEnabledSatellites()
@@ -103,7 +108,7 @@ public sealed class TrackingOrchestrator
     {
         if (_cachedSunPositionUtc == DateTime.MinValue || Math.Abs((utc - _cachedSunPositionUtc).TotalSeconds) > SunCacheValidDuration.TotalSeconds)
         {
-            _cachedSunPosition = SunPositionCalculator.GetPosition(utc);
+            _cachedSunPosition = _sunCalculator.GetPosition(utc);
             _cachedSunPositionUtc = utc;
         }
         return _cachedSunPosition;

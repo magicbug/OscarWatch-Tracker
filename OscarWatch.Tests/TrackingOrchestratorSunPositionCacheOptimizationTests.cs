@@ -16,14 +16,16 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Arrange
         var settings = new TestSettingsService();
         var satellites = new[] { TestSatellites.ISS };
-        var sunCalculator = new SunPositionCalculatorSpy();
+        var sunCalculatorSpy = new SunPositionCalculatorSpy();
         var orchestrator = new TrackingOrchestrator(
             settings,
             new StubTleService(satellites),
             new MinimalPropagator(satellites),
             new TestGroundGeometry(),
             new NullPassPredictor(),
-            new NullTrackingDiagnostics());
+            new NullTrackingDiagnostics(),
+            null, // No satellite database
+            sunCalculatorSpy);
 
         orchestrator.ReloadEnabledSatellites();
         var utc = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -33,12 +35,17 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         var states2 = orchestrator.GetLiveStates(utc);
         var states3 = orchestrator.GetLiveStates(utc);
 
-        // Assert - Should get consistent results
+        // Assert - Should get consistent results AND verify cache behavior
         Assert.Single(states1);
         Assert.Single(states2); 
         Assert.Single(states3);
         Assert.Equal(states1[0].IsSunlit, states2[0].IsSunlit);
         Assert.Equal(states2[0].IsSunlit, states3[0].IsSunlit);
+
+        // Most importantly: sun position calculator should only be called once due to caching
+        Assert.Equal(1, sunCalculatorSpy.CallCount);
+        Assert.Single(sunCalculatorSpy.CalledWithTimes);
+        Assert.Equal(utc, sunCalculatorSpy.CalledWithTimes[0]);
     }
 
     [Fact]
@@ -47,13 +54,16 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Arrange
         var settings = new TestSettingsService();
         var satellites = new[] { TestSatellites.ISS };
+        var sunCalculatorSpy = new SunPositionCalculatorSpy();
         var orchestrator = new TrackingOrchestrator(
             settings,
             new StubTleService(satellites),
             new MinimalPropagator(satellites),
             new TestGroundGeometry(),
             new NullPassPredictor(),
-            new NullTrackingDiagnostics());
+            new NullTrackingDiagnostics(),
+            null,
+            sunCalculatorSpy);
 
         orchestrator.ReloadEnabledSatellites();
         var utc1 = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -72,6 +82,11 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Sun position changes so slowly (0.004°/min) that illumination should be identical
         Assert.Equal(states1[0].IsSunlit, states2[0].IsSunlit);
         Assert.Equal(states2[0].IsSunlit, states3[0].IsSunlit);
+
+        // Verify cache behavior: only the first call should compute sun position
+        Assert.Equal(1, sunCalculatorSpy.CallCount);
+        Assert.Single(sunCalculatorSpy.CalledWithTimes);
+        Assert.Equal(utc1, sunCalculatorSpy.CalledWithTimes[0]);
     }
 
     [Fact]
@@ -80,13 +95,16 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Arrange
         var settings = new TestSettingsService();
         var satellites = new[] { TestSatellites.ISS };
+        var sunCalculatorSpy = new SunPositionCalculatorSpy();
         var orchestrator = new TrackingOrchestrator(
             settings,
             new StubTleService(satellites),
             new MinimalPropagator(satellites),
             new TestGroundGeometry(),
             new NullPassPredictor(),
-            new NullTrackingDiagnostics());
+            new NullTrackingDiagnostics(),
+            null,
+            sunCalculatorSpy);
 
         orchestrator.ReloadEnabledSatellites();
         var utc1 = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -99,6 +117,12 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Assert - Both should work (cache invalidation doesn't break functionality)
         Assert.Single(states1);
         Assert.Single(states2);
+
+        // Verify cache invalidation: should be called twice (once for each time outside cache window)
+        Assert.Equal(2, sunCalculatorSpy.CallCount);
+        Assert.Equal(2, sunCalculatorSpy.CalledWithTimes.Count);
+        Assert.Equal(utc1, sunCalculatorSpy.CalledWithTimes[0]);
+        Assert.Equal(utc2, sunCalculatorSpy.CalledWithTimes[1]);
     }
 
     [Fact]
@@ -107,13 +131,16 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Arrange
         var settings = new TestSettingsService();
         var satellites = new[] { TestSatellites.ISS, TestSatellites.SO50, TestSatellites.AO91 };
+        var sunCalculatorSpy = new SunPositionCalculatorSpy();
         var orchestrator = new TrackingOrchestrator(
             settings,
             new StubTleService(satellites),
             new MinimalPropagator(satellites),
             new TestGroundGeometry(),
             new NullPassPredictor(),
-            new NullTrackingDiagnostics());
+            new NullTrackingDiagnostics(),
+            null,
+            sunCalculatorSpy);
 
         orchestrator.ReloadEnabledSatellites();
         var utc = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -125,6 +152,11 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         Assert.Equal(3, states.Count);
         Assert.All(states, s => Assert.NotNull(s.Name));
         // All satellites should have illumination calculated (IsSunlit is a bool, never null)
+
+        // Verify cache efficiency: only one sun calculation for multiple satellites
+        Assert.Equal(1, sunCalculatorSpy.CallCount);
+        Assert.Single(sunCalculatorSpy.CalledWithTimes);
+        Assert.Equal(utc, sunCalculatorSpy.CalledWithTimes[0]);
     }
 
     [Fact]
@@ -133,13 +165,16 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         // Arrange
         var settings = new TestSettingsService();
         var satellites = new[] { TestSatellites.ISS };
+        var sunCalculatorSpy = new SunPositionCalculatorSpy();
         var orchestrator = new TrackingOrchestrator(
             settings,
             new StubTleService(satellites),
             new MinimalPropagator(satellites),
             new TestGroundGeometry(),
             new NullPassPredictor(),
-            new NullTrackingDiagnostics());
+            new NullTrackingDiagnostics(),
+            null,
+            sunCalculatorSpy);
 
         orchestrator.ReloadEnabledSatellites();
         var utc = new DateTime(2024, 6, 1, 12, 0, 0, DateTimeKind.Utc);
@@ -153,6 +188,11 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         Assert.Single(states1);
         Assert.Single(states2);
         Assert.Equal(states1[0].IsSunlit, states2[0].IsSunlit);
+
+        // Verify cache persistence: only one calculation despite method call in between
+        Assert.Equal(1, sunCalculatorSpy.CallCount);
+        Assert.Single(sunCalculatorSpy.CalledWithTimes);
+        Assert.Equal(utc, sunCalculatorSpy.CalledWithTimes[0]);
     }
 
     private sealed class StubTleService(IReadOnlyList<SatelliteCatalogEntry> satellites) : ITleService
@@ -227,7 +267,7 @@ public class TrackingOrchestratorSunPositionCacheOptimizationTests
         public void SatelliteStateSkipped(string noradId, DateTime utc, Exception exception) { }
     }
 
-    private sealed class SunPositionCalculatorSpy
+    private sealed class SunPositionCalculatorSpy : ISunPositionCalculator
     {
         public int CallCount { get; private set; }
         public List<DateTime> CalledWithTimes { get; } = new();
