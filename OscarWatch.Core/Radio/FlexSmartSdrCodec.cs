@@ -415,7 +415,8 @@ public static class FlexSmartSdrCodec
     {
         var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         
-        // Optimized: Use ReadOnlySpan<char> to avoid string allocations during parsing
+        // Optimized: Use ReadOnlySpan<char> to avoid Split() array allocations during parsing
+        // Note: Still allocates strings for keys/values via ToString(); the win is avoiding Split() array/token allocations
         var span = text.AsSpan();
         var pos = 0;
         
