@@ -147,6 +147,7 @@ jobs:
           name: OscarWatch-${{ matrix.rid }}
           path: ${{ steps.archive.outputs.path }}
           if-no-files-found: error
+          retention-days: 7
 
   release:
     name: GitHub Release
