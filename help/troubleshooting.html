@@ -32,22 +32,31 @@
     </header>
 
     <main>
-      <h2 id="macos-install">macOS — app or recording blocked on first install</h2>
+      <h2 id="macos-install">macOS: app or recording blocked on first install</h2>
       <p>
-        Release builds from GitHub are not code-signed or notarised. macOS may block OscarWatch or
-        bundled native libraries the first time you run them. These steps are usually one-time per install.
-        See the full walkthrough in <a href="macos-install.html">macOS install</a> (guide by Tim GW4VXE).
+        Release builds from GitHub are not Apple-notarised. macOS may block OscarWatch the first time
+        you run it. These steps are usually one-time per install.
+        See the full walkthrough in <a href="macos-install.html">macOS install</a>
+        (portable-folder steps adapted from Tim GW4VXE).
       </p>
+      <p><strong>Recommended (<code>.app.zip</code>):</strong></p>
       <ol>
-        <li>Download <code>OscarWatch-osx-arm64</code> (Apple Silicon) or <code>OscarWatch-osx-x64</code> (Intel).</li>
-        <li>Extract with Finder → <strong>Open With → Archive Utility</strong>.</li>
-        <li>Run in Terminal: <code>xattr -d com.apple.quarantine /Users/<em>you</em>/Downloads/OscarWatch/OscarWatch</code> (adjust the path).</li>
-        <li>Launch the <code>OscarWatch</code> executable; use right-click → <strong>Open</strong> if Finder blocks it.</li>
-        <li>For each blocked <code>.dylib</code>, use <strong>System Settings → Privacy &amp; Security → Allow Anyway</strong> and enter your password (often about three libraries).</li>
+        <li>Download <code>OscarWatch-*-osx-arm64.app.zip</code> (Apple Silicon) or <code>…-osx-x64.app.zip</code> (Intel).</li>
+        <li>Extract, drag <code>OscarWatch.app</code> to Applications.</li>
+        <li>Double-click <code>Remove Quarantine.command</code>, or run
+          <code>xattr -cr /Applications/OscarWatch.app</code>.</li>
+        <li>Open OscarWatch; use right-click → <strong>Open</strong> if Finder blocks it.</li>
         <li>Grant <strong>microphone</strong> access when you enable pass recording in <strong>Settings → Recording</strong>.</li>
       </ol>
+      <p><strong>Portable folder (<code>.tar.gz</code>):</strong> extract, then clear quarantine on the
+        <strong>whole folder</strong>:
+        <code>xattr -cr /Users/<em>you</em>/Downloads/OscarWatch</code>, then run the
+        <code>OscarWatch</code> executable inside.
+      </p>
       <p>
-        Tracking, passes, and radio/rotator control work without pass recording if you skip the PortAudio step.
+        Tracking, passes, and radio/rotator control work without pass recording.
+        If a <code>.dylib</code> is still blocked after a recursive clear, use
+        <strong>System Settings → Privacy &amp; Security → Allow Anyway</strong> and relaunch.
       </p>
 
       <h2 id="mp3-ffmpeg">MP3 recording says ffmpeg is missing</h2>
@@ -214,7 +223,7 @@
         <li>Recording only runs for the <strong>focused</strong> satellite — click it on the map or pass list first.</li>
         <li>Check start/stop elevations: the satellite must rise through the start elevation while selected.</li>
         <li>On <strong>Linux</strong>, ensure PulseAudio or ALSA is running (<code>libasound2</code> on Debian/Ubuntu).</li>
-        <li>On <strong>macOS</strong>, see <a href="macos-install.html">macOS install</a> if <code>libportaudio.dylib</code> is blocked; grant microphone permission when prompted.</li>
+        <li>On <strong>macOS</strong>, see <a href="macos-install.html">macOS install</a> for first-run quarantine; grant microphone permission when prompted.</li>
         <li>Recordings save to <code>%AppData%\OscarWatch\recordings\</code> unless you chose another folder.</li>
       </ul>
 

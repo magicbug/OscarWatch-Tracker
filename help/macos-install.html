@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>macOS install — OscarWatch Help</title>
+  <title>macOS install: OscarWatch Help</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
         <a href="index.html" class="brand-home" title="Home"><img src="oscarwatch-icon.png" alt="" class="brand-icon" width="56" height="56" /></a>
         <div class="brand-text">
           <h1>macOS install</h1>
-          <p class="tagline">Download, extract, and approve the first run</p>
+          <p class="tagline">Download, clear quarantine, and open OscarWatch</p>
         </div>
       </div>
       <nav aria-label="Help topics">
@@ -33,66 +33,61 @@
 
     <main>
       <p class="lead">
-        Pre-built OscarWatch releases from GitHub are not code-signed or notarised. On a Mac, the first launch
-        usually needs a few extra steps to extract the archive, clear quarantine, and approve bundled native
-        libraries. These prompts are normally <strong>one-time per install</strong>. It sounds worse than it is.
+        Pre-built OscarWatch releases from GitHub are not Apple-notarised (no paid Developer ID).
+        On a Mac, the first launch needs a one-time quarantine clear. Prefer the
+        <strong>OscarWatch.app</strong> zip; a portable folder archive is still published for operators
+        who already use that layout. These prompts are normally <strong>one-time per install</strong>.
       </p>
 
       <div class="tip">
         <strong>Which download?</strong> Pick the archive that matches your Mac:
-        <code>OscarWatch-osx-arm64</code> for Apple Silicon (M-series), or <code>OscarWatch-osx-x64</code> for Intel.
-        Both are on the <a href="https://github.com/magicbug/OscarWatch-Tracker/releases" target="_blank" rel="noopener">Releases</a> page.
+        <code>osx-arm64</code> for Apple Silicon (M-series), or <code>osx-x64</code> for Intel.
+        Both shapes are on the <a href="https://github.com/magicbug/OscarWatch-Tracker/releases" target="_blank" rel="noopener">Releases</a> page:
+        <code>*.app.zip</code> (recommended) and <code>*.tar.gz</code> (portable folder).
       </div>
 
-      <h2>1. Download and extract</h2>
+      <h2>Recommended: OscarWatch.app</h2>
       <ol>
-        <li>Download the <code>.zip</code> or <code>.tar.gz</code> archive for your Mac from GitHub Releases.</li>
-        <li>In Finder, right-click the downloaded file and choose <strong>Open With → Archive Utility</strong>.
-          That creates a folder in Downloads (for example <code>OscarWatch-osx-arm64</code>).</li>
+        <li>Download <code>OscarWatch-<em>version</em>-osx-arm64.app.zip</code> (Apple Silicon) or
+          <code>…-osx-x64.app.zip</code> (Intel).</li>
+        <li>Open the zip in Finder (double-click, or right-click → <strong>Open With → Archive Utility</strong>).
+          You should see <code>OscarWatch.app</code> and <code>Remove Quarantine.command</code>.</li>
+        <li>Drag <code>OscarWatch.app</code> to <strong>Applications</strong> (or keep it wherever you prefer).</li>
+        <li>Clear quarantine, either:
+          <ul>
+            <li>Double-click <code>Remove Quarantine.command</code> in the extracted folder
+              (if macOS blocks it, right-click → <strong>Open</strong> once), or</li>
+            <li>In Terminal (adjust the path if needed):
+              <pre><code>xattr -cr /Applications/OscarWatch.app</code></pre>
+            </li>
+          </ul>
+        </li>
+        <li>Open <code>OscarWatch</code> from Applications (or Launchpad). If Finder still blocks it,
+          right-click → <strong>Open</strong> once.</li>
+      </ol>
+      <p>
+        If you use <strong>Settings → Recording</strong>, grant <strong>microphone</strong> access when prompted.
+        Tracking, passes, and radio/rotator control work without recording.
+      </p>
+
+      <h2>Portable folder (existing method)</h2>
+      <p>
+        Each release also includes <code>OscarWatch-<em>version</em>-osx-arm64.tar.gz</code>
+        (or <code>osx-x64</code>): a folder with the <code>OscarWatch</code> executable, not an
+        <code>.app</code> wrapper.
+      </p>
+      <ol>
+        <li>Download the matching <code>.tar.gz</code> from GitHub Releases.</li>
+        <li>In Finder, right-click → <strong>Open With → Archive Utility</strong>.
+          That creates a folder (for example <code>OscarWatch-osx-arm64</code> contents in Downloads).</li>
         <li>For convenience, rename that folder to <code>OscarWatch</code>.</li>
+        <li>Clear quarantine on the <strong>whole folder</strong> so nested libraries are cleared too
+          (replace <code>xxxx</code> with your macOS user name and adjust the path if needed):
+          <pre><code>xattr -cr /Users/xxxx/Downloads/OscarWatch</code></pre>
+        </li>
+        <li>Double-click the <code>OscarWatch</code> executable inside that folder.
+          Alternatively, right-click → <strong>Open</strong> once if Finder says the file “cannot be opened”.</li>
       </ol>
-
-      <h2>2. Remove quarantine (Terminal)</h2>
-      <p>
-        Open <strong>Terminal</strong> and run the following, replacing <code>xxxx</code> with your macOS user name
-        and adjusting the path if you saved the folder somewhere other than Downloads:
-      </p>
-      <pre><code>xattr -d com.apple.quarantine /Users/xxxx/Downloads/OscarWatch/OscarWatch</code></pre>
-      <p>
-        If you extracted to a different location, point the command at the <code>OscarWatch</code> executable
-        inside your folder.
-      </p>
-
-      <h2>3. Start OscarWatch</h2>
-      <ol>
-        <li>In Finder, open your <code>OscarWatch</code> folder.</li>
-        <li>Double-click the <code>OscarWatch</code> executable (no <code>.app</code> wrapper — the file is named <code>OscarWatch</code>).</li>
-      </ol>
-      <p>
-        Alternatively, right-click <code>OscarWatch</code> → <strong>Open</strong> once if Finder says the file
-        “cannot be opened”.
-      </p>
-
-      <h2>4. Approve blocked libraries</h2>
-      <p>
-        macOS may show errors about a <code>.dylib</code> file (for example
-        <code>libportaudio.dylib</code> under <code>runtimes/osx-*/native/</code> inside the app folder).
-        You may need to approve <strong>several</strong> bundled libraries — often about three — before the app
-        starts cleanly.
-      </p>
-      <ol>
-        <li>Open <strong>System Settings → Privacy &amp; Security</strong>.</li>
-        <li>Scroll to <strong>Security</strong> and look for a message about a blocked file from OscarWatch.</li>
-        <li>Click <strong>Allow Anyway</strong>.</li>
-        <li>If a “file not open” dialogue is still showing, click <strong>Done</strong>, then try launching
-          <code>OscarWatch</code> again.</li>
-        <li>Enter your Mac password when macOS asks you to authorise the library.</li>
-        <li>Repeat for each blocked <code>.dylib</code> until OscarWatch opens.</li>
-      </ol>
-      <p>
-        Tracking, passes, and radio/rotator control work without pass recording if you skip PortAudio approval.
-        If you use <strong>Settings → Recording</strong>, also grant <strong>microphone</strong> access when prompted.
-      </p>
 
       <h2>After install</h2>
       <p>
@@ -102,13 +97,17 @@
 
       <h2>Troubleshooting</h2>
       <ul>
-        <li><strong>Still blocked after Allow Anyway</strong> — quit OscarWatch, run the <code>xattr</code> command again on the executable, then relaunch.</li>
-        <li><strong>Wrong architecture</strong> — an Intel Mac needs <code>osx-x64</code>; Apple Silicon needs <code>osx-arm64</code>.</li>
-        <li><strong>Serial ports</strong> — pick <code>/dev/cu.*</code> under Settings → Radio / Rotator; see <a href="radio-rotator.html">Radio &amp; rotator</a>.</li>
+        <li><strong>Still blocked</strong>: quit OscarWatch, run <code>xattr -cr</code> again on the
+          <code>.app</code> or folder, then relaunch (right-click → <strong>Open</strong> if needed).</li>
+        <li><strong>Wrong architecture</strong>: an Intel Mac needs <code>osx-x64</code>; Apple Silicon needs <code>osx-arm64</code>.</li>
+        <li><strong>Serial ports</strong>: pick <code>/dev/cu.*</code> under Settings → Radio / Rotator; see <a href="radio-rotator.html">Radio &amp; rotator</a>.</li>
+        <li><strong>Allow Anyway for a .dylib</strong>: uncommon after a recursive quarantine clear.
+          If it still appears, use <strong>System Settings → Privacy &amp; Security → Allow Anyway</strong>,
+          then relaunch.</li>
       </ul>
       <p>See also <a href="troubleshooting.html#macos-install">Problems? → macOS install</a>.</p>
 
-      <p><em>Install steps adapted from a guide by Tim GW4VXE.</em></p>
+      <p><em>Portable-folder install steps adapted from a guide by Tim GW4VXE.</em></p>
     </main>
 
     <footer><a href="index.html">Back to help home</a></footer>

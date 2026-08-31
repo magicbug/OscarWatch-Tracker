@@ -28,20 +28,27 @@ OscarWatch does **not** decode telemetry; it is a pass-tracking and station-assi
 
 Pre-built packages for Windows, macOS, and Linux are on the **[Releases](https://github.com/magicbug/OscarWatch-Tracker/releases)** page (see [Cross-platform publish](#cross-platform-publish) for platform names). Extract the archive for your OS and run `OscarWatch`.
 
-**macOS (first install):** release builds are not code-signed or notarised. Expect a few one-time security prompts — full step-by-step help is in [help/macos-install.html](help/macos-install.html) (thanks to Tim GW4VXE for the operator walkthrough).
+**macOS (first install):** release builds are not Apple-notarised. Prefer the **`.app.zip`**; a portable **`.tar.gz`** folder is still published. Full steps: [help/macos-install.html](help/macos-install.html) (portable-folder walkthrough adapted from Tim GW4VXE).
 
-1. Download **`OscarWatch-osx-arm64`** (Apple Silicon) or **`OscarWatch-osx-x64`** (Intel) from Releases.
-2. In Finder, right-click the archive → **Open With → Archive Utility**. Rename the extracted folder to `OscarWatch` if you like.
-3. In Terminal, clear quarantine (replace `xxxx` with your user name and adjust the path if needed):
+**Recommended (`.app`):**
+
+1. Download **`OscarWatch-*-osx-arm64.app.zip`** (Apple Silicon) or **`…-osx-x64.app.zip`** (Intel) from Releases.
+2. Open the zip. Drag **`OscarWatch.app`** to Applications.
+3. Double-click **`Remove Quarantine.command`** next to the app (right-click → **Open** once if blocked), or run:
 
    ```bash
-   xattr -d com.apple.quarantine /Users/xxxx/Downloads/OscarWatch/OscarWatch
+   xattr -cr /Applications/OscarWatch.app
    ```
 
-4. Double-click the `OscarWatch` executable inside that folder (or right-click → **Open** once if Finder blocks it).
-5. If macOS complains about a `.dylib` file, open **System Settings → Privacy & Security**, scroll to **Security**, click **Allow Anyway** for each blocked library (often about three), enter your password when asked, and relaunch. Approve **microphone** access too if you use pass recording (`libportaudio.dylib` lives under `runtimes/osx-*/native/`).
+4. Open OscarWatch from Applications (right-click → **Open** once if Finder still blocks it). Approve **microphone** access if you use pass recording.
 
-Tracking, passes, and radio/rotator control work without pass recording if you skip the PortAudio approval step.
+**Portable folder (existing method):** download the matching **`.tar.gz`**, extract with Archive Utility, then clear quarantine on the **whole folder** (not only the executable):
+
+```bash
+xattr -cr /Users/xxxx/Downloads/OscarWatch
+```
+
+Then run the `OscarWatch` executable inside that folder.
 
 To build from source instead, see [Build and run](#build-and-run) below.
 
@@ -208,7 +215,7 @@ Audio capture uses [PortAudio](https://www.portaudio.com/) (via PortAudioSharp2)
 | Platform    | Notes                                                                                                                                    |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | **Windows** | Select your radio interface or sound card input in Settings → Recording                                                                  |
-| **macOS**   | Core Audio devices; see [macOS install](help/macos-install.html) if `libportaudio.dylib` is blocked; grant microphone permission when prompted |
+| **macOS**   | Core Audio devices; see [macOS install](help/macos-install.html) for first-run quarantine; grant microphone permission when prompted |
 | **Linux**   | Requires PulseAudio or ALSA; install `libasound2` / PulseAudio as needed for your distro                                                 |
 
 
@@ -332,13 +339,15 @@ dotnet run -c Release --project OscarWatch/OscarWatch.csproj
 **Artifacts:**
 
 
-| Artifact                 | Runtime                              |
+| Artifact | Runtime |
 | ------------------------ | ------------------------------------ |
-| `OscarWatch-win-x64`     | Windows x64                          |
-| `OscarWatch-win-arm64`   | Windows ARM64 (Snapdragon / ARM PCs)   |
-| `OscarWatch-osx-arm64`   | macOS Apple Silicon                  |
-| `OscarWatch-osx-x64`     | macOS Intel                          |
-| `OscarWatch-linux-x64`   | Linux x64                            |
+| `OscarWatch-win-x64` | Windows x64 |
+| `OscarWatch-win-arm64` | Windows ARM64 (Snapdragon / ARM PCs) |
+| `OscarWatch-*-osx-arm64.app.zip` | macOS Apple Silicon (recommended `.app`) |
+| `OscarWatch-*-osx-arm64.tar.gz` | macOS Apple Silicon (portable folder) |
+| `OscarWatch-*-osx-x64.app.zip` | macOS Intel (recommended `.app`) |
+| `OscarWatch-*-osx-x64.tar.gz` | macOS Intel (portable folder) |
+| `OscarWatch-linux-x64` | Linux x64 |
 | `OscarWatch-linux-arm64` | Linux ARM64 (Raspberry Pi 64-bit OS) |
 
 

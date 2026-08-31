@@ -44,31 +44,37 @@ jobs:
             display_name: Windows x64
             archive_ext: zip
             publish_single_file: true
+            package_macos_app: false
           - rid: win-arm64
             os: windows-latest
             display_name: Windows ARM64
             archive_ext: zip
             publish_single_file: true
+            package_macos_app: false
           - rid: osx-arm64
             os: macos-latest
             display_name: macOS Apple Silicon
             archive_ext: tar.gz
             publish_single_file: false
+            package_macos_app: true
           - rid: osx-x64
             os: macos-latest
             display_name: macOS Intel
             archive_ext: tar.gz
             publish_single_file: false
+            package_macos_app: true
           - rid: linux-x64
             os: ubuntu-latest
             display_name: Linux x64
             archive_ext: tar.gz
             publish_single_file: false
+            package_macos_app: false
           - rid: linux-arm64
             os: ubuntu-latest
             display_name: Linux ARM64 (Raspberry Pi 64-bit)
             archive_ext: tar.gz
             publish_single_file: false
+            package_macos_app: false
 
     steps:
       - uses: actions/checkout@v4
@@ -125,12 +131,19 @@ jobs:
             -p:InformationalVersion="${{ steps.version.outputs.version }}" \
             -o "$out"
 
+      - name: Ad-hoc sign publish tree (macOS)
+        if: matrix.package_macos_app == true
+        shell: bash
+        run: |
+          chmod +x scripts/macos/adhoc-sign.sh scripts/macos/package-app.sh
+          bash scripts/macos/adhoc-sign.sh "${{ runner.temp }}/publish-${{ matrix.rid }}"
+
       - name: Archive
         id: archive
         shell: pwsh
         run: |
           $src = "${{ runner.temp }}/publish-${{ matrix.rid }}"
-          $version = "${{ steps.version.outputs.value }}"
+          $version = "${{ steps.version.outputs.version }}"
           $rid = "${{ matrix.rid }}"
           if ("${{ matrix.archive_ext }}" -eq "zip") {
             $dest = "${{ runner.temp }}/OscarWatch-${version}-${rid}.zip"
@@ -141,11 +154,39 @@ jobs:
           }
           echo "path=$dest" >> $env:GITHUB_OUTPUT
 
+      - name: Package OscarWatch.app zip (macOS)
+        if: matrix.package_macos_app == true
+        id: appzip
+        shell: bash
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          rid="${{ matrix.rid }}"
+          dest="${{ runner.temp }}/OscarWatch-${version}-${rid}.app.zip"
+          bash scripts/macos/package-app.sh \
+            "${{ runner.temp }}/publish-${{ matrix.rid }}" \
+            "$version" \
+            "$rid" \
+            "OscarWatch/icons/OscarWatch-Icon.png" \
+            "$dest"
+          echo "path=$dest" >> "$GITHUB_OUTPUT"
+
       - name: Upload artifact
+        if: matrix.package_macos_app != true
         uses: actions/upload-artifact@v4
         with:
           name: OscarWatch-${{ matrix.rid }}
           path: ${{ steps.archive.outputs.path }}
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload artifacts (macOS folder and app)
+        if: matrix.package_macos_app == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: OscarWatch-${{ matrix.rid }}
+          path: |
+            ${{ steps.archive.outputs.path }}
+            ${{ steps.appzip.outputs.path }}
           if-no-files-found: error
           retention-days: 7
 

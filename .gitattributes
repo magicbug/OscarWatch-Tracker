@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# macOS packaging scripts must keep LF for bash on GitHub runners
+scripts/macos/*.sh text eol=lf
