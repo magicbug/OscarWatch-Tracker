@@ -143,7 +143,7 @@ Keep **protocol parsing in the app project**; put only reusable math (frequency 
 - Radio menu **#37**: CAT baud matches Settings (often **57600**).
 - **CT-62** (or equivalent) on the **CAT/LINEAR** jack.
 - Two-way CAT firmware (serial **8G05xxxx+**).
-- On a real pass: SAT mode engages, RX/TX doppler tracks, uplink CTCSS on SAT TX.
+- On a real pass: SAT mode engages, RX/TX doppler tracks, uplink CTCSS on SAT TX (encode-only, like TS-2000; tone decode mutes receive on satellite downlinks).
 
 ## Reference: Yaesu FT-817 / FT-818 (shipped)
 

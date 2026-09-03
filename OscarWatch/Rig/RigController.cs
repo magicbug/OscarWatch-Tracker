@@ -1877,8 +1877,8 @@ public sealed class RigController : IRigController, IDisposable
         }
 
         // ICOM (and most others): USA region uses TSQL so the tone is actually programmed/enabled.
-        // TS-2000: always encode-only; CT mutes receive because satellite downlinks rarely carry a tone.
-        var squelch = uplinkType != RigType.KenwoodTs2000 && settings.TransmitRegion() == RigRegion.USA;
+        // TS-2000 and FT-847: encode-only; tone decode mutes receive because satellite downlinks rarely carry a tone.
+        var squelch = !UsesEncodeOnlyUplinkCtcss(uplinkType) && settings.TransmitRegion() == RigRegion.USA;
         if (!force && _lastAppliedCtcssHz == hz && _lastAppliedCtcssSquelch == squelch)
             return;
 
@@ -1902,6 +1902,9 @@ public sealed class RigController : IRigController, IDisposable
         mode.Equals("FM", StringComparison.OrdinalIgnoreCase)
         || mode.Equals("FMN", StringComparison.OrdinalIgnoreCase)
         || mode.Equals("NFM", StringComparison.OrdinalIgnoreCase);
+
+    private static bool UsesEncodeOnlyUplinkCtcss(RigType rigType) =>
+        rigType is RigType.KenwoodTs2000 or RigType.YaesuFt847;
 
     private static RigVfo UplinkVfoForCtcss(RigSettings settings, RigTrackingContext context)
     {

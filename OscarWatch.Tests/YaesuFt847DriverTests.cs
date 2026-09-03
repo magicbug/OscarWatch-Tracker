@@ -154,6 +154,58 @@ public sealed class YaesuFt847DriverTests
     }
 
     [Fact]
+    public void Pass_init_FM_us_region_ctcss_uses_encode_only_on_sat_tx()
+    {
+        var transport = new RecordingYaesuCatTransport();
+        var controller = new RigController(_ => new YaesuFt847Driver(transport));
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.YaesuFt847,
+            Port = "COM1",
+            CatDelayMs = 0,
+            Region = RigRegion.USA
+        };
+
+        var mode = new SatelliteTransponderMode
+        {
+            Type = "FM VOICE",
+            DownlinkKHz = 436_795,
+            UplinkKHz = 145_850,
+            DownlinkMode = "FM",
+            UplinkMode = "FM",
+            Doppler = "NOR",
+            CtcssHz = 67.0
+        };
+
+        controller.Update(settings, new RigTrackingContext
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "SO-50",
+                NoradId = "25544",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 30, 800, 0)
+            },
+            Mode = mode,
+            Corrected = DopplerFrequencyCalculator.Compute(mode, 0, 0),
+            SelectedCtcssHz = 67.0
+        });
+
+        var encodeOn = YaesuFt847CatCodec.BuildCtcssOnCommand(
+            encoderOnly: true,
+            YaesuFt847VfoTarget.SatTx,
+            satelliteMode: true);
+        var decodeOn = YaesuFt847CatCodec.BuildCtcssOnCommand(
+            encoderOnly: false,
+            YaesuFt847VfoTarget.SatTx,
+            satelliteMode: true);
+
+        Assert.Contains(transport.SentFrames, f => f.SequenceEqual(encodeOn));
+        Assert.DoesNotContain(transport.SentFrames, f => f.SequenceEqual(decodeOn));
+    }
+
+    [Fact]
     public void SupportsVfoExchange_is_false()
     {
         var driver = new YaesuFt847Driver(new RecordingYaesuCatTransport());
