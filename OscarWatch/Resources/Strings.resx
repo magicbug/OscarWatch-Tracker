@@ -1987,10 +1987,10 @@ Continue?</value>
     <value>Horizon Mask</value>
   </data>
   <data name="Settings.Station.HorizonMaskHelp">
-    <value>Optional skyline for trees, buildings, and hills. Click the polar plot to add points; drag to move; right-click to remove. Empty means unused — only the tracking minimum elevation applies. Pass times use the higher of the mask and that minimum at each azimuth.</value>
+    <value>Optional skyline for trees, buildings, and hills. Click the polar plot to add points; drag to move; right-click to remove. Empty means unused (only the tracking minimum elevation applies). Pass times use the higher of the mask and that minimum at each azimuth. It does not command the rotator; use Start tracking at elevation for that.</value>
   </data>
   <data name="Settings.Station.HorizonMaskSummary">
-    <value>Optional skyline for trees, buildings, and hills. Empty means unused — only the tracking minimum elevation applies.</value>
+    <value>Optional skyline for trees, buildings, and hills. Empty means unused (only the tracking minimum elevation applies). Does not command the rotator.</value>
   </data>
   <data name="Settings.Station.HorizonMaskEdit">
     <value>Edit Horizon Mask</value>
@@ -2536,7 +2536,7 @@ Continue?</value>
     <value>Enable keyhole avoidance</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>When enabled, high-elevation passes where the rotator cannot keep up near zenith are analysed, and the rotator may pre-position in a flipped orientation to minimise signal loss. Only available when elevation range is 0–180°.</value>
+    <value>When enabled, high-elevation passes where the rotator cannot keep up near zenith are analysed, and the rotator may pre-position in a flipped orientation to minimise signal loss. Pre-position slews azimuth at the track-start elevation (not below 0°). Only available when elevation range is 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Slew rate (°/s)</value>
@@ -2554,7 +2554,7 @@ Continue?</value>
     <value>Start tracking at elevation (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>Default is -3° (below horizon). Range -90° to 90°. The rotator begins slewing when the tracked satellite rises above this elevation, and parks once it drops below (after a short confirm so a single glitch tick cannot interrupt the pass).</value>
+    <value>Default is -3° (below horizon). Range -90° to 90°. The rotator begins slewing when the tracked satellite rises above this elevation, and parks once it drops below (after a short confirm so a single glitch tick cannot interrupt the pass). Keyhole pre-position uses this elevation as its floor (not below 0°).</value>
   </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>Park azimuth (°)</value>

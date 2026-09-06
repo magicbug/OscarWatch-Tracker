@@ -1894,10 +1894,10 @@ Continuar?</value>
     <value>Máscara de horizonte</value>
   </data>
   <data name="Settings.Station.HorizonMaskHelp">
-    <value>Skyline opcional para árvores, edifícios e colinas. Clique no gráfico polar para adicionar pontos; arraste para mover; clique com o botão direito para remover. Vazia = não usada — só a elevação mínima de rastreamento se aplica. Os passes usam o maior valor entre a máscara e esse mínimo em cada azimute.</value>
+    <value>Skyline opcional para árvores, edifícios e colinas. Clique no gráfico polar para adicionar pontos; arraste para mover; clique com o botão direito para remover. Vazia = não usada (só a elevação mínima de rastreamento se aplica). Os passes usam o maior valor entre a máscara e esse mínimo em cada azimute. Não comanda o rotor; use Iniciar rastreamento na elevação para isso.</value>
   </data>
   <data name="Settings.Station.HorizonMaskSummary">
-    <value>Skyline opcional para árvores, edifícios e colinas. Vazia = não usada — só a elevação mínima de rastreamento se aplica.</value>
+    <value>Skyline opcional para árvores, edifícios e colinas. Vazia = não usada (só a elevação mínima de rastreamento se aplica). Não comanda o rotor.</value>
   </data>
   <data name="Settings.Station.HorizonMaskEdit">
     <value>Editar máscara de horizonte…</value>
@@ -2422,7 +2422,7 @@ Continuar?</value>
     <value>Ativar evitar keyhole</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Quando ativado, passagens de alta elevação em que o rotor não acompanha perto do zênite são analisadas, e o rotor pode pré-posicionar-se numa orientação invertida para minimizar perda de sinal. Disponível apenas com faixa de elevação 0–180°.</value>
+    <value>Quando ativado, passagens de alta elevação em que o rotor não acompanha perto do zênite são analisadas, e o rotor pode pré-posicionar-se numa orientação invertida para minimizar perda de sinal. O pré-posicionamento gira o azimute na elevação de início de rastreamento (não abaixo de 0°). Disponível apenas com faixa de elevação 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Velocidade de rotação (°/s)</value>
@@ -2440,7 +2440,7 @@ Continuar?</value>
     <value>Iniciar rastreamento na elevação (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>O padrão é -3° (abaixo do horizonte). Faixa de -90° a 90°. O rotor começa a girar quando o satélite rastreado sobe acima desta elevação e estaciona quando cai abaixo (após uma confirmação curta para que uma única falha não interrompa o passe).</value>
+    <value>O padrão é -3° (abaixo do horizonte). Faixa de -90° a 90°. O rotor começa a girar quando o satélite rastreado sobe acima desta elevação e estaciona quando cai abaixo (após uma confirmação curta para que uma única falha não interrompa o passe). O pré-posicionamento de keyhole usa esta elevação como piso (não abaixo de 0°).</value>
   </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>Azimute de estacionamento (°)</value>

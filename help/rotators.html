@@ -82,7 +82,7 @@
         <li><strong>Azimuth range</strong> — <strong>360°</strong> or <strong>450°</strong> (G-5500 style).</li>
         <li><strong>Smart azimuth (450°)</strong> — uses 361–450° for the shortest path when the pass will actually cross 0° (north). Northbound passes that turn around east of north stay in the primary band (only shown for 450°).</li>
         <li><strong>Elevation range</strong> — <strong>0–90°</strong> standard, or <strong>0–180°</strong> for over-the-top mounts that can track past zenith by flipping azimuth.</li>
-        <li><strong>Track-start elevation</strong> — tracking begins when the satellite rises above this angle (default −3°).</li>
+        <li><strong>Track-start elevation</strong> — tracking begins when the satellite rises above this angle (default −3°). Keyhole pre-position uses this as its floor (not below 0°).</li>
         <li><strong>Park azimuth / elevation</strong> — home position.</li>
         <li><strong>Park rotator after pass</strong> — on by default; moves to park when the satellite drops below track-start. Uncheck to leave the beam where it finished.</li>
         <li><strong>Calibration offsets</strong> — optional az/el corrections (degrees) for pass tracking and manual moves. Park uses configured park az/el exactly.</li>
@@ -92,8 +92,8 @@
       <p>
         On <strong>0–180°</strong> rotators, a high pass near zenith can outrun the rotator — the “keyhole” where
         azimuth swings rapidly while elevation passes through 90°. OscarWatch can analyse such passes and, when
-        beneficial, <strong>pre-position</strong> the beam flipped (azimuth +180°, elevation 0°) before AOS, then
-        track over the top instead of fighting the keyhole.
+        beneficial, <strong>pre-position</strong> the beam flipped (azimuth +180°, at the track-start elevation)
+        before AOS, then track over the top instead of fighting the keyhole.
       </p>
       <p>
         These options appear only when elevation range is <strong>0–180°</strong>. They are hidden for
@@ -104,6 +104,7 @@
         <li><strong>Slew rate (°/s)</strong> — your rotator’s maximum speed; used to estimate signal-loss windows.</li>
         <li><strong>Keyhole threshold (°)</strong> — minimum pass max-elevation (60–89°) before a pass is treated as keyhole (default 80°).</li>
       </ul>
+      <p>Pre-position slews azimuth at the track-start elevation, not below 0°. It does not use the station horizon mask.</p>
       <p>If planning fails or the feature is off, tracking uses normal az/el commands.</p>
 
       <h2 id="manual-rotator">Standby and manual pointing</h2>

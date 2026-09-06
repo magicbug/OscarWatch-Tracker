@@ -713,7 +713,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
     /// <summary>
     /// Handles the keyhole pre-positioning branch. If a FlippedStart plan is active and the
     /// current time is within the pre-position window (AOS − PrePositionLeadTime to AOS),
-    /// commands the rotator to slew to the flipped start azimuth at 0° elevation.
+    /// commands the rotator to slew to the flipped start azimuth at the track-start elevation
+    /// (not below 0°).
     /// Returns true if pre-positioning was handled (caller should return early), false otherwise.
     /// </summary>
     private bool TryHandleKeyholePrePosition(RotatorSettings settings, SatelliteTrackState? target)
@@ -758,11 +759,19 @@ public sealed class RotatorController : IRotatorController, IDisposable
             return false;
         }
 
-        // Slew to flipped start azimuth at 0° elevation
+        // Slew azimuth at the rotator floor (track-start), never below the horizon.
         _isPrePositioning = true;
-        TryTrack(settings, _keyholePlan.FlippedStartAzimuthDeg.Value, 0, null);
+        TryTrack(settings, _keyholePlan.FlippedStartAzimuthDeg.Value, KeyholePrePositionElevationDeg(settings), null);
         return true;
     }
+
+    /// <summary>
+    /// Elevation used when slewing to a flipped start azimuth before AOS.
+    /// Follows <see cref="RotatorSettings.TrackStartElevationDeg"/>, clamped to 0° so a
+    /// default below-horizon track-start still pre-positions on the horizon.
+    /// </summary>
+    internal static double KeyholePrePositionElevationDeg(RotatorSettings settings) =>
+        Math.Max(0, settings.TrackStartElevationDeg);
 
     /// <summary>
     /// Determines whether the rotator should currently be tracking in flipped mode.

@@ -1894,10 +1894,10 @@
     <value>地平线遮罩</value>
   </data>
   <data name="Settings.Station.HorizonMaskHelp">
-    <value>可选天际线（树木、建筑、山丘）。在极坐标图上单击添加点，拖动移动，右键删除。留空表示未使用，仅应用跟踪最低仰角。过境预测在每个方位取遮罩与该最低仰角中的较大值。</value>
+    <value>可选天际线（树木、建筑、山丘）。在极坐标图上单击添加点，拖动移动，右键删除。留空表示未使用，仅应用跟踪最低仰角。过境预测在每个方位取遮罩与该最低仰角中的较大值。不会驱动旋转器；旋转器请用“开始跟踪仰角”。</value>
   </data>
   <data name="Settings.Station.HorizonMaskSummary">
-    <value>可选天际线（树木、建筑、山丘）。留空表示未使用，仅应用跟踪最低仰角。</value>
+    <value>可选天际线（树木、建筑、山丘）。留空表示未使用，仅应用跟踪最低仰角。不会驱动旋转器。</value>
   </data>
   <data name="Settings.Station.HorizonMaskEdit">
     <value>编辑地平线遮罩…</value>
@@ -2422,7 +2422,7 @@
     <value>启用 Keyhole 规避</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>启用后，会分析天顶附近旋转器跟不上卫星的高仰角过顶；必要时可预先转到反向方位（翻转）以减少信号丢失。仅在选择 0–180° 仰角范围时可用。</value>
+    <value>启用后，会分析天顶附近旋转器跟不上卫星的高仰角过顶；必要时可预先转到反向方位（翻转）以减少信号丢失。预定位在跟踪起始仰角上转动方位角（不会低于 0°）。仅在选择 0–180° 仰角范围时可用。</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>旋转速率（°/s）</value>
@@ -2440,7 +2440,7 @@
     <value>开始跟踪仰角（°）</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>默认为 -3°（地平线以下）。范围 -90° 至 90°。当跟踪的卫星上升到该仰角以上时，旋转器开始转动，一旦下降到该仰角以下就停止（经短暂确认，避免单次抖动中断跟踪）。</value>
+    <value>默认为 -3°（地平线以下）。范围 -90° 至 90°。当跟踪的卫星上升到该仰角以上时，旋转器开始转动，一旦下降到该仰角以下就停止（经短暂确认，避免单次抖动中断跟踪）。过顶预定位也以该仰角为下限（不会低于 0°）。</value>
   </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>停靠方位角（°）</value>

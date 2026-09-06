@@ -1918,10 +1918,10 @@
     <value>Máscara de horizonte</value>
   </data>
   <data name="Settings.Station.HorizonMaskHelp">
-    <value>Perfil opcional del horizonte (árboles, edificios, colinas). Haga clic en el gráfico polar para añadir puntos; arrastre para mover; clic derecho para eliminar. Vacía = sin usar; solo aplica la elevación mínima de seguimiento. Los pases usan el mayor valor entre la máscara y ese mínimo en cada acimut.</value>
+    <value>Perfil opcional del horizonte (árboles, edificios, colinas). Haga clic en el gráfico polar para añadir puntos; arrastre para mover; clic derecho para eliminar. Vacía = sin usar; solo aplica la elevación mínima de seguimiento. Los pases usan el mayor valor entre la máscara y ese mínimo en cada acimut. No comanda el rotor; para eso use Empezar seguimiento a elevación.</value>
   </data>
   <data name="Settings.Station.HorizonMaskSummary">
-    <value>Perfil opcional del horizonte (árboles, edificios, colinas). Vacía = sin usar; solo aplica la elevación mínima de seguimiento.</value>
+    <value>Perfil opcional del horizonte (árboles, edificios, colinas). Vacía = sin usar; solo aplica la elevación mínima de seguimiento. No comanda el rotor.</value>
   </data>
   <data name="Settings.Station.HorizonMaskEdit">
     <value>Editar máscara de horizonte…</value>
@@ -2446,7 +2446,7 @@
     <value>Habilitar evitación de keyhole</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Cuando está habilitado, los pases de elevación alta en los que el rotor no puede seguir el ritmo cerca del cenit se analizan, y el rotor puede preposicionarse en orientación invertida para minimizar la pérdida de señal. Solo disponible cuando el rango de elevación es 0–180°.</value>
+    <value>Cuando está habilitado, los pases de elevación alta en los que el rotor no puede seguir el ritmo cerca del cenit se analizan, y el rotor puede preposicionarse en orientación invertida para minimizar la pérdida de señal. La preposición gira el acimut a la elevación de inicio de seguimiento (no por debajo de 0°). Solo disponible cuando el rango de elevación es 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Velocidad de giro (°/s)</value>
@@ -2464,7 +2464,7 @@
     <value>Empezar seguimiento a elevación (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>El predeterminado es -3° (por debajo del horizonte). Rango -90° a 90°. El rotor empieza a girar cuando el satélite seguido supera esta elevación, y se estaciona cuando baja de ella (tras una breve confirmación para que un solo fallo no interrumpa el pase).</value>
+    <value>El predeterminado es -3° (por debajo del horizonte). Rango -90° a 90°. El rotor empieza a girar cuando el satélite seguido supera esta elevación, y se estaciona cuando baja de ella (tras una breve confirmación para que un solo fallo no interrumpa el pase). La preposición de keyhole usa esta elevación como suelo (no por debajo de 0°).</value>
   </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>Acimut de estacionamiento (°)</value>

@@ -166,7 +166,7 @@ public sealed class RotatorControllerKeyholeTests
     /// <summary>
     /// When a flipped plan is active and the current time is in the pre-position window
     /// (AOS − PrePositionLeadTime ≤ now &lt; AOS), the controller commands the rotator to
-    /// slew to the flipped start azimuth at 0° elevation.
+    /// slew to the flipped start azimuth at the track-start elevation.
     ///
     /// Requirements: 3.2
     /// </summary>
@@ -174,7 +174,7 @@ public sealed class RotatorControllerKeyholeTests
     public void PrePositioning_CommandsFlippedStartAzimuth_AtCorrectTime()
     {
         var rotator = new RecordingRotatorDriver();
-        // AOS 30 seconds from now — within pre-position window (lead time = 75s)
+        // AOS 30 seconds from now, within pre-position window (lead time = 75s)
         var aosUtc = DateTime.UtcNow.AddSeconds(30);
         var pass = MakePass(88.0, 30.0, aosUtc);
         var plan = FlippedPlan(flippedStartAz: 210.0, leadTime: TimeSpan.FromSeconds(75));
@@ -189,19 +189,62 @@ public sealed class RotatorControllerKeyholeTests
         controller.SetActivePassSynchronously(pass);
         controller.SetKeyholePlanForTests(plan);
 
-        // Now update again — the pre-positioning branch should activate
+        // Now update again: the pre-positioning branch should activate
         // Target elevation is below tracking threshold, so tracking won't override
         controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 2));
 
         // The controller should be pre-positioning
         Assert.True(controller.IsPrePositioning);
 
-        // The commanded azimuth should be the flipped start azimuth (210°) at 0° elevation
+        // Flipped start azimuth (210°) at track-start elevation (5° in EnabledSettings)
         Assert.Equal(210, rotator.LastAzimuthDeg);
-        Assert.Equal(0, rotator.LastElevationDeg);
+        Assert.Equal(5, rotator.LastElevationDeg);
 
         var status = controller.GetPositionStatus();
         Assert.True(status.IsPrePositioning);
+    }
+
+    [Fact]
+    public void PrePositioning_UsesTrackStartElevation()
+    {
+        var rotator = new RecordingRotatorDriver();
+        var aosUtc = DateTime.UtcNow.AddSeconds(30);
+        var pass = MakePass(88.0, 30.0, aosUtc);
+        var plan = FlippedPlan(flippedStartAz: 210.0, leadTime: TimeSpan.FromSeconds(75));
+        var settings = EnabledSettings();
+        settings.TrackStartElevationDeg = 25;
+
+        var controller = new RotatorController(_ => rotator);
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 2));
+        controller.SetActivePassSynchronously(pass);
+        controller.SetKeyholePlanForTests(plan);
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 2));
+
+        Assert.True(controller.IsPrePositioning);
+        Assert.Equal(210, rotator.LastAzimuthDeg);
+        Assert.Equal(25, rotator.LastElevationDeg);
+    }
+
+    [Fact]
+    public void PrePositioning_ClampsNegativeTrackStartToHorizon()
+    {
+        var rotator = new RecordingRotatorDriver();
+        var aosUtc = DateTime.UtcNow.AddSeconds(30);
+        var pass = MakePass(88.0, 30.0, aosUtc);
+        var plan = FlippedPlan(flippedStartAz: 210.0, leadTime: TimeSpan.FromSeconds(75));
+        var settings = EnabledSettings();
+        settings.TrackStartElevationDeg = -3;
+
+        var controller = new RotatorController(_ => rotator);
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 2));
+        controller.SetActivePassSynchronously(pass);
+        controller.SetKeyholePlanForTests(plan);
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 2));
+
+        Assert.True(controller.IsPrePositioning);
+        Assert.Equal(210, rotator.LastAzimuthDeg);
+        Assert.Equal(0, rotator.LastElevationDeg);
+        Assert.Equal(0, RotatorController.KeyholePrePositionElevationDeg(settings));
     }
 
     /// <summary>
