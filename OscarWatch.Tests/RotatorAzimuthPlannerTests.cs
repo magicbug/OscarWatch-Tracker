@@ -157,4 +157,21 @@ public sealed class RotatorAzimuthPlannerTests
             expected,
             RotatorAzimuthPlanner.ShouldUseExtendedForImminentEastWrap(target, next, 450));
     }
+
+    [Theory]
+    [InlineData(40, 40, 1.0, true)]
+    [InlineData(40, 70, 1.0, false)]
+    [InlineData(15, 375, 1.0, true)]
+    [InlineData(375, 15, 1.0, true)]
+    [InlineData(0, 359, 1.0, false)]
+    [InlineData(0, 359.6, 1.0, true)]
+    [InlineData(400, 40, 1.0, true)]
+    public void IsWithinAzimuthThreshold_treats_overlap_and_compass_wrap_as_same_heading(
+        double first,
+        double second,
+        double threshold,
+        bool expected)
+    {
+        Assert.Equal(expected, RotatorAzimuthPlanner.IsWithinAzimuthThreshold(first, second, threshold));
+    }
 }

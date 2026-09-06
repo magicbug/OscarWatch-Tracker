@@ -90,6 +90,7 @@ public sealed class RotatorSettings
 
     /// <summary>
     /// Minimum angular change (degrees) required before a new position command is sent.
+    /// Also the arrival window: if polled az/el is still outside this threshold, the last command is sent again.
     /// Valid range: [0.1, 10.0]. Default: 1.0°.
     /// </summary>
     private double _movementThresholdDeg = 1.0;

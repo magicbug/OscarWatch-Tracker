@@ -2442,6 +2442,12 @@ Continuar?</value>
   <data name="Settings.Rotator.TrackStartNote">
     <value>O padrão é -3° (abaixo do horizonte). Faixa de -90° a 90°. O rotor começa a girar quando o satélite rastreado sobe acima desta elevação e estaciona quando cai abaixo (após uma confirmação curta para que uma única falha não interrompa o passe). O pré-posicionamento de keyhole usa esta elevação como piso (não abaixo de 0°).</value>
   </data>
+  <data name="Settings.Rotator.MovementThreshold">
+    <value>Limiar de movimento (°)</value>
+  </data>
+  <data name="Settings.Rotator.MovementThresholdNote">
+    <value>Mudança angular mínima antes de enviar um novo alvo. Se o rotor informar uma posição ainda fora deste limiar, o último comando é reenviado para que um encoder ruidoso que pare cedo volte a arrancar. Parar cancela essa repetição. Valores menores dão rastreamento mais preciso; valores maiores reduzem o desgaste. Padrão: 1,0°.</value>
+  </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>Azimute de estacionamento (°)</value>
   </data>

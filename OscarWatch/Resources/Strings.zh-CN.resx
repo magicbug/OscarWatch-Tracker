@@ -2442,6 +2442,12 @@
   <data name="Settings.Rotator.TrackStartNote">
     <value>默认为 -3°（地平线以下）。范围 -90° 至 90°。当跟踪的卫星上升到该仰角以上时，旋转器开始转动，一旦下降到该仰角以下就停止（经短暂确认，避免单次抖动中断跟踪）。过顶预定位也以该仰角为下限（不会低于 0°）。</value>
   </data>
+  <data name="Settings.Rotator.MovementThreshold">
+    <value>移动阈值（°）</value>
+  </data>
+  <data name="Settings.Rotator.MovementThresholdNote">
+    <value>发送新目标前所需的最小角度变化。如果旋转器回报的位置仍超出该阈值，会重发上一次指令，以便编码器噪声导致提前停止时能再次启动。停止会取消该重试。较小的值跟踪更紧，较大的值减少齿轮磨损。默认：1.0°。</value>
+  </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>停靠方位角（°）</value>
   </data>

@@ -38,9 +38,9 @@ public interface IRotatorDriver : IDisposable
 | Method | Expectations |
 |--------|----------------|
 | `Open` | Open the serial port or TCP connection configured in the constructor. Throw or log on failure; controller will tear down and retry later. |
-| `SetPosition` | Send a move command. Use `RotatorSettings` limits for clamping. Called ~1 Hz when tracking; skip heavy work if the controller already dedupes (≥1° change). |
+| `SetPosition` | Send a move command. Use `RotatorSettings` limits for clamping. Called ~1 Hz when tracking, and again if feedback shows the beam has not arrived. |
 | `Stop` | Optional protocol stop (GS-232 `S`). No-op or GOTO-current is fine if the protocol has no stop. |
-| `GetPosition` | Poll hardware az/el for the sidebar. Return `(null, null)` on timeout or parse failure. |
+| `GetPosition` | Poll hardware az/el for the sidebar and arrival retry. Return `(null, null)` on timeout, parse failure, or when the protocol must not query (SAEBRTrack). |
 | `Dispose` | Close the port/socket; call `Stop` if appropriate. |
 
 Reference implementations:

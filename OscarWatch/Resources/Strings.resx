@@ -2556,6 +2556,12 @@ Continue?</value>
   <data name="Settings.Rotator.TrackStartNote">
     <value>Default is -3° (below horizon). Range -90° to 90°. The rotator begins slewing when the tracked satellite rises above this elevation, and parks once it drops below (after a short confirm so a single glitch tick cannot interrupt the pass). Keyhole pre-position uses this elevation as its floor (not below 0°).</value>
   </data>
+  <data name="Settings.Rotator.MovementThreshold">
+    <value>Movement threshold (°)</value>
+  </data>
+  <data name="Settings.Rotator.MovementThresholdNote">
+    <value>Minimum angular change before a new satellite target is sent. If the rotator reports a position still outside this threshold, the last command is sent again so a noisy encoder that stops early will restart. Stop cancels that retry. Lower values give tighter tracking; higher values reduce gear wear. Default: 1.0°.</value>
+  </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>Park azimuth (°)</value>
   </data>

@@ -1065,7 +1065,7 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Rotator.TrackStartNote}" />
-            <TextBlock Text="Movement Threshold (°)" Margin="0,8,0,0" />
+            <TextBlock Text="{loc:Localize Key=Settings.Rotator.MovementThreshold}" Margin="0,8,0,0" />
             <NumericUpDown Value="{Binding RotatorMovementThresholdDeg, Mode=TwoWay}"
                            Minimum="0.1" Maximum="10.0"
                            Increment="0.1" FormatString="F1"
@@ -1073,7 +1073,7 @@
             <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                        FontSize="11"
                        TextWrapping="Wrap"
-                       Text="Minimum angular change before a new position command is sent. Lower values give tighter tracking; higher values reduce gear wear. Default: 1.0°." />
+                       Text="{loc:Localize Key=Settings.Rotator.MovementThresholdNote}" />
             <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
               <StackPanel Grid.Column="0" Spacing="4">
                 <TextBlock Text="{loc:Localize Key=Settings.Rotator.ParkAzimuth}" />

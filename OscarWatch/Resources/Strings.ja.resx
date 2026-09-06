@@ -1554,6 +1554,12 @@
   <data name="Settings.Rotator.TrackStartNote">
     <value>既定は -3°（地平線下）。範囲 -90°～90°。追跡衛星がこの仰角を超えて上昇するときにスルーし、下回るとパークします（短い確認後のため、一瞬の不具合でパスが中断されません）。キーホールの事前配置もこの仰角を下限にします（0°未満にはしません）。</value>
   </data>
+  <data name="Settings.Rotator.MovementThreshold">
+    <value>移動しきい値 (°)</value>
+  </data>
+  <data name="Settings.Rotator.MovementThresholdNote">
+    <value>新しい目標を送る前に必要な最小角度変化です。ローテーターがこのしきい値の外の位置を返す場合は、最後のコマンドを再送します。ノイズのあるエンコーダが途中で止まっても再開できます。停止すると再送はキャンセルされます。小さい値はより精密な追尾、大きい値はギアの負荷を減らします。既定: 1.0°。</value>
+  </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>パーク方位 (°)</value>
   </data>

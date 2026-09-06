@@ -158,4 +158,26 @@ public static class RotatorAzimuthPlanner
             deg += 360;
         return deg;
     }
+
+    /// <summary>
+    /// Shortest compass separation in degrees, treating 0/360 and 450-overlap
+    /// headings (for example 15° and 375°) as the same direction.
+    /// </summary>
+    public static double CompassSeparationDeg(double firstDeg, double secondDeg)
+    {
+        var delta = Math.Abs(Normalize360(firstDeg) - Normalize360(secondDeg));
+        return Math.Min(delta, 360 - delta);
+    }
+
+    /// <summary>
+    /// True when two azimuth readings are closer than <paramref name="thresholdDeg"/>.
+    /// Used for arrival checks so overlap-band feedback (15° vs 375°) is not treated as 360° off.
+    /// </summary>
+    public static bool IsWithinAzimuthThreshold(double firstDeg, double secondDeg, double thresholdDeg)
+    {
+        if (Math.Abs(firstDeg - secondDeg) < thresholdDeg)
+            return true;
+
+        return CompassSeparationDeg(firstDeg, secondDeg) < thresholdDeg;
+    }
 }

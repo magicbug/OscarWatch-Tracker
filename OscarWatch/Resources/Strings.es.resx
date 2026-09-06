@@ -2466,6 +2466,12 @@
   <data name="Settings.Rotator.TrackStartNote">
     <value>El predeterminado es -3° (por debajo del horizonte). Rango -90° a 90°. El rotor empieza a girar cuando el satélite seguido supera esta elevación, y se estaciona cuando baja de ella (tras una breve confirmación para que un solo fallo no interrumpa el pase). La preposición de keyhole usa esta elevación como suelo (no por debajo de 0°).</value>
   </data>
+  <data name="Settings.Rotator.MovementThreshold">
+    <value>Umbral de movimiento (°)</value>
+  </data>
+  <data name="Settings.Rotator.MovementThresholdNote">
+    <value>Cambio angular mínimo antes de enviar un nuevo objetivo. Si el rotor informa una posición todavía fuera de este umbral, se reenvía el último mando para que un encoder ruidoso que se detenga pronto vuelva a arrancar. Detener cancela ese reintento. Valores más bajos dan un seguimiento más preciso; valores más altos reducen el desgaste. Predeterminado: 1,0°.</value>
+  </data>
   <data name="Settings.Rotator.ParkAzimuth">
     <value>Acimut de estacionamiento (°)</value>
   </data>
