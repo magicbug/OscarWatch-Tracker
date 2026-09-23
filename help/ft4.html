@@ -128,9 +128,11 @@
       </p>
       <p>
         With a Virtual Audio Cable (or similar), play FT4 TX into <strong>CABLE Input</strong> and
-        set WSJT-X (or the radio) to listen on <strong>CABLE Output</strong>. After changing soundcard
-        settings, use <strong>Refresh</strong> and re-select the cable if another app suddenly loses audio;
-        OscarWatch prefers the shared-friendly Windows audio backend so both apps can open the same cable.
+        set WSJT-X (or the radio) to listen on <strong>CABLE Output</strong>. FT4 opens the low-latency
+        shared Windows audio path for that device, so the cable can still be shared, and keeps the
+        output open while the modem is running. The burst is built before the slot. The tone itself
+        follows a half-second lead-in, which is part of FT4 timing.
+        After changing soundcard settings, use <strong>Refresh</strong> and re-select the cable if another app suddenly loses audio.
       </p>
 
       <h2>Logging</h2>

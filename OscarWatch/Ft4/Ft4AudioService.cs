@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using OscarWatch.Core.Services;
 using OscarWatch.Recording;
 using PortAudioSharp;
@@ -19,9 +20,21 @@ public sealed class Ft4AudioService : IDisposable
     private readonly object _monitorGate = new();
     private PaStream? _input;
     private PaStream? _output;
-    private float[]? _playback;
-    private int _playbackIndex;
+    private int _outputDeviceIndex = -1;
+    private int _outputChannels = 1;
+    private TxBuffer? _tx;
     private float _playbackPeak;
+
+    private sealed class TxBuffer
+    {
+        public TxBuffer(float[] samples) => Samples = samples;
+
+        public float[] Samples { get; }
+        public int Index;
+        public int FirstToneIndex = -1;
+        public long PublishedTimestamp;
+        public int ToneLogged;
+    }
     private bool _portAudioReady;
     private int _captureSampleRate = 48000;
     private int _playbackSampleRate = 48000;
@@ -108,43 +121,62 @@ public sealed class Ft4AudioService : IDisposable
             {
             }
 
-            var deviceIndex = ResolveDeviceIndex(deviceId, deviceDisplayName, input: true);
-            if (deviceIndex < 0)
+            try
             {
-                throw new InvalidOperationException(
-                    "FT4 input soundcard is no longer available. " +
-                    "Open FT4 Settings, click Refresh, and re-select the input device.");
+                OpenCaptureUnlocked(deviceId, deviceDisplayName, preferLowLatencyShared: true);
             }
-
-            var info = PortAudio.GetDeviceInfo(deviceIndex);
-            _captureSampleRate = (int)Math.Round(info.defaultSampleRate);
-            if (_captureSampleRate < 8000)
-                _captureSampleRate = 48000;
-
-            var param = new StreamParameters
+            catch (Exception ex)
             {
-                device = deviceIndex,
-                channelCount = 1,
-                sampleFormat = SampleFormat.Float32,
-                suggestedLatency = info.defaultLowInputLatency,
-                hostApiSpecificStreamInfo = IntPtr.Zero
-            };
+                var lowLatency = ResolveDeviceIndex(deviceId, deviceDisplayName, input: true, preferLowLatencyShared: true);
+                var shared = ResolveDeviceIndex(deviceId, deviceDisplayName, input: true, preferLowLatencyShared: false);
+                if (shared < 0 || shared == lowLatency)
+                    throw;
 
-            _input = new PaStream(
-                inParams: param,
-                outParams: null,
-                sampleRate: _captureSampleRate,
-                framesPerBuffer: 256,
-                streamFlags: StreamFlags.ClipOff,
-                callback: OnInput,
-                userData: IntPtr.Zero);
-            _input.Start();
-            Log.Information(
-                "FT4 capture started on '{Device}' (index {Index}) at {Rate} Hz",
-                info.name,
-                deviceIndex,
-                _captureSampleRate);
+                Log.Warning(ex, "FT4 low-latency capture open failed; retrying the shareable device");
+                StopCaptureUnlocked();
+                OpenCaptureUnlocked(deviceId, deviceDisplayName, preferLowLatencyShared: false);
+            }
         }
+    }
+
+    private void OpenCaptureUnlocked(string? deviceId, string? deviceDisplayName, bool preferLowLatencyShared)
+    {
+        var deviceIndex = ResolveDeviceIndex(deviceId, deviceDisplayName, input: true, preferLowLatencyShared);
+        if (deviceIndex < 0)
+        {
+            throw new InvalidOperationException(
+                "FT4 input soundcard is no longer available. " +
+                "Open FT4 Settings, click Refresh, and re-select the input device.");
+        }
+
+        var info = PortAudio.GetDeviceInfo(deviceIndex);
+        _captureSampleRate = (int)Math.Round(info.defaultSampleRate);
+        if (_captureSampleRate < 8000)
+            _captureSampleRate = 48000;
+
+        var param = new StreamParameters
+        {
+            device = deviceIndex,
+            channelCount = 1,
+            sampleFormat = SampleFormat.Float32,
+            suggestedLatency = info.defaultLowInputLatency,
+            hostApiSpecificStreamInfo = IntPtr.Zero
+        };
+
+        _input = new PaStream(
+            inParams: param,
+            outParams: null,
+            sampleRate: _captureSampleRate,
+            framesPerBuffer: 256,
+            streamFlags: StreamFlags.ClipOff,
+            callback: OnInput,
+            userData: IntPtr.Zero);
+        _input.Start();
+        Log.Information(
+            "FT4 capture started on '{Device}' (index {Index}) at {Rate} Hz",
+            info.name,
+            deviceIndex,
+            _captureSampleRate);
     }
 
     public void StopCapture()
@@ -177,6 +209,64 @@ public sealed class Ft4AudioService : IDisposable
         }
     }
 
+    /// <summary>
+    /// Open the TX output and leave it running with silence. Called when the modem starts
+    /// so the soundcard is already awake at the next slot boundary.
+    /// </summary>
+    public void StartOutput(string? deviceId, string? deviceDisplayName = null)
+    {
+        lock (_gate)
+        {
+            EnsurePortAudio();
+            if (!_portAudioReady)
+                return;
+
+            try
+            {
+                EnsureOutputUnlocked(deviceId, deviceDisplayName);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "FT4 output open failed");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resample and scale a 12 kHz burst for the open output. Does not start playback.
+    /// Used so the slot boundary only has to hand the buffer to the soundcard.
+    /// </summary>
+    public bool TryPreparePlayback(
+        float[] samples12k,
+        double level,
+        string? deviceId,
+        string? deviceDisplayName,
+        out float[] devicePcm,
+        out int sampleRate)
+    {
+        devicePcm = [];
+        sampleRate = 0;
+        lock (_gate)
+        {
+            try
+            {
+                EnsurePortAudio();
+                if (!_portAudioReady)
+                    return false;
+
+                EnsureOutputUnlocked(deviceId, deviceDisplayName);
+                devicePcm = ScaleForOutput(samples12k, level);
+                sampleRate = _playbackSampleRate;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "FT4 prepare playback failed");
+                return false;
+            }
+        }
+    }
+
     public void PlayPcm(float[] samples12k, double level, string? deviceId, string? deviceDisplayName = null)
     {
         lock (_gate)
@@ -185,64 +275,74 @@ public sealed class Ft4AudioService : IDisposable
             if (!_portAudioReady)
                 throw new InvalidOperationException("PortAudio is not available.");
 
-            StopPlaybackUnlocked();
-
-            var deviceIndex = ResolveDeviceIndex(deviceId, deviceDisplayName, input: false);
-            if (deviceIndex < 0)
-            {
-                throw new InvalidOperationException(
-                    "FT4 output soundcard is no longer available. " +
-                    "Open FT4 Settings, click Refresh, and re-select the output device.");
-            }
-
-            var info = PortAudio.GetDeviceInfo(deviceIndex);
-            _playbackSampleRate = (int)Math.Round(info.defaultSampleRate);
-            if (_playbackSampleRate < 8000)
-                _playbackSampleRate = 48000;
-
-            var scaled = Resample(samples12k, 12000, _playbackSampleRate);
-            var gain = (float)Math.Clamp(level, 0.01, 1.0);
-            for (var i = 0; i < scaled.Length; i++)
-                scaled[i] *= gain;
-
-            _playback = scaled;
-            _playbackIndex = 0;
-            Volatile.Write(ref _playbackPeak, 0f);
-
-            var param = new StreamParameters
-            {
-                device = deviceIndex,
-                channelCount = 1,
-                sampleFormat = SampleFormat.Float32,
-                suggestedLatency = info.defaultLowOutputLatency,
-                hostApiSpecificStreamInfo = IntPtr.Zero
-            };
-
-            _output = new PaStream(
-                inParams: null,
-                outParams: param,
-                sampleRate: _playbackSampleRate,
-                framesPerBuffer: 256,
-                streamFlags: StreamFlags.ClipOff,
-                callback: OnOutput,
-                userData: IntPtr.Zero);
-            _output.Start();
+            EnsureOutputUnlocked(deviceId, deviceDisplayName);
+            PublishPlayback(ScaleForOutput(samples12k, level));
         }
+    }
+
+    /// <summary>Start a buffer already at the output sample rate. Returns false if the stream is not at that rate.</summary>
+    public bool TryPlayPrepared(float[] devicePcm, int sampleRate)
+    {
+        lock (_gate)
+        {
+            if (_output is null || _playbackSampleRate != sampleRate || devicePcm.Length == 0)
+                return false;
+
+            PublishPlayback(devicePcm);
+            return true;
+        }
+    }
+
+    private float[] ScaleForOutput(float[] samples12k, double level)
+    {
+        var scaled = Resample(samples12k, 12000, _playbackSampleRate);
+        var gain = (float)Math.Clamp(level, 0.01, 1.0);
+        for (var i = 0; i < scaled.Length; i++)
+            scaled[i] *= gain;
+        return scaled;
+    }
+
+    private void PublishPlayback(float[] devicePcm)
+    {
+        var firstTone = devicePcm.Length;
+        for (var i = 0; i < devicePcm.Length; i++)
+        {
+            if (Math.Abs(devicePcm[i]) >= 0.02f)
+            {
+                firstTone = i;
+                break;
+            }
+        }
+
+        Volatile.Write(ref _playbackPeak, 0f);
+        // The callback only advances Index, so swapping the reference is the handoff.
+        Volatile.Write(ref _tx, new TxBuffer(devicePcm)
+        {
+            FirstToneIndex = firstTone,
+            PublishedTimestamp = Stopwatch.GetTimestamp()
+        });
     }
 
     public bool IsPlaying
     {
         get
         {
-            lock (_gate)
-                return _playback is not null && _playbackIndex < _playback.Length;
+            var tx = Volatile.Read(ref _tx);
+            return tx is not null && tx.Index < tx.Samples.Length;
         }
     }
 
+    /// <summary>Drop the current burst. The output stream stays open so the next slot does not cold-start.</summary>
     public void StopPlayback()
     {
         lock (_gate)
-            StopPlaybackUnlocked();
+            SilencePlaybackUnlocked();
+    }
+
+    public void StopOutput()
+    {
+        lock (_gate)
+            StopOutputUnlocked();
     }
 
     private StreamCallbackResult OnInput(
@@ -297,34 +397,50 @@ public sealed class Ft4AudioService : IDisposable
         unsafe
         {
             var ptr = (float*)output.ToPointer();
-            var src = _playback;
-            if (src is null)
-            {
-                for (var i = 0; i < frameCount; i++)
-                    ptr[i] = 0;
-                return StreamCallbackResult.Complete;
-            }
+            var channels = _outputChannels;
+            if (channels < 1)
+                channels = 1;
+            var tx = Volatile.Read(ref _tx);
 
-            for (var i = 0; i < frameCount; i++)
+            for (var frame = 0; frame < frameCount; frame++)
             {
-                float sample;
-                if (_playbackIndex < src.Length)
-                    sample = src[_playbackIndex++];
-                else
-                    sample = 0;
-                ptr[i] = sample;
+                var sample = 0f;
+                if (tx is not null)
+                {
+                    var i = tx.Index;
+                    if (i < tx.Samples.Length)
+                    {
+                        sample = tx.Samples[i];
+                        tx.Index = i + 1;
+                        if (i == tx.FirstToneIndex
+                            && Interlocked.CompareExchange(ref tx.ToneLogged, 1, 0) == 0)
+                        {
+                            var sincePublishMs = Stopwatch.GetElapsedTime(tx.PublishedTimestamp).TotalMilliseconds;
+                            var leadInMs = _playbackSampleRate > 0
+                                ? i * 1000.0 / _playbackSampleRate
+                                : 0;
+                            var dacMs = (timeInfo.outputBufferDacTime - timeInfo.currentTime) * 1000.0;
+                            Log.Information(
+                                "FT4 first tone sample: lead-in {LeadInMs:0} ms, callback {CallbackMs:0} ms after playback start, soundcard holds it {DacMs:0} ms",
+                                leadInMs,
+                                sincePublishMs,
+                                dacMs);
+                        }
+                    }
+                }
+
+                var dest = frame * channels;
+                for (var c = 0; c < channels; c++)
+                    ptr[dest + c] = sample;
+
                 var abs = Math.Abs(sample);
                 if (abs > _playbackPeak)
                     _playbackPeak = abs;
             }
-
-            if (_playbackIndex >= src.Length)
-            {
-                _playback = null;
-                return StreamCallbackResult.Complete;
-            }
         }
 
+        // Keep the stream running. Closing it at the end of each burst makes the
+        // next transmit wait while the soundcard wakes up.
         return StreamCallbackResult.Continue;
     }
 
@@ -335,14 +451,120 @@ public sealed class Ft4AudioService : IDisposable
         _input = null;
     }
 
-    private void StopPlaybackUnlocked()
+    private void SilencePlaybackUnlocked()
     {
+        Volatile.Write(ref _tx, null);
+        Volatile.Write(ref _playbackPeak, 0f);
+    }
+
+    private void EnsureOutputUnlocked(string? deviceId, string? deviceDisplayName)
+    {
+        var deviceIndex = ResolveDeviceIndex(deviceId, deviceDisplayName, input: false);
+        if (deviceIndex < 0)
+        {
+            throw new InvalidOperationException(
+                "FT4 output soundcard is no longer available. " +
+                "Open FT4 Settings, click Refresh, and re-select the output device.");
+        }
+
+        if (_output is not null && _outputDeviceIndex == deviceIndex)
+            return;
+
+        StopOutputUnlocked();
+
+        var info = PortAudio.GetDeviceInfo(deviceIndex);
+        _playbackSampleRate = (int)Math.Round(info.defaultSampleRate);
+        if (_playbackSampleRate < 8000)
+            _playbackSampleRate = 48000;
+
+        try
+        {
+            TryOpenOutputUnlocked(deviceIndex, info);
+        }
+        catch (Exception ex)
+        {
+            var shared = ResolveDeviceIndex(deviceId, deviceDisplayName, input: false, preferLowLatencyShared: false);
+            if (shared < 0 || shared == deviceIndex)
+                throw;
+
+            Log.Warning(ex, "FT4 low-latency output open failed; retrying the shareable device");
+            StopOutputUnlocked();
+            var sharedInfo = PortAudio.GetDeviceInfo(shared);
+            _playbackSampleRate = (int)Math.Round(sharedInfo.defaultSampleRate);
+            if (_playbackSampleRate < 8000)
+                _playbackSampleRate = 48000;
+            TryOpenOutputUnlocked(shared, sharedInfo);
+        }
+    }
+
+    private void TryOpenOutputUnlocked(int deviceIndex, DeviceInfo info)
+    {
+        try
+        {
+            OpenOutputUnlocked(deviceIndex, info, channels: 1);
+        }
+        catch (Exception ex) when (info.maxOutputChannels >= 2)
+        {
+            Log.Warning(ex, "FT4 mono output open failed; retrying stereo");
+            OpenOutputUnlocked(deviceIndex, info, channels: 2);
+        }
+    }
+
+    private void OpenOutputUnlocked(int deviceIndex, DeviceInfo info, int channels)
+    {
+        var param = new StreamParameters
+        {
+            device = deviceIndex,
+            channelCount = channels,
+            sampleFormat = SampleFormat.Float32,
+            suggestedLatency = info.defaultLowOutputLatency,
+            hostApiSpecificStreamInfo = IntPtr.Zero
+        };
+
+        PaStream? stream = null;
+        try
+        {
+            stream = new PaStream(
+                inParams: null,
+                outParams: param,
+                sampleRate: _playbackSampleRate,
+                framesPerBuffer: PortAudio.FramesPerBufferUnspecified,
+                streamFlags: StreamFlags.ClipOff,
+                callback: OnOutput,
+                userData: IntPtr.Zero);
+            stream.Start();
+            _output = stream;
+            _outputChannels = channels;
+            _outputDeviceIndex = deviceIndex;
+            stream = null;
+        }
+        finally
+        {
+            if (stream is not null)
+            {
+                try { stream.Dispose(); } catch { /* open failed */ }
+            }
+        }
+
+        Log.Information(
+            "FT4 output open on '{Device}' index {Index} hostApi {HostApi} type {HostApiType} at {Rate} Hz, {Channels} ch, low latency {LatencyMs} ms",
+            info.name,
+            deviceIndex,
+            info.hostApi,
+            PortAudioHostApi.GetTypeId(info.hostApi),
+            _playbackSampleRate,
+            channels,
+            info.defaultLowOutputLatency * 1000);
+    }
+
+    private void StopOutputUnlocked()
+    {
+        SilencePlaybackUnlocked();
         try { _output?.Stop(); } catch { /* ignore */ }
         try { _output?.Dispose(); } catch { /* ignore */ }
         _output = null;
-        _playback = null;
-        _playbackIndex = 0;
-        Volatile.Write(ref _playbackPeak, 0f);
+        _outputDeviceIndex = -1;
+        _outputChannels = 1;
     }
 
     private void EnsurePortAudio()
@@ -368,7 +590,11 @@ public sealed class Ft4AudioService : IDisposable
         }
     }
 
-    private static int ResolveDeviceIndex(string? deviceId, string? deviceDisplayName, bool input)
+    private static int ResolveDeviceIndex(
+        string? deviceId,
+        string? deviceDisplayName,
+        bool input,
+        bool preferLowLatencyShared = true)
     {
         if (string.IsNullOrWhiteSpace(deviceId) && string.IsNullOrWhiteSpace(deviceDisplayName))
             return input ? PortAudio.DefaultInputDevice : PortAudio.DefaultOutputDevice;
@@ -385,10 +611,17 @@ public sealed class Ft4AudioService : IDisposable
                 i,
                 info.name ?? "",
                 latency,
-                channels));
+                channels,
+                PortAudioHostApi.GetTypeId(info.hostApi)));
         }
 
-        return RecordingDeviceResolver.ResolveIndex(deviceId, deviceDisplayName, snapshots);
+        // WASAPI when it is available: shared with other apps, and much faster to start
+        // than the MME/DirectSound copy the pass-recording list prefers.
+        return RecordingDeviceResolver.ResolveIndex(
+            deviceId,
+            deviceDisplayName,
+            snapshots,
+            preferLowLatencyShared);
     }
 
     private static float[] Resample(float[] input, int inRate, int outRate)
@@ -415,7 +648,7 @@ public sealed class Ft4AudioService : IDisposable
         lock (_gate)
         {
             StopCaptureUnlocked();
-            StopPlaybackUnlocked();
+            StopOutputUnlocked();
         }
     }
 }

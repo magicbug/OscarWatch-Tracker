@@ -8,8 +8,9 @@ public sealed class RecordingDeviceResolverTests
         int index,
         string rawName,
         double latency = 0.003,
-        int channels = 2) =>
-        new(index, rawName, latency, channels);
+        int channels = 2,
+        int hostApiType = 0) =>
+        new(index, rawName, latency, channels, hostApiType);
 
     [Fact]
     public void Resolve_MatchesRawNameAtNewIndex_AfterUsbReenumeration()
@@ -110,6 +111,44 @@ public sealed class RecordingDeviceResolverTests
             inputs);
 
         Assert.Equal(3, index);
+    }
+
+    [Fact]
+    public void Resolve_Ft4PrefersWasapiOverSlowerSharedAndExclusiveCopies()
+    {
+        var inputs = new[]
+        {
+            Dev(1, "Speakers (USB audio CODEC)", 0.120, hostApiType: RecordingDeviceResolver.HostApiDirectSound),
+            Dev(8, "Speakers (USB audio CODEC)", 0.090, hostApiType: RecordingDeviceResolver.HostApiMme),
+            Dev(20, "Speakers (USB audio CODEC)", 0.003, hostApiType: RecordingDeviceResolver.HostApiWasapi),
+            Dev(41, "Speakers (USB audio CODEC)", 0.001, hostApiType: RecordingDeviceResolver.HostApiWdmks)
+        };
+
+        var index = RecordingDeviceResolver.ResolveIndex(
+            "Speakers (USB audio CODEC)",
+            "Speakers (USB audio CODEC)",
+            inputs,
+            preferLowLatencyShared: true);
+
+        Assert.Equal(20, index);
+    }
+
+    [Fact]
+    public void Resolve_Ft4SkipsExclusiveApiWhenWasapiIsMissing()
+    {
+        var inputs = new[]
+        {
+            Dev(4, "CABLE Input", 0.090, hostApiType: RecordingDeviceResolver.HostApiMme),
+            Dev(9, "CABLE Input", 0.002, hostApiType: RecordingDeviceResolver.HostApiWdmks)
+        };
+
+        var index = RecordingDeviceResolver.ResolveIndex(
+            "CABLE Input",
+            "CABLE Input",
+            inputs,
+            preferLowLatencyShared: true);
+
+        Assert.Equal(4, index);
     }
 
     [Fact]

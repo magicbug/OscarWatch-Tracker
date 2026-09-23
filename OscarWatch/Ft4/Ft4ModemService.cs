@@ -30,6 +30,13 @@ public sealed class Ft4ModemService : IDisposable
     private Task? _loopTask;
     private CancellationTokenSource? _txCts;
     private int _txRunning; // 0 idle, 1 in progress
+    private int _prepareRunning;
+    private int _preparedPlayed;
+    private readonly object _prepareGate = new();
+    private readonly object _encodeGate = new();
+    private string? _preparedKey;
+    private float[]? _preparedDevicePcm;
+    private int _preparedSampleRate;
     private readonly List<float> _slotBuffer = new(12000 * 8);
     private int _deviceSampleRate = 48000;
     private DateTime _currentSlotStart = DateTime.MinValue;
@@ -75,6 +82,17 @@ public sealed class Ft4ModemService : IDisposable
     public IReadOnlyList<AudioInputDevice> GetInputDevices() => _audio.GetInputDevices();
 
     public IReadOnlyList<AudioInputDevice> GetOutputDevices() => _audio.GetOutputDevices();
+
+    /// <summary>Re-open the TX output on the device currently stored in FT4 settings (while listening).</summary>
+    public void RestartOutputFromSettings()
+    {
+        if (!IsRunning)
+            return;
+
+        _audio.StartOutput(
+            _settings.Current.Ft4.OutputDeviceId,
+            _settings.Current.Ft4.OutputDeviceDisplayName);
+    }
 
     /// <summary>Re-open capture on the device currently stored in FT4 settings (while listening).</summary>
     public void RestartCaptureFromSettings()
@@ -162,6 +180,9 @@ public sealed class Ft4ModemService : IDisposable
         _audio.StartCapture(
             _settings.Current.Ft4.InputDeviceId,
             _settings.Current.Ft4.InputDeviceDisplayName);
+        _audio.StartOutput(
+            _settings.Current.Ft4.OutputDeviceId,
+            _settings.Current.Ft4.OutputDeviceDisplayName);
         _deviceSampleRate = _audio.CaptureSampleRate;
         _slotBuffer.Clear();
         _currentSlotStart = DateTime.MinValue;
@@ -196,7 +217,7 @@ public sealed class Ft4ModemService : IDisposable
         }
 
         await _ptt.UnkeyAsync().ConfigureAwait(false);
-        _audio.StopPlayback();
+        _audio.StopOutput();
         _audio.StopCapture();
         _rig.SetFt4SlotGatedDoppler(false);
         IsRunning = false;
@@ -232,6 +253,8 @@ public sealed class Ft4ModemService : IDisposable
     {
         _sequencer?.HaltTx();
         _txCts?.Cancel();
+        ClearPrepared();
+        Interlocked.Exchange(ref _preparedPlayed, 0);
         _audio.StopPlayback();
         _ = _ptt.UnkeyAsync();
         _txThisSlot = false;
@@ -380,6 +403,9 @@ public sealed class Ft4ModemService : IDisposable
                         QueueDecode(previousSlot, previousSamples, previousWasTx);
                 }
 
+                // Build the next TX burst before its slot, so the boundary only starts playback.
+                MaybePrepareTransmit(now);
+
                 // Early RX decode once the FT4 burst should be in the buffer (~6 s).
                 MaybeQueueEarlyDecode(now);
 
@@ -445,6 +471,17 @@ public sealed class Ft4ModemService : IDisposable
         _txCts = CancellationTokenSource.CreateLinkedTokenSource(loopCt);
         var txCt = _txCts.Token;
 
+        // VOX keys from the audio itself, so start a ready buffer on this thread.
+        // Waiting for the TX task to encode and resample was holding the tone until about +1 s.
+        if (_ptt.Method == Ft4PttMethod.Vox
+            && TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
+            && _audio.TryPlayPrepared(ready, readyRate))
+        {
+            Interlocked.Exchange(ref _preparedPlayed, 1);
+            var intoMs = (DateTime.UtcNow - slotStart).TotalMilliseconds;
+            Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot from a prepared buffer", intoMs);
+        }
+
         _ = Task.Run(async () =>
         {
             try
@@ -472,37 +509,19 @@ public sealed class Ft4ModemService : IDisposable
 
     private async Task RunTransmitAsync(DateTime slotStart, CancellationToken ct)
     {
+        var playedEarly = Interlocked.Exchange(ref _preparedPlayed, 0) == 1;
         var seq = _sequencer;
         if (seq is null || !seq.TransmitEnabled || string.IsNullOrWhiteSpace(seq.CurrentTxMessage))
+        {
+            if (playedEarly)
+                _audio.StopPlayback();
             return;
+        }
 
         var audioHz = (float)Math.Clamp(seq.TxAudioHz, 200, 3000);
-        if (!Ft8Native.TryEncodeFt4(seq.CurrentTxMessage, audioHz, 12000, out var pcm, out var encodeError)
-            || pcm is null)
-        {
-            _txThisSlot = false;
-            Status = string.IsNullOrWhiteSpace(encodeError)
-                ? _l.Get("Ft4.Status.EncodeFailed")
-                : encodeError;
-            Log.Warning("FT4 encode failed for '{Message}': {Error}", seq.CurrentTxMessage, encodeError);
-            Changed?.Invoke();
-            return;
-        }
-
-        if (_settings.Current.Ft4.AudioDopplerTx
-            && TryGetDopplerSlopeHzPerSec(slotStart, Ft4SlotClock.Ft4SymbolBurstSeconds, out _, out var ulSlope))
-        {
-            var uplinkMode = _frequencies.SelectedMode is null
-                ? null
-                : Core.Radio.TransponderOperatingModes.GetEffectiveUplinkMode(
-                    _frequencies.SelectedMode,
-                    _frequencies.IsCwUplink);
-            pcm = Ft4AudioDoppler.ApplyTxPrecompensation(pcm, 12000, ulSlope, uplinkMode);
-        }
 
         // Native encode pads to a full 7.5 s slot (silence tail). Key only for lead-in + burst
-        // so VOX/CAT unkey before the opposite RX slot, and so playback does not hold the
-        // output device across the slot boundary on shared virtual cables.
+        // so VOX/CAT unkey before the opposite RX slot.
         const double leadInSeconds = 0.5;
         var keySeconds = leadInSeconds + Ft4SlotClock.Ft4SymbolBurstSeconds + 0.15;
         var keyedUntil = slotStart.AddSeconds(keySeconds);
@@ -510,12 +529,37 @@ public sealed class Ft4ModemService : IDisposable
         await _ptt.KeyAsync(ct).ConfigureAwait(false);
         try
         {
-            var ft4 = _settings.Current.Ft4;
-            _audio.PlayPcm(
-                pcm,
-                ft4.TxLevel,
-                ft4.OutputDeviceId,
-                ft4.OutputDeviceDisplayName);
+            if (!playedEarly)
+            {
+                var ft4 = _settings.Current.Ft4;
+                if (TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
+                    && _audio.TryPlayPrepared(ready, readyRate))
+                {
+                    var intoMs = (DateTime.UtcNow - slotStart).TotalMilliseconds;
+                    Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot from a prepared buffer", intoMs);
+                }
+                else if (!TryBuildTransmitPcm(slotStart, seq.CurrentTxMessage, audioHz, out var pcm, out var encodeError)
+                    || pcm is null)
+                {
+                    _txThisSlot = false;
+                    Status = string.IsNullOrWhiteSpace(encodeError)
+                        ? _l.Get("Ft4.Status.EncodeFailed")
+                        : encodeError;
+                    Log.Warning("FT4 encode failed for '{Message}': {Error}", seq.CurrentTxMessage, encodeError);
+                    Changed?.Invoke();
+                    return;
+                }
+                else
+                {
+                    _audio.PlayPcm(
+                        pcm,
+                        ft4.TxLevel,
+                        ft4.OutputDeviceId,
+                        ft4.OutputDeviceDisplayName);
+                    var intoMs = (DateTime.UtcNow - slotStart).TotalMilliseconds;
+                    Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot after building on the slot", intoMs);
+                }
+            }
 
             while (!ct.IsCancellationRequested)
             {
@@ -546,6 +590,148 @@ public sealed class Ft4ModemService : IDisposable
 
         Status = _l.Get("Ft4.Status.TxDone", seq.CurrentTxMessage);
         Changed?.Invoke();
+    }
+
+    private void MaybePrepareTransmit(DateTime utcNow)
+    {
+        var seq = _sequencer;
+        if (seq is not { TransmitEnabled: true } || string.IsNullOrWhiteSpace(seq.CurrentTxMessage))
+        {
+            ClearPrepared();
+            return;
+        }
+
+        var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, Ft4SlotClock.Ft4SlotSeconds, seq.PreferEvenSlot);
+        if (_txThisSlot && next == _currentSlotStart)
+            return;
+
+        var audioHz = (float)Math.Clamp(seq.TxAudioHz, 200, 3000);
+        var level = _settings.Current.Ft4.TxLevel;
+        var message = seq.CurrentTxMessage;
+        var doppler = _settings.Current.Ft4.AudioDopplerTx;
+        var key = PrepareKey(next, message, audioHz, level, doppler);
+
+        lock (_prepareGate)
+        {
+            if (_preparedKey == key && _preparedDevicePcm is not null)
+                return;
+        }
+
+        if (Interlocked.CompareExchange(ref _prepareRunning, 1, 0) != 0)
+            return;
+
+        var deviceId = _settings.Current.Ft4.OutputDeviceId;
+        var deviceName = _settings.Current.Ft4.OutputDeviceDisplayName;
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                if (!TryBuildTransmitPcm(next, message, audioHz, out var pcm, out _) || pcm is null)
+                    return;
+                if (!_audio.TryPreparePlayback(pcm, level, deviceId, deviceName, out var devicePcm, out var rate))
+                    return;
+
+                lock (_prepareGate)
+                {
+                    var nowSeq = _sequencer;
+                    if (nowSeq is not { TransmitEnabled: true }
+                        || !string.Equals(nowSeq.CurrentTxMessage, message, StringComparison.Ordinal))
+                        return;
+
+                    var keyNow = PrepareKey(
+                        next,
+                        nowSeq.CurrentTxMessage,
+                        Math.Clamp(nowSeq.TxAudioHz, 200, 3000),
+                        _settings.Current.Ft4.TxLevel,
+                        _settings.Current.Ft4.AudioDopplerTx);
+                    if (!string.Equals(keyNow, key, StringComparison.Ordinal))
+                        return;
+
+                    _preparedKey = key;
+                    _preparedDevicePcm = devicePcm;
+                    _preparedSampleRate = rate;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "FT4 transmit prepare failed");
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _prepareRunning, 0);
+            }
+        });
+    }
+
+    private bool TryTakePrepared(DateTime slotStart, string message, out float[] devicePcm, out int sampleRate)
+    {
+        devicePcm = [];
+        sampleRate = 0;
+        var seq = _sequencer;
+        if (seq is null)
+            return false;
+
+        var key = PrepareKey(
+            slotStart,
+            message,
+            Math.Clamp(seq.TxAudioHz, 200, 3000),
+            _settings.Current.Ft4.TxLevel,
+            _settings.Current.Ft4.AudioDopplerTx);
+
+        lock (_prepareGate)
+        {
+            if (_preparedDevicePcm is null || !string.Equals(_preparedKey, key, StringComparison.Ordinal))
+                return false;
+
+            devicePcm = _preparedDevicePcm;
+            sampleRate = _preparedSampleRate;
+            _preparedDevicePcm = null;
+            _preparedKey = null;
+            return true;
+        }
+    }
+
+    private void ClearPrepared()
+    {
+        lock (_prepareGate)
+        {
+            _preparedKey = null;
+            _preparedDevicePcm = null;
+        }
+    }
+
+    private static string PrepareKey(DateTime slotStart, string message, double audioHz, double level, bool doppler) =>
+        string.Create(
+            System.Globalization.CultureInfo.InvariantCulture,
+            $"{slotStart.Ticks}|{message}|{audioHz:0}|{level:0.000}|{(doppler ? 1 : 0)}");
+
+    private bool TryBuildTransmitPcm(
+        DateTime slotStart,
+        string message,
+        float audioHz,
+        out float[]? pcm,
+        out string encodeError)
+    {
+        pcm = null;
+        encodeError = "";
+        lock (_encodeGate)
+        {
+            if (!Ft8Native.TryEncodeFt4(message, audioHz, 12000, out pcm, out encodeError) || pcm is null)
+                return false;
+
+            if (_settings.Current.Ft4.AudioDopplerTx
+                && TryGetDopplerSlopeHzPerSec(slotStart, Ft4SlotClock.Ft4SymbolBurstSeconds, out _, out var ulSlope))
+            {
+                var uplinkMode = _frequencies.SelectedMode is null
+                    ? null
+                    : Core.Radio.TransponderOperatingModes.GetEffectiveUplinkMode(
+                        _frequencies.SelectedMode,
+                        _frequencies.IsCwUplink);
+                pcm = Ft4AudioDoppler.ApplyTxPrecompensation(pcm, 12000, ulSlope, uplinkMode);
+            }
+
+            return true;
+        }
     }
 
     private void AppendTransmittedMessage(DateTime slotStart, string text, float freqHz)

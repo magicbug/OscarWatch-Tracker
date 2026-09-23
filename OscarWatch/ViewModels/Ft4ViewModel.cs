@@ -411,6 +411,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.Current.Ft4.OutputDeviceId = value.Id;
         _settings.Current.Ft4.OutputDeviceDisplayName = value.DisplayName;
         _settings.RequestSave();
+        _modem.RestartOutputFromSettings();
     }
 
     partial void OnSelectedDecodeChanged(Ft4DecodedMessage? value)

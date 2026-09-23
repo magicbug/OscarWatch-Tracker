@@ -6,11 +6,20 @@ namespace OscarWatch.Recording;
 /// </summary>
 internal static class RecordingDeviceResolver
 {
+    /// <summary>PortAudio <c>PaHostApiTypeId</c> values used when choosing a Windows host API.</summary>
+    internal const int HostApiDirectSound = 1;
+
+    internal const int HostApiMme = 2;
+    internal const int HostApiAsio = 3;
+    internal const int HostApiWdmks = 11;
+    internal const int HostApiWasapi = 13;
+
     internal readonly record struct InputDeviceSnapshot(
         int Index,
         string RawName,
         double DefaultLowInputLatency,
-        int MaxInputChannels);
+        int MaxInputChannels,
+        int HostApiType = 0);
 
     /// <summary>
     /// Returns the PortAudio device index to open, or -1 if no match.
@@ -18,7 +27,8 @@ internal static class RecordingDeviceResolver
     internal static int ResolveIndex(
         string? deviceId,
         string? deviceDisplayName,
-        IReadOnlyList<InputDeviceSnapshot> inputs)
+        IReadOnlyList<InputDeviceSnapshot> inputs,
+        bool preferLowLatencyShared = false)
     {
         if (inputs.Count == 0)
             return -1;
@@ -29,14 +39,14 @@ internal static class RecordingDeviceResolver
 
         if (legacyIndex is null && id.Length > 0)
         {
-            var byRaw = FindBestByRawName(id, inputs);
+            var byRaw = FindBestByRawName(id, inputs, preferLowLatencyShared);
             if (byRaw >= 0)
                 return byRaw;
         }
 
         if (displayName.Length > 0)
         {
-            var byDisplay = FindBestByFormattedDisplayName(displayName, inputs);
+            var byDisplay = FindBestByFormattedDisplayName(displayName, inputs, preferLowLatencyShared);
             if (byDisplay >= 0)
                 return byDisplay;
         }
@@ -83,25 +93,29 @@ internal static class RecordingDeviceResolver
         return index;
     }
 
-    private static int FindBestByRawName(string rawName, IReadOnlyList<InputDeviceSnapshot> inputs)
+    private static int FindBestByRawName(
+        string rawName,
+        IReadOnlyList<InputDeviceSnapshot> inputs,
+        bool preferLowLatencyShared)
     {
         var matches = inputs
             .Where(d => d.MaxInputChannels > 0
-                        && d.RawName.Trim().Equals(rawName, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(d => d.DefaultLowInputLatency)
-            .ThenBy(d => d.Index)
-            .ToList();
-        return matches.Count > 0 ? matches[0].Index : -1;
+                        && d.RawName.Trim().Equals(rawName, StringComparison.OrdinalIgnoreCase));
+        return Pick(matches, preferLowLatencyShared);
     }
 
-    private static int FindBestByFormattedDisplayName(string displayName, IReadOnlyList<InputDeviceSnapshot> inputs)
+    private static int FindBestByFormattedDisplayName(
+        string displayName,
+        IReadOnlyList<InputDeviceSnapshot> inputs,
+        bool preferLowLatencyShared)
     {
         var formattedStored = RecordingDeviceNameFormatter.Format(displayName);
         if (formattedStored.Length == 0)
             return -1;
 
-        // Prefer higher-latency host APIs (MME/shared) so Virtual Audio Cable can be
-        // shared with WSJT-X; WDM-KS exclusive often wins on lowest latency alone.
+        // Pass recording prefers the higher-latency host API (MME or DirectSound) so a
+        // Virtual Audio Cable stays shareable. WDM-KS is often the lowest latency and exclusive.
+        // FT4 passes preferLowLatencyShared so transmit uses WASAPI instead.
         var matches = inputs
             .Where(d =>
             {
@@ -109,10 +123,33 @@ internal static class RecordingDeviceResolver
                     return false;
                 var formatted = RecordingDeviceNameFormatter.Format(d.RawName);
                 return formatted.Equals(formattedStored, StringComparison.OrdinalIgnoreCase);
-            })
-            .OrderByDescending(d => d.DefaultLowInputLatency)
-            .ThenBy(d => d.Index)
-            .ToList();
-        return matches.Count > 0 ? matches[0].Index : -1;
+            });
+        return Pick(matches, preferLowLatencyShared);
+    }
+
+    private static int Pick(IEnumerable<InputDeviceSnapshot> matches, bool preferLowLatencyShared)
+    {
+        var ordered = preferLowLatencyShared
+            ? matches
+                .OrderBy(SharedLatencyTier)
+                .ThenBy(d => d.DefaultLowInputLatency)
+                .ThenBy(d => d.Index)
+            : matches
+                .OrderByDescending(d => d.DefaultLowInputLatency)
+                .ThenBy(d => d.Index);
+        var best = ordered.FirstOrDefault();
+        return best.MaxInputChannels > 0 ? best.Index : -1;
+    }
+
+    /// <summary>
+    /// 0 = WASAPI (shared and low latency), 1 = other shareable APIs, 2 = exclusive (WDM-KS, ASIO).
+    /// </summary>
+    private static int SharedLatencyTier(InputDeviceSnapshot device)
+    {
+        if (device.HostApiType == HostApiWasapi)
+            return 0;
+        if (device.HostApiType is HostApiWdmks or HostApiAsio)
+            return 2;
+        return 1;
     }
 }
