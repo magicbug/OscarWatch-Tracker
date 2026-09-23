@@ -4,6 +4,9 @@ namespace OscarWatch.Core.Services;
 
 public interface IQsoLogbookRepository
 {
+    /// <summary>Raised after a QSO is inserted. The argument is the logbook id.</summary>
+    event Action<long>? QsosChanged;
+
     string DatabasePath { get; }
 
     Task InitializeAsync(CancellationToken cancellationToken = default);

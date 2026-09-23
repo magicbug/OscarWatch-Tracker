@@ -18,6 +18,7 @@ public sealed class Ft4ModemService : IDisposable
     private readonly ILiveTrackingService _tracking;
     private readonly FrequencyOverlayViewModel _frequencies;
     private readonly IQsoLogbookRepository _logbook;
+    private readonly ICloudlogQsoUploadService _cloudlogUpload;
     private readonly ILiveTrackerSnapshotProvider _snapshot;
     private readonly IOrbitPropagator _propagator;
     private readonly IRigController _rig;
@@ -53,6 +54,7 @@ public sealed class Ft4ModemService : IDisposable
         FrequencyOverlayViewModel frequencies,
         IRigController rig,
         IQsoLogbookRepository logbook,
+        ICloudlogQsoUploadService cloudlogUpload,
         ILiveTrackerSnapshotProvider snapshot,
         IOrbitPropagator propagator,
         ILocalizationService localization)
@@ -61,6 +63,7 @@ public sealed class Ft4ModemService : IDisposable
         _tracking = tracking;
         _frequencies = frequencies;
         _logbook = logbook;
+        _cloudlogUpload = cloudlogUpload;
         _snapshot = snapshot;
         _propagator = propagator;
         _rig = rig;
@@ -1035,6 +1038,9 @@ public sealed class Ft4ModemService : IDisposable
             }
 
             var snap = _snapshot.GetCurrent();
+            var cloudlogUpload = book.CloudlogAutoUpload && book.CloudlogStationProfileId.HasValue
+                ? CloudlogUploadStatus.Pending
+                : CloudlogUploadStatus.None;
             var record = await _logbook.AddQsoAsync(new QsoRecordCreateRequest
             {
                 LogbookId = book.Id,
@@ -1051,8 +1057,12 @@ public sealed class Ft4ModemService : IDisposable
                 Band = snap.IsAvailable ? snap.Band : "",
                 BandRx = snap.IsAvailable ? snap.BandRx : "",
                 PropMode = "SAT",
-                Comment = manual ? "FT4 manual log" : ""
+                Comment = manual ? "FT4 manual log" : "",
+                CloudlogUploadStatus = cloudlogUpload
             }).ConfigureAwait(false);
+
+            if (cloudlogUpload == CloudlogUploadStatus.Pending)
+                await _cloudlogUpload.QueueUploadIfEnabledAsync(record.Id).ConfigureAwait(false);
 
             _lastLoggedKey = key;
             Status = manual

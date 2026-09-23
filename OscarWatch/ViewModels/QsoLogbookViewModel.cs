@@ -63,6 +63,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         _liveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
         _liveTimer.Tick += (_, _) => RefreshStationPanel();
         _cloudlogUpload.UploadStateChanged += OnCloudlogUploadStateChanged;
+        _repository.QsosChanged += OnRepositoryQsosChanged;
     }
 
     [ObservableProperty]
@@ -1082,6 +1083,16 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     private void OnCloudlogUploadStateChanged(long qsoId) =>
         Dispatcher.UIThread.Post(() => _ = RefreshQsoRowAsync(qsoId));
 
+    private void OnRepositoryQsosChanged(long logbookId) =>
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (SelectedLogbook?.Id != logbookId || IsEditingQso)
+                return;
+
+            var filter = Call?.Trim();
+            _ = ReloadQsosAsync(filter is { Length: >= 3 } ? filter : null);
+        });
+
     private async Task RefreshQsoRowAsync(long qsoId)
     {
         if (SelectedLogbook is null)
@@ -1174,6 +1185,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     {
         CancelQrzLookup();
         _cloudlogUpload.UploadStateChanged -= OnCloudlogUploadStateChanged;
+        _repository.QsosChanged -= OnRepositoryQsosChanged;
         _liveTimer.Stop();
     }
 }
