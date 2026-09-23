@@ -7,6 +7,7 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
         <Style Selector="Window">
             <Setter Property="Icon" Value="/icons/OscarWatch-Icon.png" />
             <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />

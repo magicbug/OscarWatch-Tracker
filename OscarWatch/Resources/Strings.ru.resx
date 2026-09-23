@@ -3994,6 +3994,15 @@ LOS: {2}
   <data name="Ft4.DecodeFontSize.Note">
     <value>Размер шрифта списка декодов (10–28). Больший размер удобнее при слабом зрении.</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>Вызывает меня</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>Отвечает</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>Фон строки, адресованной вам. Отвечает: станция текущего QSO. Выберите цвет в палитре; чем меньше прозрачность, тем насыщеннее фон.</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Калибровка эха</value>
   </data>

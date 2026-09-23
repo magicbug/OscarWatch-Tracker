@@ -3990,6 +3990,15 @@ Latest: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Font size for the decode list (10–28). Larger sizes help with poorer vision.</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>Calling me</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>Replying</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>Background of a decode line addressed to you. Replying is the station in the current QSO. Use the colour selector; the lower the transparency, the stronger the shade.</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Echo calibration</value>
   </data>

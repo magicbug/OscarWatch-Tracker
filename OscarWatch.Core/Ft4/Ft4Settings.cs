@@ -84,6 +84,12 @@ public sealed class Ft4Settings
     /// <summary>Font size for the decode / activity list (points). Default 12.</summary>
     public double DecodeFontSize { get; set; } = 12;
 
+    /// <summary>Row background for a decode addressed to this station. #RRGGBB or #AARRGGBB.</summary>
+    public string CallingMeColour { get; set; } = Ft4DecodeHighlight.DefaultCallingMeColour;
+
+    /// <summary>Row background for the station in the current QSO. #RRGGBB or #AARRGGBB.</summary>
+    public string ReplyingColour { get; set; } = Ft4DecodeHighlight.DefaultReplyingColour;
+
     /// <summary>Window size/position.</summary>
     public int? WindowWidth { get; set; }
     public int? WindowHeight { get; set; }

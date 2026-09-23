@@ -857,18 +857,16 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
-        if (!Ft4EchoAligner.TryFindToneOnset(raw, 12000, hz, out var onset))
-            return;
-        if (onset < (int)(Ft4EchoAligner.NativeWindowSeconds * 12000))
-            return;
+        if (Ft4EchoAligner.TryFindToneOnset(raw, 12000, hz, out var onset)
+            && onset >= (int)(Ft4EchoAligner.NativeWindowSeconds * 12000))
+        {
+            var aligned = Ft4EchoAligner.AlignToNativeWindow(raw, 12000, onset, out var shiftSec);
+            if (aligned.Length >= (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2) && shiftSec >= 0.2)
+                foundOwn = PublishDecoded(slotStart, aligned, txSlot, shiftSec, ownOnly: true);
+        }
 
-        var aligned = Ft4EchoAligner.AlignToNativeWindow(raw, 12000, onset, out var shiftSec);
-        if (aligned.Length < (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
-            return;
-        if (shiftSec < 0.2)
-            return;
-
-        PublishDecoded(slotStart, aligned, txSlot, shiftSec, ownOnly: true);
+        if (!foundOwn)
+            TryCalibrateEchoFromSpectrum(raw, hz);
     }
 
     /// <summary>Post decoder output. Returns true when our own callsign was published.</summary>
@@ -988,22 +986,66 @@ public sealed class Ft4ModemService : IDisposable
         if (seq is null)
             return;
 
-        var errorHz = own.FreqHz - seq.TxAudioHz;
-        if (Math.Abs(errorHz) < 5)
+        ApplyEchoCalibrationHz(own.FreqHz - seq.TxAudioHz);
+    }
+
+    /// <summary>
+    /// The trace is on the waterfall but the decoder missed the message.
+    /// Measure that tone and nudge the uplink so the next slot sits on the red bracket.
+    /// </summary>
+    private void TryCalibrateEchoFromSpectrum(float[] raw, double txHz)
+    {
+        if (!Ft4EchoAligner.TryMeasurePeakHz(raw, 12000, txHz, out var peakHz))
             return;
 
-        var sat = _frequencies.SatelliteName;
-        if (string.IsNullOrWhiteSpace(sat))
+        var errorHz = peakHz - txHz;
+        if (Math.Abs(errorHz) < 15)
             return;
 
-        // Positive audio error → we need a touch more uplink (reverse path depends on doppler sense).
-        // Store as kHz trim applied to transmit offset path.
+        Log.Information(
+            "FT4 echo on the waterfall is {Peak:0} Hz, TX marker {Tx:0} Hz, error {Error:0} Hz",
+            peakHz,
+            txHz,
+            errorHz);
+        ApplyEchoCalibrationHz(errorHz);
+    }
+
+    private void ApplyEchoCalibrationHz(double errorHz)
+    {
+        if (Math.Abs(errorHz) < 5 || !double.IsFinite(errorHz))
+            return;
+
+        var sat = ResolveCalibrationSatellite();
+        if (sat is null)
+            return;
+
+        // Positive audio error (echo above the marker) needs a higher uplink dial on a
+        // reversing LSB-up / USB-down satellite, which brings the echo back down.
         var deltaKHz = errorHz / 1000.0;
         var current = _settings.Current.Ft4.GetUplinkCalibrationKHz(sat);
         _settings.Current.Ft4.SetUplinkCalibrationKHz(sat, current + deltaKHz);
         _settings.RequestSave();
         Status = _l.Get("Ft4.Status.EchoCalibration", deltaKHz * 1000.0, sat);
         Changed?.Invoke();
+    }
+
+    /// <summary>Satellite the uplink trim belongs to. Ignores the overlay placeholder.</summary>
+    private string? ResolveCalibrationSatellite()
+    {
+        var snap = _snapshot.GetCurrent();
+        if (IsRealSatelliteName(snap.SatelliteName))
+            return snap.SatelliteName.Trim();
+        if (IsRealSatelliteName(_frequencies.SatelliteName))
+            return _frequencies.SatelliteName.Trim();
+        return null;
+    }
+
+    private static bool IsRealSatelliteName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+        var trimmed = name.Trim();
+        return trimmed is not "-" and not "—" and not "–";
     }
 
     private async Task TryLogAsync(bool manual)
@@ -1105,7 +1147,7 @@ public sealed class Ft4ModemService : IDisposable
 
             var rxOffset = _frequencies.ReceiveOffsetKHz;
             var txOffset = _frequencies.TransmitOffsetKHz
-                + _settings.Current.Ft4.GetUplinkCalibrationKHz(_frequencies.SatelliteName);
+                + _settings.Current.Ft4.GetUplinkCalibrationKHz(ResolveCalibrationSatellite());
 
             var s0 = Ft4DopplerShift.ComputeShiftsHz(mode, rr0, rxOffset, txOffset);
             var s1 = Ft4DopplerShift.ComputeShiftsHz(mode, rr1, rxOffset, txOffset);

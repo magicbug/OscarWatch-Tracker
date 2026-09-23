@@ -26,6 +26,42 @@ public sealed class Ft4EchoAlignerTests
     }
 
     [Fact]
+    public void Tone_offset_from_the_marker_is_still_found()
+    {
+        const int rate = 12000;
+        const double hz = 1650;
+        var onset = (int)(1.6 * rate);
+        var samples = new float[rate * 7];
+        for (var i = onset; i < onset + rate * 4 && i < samples.Length; i++)
+            samples[i] = (float)Math.Sin(2 * Math.PI * hz * i / rate);
+
+        Assert.True(Ft4EchoAligner.TryFindToneOnset(samples, rate, 1500, out var found));
+        Assert.InRange(found, onset - rate / 5, onset + rate / 5);
+    }
+
+    [Fact]
+    public void Waterfall_peak_reports_a_tone_off_the_tx_marker()
+    {
+        const int rate = 12000;
+        const double hz = 1640;
+        var samples = new float[rate * 7];
+        var from = (int)(1.2 * rate);
+        var to = (int)(4.8 * rate);
+        for (var i = from; i < to; i++)
+            samples[i] = 0.4f * (float)Math.Sin(2 * Math.PI * hz * i / rate);
+
+        Assert.True(Ft4EchoAligner.TryMeasurePeakHz(samples, rate, 1780, out var peak));
+        Assert.InRange(peak, hz - 8, hz + 8);
+    }
+
+    [Fact]
+    public void Silence_has_no_waterfall_peak()
+    {
+        var samples = new float[12000 * 7];
+        Assert.False(Ft4EchoAligner.TryMeasurePeakHz(samples, 12000, 1780, out _));
+    }
+
+    [Fact]
     public void Silence_has_no_tone_onset()
     {
         var samples = new float[12000 * 2];

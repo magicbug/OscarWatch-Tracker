@@ -3990,6 +3990,15 @@
   <data name="Ft4.DecodeFontSize.Note">
     <value>デコード一覧のフォントサイズ（10–28）。大きいほど見やすくなります。</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>自分宛て</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>応答中</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>自分宛てのデコード行の背景です。応答中は現在のQSO相手です。色選択で指定します。透明度が低いほど色が濃くなります。</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>エコー校正</value>
   </data>

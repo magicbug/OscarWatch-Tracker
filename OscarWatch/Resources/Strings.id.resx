@@ -3994,6 +3994,15 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Ukuran font daftar decode (10–28). Ukuran lebih besar membantu penglihatan lemah.</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>Memanggil saya</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>Membalas</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>Latar baris yang ditujukan kepada Anda. Membalas adalah stasiun pada QSO saat ini. Gunakan pemilih warna; transparansi lebih rendah membuat warna lebih kuat.</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Kalibrasi gema</value>
   </data>

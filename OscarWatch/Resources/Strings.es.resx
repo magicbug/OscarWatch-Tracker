@@ -3990,6 +3990,15 @@ Está utilizando la versión {0}.
   <data name="Ft4.DecodeFontSize.Note">
     <value>Tamaño de fuente de la lista de decodes (10–28). Los tamaños mayores ayudan con visión reducida.</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>Me llama</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>Respondiendo</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>Fondo de una línea dirigida a ti. Respondiendo es la estación del QSO actual. Use el selector de color; menos transparencia da un tono más fuerte.</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Calibración de eco</value>
   </data>

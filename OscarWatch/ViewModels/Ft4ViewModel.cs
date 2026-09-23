@@ -68,6 +68,10 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _pttLeadMs = Math.Clamp(ft4.PttLeadMs, 0, 2000);
         _pttTailMs = Math.Clamp(ft4.PttTailMs, 0, 2000);
         _decodeFontSize = Math.Clamp(ft4.DecodeFontSize, 10, 28);
+        _callingMeColour = Ft4DecodeHighlight.NormalizeColour(ft4.CallingMeColour)
+            ?? Ft4DecodeHighlight.DefaultCallingMeColour;
+        _replyingColour = Ft4DecodeHighlight.NormalizeColour(ft4.ReplyingColour)
+            ?? Ft4DecodeHighlight.DefaultReplyingColour;
         _preferEvenSlot = false;
         _pttInvert = ft4.PttInvert;
         _selectedPttMethod = PttMethodOptions.FirstOrDefault(o => o.Value == ft4.PttMethod)
@@ -168,6 +172,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private int _pttLeadMs = 200;
     [ObservableProperty] private int _pttTailMs = 100;
     [ObservableProperty] private double _decodeFontSize = 12;
+    [ObservableProperty] private string _callingMeColour = Ft4DecodeHighlight.DefaultCallingMeColour;
+    [ObservableProperty] private string _replyingColour = Ft4DecodeHighlight.DefaultReplyingColour;
+    [ObservableProperty] private string? _qsoPartnerCall;
     [ObservableProperty] private string? _selectedEchoCalibrationSatellite;
     [ObservableProperty] private double _echoCalibrationHz;
     [ObservableProperty] private double _txAudioHz = 1500;
@@ -248,6 +255,49 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
         _settings.Current.Ft4.DecodeFontSize = clamped;
         _settings.RequestSave();
+    }
+
+    partial void OnCallingMeColourChanged(string value) =>
+        CommitDecodeColour(
+            value,
+            Ft4DecodeHighlight.DefaultCallingMeColour,
+            () => CallingMeColour,
+            hex => CallingMeColour = hex,
+            hex => _settings.Current.Ft4.CallingMeColour = hex);
+
+    partial void OnReplyingColourChanged(string value) =>
+        CommitDecodeColour(
+            value,
+            Ft4DecodeHighlight.DefaultReplyingColour,
+            () => ReplyingColour,
+            hex => ReplyingColour = hex,
+            hex => _settings.Current.Ft4.ReplyingColour = hex);
+
+    private int _colourCommitDepth;
+
+    private void CommitDecodeColour(
+        string value,
+        string fallback,
+        Func<string> current,
+        Action<string> setCurrent,
+        Action<string> store)
+    {
+        if (_colourCommitDepth > 0)
+            return;
+
+        var normalized = Ft4DecodeHighlight.NormalizeColour(value) ?? fallback;
+        _colourCommitDepth++;
+        try
+        {
+            if (!string.Equals(current(), normalized, StringComparison.OrdinalIgnoreCase))
+                setCurrent(normalized);
+            store(normalized);
+            _settings.RequestSave();
+        }
+        finally
+        {
+            _colourCommitDepth--;
+        }
     }
 
     partial void OnSelectedEchoCalibrationSatelliteChanged(string? value)
@@ -905,6 +955,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 StatusLine = _modem.Status;
             CurrentTxMessage = _modem.Sequencer?.CurrentTxMessage ?? CurrentTxMessage;
             TxEnabled = _modem.Sequencer?.TransmitEnabled == true;
+            QsoPartnerCall = _modem.Sequencer?.TheirCall;
             if (!string.IsNullOrEmpty(_modem.ManualPrompt))
                 SetManualPttPrompt(_modem.ManualPrompt);
             OnPropertyChanged(nameof(CanManualLog));

@@ -3994,6 +3994,15 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Schriftgröße der Decode-Liste (10–28). Größere Werte helfen bei eingeschränkter Sehkraft.</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>Ruft mich</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>Antwortet</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>Hintergrund einer Zeile an die eigene Station. Antwortet ist die Station im aktuellen QSO. Farbe über die Auswahl; weniger Transparenz ergibt einen kräftigeren Ton.</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Echo-Kalibrierung</value>
   </data>

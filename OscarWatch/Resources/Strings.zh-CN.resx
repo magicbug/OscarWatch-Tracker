@@ -3990,6 +3990,15 @@
   <data name="Ft4.DecodeFontSize.Note">
     <value>解码列表字体大小（10–28）。较大字号便于视力较弱时阅读。</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>呼叫我</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>正在回复</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>呼叫本台的解码行背景。正在回复是当前 QSO 的电台。请用颜色选择器；透明度越低，底色越深。</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>回波校准</value>
   </data>

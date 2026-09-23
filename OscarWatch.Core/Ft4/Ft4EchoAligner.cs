@@ -30,7 +30,9 @@ public static class Ft4EchoAligner
         centreHz = Math.Clamp(centreHz, 200, 3000);
         var bestHz = centreHz;
         var bestPeak = 0.0;
-        foreach (var offset in new[] { -80.0, -40.0, 0.0, 40.0, 80.0 })
+        // The echo can sit well off the TX marker. A ±80 Hz search missed a copy
+        // that was obvious on the waterfall, so calibration never ran.
+        for (var offset = -200.0; offset <= 200.0; offset += 20.0)
         {
             var hz = centreHz + offset;
             if (hz < 150 || hz > 3400)
@@ -47,6 +49,96 @@ public static class Ft4EchoAligner
             return false;
 
         return TryOnsetAt(samples, sampleRate, bestHz, bestPeak, out onsetSample);
+    }
+
+    /// <summary>
+    /// Strongest steady tone within ±<paramref name="halfWidthHz"/> of <paramref name="centreHz"/>,
+    /// measured over the FT4 burst (not the quiet ends of the slot).
+    /// Rejects a peak stuck on the edge of the window, which is usually another station.
+    /// </summary>
+    public static bool TryMeasurePeakHz(
+        ReadOnlySpan<float> samples,
+        int sampleRate,
+        double centreHz,
+        out double peakHz,
+        double halfWidthHz = 220)
+    {
+        peakHz = 0;
+        if (sampleRate < 8000
+            || samples.Length < sampleRate
+            || !double.IsFinite(centreHz)
+            || !double.IsFinite(halfWidthHz)
+            || halfWidthHz < 20)
+        {
+            return false;
+        }
+
+        var start = (int)(0.8 * sampleRate);
+        var end = Math.Min(samples.Length, (int)(5.2 * sampleRate));
+        if (end - start < sampleRate)
+        {
+            start = 0;
+            end = samples.Length;
+        }
+
+        var burst = samples.Slice(start, end - start);
+        var lo = Math.Max(150, centreHz - halfWidthHz);
+        var hi = Math.Min(3400, centreHz + halfWidthHz);
+        if (hi - lo < 40)
+            return false;
+
+        var bestHz = lo;
+        var best = -1.0;
+        var powers = new List<double>();
+        for (var hz = lo; hz <= hi; hz += 10)
+        {
+            var power = TonePower(burst, sampleRate, hz);
+            powers.Add(power);
+            if (power > best)
+            {
+                best = power;
+                bestHz = hz;
+            }
+        }
+
+        var refineLo = Math.Max(lo, bestHz - 10);
+        var refineHi = Math.Min(hi, bestHz + 10);
+        for (var hz = refineLo; hz <= refineHi; hz += 1)
+        {
+            var power = TonePower(burst, sampleRate, hz);
+            if (power > best)
+            {
+                best = power;
+                bestHz = hz;
+            }
+        }
+
+        powers.Sort();
+        var median = powers[powers.Count / 2];
+        if (median <= 0 || best < median * 8.0)
+            return false;
+
+        if (bestHz <= lo + 12 || bestHz >= hi - 12)
+            return false;
+
+        peakHz = bestHz;
+        return true;
+    }
+
+    private static double TonePower(ReadOnlySpan<float> samples, int sampleRate, double hz)
+    {
+        var omega = 2.0 * Math.PI * hz / sampleRate;
+        double iSum = 0;
+        double qSum = 0;
+        for (var n = 0; n < samples.Length; n++)
+        {
+            var s = samples[n];
+            iSum += s * Math.Cos(omega * n);
+            qSum += s * Math.Sin(omega * n);
+        }
+
+        var nSamp = (double)samples.Length;
+        return (iSum * iSum + qSum * qSum) / (nSamp * nSamp);
     }
 
     /// <summary>

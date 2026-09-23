@@ -3,6 +3,7 @@
         xmlns:vm="using:OscarWatch.ViewModels"
         xmlns:ft4="using:OscarWatch.Core.Ft4"
         xmlns:controls="using:OscarWatch.Controls"
+        xmlns:ft4ui="using:OscarWatch.Ft4"
         xmlns:loc="using:OscarWatch.Localization"
         x:Class="OscarWatch.Views.Ft4Window"
         x:DataType="vm:Ft4ViewModel"
@@ -212,13 +213,23 @@
                    Padding="0">
             <ListBox.Styles>
               <Style Selector="ListBoxItem">
-                <Setter Property="Padding" Value="4,2" />
+                <Setter Property="Padding" Value="0" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
               </Style>
             </ListBox.Styles>
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="ft4:Ft4DecodedMessage">
-                <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10">
+                <Grid>
+                  <Grid.Background>
+                    <MultiBinding Converter="{x:Static ft4ui:Ft4DecodeRowBackgroundConverter.Instance}">
+                      <Binding />
+                      <Binding Path="$parent[ListBox].DataContext.QsoPartnerCall" />
+                      <Binding Path="$parent[ListBox].DataContext.CallingMeColour" />
+                      <Binding Path="$parent[ListBox].DataContext.ReplyingColour" />
+                      <Binding Path="$parent[ListBox].DataContext.StationCallsign" />
+                    </MultiBinding>
+                  </Grid.Background>
+                <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10" Margin="4,2">
                   <TextBlock Grid.Column="0"
                              Text="{Binding SlotUtc, StringFormat={}{0:HH:mm:ss}}" />
                   <TextBlock Grid.Column="1"
@@ -270,6 +281,7 @@
                              Text="{Binding FreqHz, StringFormat={}{0:0}}"
                              Opacity="0.9"
                              HorizontalAlignment="Right" />
+                </Grid>
                 </Grid>
               </DataTemplate>
             </ListBox.ItemTemplate>

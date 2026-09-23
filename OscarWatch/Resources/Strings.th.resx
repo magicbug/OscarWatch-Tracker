@@ -3994,6 +3994,15 @@ LOS: {2}
   <data name="Ft4.DecodeFontSize.Note">
     <value>ขนาดแบบอักษรรายการถอดรหัส (10–28) ขนาดใหญ่ช่วยเมื่อสายตาไม่ดี</value>
   </data>
+  <data name="Ft4.Decode.CallingMe">
+    <value>เรียกฉัน</value>
+  </data>
+  <data name="Ft4.Decode.Replying">
+    <value>ตอบกลับ</value>
+  </data>
+  <data name="Ft4.Decode.ColourNote">
+    <value>พื้นหลังของบรรทัดที่เรียกหาคุณ ตอบกลับคือสถานีใน QSO ปัจจุบัน เลือกสีจากตัวเลือก ความโปร่งใสน้อยลงจะได้สีเข้มขึ้น</value>
+  </data>
   <data name="Ft4.Settings.EchoSection">
     <value>การปรับเทียบเสียงสะท้อน</value>
   </data>
