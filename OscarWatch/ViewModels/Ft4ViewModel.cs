@@ -99,7 +99,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         SlotProgressText = "0%";
     }
 
-    public ObservableCollection<Ft4DecodedMessage> Decodes { get; } = [];
+    public ObservableCollection<Ft4DecodeRowViewModel> Decodes { get; } = [];
 
     public ObservableCollection<Ft4AudioDeviceOption> InputDeviceOptions { get; } = [];
 
@@ -187,7 +187,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private Ft4PttLineOption? _selectedPttLine;
     [ObservableProperty] private Ft4AudioDeviceOption? _selectedInputDevice;
     [ObservableProperty] private Ft4AudioDeviceOption? _selectedOutputDevice;
-    [ObservableProperty] private Ft4DecodedMessage? _selectedDecode;
+    [ObservableProperty] private Ft4DecodeRowViewModel? _selectedDecode;
     [ObservableProperty] private float[]? _spectrumBins;
 
     partial void OnSkipRrrChanged(bool value)
@@ -273,6 +273,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             hex => ReplyingColour = hex,
             hex => _settings.Current.Ft4.ReplyingColour = hex);
 
+    partial void OnQsoPartnerCallChanged(string? value) => RefreshDecodeHighlights();
+
     private int _colourCommitDepth;
 
     private void CommitDecodeColour(
@@ -293,6 +295,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 setCurrent(normalized);
             store(normalized);
             _settings.RequestSave();
+            RefreshDecodeHighlights();
         }
         finally
         {
@@ -362,7 +365,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         // someone else's contact, and chasing it walks the green bracket.
         var partner = _modem.Sequencer?.TheirCall;
         if (!string.IsNullOrWhiteSpace(partner)
-            && TryPartnerRxHz(Decodes, partner, out var partnerHz))
+            && TryPartnerRxHz(Decodes.Select(r => r.Message), partner, out var partnerHz))
         {
             RxAudioHz = partnerHz;
             return;
@@ -498,11 +501,11 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _modem.RestartOutputFromSettings();
     }
 
-    partial void OnSelectedDecodeChanged(Ft4DecodedMessage? value)
+    partial void OnSelectedDecodeChanged(Ft4DecodeRowViewModel? value)
     {
         if (value is null)
             return;
-        AnswerDecode(value);
+        AnswerDecode(value.Message);
     }
 
     public Task OnWindowOpenedAsync()
@@ -598,11 +601,11 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
         foreach (var decode in Decodes)
         {
-            if (!decode.IsReceiveActivity || string.IsNullOrWhiteSpace(decode.CallDe))
+            if (!decode.Message.IsReceiveActivity || string.IsNullOrWhiteSpace(decode.Message.CallDe))
                 continue;
-            if (!decode.CallDe.Equals(partner, StringComparison.OrdinalIgnoreCase))
+            if (!decode.Message.CallDe.Equals(partner, StringComparison.OrdinalIgnoreCase))
                 continue;
-            return decode.SnrDb;
+            return decode.Message.SnrDb;
         }
 
         return null;
@@ -955,6 +958,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 StatusLine = _modem.Status;
             CurrentTxMessage = _modem.Sequencer?.CurrentTxMessage ?? CurrentTxMessage;
             TxEnabled = _modem.Sequencer?.TransmitEnabled == true;
+            // Set partner before any decode-list rebuild so new rows paint correctly.
             QsoPartnerCall = _modem.Sequencer?.TheirCall;
             if (!string.IsNullOrEmpty(_modem.ManualPrompt))
                 SetManualPttPrompt(_modem.ManualPrompt);
@@ -974,11 +978,39 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         Dispatcher.UIThread.Post(() =>
         {
-            Decodes.Clear();
-            foreach (var d in _modem.Decodes)
-                Decodes.Add(d);
+            QsoPartnerCall = _modem.Sequencer?.TheirCall;
+            RebuildDecodeRows();
             RefreshRxMarker();
         });
+    }
+
+    private void RebuildDecodeRows()
+    {
+        var messages = _modem.Decodes.ToList();
+        if (Decodes.Count == messages.Count
+            && Decodes.Zip(messages, (row, msg) => ReferenceEquals(row.Message, msg)).All(same => same))
+        {
+            RefreshDecodeHighlights();
+            return;
+        }
+
+        Decodes.Clear();
+        foreach (var message in messages)
+        {
+            var row = new Ft4DecodeRowViewModel(message);
+            row.RefreshHighlight(StationCallsign, QsoPartnerCall, CallingMeColour, ReplyingColour);
+            Decodes.Add(row);
+        }
+    }
+
+    private void RefreshDecodeHighlights()
+    {
+        var myCall = StationCallsign;
+        var partner = QsoPartnerCall;
+        var calling = CallingMeColour;
+        var replying = ReplyingColour;
+        foreach (var row in Decodes)
+            row.RefreshHighlight(myCall, partner, calling, replying);
     }
 
     private void RefreshUiTick()
@@ -1030,9 +1062,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         // WSJT-X style: large DT across recent RX decodes usually means the PC clock is off UTC.
         const float thresholdSec = 1.0f;
         var recent = Decodes
-            .Where(d => d.IsReceiveActivity)
+            .Where(d => d.Message.IsReceiveActivity)
             .Take(8)
-            .Select(d => Math.Abs(d.TimeSec))
+            .Select(d => Math.Abs(d.Message.TimeSec))
             .ToList();
         if (recent.Count < 3)
         {

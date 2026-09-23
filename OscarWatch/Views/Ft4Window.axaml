@@ -1,9 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:OscarWatch.ViewModels"
-        xmlns:ft4="using:OscarWatch.Core.Ft4"
         xmlns:controls="using:OscarWatch.Controls"
-        xmlns:ft4ui="using:OscarWatch.Ft4"
         xmlns:loc="using:OscarWatch.Localization"
         x:Class="OscarWatch.Views.Ft4Window"
         x:DataType="vm:Ft4ViewModel"
@@ -218,70 +216,60 @@
               </Style>
             </ListBox.Styles>
             <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="ft4:Ft4DecodedMessage">
-                <Grid>
-                  <Grid.Background>
-                    <MultiBinding Converter="{x:Static ft4ui:Ft4DecodeRowBackgroundConverter.Instance}">
-                      <Binding />
-                      <Binding Path="$parent[ListBox].DataContext.QsoPartnerCall" />
-                      <Binding Path="$parent[ListBox].DataContext.CallingMeColour" />
-                      <Binding Path="$parent[ListBox].DataContext.ReplyingColour" />
-                      <Binding Path="$parent[ListBox].DataContext.StationCallsign" />
-                    </MultiBinding>
-                  </Grid.Background>
-                <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10" Margin="4,2">
+              <DataTemplate x:DataType="vm:Ft4DecodeRowViewModel">
+                <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10" Margin="4,2"
+                      Background="{Binding RowBackground}">
                   <TextBlock Grid.Column="0"
-                             Text="{Binding SlotUtc, StringFormat={}{0:HH:mm:ss}}" />
+                             Text="{Binding Message.SlotUtc, StringFormat={}{0:HH:mm:ss}}" />
                   <TextBlock Grid.Column="1"
                              Text="{loc:Localize Key=Ft4.Decodes.Tx}"
                              FontWeight="SemiBold"
                              Foreground="{DynamicResource PassInProgressBadgeForegroundBrush}"
-                             IsVisible="{Binding IsTransmitted}" />
+                             IsVisible="{Binding Message.IsTransmitted}" />
                   <TextBlock Grid.Column="1"
                              Text="{loc:Localize Key=Ft4.Decodes.Echo}"
                              FontWeight="SemiBold"
                              Foreground="#6DB3F2"
-                             IsVisible="{Binding IsOwnEcho}" />
+                             IsVisible="{Binding Message.IsOwnEcho}" />
                   <TextBlock Grid.Column="2"
-                             Text="{Binding TimeSec, StringFormat={}{0:+0.0;-0.0}}"
-                             IsVisible="{Binding IsReceiveActivity}" />
+                             Text="{Binding Message.TimeSec, StringFormat={}{0:+0.0;-0.0}}"
+                             IsVisible="{Binding Message.IsReceiveActivity}" />
                   <TextBlock Grid.Column="2"
-                             Text="{Binding TimeSec, StringFormat={}{0:+0.0;-0.0}}"
+                             Text="{Binding Message.TimeSec, StringFormat={}{0:+0.0;-0.0}}"
                              Foreground="#6DB3F2"
-                             IsVisible="{Binding IsOwnEcho}" />
+                             IsVisible="{Binding Message.IsOwnEcho}" />
                   <TextBlock Grid.Column="2"
                              Text="-"
                              Opacity="0.45"
-                             IsVisible="{Binding IsTransmitted}" />
+                             IsVisible="{Binding Message.IsTransmitted}" />
                   <TextBlock Grid.Column="3"
-                             Text="{Binding SnrDb, StringFormat={}{0:+0;-0} dB}"
-                             IsVisible="{Binding IsReceiveActivity}" />
+                             Text="{Binding Message.SnrDb, StringFormat={}{0:+0;-0} dB}"
+                             IsVisible="{Binding Message.IsReceiveActivity}" />
                   <TextBlock Grid.Column="3"
-                             Text="{Binding SnrDb, StringFormat={}{0:+0;-0} dB}"
+                             Text="{Binding Message.SnrDb, StringFormat={}{0:+0;-0} dB}"
                              Foreground="#6DB3F2"
-                             IsVisible="{Binding IsOwnEcho}" />
+                             IsVisible="{Binding Message.IsOwnEcho}" />
                   <TextBlock Grid.Column="3"
                              Text="-"
                              Opacity="0.45"
-                             IsVisible="{Binding IsTransmitted}" />
+                             IsVisible="{Binding Message.IsTransmitted}" />
                   <TextBlock Grid.Column="4"
-                             Text="{Binding Text}"
+                             Text="{Binding Message.Text}"
                              FontWeight="SemiBold"
-                             IsVisible="{Binding IsTransmitted}"
+                             IsVisible="{Binding Message.IsTransmitted}"
                              Foreground="{DynamicResource PassInProgressBadgeForegroundBrush}" />
                   <TextBlock Grid.Column="4"
-                             Text="{Binding Text}"
+                             Text="{Binding Message.Text}"
                              FontWeight="SemiBold"
-                             IsVisible="{Binding IsOwnEcho}"
+                             IsVisible="{Binding Message.IsOwnEcho}"
                              Foreground="#6DB3F2" />
                   <TextBlock Grid.Column="4"
-                             Text="{Binding Text}"
-                             IsVisible="{Binding IsReceiveActivity}" />
+                             Text="{Binding Message.Text}"
+                             IsVisible="{Binding Message.IsReceiveActivity}" />
                   <TextBlock Grid.Column="5"
-                             Text="{Binding FreqHz, StringFormat={}{0:0}}"
+                             Text="{Binding Message.FreqHz, StringFormat={}{0:0}}"
                              Opacity="0.9"
                              HorizontalAlignment="Right" />
-                </Grid>
                 </Grid>
               </DataTemplate>
             </ListBox.ItemTemplate>
