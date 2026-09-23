@@ -148,6 +148,19 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
+    public void Roger_report_received_is_stored_without_the_R()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        seq.StartCq(evenSlot: true);
+        seq.OnDecoded(Msg("MM9SQL G4ABC IO91", snr: -6f));
+        Assert.Equal("-06", seq.ReportSent);
+
+        Assert.False(seq.OnDecoded(Msg("MM9SQL G4ABC R+14")));
+        Assert.Equal("+14", seq.ReportReceived);
+        Assert.Equal("G4ABC MM9SQL RR73", seq.CurrentTxMessage);
+    }
+
+    [Fact]
     public void Answer_directed_grid_sends_report()
     {
         var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);

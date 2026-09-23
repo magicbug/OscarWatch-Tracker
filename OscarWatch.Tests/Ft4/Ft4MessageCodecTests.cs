@@ -43,6 +43,16 @@ public sealed class Ft4MessageCodecTests
     }
 
     [Fact]
+    public void NormalizeSnrReport_strips_roger_prefix_for_the_log()
+    {
+        Assert.Equal("+14", Ft4MessageCodec.NormalizeSnrReport("R+14"));
+        Assert.Equal("-08", Ft4MessageCodec.NormalizeSnrReport("R-08"));
+        Assert.Equal("+05", Ft4MessageCodec.NormalizeSnrReport("+05"));
+        Assert.Equal("-12", Ft4MessageCodec.NormalizeSnrReport("-12"));
+        Assert.Equal("", Ft4MessageCodec.NormalizeSnrReport(null));
+    }
+
+    [Fact]
     public void Builders_use_upper_case()
     {
         Assert.Equal("CQ MM9SQL IO85", Ft4MessageCodec.BuildCq("mm9sql", "io85"));

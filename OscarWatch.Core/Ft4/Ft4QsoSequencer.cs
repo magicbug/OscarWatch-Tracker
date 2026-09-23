@@ -94,7 +94,7 @@ public sealed class Ft4QsoSequencer
         {
             if (Ft4MessageCodec.IsReport(extra))
             {
-                ReportReceived = extra;
+                ReportReceived = Ft4MessageCodec.NormalizeSnrReport(extra);
                 ReportSent ??= Ft4MessageCodec.FormatSnrReport(decode.SnrDb);
                 CurrentTxMessage = _skipRrr()
                     ? Ft4MessageCodec.BuildRr73(TheirCall, my)
@@ -180,7 +180,7 @@ public sealed class Ft4QsoSequencer
             }
             else if (Ft4MessageCodec.IsReport(extra))
             {
-                ReportReceived = extra;
+                ReportReceived = Ft4MessageCodec.NormalizeSnrReport(extra);
                 ReportSent ??= Ft4MessageCodec.FormatSnrReport(decode.SnrDb);
                 CurrentTxMessage = _skipRrr()
                     ? Ft4MessageCodec.BuildRr73(TheirCall, my)
@@ -242,7 +242,7 @@ public sealed class Ft4QsoSequencer
 
         if (Ft4MessageCodec.IsReport(extra))
         {
-            ReportReceived = extra;
+            ReportReceived = Ft4MessageCodec.NormalizeSnrReport(extra);
 
             // After our grid reply to their CQ, a plain +NN means send R+NN next.
             // R+NN (or a second report after we already sent one) advances to RR73/RRR.

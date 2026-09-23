@@ -68,6 +68,21 @@ public static partial class Ft4MessageCodec
     public static bool IsRogerReport(string? extra) =>
         IsReport(extra) && extra!.StartsWith('R');
 
+    /// <summary>
+    /// SNR for the logbook. Air text may be R+NN; ADIF / Cloudlog want +NN or -NN.
+    /// </summary>
+    public static string NormalizeSnrReport(string? report)
+    {
+        if (string.IsNullOrWhiteSpace(report))
+            return "";
+
+        var text = report.Trim().ToUpperInvariant();
+        if (text.StartsWith('R') && text.Length > 1 && IsReport(text))
+            text = text[1..];
+
+        return IsReport(text) ? text : report.Trim();
+    }
+
     public static string FormatRogerReport(float snrDb) =>
         "R" + FormatSnrReport(snrDb);
 
