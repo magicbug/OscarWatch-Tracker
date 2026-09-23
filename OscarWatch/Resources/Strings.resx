@@ -4035,6 +4035,9 @@ Latest: {1} ({2})</value>
   <data name="Ft4.HaltTx">
     <value>Halt Tx</value>
   </data>
+  <data name="Ft4.Tune">
+    <value>Tune</value>
+  </data>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
@@ -4094,6 +4097,12 @@ Latest: {1} ({2})</value>
   </data>
   <data name="Ft4.Status.TxHalted">
     <value>Transmit halted</value>
+  </data>
+  <data name="Ft4.Status.Tuning">
+    <value>Tune on at {0} Hz</value>
+  </data>
+  <data name="Ft4.Status.TuneStopped">
+    <value>Tune stopped</value>
   </data>
   <data name="Ft4.Blocked.FmSatellite">
     <value>FT4 is not available on FM satellites</value>

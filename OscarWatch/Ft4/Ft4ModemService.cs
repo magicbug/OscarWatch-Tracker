@@ -46,6 +46,8 @@ public sealed class Ft4ModemService : IDisposable
     private readonly HashSet<string> _postedDecodeKeys = new(StringComparer.Ordinal);
     private readonly object _decodePostGate = new();
     private DateTime _lastRelevantDecodeUtc = DateTime.UtcNow;
+    private DateTime _lastTuneCalUtc = DateTime.MinValue;
+    private int _tuning; // 0 off, 1 on
     private Ft4QsoSequencer? _sequencer;
 
     public Ft4ModemService(
@@ -75,6 +77,7 @@ public sealed class Ft4ModemService : IDisposable
     public string Status { get; private set; } = "";
     public string ManualPrompt { get; private set; } = "";
     public bool IsRunning { get; private set; }
+    public bool IsTuning => Volatile.Read(ref _tuning) == 1;
     public bool NativeAvailable => Ft8Native.IsAvailable;
     public Ft4QsoSequencer? Sequencer => _sequencer;
     public double TxPlaybackPeak => _audio.PlaybackPeak;
@@ -211,6 +214,7 @@ public sealed class Ft4ModemService : IDisposable
         if (!IsRunning)
             return;
 
+        StopTune();
         _txCts?.Cancel();
         _loopCts?.Cancel();
         if (_loopTask is not null)
@@ -230,6 +234,7 @@ public sealed class Ft4ModemService : IDisposable
 
     public void StartCq(bool evenSlot)
     {
+        StopTune();
         if (!EnsureTransmitAllowed())
             return;
 
@@ -244,6 +249,7 @@ public sealed class Ft4ModemService : IDisposable
     {
         if (_sequencer is null || string.IsNullOrWhiteSpace(_sequencer.TheirCall))
             return false;
+        StopTune();
         if (!EnsureTransmitAllowed())
             return false;
         if (!_sequencer.ForceReport(snrDb))
@@ -259,6 +265,7 @@ public sealed class Ft4ModemService : IDisposable
     {
         if (_sequencer is null || string.IsNullOrWhiteSpace(_sequencer.TheirCall))
             return false;
+        StopTune();
         if (!EnsureTransmitAllowed())
             return false;
         if (!_sequencer.Force73())
@@ -272,6 +279,7 @@ public sealed class Ft4ModemService : IDisposable
 
     public void EnableTx()
     {
+        StopTune();
         if (!EnsureTransmitAllowed())
             return;
 
@@ -284,6 +292,7 @@ public sealed class Ft4ModemService : IDisposable
 
     public void HaltTx()
     {
+        StopTune();
         _sequencer?.HaltTx();
         _txCts?.Cancel();
         ClearPrepared();
@@ -295,10 +304,105 @@ public sealed class Ft4ModemService : IDisposable
         Changed?.Invoke();
     }
 
+    /// <summary>
+    /// WSJT-X-style Tune: continuous tone on the TX audio frequency with PTT.
+    /// Call again (or Halt Tx) to stop. While on, the downlink tone can trim the uplink.
+    /// </summary>
+    public bool StartTune()
+    {
+        if (!IsRunning)
+            return false;
+        if (!EnsureTransmitAllowed())
+            return false;
+        if (IsTuning)
+            return true;
+
+        // Stop sequenced FT4 bursts; Tune owns the transmitter until cancelled.
+        _sequencer?.HaltTx();
+        _txCts?.Cancel();
+        ClearPrepared();
+        Interlocked.Exchange(ref _preparedPlayed, 0);
+        Interlocked.Exchange(ref _txRunning, 0);
+        _audio.StopPlayback();
+
+        Volatile.Write(ref _tuning, 1);
+        _lastTuneCalUtc = DateTime.UtcNow;
+        Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
+        Changed?.Invoke();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await _ptt.KeyAsync().ConfigureAwait(false);
+                if (!IsTuning)
+                {
+                    await _ptt.UnkeyAsync().ConfigureAwait(false);
+                    return;
+                }
+
+                StartTuneTone();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "FT4 Tune failed to start");
+                Volatile.Write(ref _tuning, 0);
+                _audio.StopPlayback();
+                _ = _ptt.UnkeyAsync();
+                Status = _l.Get(
+                    "Ft4.Status.TxError",
+                    ComPortConflictLocalizer.Localize(ex.Message, _l));
+                Changed?.Invoke();
+            }
+        });
+
+        return true;
+    }
+
+    public void StopTune()
+    {
+        if (Interlocked.Exchange(ref _tuning, 0) == 0)
+            return;
+
+        _audio.StopPlayback();
+        _ = _ptt.UnkeyAsync();
+        Status = _l.Get("Ft4.Status.TuneStopped");
+        Changed?.Invoke();
+    }
+
+    /// <summary>Retarget the Tune tone when the operator moves the TX Hz spinner.</summary>
+    public void UpdateTuneFrequency()
+    {
+        if (!IsTuning)
+            return;
+
+        StartTuneTone();
+        Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
+        Changed?.Invoke();
+    }
+
+    private void StartTuneTone()
+    {
+        var ft4 = _settings.Current.Ft4;
+        var hz = _sequencer?.TxAudioHz ?? ft4.TxAudioHz;
+        _audio.StartContinuousTone(
+            hz,
+            ft4.TxLevel,
+            ft4.OutputDeviceId,
+            ft4.OutputDeviceDisplayName);
+    }
+
+    private string FormatTuneHz()
+    {
+        var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
+        return Math.Clamp(hz, 200, 3000).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+    }
+
     public void Answer(Ft4DecodedMessage decode)
     {
         if (_sequencer is null)
             return;
+        StopTune();
         if (!EnsureTransmitAllowed())
             return;
 
@@ -430,20 +534,26 @@ public sealed class Ft4ModemService : IDisposable
                         _postedDecodeKeys.Clear();
 
                     _rig.ForceFt4DopplerStep();
-                    KickTransmit(slotStart, ct);
+                    if (!IsTuning)
+                        KickTransmit(slotStart, ct);
 
                     if (previousSamples is not null)
                         QueueDecode(previousSlot, previousSamples, previousWasTx);
                 }
 
                 // Build the next TX burst before its slot, so the boundary only starts playback.
-                MaybePrepareTransmit(now);
+                if (!IsTuning)
+                    MaybePrepareTransmit(now);
 
                 // Early RX decode once the FT4 burst should be in the buffer (~6 s).
                 MaybeQueueEarlyDecode(now);
 
+                if (IsTuning)
+                    MaybeCalibrateTune(now);
+
                 // Watchdog: stop TX if nothing relevant for 3 minutes.
-                if (_sequencer is { TransmitEnabled: true }
+                if (!IsTuning
+                    && _sequencer is { TransmitEnabled: true }
                     && DateTime.UtcNow - _lastRelevantDecodeUtc > TimeSpan.FromMinutes(3))
                 {
                     HaltTx();
@@ -485,6 +595,9 @@ public sealed class Ft4ModemService : IDisposable
 
     private void KickTransmit(DateTime slotStart, CancellationToken loopCt)
     {
+        if (IsTuning)
+            return;
+
         var seq = _sequencer;
         if (seq is null || !seq.TransmitEnabled || string.IsNullOrWhiteSpace(seq.CurrentTxMessage))
             return;
@@ -627,6 +740,9 @@ public sealed class Ft4ModemService : IDisposable
 
     private void MaybePrepareTransmit(DateTime utcNow)
     {
+        if (IsTuning)
+            return;
+
         var seq = _sequencer;
         if (seq is not { TransmitEnabled: true } || string.IsNullOrWhiteSpace(seq.CurrentTxMessage))
         {
@@ -791,6 +907,40 @@ public sealed class Ft4ModemService : IDisposable
             while (Decodes.Count > 200)
                 Decodes.RemoveAt(Decodes.Count - 1);
         });
+        Changed?.Invoke();
+    }
+
+    /// <summary>
+    /// While Tune is on, measure the downlink tone and nudge uplink trim toward the red bracket.
+    /// </summary>
+    private void MaybeCalibrateTune(DateTime utcNow)
+    {
+        if (utcNow - _lastTuneCalUtc < TimeSpan.FromSeconds(1.5))
+            return;
+
+        _lastTuneCalUtc = utcNow;
+        var txHz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
+        Span<float> scratch = stackalloc float[4096];
+        var n = _audio.CopyMonitorSamples(scratch);
+        var rate = _audio.CaptureSampleRate;
+        if (n < rate / 2 || rate < 8000)
+            return;
+
+        if (!Ft4EchoAligner.TryMeasurePeakHz(scratch[..n], rate, txHz, out var peakHz))
+            return;
+
+        var errorHz = peakHz - txHz;
+        if (Math.Abs(errorHz) < 15)
+            return;
+
+        Log.Information(
+            "FT4 Tune tone on the waterfall is {Peak:0} Hz, TX marker {Tx:0} Hz, error {Error:0} Hz",
+            peakHz,
+            txHz,
+            errorHz);
+        ApplyEchoCalibrationHz(errorHz);
+        // Keep the Tune status visible after a calibration note.
+        Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
         Changed?.Invoke();
     }
 

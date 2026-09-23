@@ -181,6 +181,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private double _rxAudioHz = 1500;
     [ObservableProperty] private double _txLevel = 0.35;
     [ObservableProperty] private bool _txEnabled;
+    [ObservableProperty] private bool _isTuning;
     [ObservableProperty] private bool _pttInvert;
     [ObservableProperty] private string _separatePttPort = "";
     [ObservableProperty] private Ft4PttMethodOption? _selectedPttMethod;
@@ -353,6 +354,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         if (_modem.Sequencer is not null)
             _modem.Sequencer.TxAudioHz = clamped;
         _settings.RequestSave();
+
+        if (IsTuning)
+            _modem.UpdateTuneFrequency();
 
         // Without Hold Tx, keep RX locked to TX (WSJT-X behaviour).
         if (!_settings.Current.Ft4.HoldTxFrequency)
@@ -546,14 +550,18 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             ? _l.Get("Ft4.Status.Ready")
             : _modem.Status;
         WaterfallStatusText = _l.Get("Ft4.Waterfall.Listening");
+        TuneCommand.NotifyCanExecuteChanged();
     }
 
     public async Task StopSessionAsync()
     {
         await _modem.StopAsync().ConfigureAwait(true);
         TxEnabled = false;
+        IsTuning = false;
         StatusLine = _l.Get("Ft4.Status.Idle");
         WaterfallStatusText = _l.Get("Ft4.Waterfall.Unavailable");
+        TuneCommand.NotifyCanExecuteChanged();
+        HaltTxCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand(CanExecute = nameof(CanEnableTx))]
@@ -566,7 +574,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         StatusLine = _l.Get("Ft4.Status.TxEnabled");
     }
 
-    private bool CanEnableTx() => !TxEnabled;
+    private bool CanEnableTx() => !TxEnabled && !IsTuning;
 
     [RelayCommand(CanExecute = nameof(CanSendStandardMessage))]
     private void SendReport()
@@ -616,16 +624,55 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         _modem.HaltTx();
         TxEnabled = false;
+        IsTuning = false;
         ManualPttPrompt = "";
-        StatusLine = _l.Get("Ft4.Status.TxHalted");
+        StatusLine = _modem.Status;
+        TuneCommand.NotifyCanExecuteChanged();
     }
 
-    private bool CanHaltTx() => TxEnabled;
+    private bool CanHaltTx() => TxEnabled || IsTuning;
+
+    [RelayCommand(CanExecute = nameof(CanTune))]
+    private void Tune()
+    {
+        if (IsTuning)
+        {
+            _modem.StopTune();
+            IsTuning = false;
+            StatusLine = _modem.Status;
+            HaltTxCommand.NotifyCanExecuteChanged();
+            TuneCommand.NotifyCanExecuteChanged();
+            return;
+        }
+
+        if (!_modem.StartTune())
+        {
+            StatusLine = _modem.Status;
+            return;
+        }
+
+        TxEnabled = false;
+        IsTuning = true;
+        StatusLine = _modem.Status;
+        HaltTxCommand.NotifyCanExecuteChanged();
+        TuneCommand.NotifyCanExecuteChanged();
+        EnableTxCommand.NotifyCanExecuteChanged();
+    }
+
+    private bool CanTune() => _modem.IsRunning;
 
     partial void OnTxEnabledChanged(bool value)
     {
         EnableTxCommand.NotifyCanExecuteChanged();
         HaltTxCommand.NotifyCanExecuteChanged();
+        TuneCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsTuningChanged(bool value)
+    {
+        HaltTxCommand.NotifyCanExecuteChanged();
+        TuneCommand.NotifyCanExecuteChanged();
+        EnableTxCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand]
@@ -958,6 +1005,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 StatusLine = _modem.Status;
             CurrentTxMessage = _modem.Sequencer?.CurrentTxMessage ?? CurrentTxMessage;
             TxEnabled = _modem.Sequencer?.TransmitEnabled == true;
+            IsTuning = _modem.IsTuning;
             // Set partner before any decode-list rebuild so new rows paint correctly.
             QsoPartnerCall = _modem.Sequencer?.TheirCall;
             if (!string.IsNullOrEmpty(_modem.ManualPrompt))

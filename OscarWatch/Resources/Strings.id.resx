@@ -4039,6 +4039,9 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.HaltTx">
     <value>Hentikan Tx</value>
   </data>
+  <data name="Ft4.Tune">
+    <value>Tune</value>
+  </data>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
@@ -4098,6 +4101,12 @@ Terbaru: {1} ({2})</value>
   </data>
   <data name="Ft4.Status.TxHalted">
     <value>Transmit dihentikan</value>
+  </data>
+  <data name="Ft4.Status.Tuning">
+    <value>Tune pada {0} Hz</value>
+  </data>
+  <data name="Ft4.Status.TuneStopped">
+    <value>Tune dihentikan</value>
   </data>
   <data name="Ft4.Blocked.FmSatellite">
     <value>FT4 tidak tersedia pada satelit FM</value>

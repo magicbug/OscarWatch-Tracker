@@ -299,6 +299,10 @@
                     Command="{Binding HaltTxCommand}"
                     Classes.accent="{Binding TxEnabled}"
                     MinWidth="100" />
+            <Button Content="{loc:Localize Key=Ft4.Tune}"
+                    Command="{Binding TuneCommand}"
+                    Classes.accent="{Binding IsTuning}"
+                    MinWidth="88" />
             <Button Content="{loc:Localize Key=Ft4.CallCq}"
                     Command="{Binding StartCqCommand}"
                     MinWidth="100" />

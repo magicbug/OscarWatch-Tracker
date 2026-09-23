@@ -4035,6 +4035,9 @@
   <data name="Ft4.HaltTx">
     <value>停止发射</value>
   </data>
+  <data name="Ft4.Tune">
+    <value>调谐</value>
+  </data>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
@@ -4094,6 +4097,12 @@
   </data>
   <data name="Ft4.Status.TxHalted">
     <value>已停止发射</value>
+  </data>
+  <data name="Ft4.Status.Tuning">
+    <value>调谐中 {0} Hz</value>
+  </data>
+  <data name="Ft4.Status.TuneStopped">
+    <value>调谐已停止</value>
   </data>
   <data name="Ft4.Blocked.FmSatellite">
     <value>FM 卫星上不可使用 FT4</value>

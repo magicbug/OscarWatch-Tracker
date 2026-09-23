@@ -4035,6 +4035,9 @@
   <data name="Ft4.HaltTx">
     <value>送信停止</value>
   </data>
+  <data name="Ft4.Tune">
+    <value>チューン</value>
+  </data>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
@@ -4094,6 +4097,12 @@
   </data>
   <data name="Ft4.Status.TxHalted">
     <value>送信停止</value>
+  </data>
+  <data name="Ft4.Status.Tuning">
+    <value>チューン中 {0} Hz</value>
+  </data>
+  <data name="Ft4.Status.TuneStopped">
+    <value>チューン停止</value>
   </data>
   <data name="Ft4.Blocked.FmSatellite">
     <value>FM衛星ではFT4を利用できません</value>

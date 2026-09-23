@@ -34,6 +34,8 @@ public sealed class Ft4AudioService : IDisposable
         public int FirstToneIndex = -1;
         public long PublishedTimestamp;
         public int ToneLogged;
+        /// <summary>When true, playback wraps so a Tune tone stays up until stopped.</summary>
+        public bool Loop;
     }
     private bool _portAudioReady;
     private int _captureSampleRate = 48000;
@@ -276,7 +278,43 @@ public sealed class Ft4AudioService : IDisposable
                 throw new InvalidOperationException("PortAudio is not available.");
 
             EnsureOutputUnlocked(deviceId, deviceDisplayName);
-            PublishPlayback(ScaleForOutput(samples12k, level));
+            PublishPlayback(ScaleForOutput(samples12k, level), loop: false);
+        }
+    }
+
+    /// <summary>
+    /// Continuous sine at <paramref name="hz"/> for WSJT-X-style Tune.
+    /// Stays up until <see cref="StopPlayback"/> (or a later one-shot burst replaces it).
+    /// </summary>
+    public void StartContinuousTone(
+        double hz,
+        double level,
+        string? deviceId,
+        string? deviceDisplayName = null)
+    {
+        if (!double.IsFinite(hz))
+            hz = 1500;
+        hz = Math.Clamp(hz, 200, 3000);
+
+        lock (_gate)
+        {
+            EnsurePortAudio();
+            if (!_portAudioReady)
+                throw new InvalidOperationException("PortAudio is not available.");
+
+            EnsureOutputUnlocked(deviceId, deviceDisplayName);
+            var rate = _playbackSampleRate;
+            if (rate < 8000)
+                rate = 48000;
+
+            // One second of tone; the output callback wraps Index while Loop is set.
+            var samples = new float[rate];
+            var gain = (float)Math.Clamp(level, 0.01, 1.0);
+            var omega = 2.0 * Math.PI * hz / rate;
+            for (var i = 0; i < samples.Length; i++)
+                samples[i] = (float)(gain * Math.Sin(omega * i));
+
+            PublishPlayback(samples, loop: true);
         }
     }
 
@@ -288,7 +326,7 @@ public sealed class Ft4AudioService : IDisposable
             if (_output is null || _playbackSampleRate != sampleRate || devicePcm.Length == 0)
                 return false;
 
-            PublishPlayback(devicePcm);
+            PublishPlayback(devicePcm, loop: false);
             return true;
         }
     }
@@ -302,7 +340,7 @@ public sealed class Ft4AudioService : IDisposable
         return scaled;
     }
 
-    private void PublishPlayback(float[] devicePcm)
+    private void PublishPlayback(float[] devicePcm, bool loop)
     {
         var firstTone = devicePcm.Length;
         for (var i = 0; i < devicePcm.Length; i++)
@@ -319,7 +357,8 @@ public sealed class Ft4AudioService : IDisposable
         Volatile.Write(ref _tx, new TxBuffer(devicePcm)
         {
             FirstToneIndex = firstTone,
-            PublishedTimestamp = Stopwatch.GetTimestamp()
+            PublishedTimestamp = Stopwatch.GetTimestamp(),
+            Loop = loop
         });
     }
 
@@ -328,7 +367,11 @@ public sealed class Ft4AudioService : IDisposable
         get
         {
             var tx = Volatile.Read(ref _tx);
-            return tx is not null && tx.Index < tx.Samples.Length;
+            if (tx is null)
+                return false;
+            if (tx.Loop)
+                return true;
+            return tx.Index < tx.Samples.Length;
         }
     }
 
@@ -408,6 +451,15 @@ public sealed class Ft4AudioService : IDisposable
                 if (tx is not null)
                 {
                     var i = tx.Index;
+                    if (i >= tx.Samples.Length)
+                    {
+                        if (tx.Loop && tx.Samples.Length > 0)
+                        {
+                            i = 0;
+                            tx.Index = 0;
+                        }
+                    }
+
                     if (i < tx.Samples.Length)
                     {
                         sample = tx.Samples[i];

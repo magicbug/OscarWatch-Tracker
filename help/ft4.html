@@ -81,7 +81,8 @@
       <h2>Transmit and auto-sequence</h2>
       <ul>
         <li><strong>Enable Tx</strong>: arms transmit for the current message on the next matching slot.</li>
-        <li><strong>Halt Tx</strong>: stops further transmits immediately.</li>
+        <li><strong>Halt Tx</strong>: stops further transmits immediately, and also stops Tune.</li>
+        <li><strong>Tune</strong>: continuous tone on the TX audio frequency (WSJT-X style) so you can set drive level and line your echo up on the red bracket. While it is on, OscarWatch can trim the uplink from the tone on the waterfall. Press Tune again or Halt Tx to stop.</li>
         <li><strong>CQ</strong>: starts a CQ using your callsign and grid, then auto-sequences replies (report, RRR or skip to 73).</li>
         <li><strong>Report</strong> and <strong>73</strong>: send that message again to the station in the current QSO. Report reuses the signal report already sent. Both need a QSO in progress.</li>
         <li><strong>Skip RRR</strong>: when checked (default), finished QSOs go straight to 73.</li>
