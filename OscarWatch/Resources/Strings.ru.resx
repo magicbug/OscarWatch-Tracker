@@ -4033,6 +4033,12 @@ LOS: {2}
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>Рапорт</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>Пропустить RRR</value>
   </data>
@@ -4090,11 +4096,20 @@ LOS: {2}
   <data name="Ft4.Blocked.Fo29">
     <value>FT4 не разрешён на FO-29 (ограничение лицензии)</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>FT4 не разрешён на AO-7 (просьба AMSAT)</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>Передача FT4 заблокирована: мощность ВЧ выше {0} Вт. Уменьшите мощность на радиостанции.</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>Вызов CQ</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>Передача рапорта для {0}</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>Передача 73 для {0}</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>Сначала введите или создайте TX-сообщение</value>

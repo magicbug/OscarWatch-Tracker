@@ -283,6 +283,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     partial void OnTxAudioHzChanged(double value)
     {
+        if (!double.IsFinite(value))
+        {
+            TxAudioHz = 1500;
+            return;
+        }
+
         var clamped = Math.Clamp(value, 200, 3000);
         if (Math.Abs(clamped - value) > 0.01)
         {
@@ -302,17 +308,45 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     private void RefreshRxMarker()
     {
-        foreach (var d in Decodes)
+        // Follow the station we are in QSO with. The newest line on the band is often
+        // someone else's contact, and chasing it walks the green bracket.
+        var partner = _modem.Sequencer?.TheirCall;
+        if (!string.IsNullOrWhiteSpace(partner)
+            && TryPartnerRxHz(Decodes, partner, out var partnerHz))
         {
-            if (!d.IsReceiveActivity)
-                continue;
-            RxAudioHz = Math.Clamp(d.FreqHz, 200, 3000);
+            RxAudioHz = partnerHz;
             return;
         }
 
-        // Keep an operator-chosen RX offset when Hold Tx is on; otherwise lock RX to TX.
+        if (!string.IsNullOrWhiteSpace(partner))
+            return;
+
+        // No QSO yet. Without Hold Tx, RX stays on TX. With Hold Tx, keep the click.
         if (!_settings.Current.Ft4.HoldTxFrequency)
             RxAudioHz = TxAudioHz;
+    }
+
+    /// <summary>Newest receive decode from <paramref name="partner"/>, if the list has one.</summary>
+    internal static bool TryPartnerRxHz(
+        IEnumerable<Ft4DecodedMessage> decodes,
+        string partner,
+        out double hz)
+    {
+        foreach (var d in decodes)
+        {
+            if (!d.IsReceiveActivity || string.IsNullOrWhiteSpace(d.CallDe))
+                continue;
+            if (!d.CallDe.Equals(partner, StringComparison.OrdinalIgnoreCase))
+                continue;
+            if (!double.IsFinite(d.FreqHz))
+                continue;
+
+            hz = Math.Clamp(d.FreqHz, 200, 3000);
+            return true;
+        }
+
+        hz = 0;
+        return false;
     }
 
     partial void OnTxLevelChanged(double value)
@@ -481,6 +515,49 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     private bool CanEnableTx() => !TxEnabled;
 
+    [RelayCommand(CanExecute = nameof(CanSendStandardMessage))]
+    private void SendReport()
+    {
+        if (!_modem.QueueReport(LatestPartnerSnr()))
+            return;
+
+        TxEnabled = _modem.Sequencer?.TransmitEnabled == true;
+        CurrentTxMessage = _modem.Sequencer?.CurrentTxMessage ?? CurrentTxMessage;
+        StatusLine = _modem.Status;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanSendStandardMessage))]
+    private void Send73()
+    {
+        if (!_modem.Queue73())
+            return;
+
+        TxEnabled = _modem.Sequencer?.TransmitEnabled == true;
+        CurrentTxMessage = _modem.Sequencer?.CurrentTxMessage ?? CurrentTxMessage;
+        StatusLine = _modem.Status;
+    }
+
+    private bool CanSendStandardMessage() =>
+        !string.IsNullOrWhiteSpace(_modem.Sequencer?.TheirCall);
+
+    private float? LatestPartnerSnr()
+    {
+        var partner = _modem.Sequencer?.TheirCall;
+        if (string.IsNullOrWhiteSpace(partner))
+            return null;
+
+        foreach (var decode in Decodes)
+        {
+            if (!decode.IsReceiveActivity || string.IsNullOrWhiteSpace(decode.CallDe))
+                continue;
+            if (!decode.CallDe.Equals(partner, StringComparison.OrdinalIgnoreCase))
+                continue;
+            return decode.SnrDb;
+        }
+
+        return null;
+    }
+
     [RelayCommand(CanExecute = nameof(CanHaltTx))]
     private void HaltTx()
     {
@@ -534,8 +611,6 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         PreferEvenSlot = _modem.Sequencer?.PreferEvenSlot ?? PreferEvenSlot;
         if (!_settings.Current.Ft4.HoldTxFrequency)
             TxAudioHz = decode.FreqHz;
-        else if (_modem.Sequencer is not null)
-            TxAudioHz = _modem.Sequencer.TxAudioHz;
         RxAudioHz = Math.Clamp(decode.FreqHz, 200, 3000);
         StatusLine = _l.Get("Ft4.Status.Answering", decode.Text);
         OnPropertyChanged(nameof(CanManualLog));
@@ -834,6 +909,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 SetManualPttPrompt(_modem.ManualPrompt);
             OnPropertyChanged(nameof(CanManualLog));
             ManualLogCommand.NotifyCanExecuteChanged();
+            SendReportCommand.NotifyCanExecuteChanged();
+            Send73Command.NotifyCanExecuteChanged();
             // Auto echo calibration may have updated the stored trim.
             if (SelectedEchoCalibrationSatellite is not null)
                 LoadEchoCalibrationHzForSelected();

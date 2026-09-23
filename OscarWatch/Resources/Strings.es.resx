@@ -4029,6 +4029,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>Reporte</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>Omitir RRR</value>
   </data>
@@ -4086,11 +4092,20 @@ Está utilizando la versión {0}.
   <data name="Ft4.Blocked.Fo29">
     <value>FT4 no está permitido en FO-29 (restricción de licencia)</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>FT4 no está permitido en AO-7 (petición de AMSAT)</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>Transmisión FT4 bloqueada: la potencia de RF supera {0} W. Reduzca la potencia en la radio.</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>Llamando CQ</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>Enviando reporte a {0}</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>Enviando 73 a {0}</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>Escriba o genere un mensaje TX primero</value>

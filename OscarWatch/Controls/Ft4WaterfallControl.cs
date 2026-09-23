@@ -10,7 +10,7 @@ namespace OscarWatch.Controls;
 
 /// <summary>
 /// Scrolling spectrogram for FT4. Frequency left→right (passband), time scrolls down.
-/// Click sets the TX audio frequency.
+/// Click sets RX, and TX as well unless Hold Tx Freq is on.
 /// </summary>
 public sealed class Ft4WaterfallControl : Control
 {
@@ -260,8 +260,10 @@ public sealed class Ft4WaterfallControl : Control
             context.DrawText(ft, new Point(10, Math.Max(8, (bounds.Height - ft.Height) / 2)));
         }
 
-        // WSJT-X-style FT4 filter brackets: green around RX, red around TX when they differ.
+        // WSJT-X-style FT4 filter brackets: green around RX, red around TX.
         // Each pair is two vertical legs joined by a horizontal line at the top.
+        // TX is always drawn. A centre outside the passband is pulled in so both legs
+        // stay on the waterfall (a border-pixel bracket is clipped and looks gone).
         var rxHz = RxAudioHz > 0 ? RxAudioHz : TxAudioHz;
         var txHz = TxAudioHz;
         var half = Ft4SpectrumAnalyzer.Ft4FilterHalfWidthHz;
@@ -272,16 +274,16 @@ public sealed class Ft4WaterfallControl : Control
 
         void DrawBracket(Pen pen, double centreHz)
         {
-            var left = Ft4SpectrumAnalyzer.HzToPixel(centreHz - half, bounds.Width, MinHz, MaxHz);
-            var right = Ft4SpectrumAnalyzer.HzToPixel(centreHz + half, bounds.Width, MinHz, MaxHz);
+            var centre = Ft4SpectrumAnalyzer.VisibleBracketCentreHz(centreHz, half, MinHz, MaxHz);
+            var left = Ft4SpectrumAnalyzer.HzToPixel(centre - half, bounds.Width, MinHz, MaxHz);
+            var right = Ft4SpectrumAnalyzer.HzToPixel(centre + half, bounds.Width, MinHz, MaxHz);
             context.DrawLine(pen, new Point(left, 0), new Point(left, bounds.Height));
             context.DrawLine(pen, new Point(right, 0), new Point(right, bounds.Height));
             context.DrawLine(pen, new Point(left, 0), new Point(right, 0));
         }
 
         DrawBracket(greenPen, rxHz);
-        if (Math.Abs(txHz - rxHz) >= 5)
-            DrawBracket(redPen, txHz);
+        DrawBracket(redPen, txHz);
 
         // Frequency ticks
         var labelBrush = new SolidColorBrush(Color.FromArgb(200, 220, 220, 220));

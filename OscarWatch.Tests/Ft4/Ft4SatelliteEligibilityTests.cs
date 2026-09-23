@@ -98,4 +98,43 @@ public sealed class Ft4SatelliteEligibilityTests
             Ft4SatelliteEligibility.BlockReason.Fo29,
             Ft4SatelliteEligibility.Evaluate("FO-29", "24278", mode));
     }
+
+    [Fact]
+    public void Blocks_ao7_by_norad_and_catalogue_name()
+    {
+        var mode = new SatelliteTransponderMode
+        {
+            Type = "SSB Transponder",
+            UplinkMode = "LSB",
+            DownlinkMode = "USB"
+        };
+
+        Assert.Equal(
+            Ft4SatelliteEligibility.BlockReason.Ao7,
+            Ft4SatelliteEligibility.Evaluate("AO-07", "07530", mode));
+        Assert.Equal(
+            Ft4SatelliteEligibility.BlockReason.Ao7,
+            Ft4SatelliteEligibility.Evaluate("AO-7", null, mode));
+        Assert.Equal(
+            Ft4SatelliteEligibility.BlockReason.Ao7,
+            Ft4SatelliteEligibility.Evaluate("Something Else", "7530", mode));
+        Assert.Equal(
+            "Ft4.Blocked.Ao7",
+            Ft4SatelliteEligibility.StatusKey(Ft4SatelliteEligibility.BlockReason.Ao7));
+    }
+
+    [Fact]
+    public void Ao7_takes_priority_over_fm()
+    {
+        var mode = new SatelliteTransponderMode
+        {
+            Type = "FM",
+            UplinkMode = "FM",
+            DownlinkMode = "FM"
+        };
+
+        Assert.Equal(
+            Ft4SatelliteEligibility.BlockReason.Ao7,
+            Ft4SatelliteEligibility.Evaluate("AO-07", "07530", mode));
+    }
 }

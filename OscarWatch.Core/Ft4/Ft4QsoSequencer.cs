@@ -277,6 +277,43 @@ public sealed class Ft4QsoSequencer
             StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Operator asked to send a signal report again. Reuses the report already sent,
+    /// or <paramref name="snrDb"/> when none has been sent yet.
+    /// </summary>
+    public bool ForceReport(float? snrDb)
+    {
+        if (string.IsNullOrWhiteSpace(TheirCall))
+            return false;
+
+        var my = _myCall();
+        if (string.IsNullOrWhiteSpace(my))
+            return false;
+
+        var report = ReportSent ?? Ft4MessageCodec.FormatSnrReport(snrDb ?? 0f);
+        ReportSent = report;
+        CurrentTxMessage = Ft4MessageCodec.BuildReport(TheirCall, my, report);
+        Phase = Ft4QsoPhase.InQso;
+        TransmitEnabled = true;
+        return true;
+    }
+
+    /// <summary>Operator asked to send 73 again to the station in the current QSO.</summary>
+    public bool Force73()
+    {
+        if (string.IsNullOrWhiteSpace(TheirCall))
+            return false;
+
+        var my = _myCall();
+        if (string.IsNullOrWhiteSpace(my))
+            return false;
+
+        CurrentTxMessage = Ft4MessageCodec.Build73(TheirCall, my);
+        Phase = Ft4QsoPhase.InQso;
+        TransmitEnabled = true;
+        return true;
+    }
+
     /// <summary>Called after a TX message was fully sent.</summary>
     public bool OnTxCompleted()
     {

@@ -4029,6 +4029,12 @@
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>レポート</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>RRRを省略</value>
   </data>
@@ -4086,11 +4092,20 @@
   <data name="Ft4.Blocked.Fo29">
     <value>FO-29ではFT4は許可されていません（ライセンス制限）</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>AO-7ではFT4は許可されていません（AMSATの要請）</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>FT4送信をブロックしました: RF出力が{0} Wを超えています。ラジオの出力を下げてください。</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>CQ呼び出し中</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>{0} へレポートを送信</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>{0} へ 73 を送信</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>先にTXメッセージを入力または生成してください</value>

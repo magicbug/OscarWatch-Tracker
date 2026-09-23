@@ -4033,6 +4033,12 @@ LOS: {2}
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>รายงาน</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>ข้าม RRR</value>
   </data>
@@ -4090,11 +4096,20 @@ LOS: {2}
   <data name="Ft4.Blocked.Fo29">
     <value>ไม่อนุญาตให้ใช้ FT4 บน FO-29 (ข้อจำกัดใบอนุญาต)</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>ไม่อนุญาตให้ใช้ FT4 บน AO-7 (ตามคำขอของ AMSAT)</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>บล็อกการส่ง FT4: กำลัง RF สูงกว่า {0} W โปรดลดกำลังบนวิทยุ</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>กำลังเรียก CQ</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>กำลังส่งรายงานถึง {0}</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>กำลังส่ง 73 ถึง {0}</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>กรุณาใส่หรือสร้างข้อความ TX ก่อน</value>

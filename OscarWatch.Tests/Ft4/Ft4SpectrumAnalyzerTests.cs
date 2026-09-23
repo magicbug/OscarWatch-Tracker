@@ -14,6 +14,23 @@ public sealed class Ft4SpectrumAnalyzerTests
     }
 
     [Fact]
+    public void Bracket_centre_outside_the_passband_stays_fully_inside()
+    {
+        const double half = Ft4SpectrumAnalyzer.Ft4FilterHalfWidthHz;
+        Assert.Equal(1500, Ft4SpectrumAnalyzer.VisibleBracketCentreHz(1500, half, 200, 3000), 3);
+        Assert.Equal(200 + half, Ft4SpectrumAnalyzer.VisibleBracketCentreHz(0, half, 200, 3000), 3);
+        Assert.Equal(3000 - half, Ft4SpectrumAnalyzer.VisibleBracketCentreHz(20000, half, 200, 3000), 3);
+        Assert.Equal(1600, Ft4SpectrumAnalyzer.VisibleBracketCentreHz(double.NaN, half, 200, 3000), 3);
+
+        var centre = Ft4SpectrumAnalyzer.VisibleBracketCentreHz(0, half, 200, 3000);
+        var left = Ft4SpectrumAnalyzer.HzToPixel(centre - half, 400, 200, 3000);
+        var right = Ft4SpectrumAnalyzer.HzToPixel(centre + half, 400, 200, 3000);
+        Assert.True(right - left > 1);
+        Assert.InRange(left, 0, 400);
+        Assert.InRange(right, 0, 400);
+    }
+
+    [Fact]
     public void Tone_at_1500_hz_peaks_near_mid_passband()
     {
         const int sampleRate = 12000;

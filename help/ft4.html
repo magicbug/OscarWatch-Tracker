@@ -48,8 +48,8 @@
       </p>
       <p>
         OscarWatch FT4 is for linear/USB-style modes only. The Tools menu item is disabled, and transmit
-        is blocked, when the focused mode is FM or when FO-29 is focused (FO-29’s licence does not allow
-        this digital mode).
+        is blocked, when the focused mode is FM, when FO-29 is focused (its licence does not allow
+        this digital mode), or when AO-7 is focused (AMSAT has asked that FT4 not be used there).
       </p>
       <p>
         On ICOM radios that report RF power over CI-V (for example the IC-9700), and on Yaesu
@@ -61,14 +61,19 @@
       <h2>What you will see</h2>
       <ul>
         <li><strong>Waterfall</strong>: scrolling spectrogram of the USB audio passband (about 200–3000 Hz).
-          Click the waterfall to set your <strong>TX audio (Hz)</strong>; green brackets mark the
-          FT4 filter around RX (±45 Hz), with a horizontal bar joining the two legs at the top.
-          Red brackets appear around TX when Hold Tx Freq keeps them apart.
+          Click the waterfall to set RX, and TX as well unless <strong>Hold Tx Freq</strong> is on.
+          Green brackets mark the FT4 filter around RX (±45 Hz), with a horizontal bar joining the
+          two legs at the top. While you are in a QSO they stay on that station. Red brackets always
+          mark TX and stay inside the waterfall.
           Decodes appear in the list with their audio frequency so you can match RX and TX.</li>
         <li><strong>Slot clock</strong>: UTC FT4 slot timing (7.5 s), including even/odd slot.</li>
         <li><strong>Doppler</strong>: uplink and downlink radio frequencies from OscarWatch tracking for the focused satellite.</li>
-        <li><strong>Decodes</strong>: messages decoded in the current session, including DT (time offset)
-          and your own uplink echo (labelled Echo) when heard on a TX slot.</li>
+        <li><strong>Decodes</strong>: messages decoded in the current session, including DT (time offset).
+          <strong>TX</strong> is the message OscarWatch sent (no SNR, a dash in the DT column).
+          <strong>Echo</strong> is that transmission decoded from the receiver, with the SNR and
+          audio frequency that came back. A trace on the waterfall is not an Echo until the
+          decoder copies it. Full-duplex copies often start late in the slot; OscarWatch searches
+          that later audio on your TX slots.</li>
         <li><strong>TX message</strong>: text you will transmit; use <strong>CQ</strong> to build a standard call from your station callsign and grid.</li>
       </ul>
 
@@ -77,6 +82,7 @@
         <li><strong>Enable Tx</strong>: arms transmit for the current message on the next matching slot.</li>
         <li><strong>Halt Tx</strong>: stops further transmits immediately.</li>
         <li><strong>CQ</strong>: starts a CQ using your callsign and grid, then auto-sequences replies (report, RRR or skip to 73).</li>
+        <li><strong>Report</strong> and <strong>73</strong>: send that message again to the station in the current QSO. Report reuses the signal report already sent. Both need a QSO in progress.</li>
         <li><strong>Skip RRR</strong>: when checked (default), finished QSOs go straight to 73.</li>
         <li><strong>Even TX slots</strong>: prefer even FT4 slots for your transmit side.</li>
         <li><strong>Clear</strong> / <strong>Save activity</strong>: clear the decode list, or save band activity to a text file.</li>

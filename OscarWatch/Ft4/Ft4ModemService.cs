@@ -237,6 +237,36 @@ public sealed class Ft4ModemService : IDisposable
         Changed?.Invoke();
     }
 
+    public bool QueueReport(float? snrDb)
+    {
+        if (_sequencer is null || string.IsNullOrWhiteSpace(_sequencer.TheirCall))
+            return false;
+        if (!EnsureTransmitAllowed())
+            return false;
+        if (!_sequencer.ForceReport(snrDb))
+            return false;
+
+        _lastRelevantDecodeUtc = DateTime.UtcNow;
+        Status = _l.Get("Ft4.Status.SendingReport", _sequencer.TheirCall);
+        Changed?.Invoke();
+        return true;
+    }
+
+    public bool Queue73()
+    {
+        if (_sequencer is null || string.IsNullOrWhiteSpace(_sequencer.TheirCall))
+            return false;
+        if (!EnsureTransmitAllowed())
+            return false;
+        if (!_sequencer.Force73())
+            return false;
+
+        _lastRelevantDecodeUtc = DateTime.UtcNow;
+        Status = _l.Get("Ft4.Status.Sending73", _sequencer.TheirCall);
+        Changed?.Invoke();
+        return true;
+    }
+
     public void EnableTx()
     {
         if (!EnsureTransmitAllowed())
@@ -278,7 +308,7 @@ public sealed class Ft4ModemService : IDisposable
     }
 
     /// <summary>
-    /// Re-check satellite eligibility while listening (e.g. operator switched to FM or FO-29).
+    /// Re-check satellite eligibility while listening (e.g. operator switched to FM, FO-29, or AO-7).
     /// Halts TX when the focused satellite is not allowed for FT4.
     /// </summary>
     public void RefreshSatelliteEligibility()
@@ -803,16 +833,53 @@ public sealed class Ft4ModemService : IDisposable
         if (samples.Length < (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
             return;
 
+        var raw = samples;
+        var corrected = raw;
         if (_settings.Current.Ft4.AudioDopplerRx
             && TryGetDopplerSlopeHzPerSec(slotStart, Ft4SlotClock.Ft4SlotSeconds, out var dlSlope, out _)
             && Math.Abs(dlSlope) >= 0.05)
         {
-            samples = Ft4AudioDoppler.RemoveLinearDrift(samples, 12000, dlSlope);
+            corrected = Ft4AudioDoppler.RemoveLinearDrift(raw, 12000, dlSlope);
         }
 
+        var foundOwn = PublishDecoded(slotStart, corrected, txSlot, timeShiftSec: 0, ownOnly: false);
+        if (!txSlot || foundOwn)
+            return;
+
+        // The waterfall is the raw capture. Doppler removal and the decoder's early
+        // time window both hide a full-duplex copy that is obvious on screen.
+        if (!ReferenceEquals(corrected, raw))
+            foundOwn = PublishDecoded(slotStart, raw, txSlot, timeShiftSec: 0, ownOnly: true);
+        if (foundOwn)
+            return;
+
+        var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
+        if (!Ft4EchoAligner.TryFindToneOnset(raw, 12000, hz, out var onset))
+            return;
+        if (onset < (int)(Ft4EchoAligner.NativeWindowSeconds * 12000))
+            return;
+
+        var aligned = Ft4EchoAligner.AlignToNativeWindow(raw, 12000, onset, out var shiftSec);
+        if (aligned.Length < (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
+            return;
+        if (shiftSec < 0.2)
+            return;
+
+        PublishDecoded(slotStart, aligned, txSlot, shiftSec, ownOnly: true);
+    }
+
+    /// <summary>Post decoder output. Returns true when our own callsign was published.</summary>
+    private bool PublishDecoded(
+        DateTime slotStart,
+        float[] samples,
+        bool txSlot,
+        double timeShiftSec,
+        bool ownOnly)
+    {
         var decoded = Ft8Native.DecodeFt4(samples);
         var my = Ft4MessageCodec.NormalizeCall(_settings.Current.GroundStation.Callsign ?? "");
         var any = false;
+        var foundOwn = false;
 
         foreach (var d in decoded)
         {
@@ -821,8 +888,16 @@ public sealed class Ft4ModemService : IDisposable
                 && callDe is not null
                 && callDe.Equals(my, StringComparison.OrdinalIgnoreCase);
 
+            if (ownOnly && !isOwn)
+                continue;
+
+            if (isOwn)
+                _lastRelevantDecodeUtc = DateTime.UtcNow;
+
             if (!string.IsNullOrWhiteSpace(callDe))
                 Ft8Native.ow_ft8_remember_callsign(callDe);
+
+            var timeSec = d.time_sec + (float)timeShiftSec;
 
             if (isOwn && txSlot)
             {
@@ -830,7 +905,7 @@ public sealed class Ft4ModemService : IDisposable
                     slotStart,
                     d.text,
                     d.freq_hz,
-                    d.time_sec,
+                    timeSec,
                     d.snr,
                     callTo,
                     callDe,
@@ -845,7 +920,14 @@ public sealed class Ft4ModemService : IDisposable
                         continue;
                 }
 
+                foundOwn = true;
                 any = true;
+                Log.Information(
+                    "FT4 own echo: {Text} at {Hz:0} Hz, DT {Dt:0.00} s, SNR {Snr:0} dB",
+                    d.text,
+                    d.freq_hz,
+                    timeSec,
+                    d.snr);
                 Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                 {
                     Decodes.Insert(0, echo);
@@ -866,7 +948,7 @@ public sealed class Ft4ModemService : IDisposable
                 slotStart,
                 d.text,
                 d.freq_hz,
-                d.time_sec,
+                timeSec,
                 d.snr,
                 callTo,
                 callDe,
@@ -874,6 +956,8 @@ public sealed class Ft4ModemService : IDisposable
                 isOwn);
 
             any = true;
+            if (isOwn)
+                foundOwn = true;
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 Decodes.Insert(0, msg);
@@ -881,7 +965,7 @@ public sealed class Ft4ModemService : IDisposable
                     Decodes.RemoveAt(Decodes.Count - 1);
             });
 
-            if (_sequencer is not null)
+            if (_sequencer is not null && !isOwn)
             {
                 var finished = _sequencer.OnDecoded(msg);
                 _lastRelevantDecodeUtc = DateTime.UtcNow;
@@ -892,6 +976,7 @@ public sealed class Ft4ModemService : IDisposable
 
         if (any)
             Changed?.Invoke();
+        return foundOwn;
     }
 
     private void ApplyEchoCalibration(Ft4DecodedMessage own)

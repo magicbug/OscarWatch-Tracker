@@ -4029,6 +4029,12 @@
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>报告</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>跳过 RRR</value>
   </data>
@@ -4086,11 +4092,20 @@
   <data name="Ft4.Blocked.Fo29">
     <value>FO-29 不允许使用 FT4（许可证限制）</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>AO-7 不允许使用 FT4（AMSAT 要求）</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>已阻止 FT4 发射：射频功率高于 {0} W。请调低电台功率。</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>正在呼叫 CQ</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>正在向 {0} 发送报告</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>正在向 {0} 发送 73</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>请先输入或生成 TX 消息</value>

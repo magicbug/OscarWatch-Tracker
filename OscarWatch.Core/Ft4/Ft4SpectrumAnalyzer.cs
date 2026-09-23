@@ -100,6 +100,33 @@ public static class Ft4SpectrumAnalyzer
         return Math.Clamp(t, 0, 1) * width;
     }
 
+    /// <summary>
+    /// Centre to use when drawing an FT4 filter bracket so both legs stay inside the plot.
+    /// A centre outside the passband used to pin both legs on the same border pixel, which
+    /// the control then clipped, so the bracket vanished off the waterfall.
+    /// </summary>
+    public static double VisibleBracketCentreHz(
+        double centreHz,
+        double halfWidthHz,
+        double minHz,
+        double maxHz)
+    {
+        if (!double.IsFinite(minHz) || !double.IsFinite(maxHz) || maxHz <= minHz)
+            return 1500;
+
+        var mid = (minHz + maxHz) / 2.0;
+        if (!double.IsFinite(centreHz))
+            return mid;
+
+        var half = double.IsFinite(halfWidthHz) ? Math.Max(0, halfWidthHz) : 0;
+        var lo = minHz + half;
+        var hi = maxHz - half;
+        if (hi <= lo)
+            return mid;
+
+        return Math.Clamp(centreHz, lo, hi);
+    }
+
     private static float MagnitudeDb(double re, double im, int fftSize)
     {
         // Normalise by FFT length so display dB is roughly independent of window size.

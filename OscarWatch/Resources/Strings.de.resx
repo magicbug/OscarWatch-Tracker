@@ -4033,6 +4033,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>Rapport</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>RRR überspringen</value>
   </data>
@@ -4090,11 +4096,20 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Blocked.Fo29">
     <value>FT4 ist auf FO-29 nicht erlaubt (Lizenzbeschränkung)</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>FT4 ist auf AO-7 nicht erlaubt (Bitte von AMSAT)</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>FT4-Senden gesperrt: HF-Leistung liegt über {0} W. Bitte die Leistung am Funkgerät reduzieren.</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>CQ rufen</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>Sende Rapport an {0}</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>Sende 73 an {0}</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>Zuerst eine TX-Nachricht eingeben oder erzeugen</value>

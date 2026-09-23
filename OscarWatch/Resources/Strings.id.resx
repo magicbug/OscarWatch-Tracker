@@ -4033,6 +4033,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.SendReport">
+    <value>Laporan</value>
+  </data>
+  <data name="Ft4.Send73">
+    <value>73</value>
+  </data>
   <data name="Ft4.SkipRrr">
     <value>Lewati RRR</value>
   </data>
@@ -4090,11 +4096,20 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Blocked.Fo29">
     <value>FT4 tidak diizinkan di FO-29 (pembatasan lisensi)</value>
   </data>
+  <data name="Ft4.Blocked.Ao7">
+    <value>FT4 tidak diizinkan di AO-7 (permintaan AMSAT)</value>
+  </data>
   <data name="Ft4.Blocked.RfPowerTooHigh">
     <value>Transmit FT4 diblokir: daya RF di atas {0} W. Turunkan daya pada radio.</value>
   </data>
   <data name="Ft4.Status.CallingCq">
     <value>Memanggil CQ</value>
+  </data>
+  <data name="Ft4.Status.SendingReport">
+    <value>Mengirim laporan ke {0}</value>
+  </data>
+  <data name="Ft4.Status.Sending73">
+    <value>Mengirim 73 ke {0}</value>
   </data>
   <data name="Ft4.Status.NoTxMessage">
     <value>Masukkan atau buat pesan TX terlebih dahulu</value>

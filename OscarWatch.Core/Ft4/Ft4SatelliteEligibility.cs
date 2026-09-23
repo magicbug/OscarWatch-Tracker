@@ -3,8 +3,9 @@ using OscarWatch.Core.Models;
 namespace OscarWatch.Core.Ft4;
 
 /// <summary>
-/// Policy for where OscarWatch FT4 may be used. FM satellites are unsuitable for FT4,
-/// and FO-29’s licence does not permit this digital mode.
+/// Policy for where OscarWatch FT4 may be used. FM satellites are unsuitable for FT4.
+/// FO-29's licence does not permit this digital mode, and AMSAT has asked that FT4
+/// not be used on AO-7.
 /// </summary>
 public static class Ft4SatelliteEligibility
 {
@@ -13,17 +14,22 @@ public static class Ft4SatelliteEligibility
 
     public const string Fo29Name = "FO-29";
 
+    /// <summary>NORAD catalog number for AO-7 (AMSAT-OSCAR 7), without leading zeros.</summary>
+    public const string Ao7NoradId = "7530";
+
+    public const string Ao7Name = "AO-7";
+
     public enum BlockReason
     {
         None = 0,
         FmMode,
         Fo29,
+        Ao7,
     }
 
     public static bool IsFo29(string? satelliteName, string? noradId)
     {
-        if (!string.IsNullOrWhiteSpace(noradId)
-            && string.Equals(noradId.Trim(), Fo29NoradId, StringComparison.OrdinalIgnoreCase))
+        if (NoradEquals(noradId, Fo29NoradId))
             return true;
 
         if (string.IsNullOrWhiteSpace(satelliteName))
@@ -35,10 +41,30 @@ public static class Ft4SatelliteEligibility
             || name.Equals("FO29", StringComparison.OrdinalIgnoreCase);
     }
 
+    public static bool IsAo7(string? satelliteName, string? noradId)
+    {
+        if (NoradEquals(noradId, Ao7NoradId))
+            return true;
+
+        if (string.IsNullOrWhiteSpace(satelliteName))
+            return false;
+
+        var name = satelliteName.Trim();
+        return name.Equals(Ao7Name, StringComparison.OrdinalIgnoreCase)
+            || name.Equals("AO-07", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("AO7", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("AO07", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("OSCAR 7", StringComparison.OrdinalIgnoreCase)
+            || name.Equals("OSCAR-7", StringComparison.OrdinalIgnoreCase);
+    }
+
     public static BlockReason Evaluate(string? satelliteName, string? noradId, SatelliteTransponderMode? mode)
     {
         if (IsFo29(satelliteName, noradId))
             return BlockReason.Fo29;
+
+        if (IsAo7(satelliteName, noradId))
+            return BlockReason.Ao7;
 
         if (mode?.IsFmMode == true)
             return BlockReason.FmMode;
@@ -54,6 +80,18 @@ public static class Ft4SatelliteEligibility
     {
         BlockReason.FmMode => "Ft4.Blocked.FmSatellite",
         BlockReason.Fo29 => "Ft4.Blocked.Fo29",
+        BlockReason.Ao7 => "Ft4.Blocked.Ao7",
         _ => ""
     };
+
+    private static bool NoradEquals(string? noradId, string catalog)
+    {
+        if (string.IsNullOrWhiteSpace(noradId))
+            return false;
+
+        var trimmed = noradId.Trim().TrimStart('0');
+        if (trimmed.Length == 0)
+            trimmed = "0";
+        return trimmed.Equals(catalog, StringComparison.OrdinalIgnoreCase);
+    }
 }

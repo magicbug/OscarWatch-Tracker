@@ -201,4 +201,36 @@ public sealed class Ft4QsoSequencerTests
         Assert.Equal(Ft4QsoPhase.Finished, seq.Phase);
         Assert.False(seq.TransmitEnabled);
     }
+
+    [Fact]
+    public void Force_report_and_73_rearm_a_finished_qso()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        Assert.False(seq.ForceReport(-6f));
+        Assert.False(seq.Force73());
+
+        seq.StartCq(evenSlot: true);
+        seq.OnDecoded(Msg("MM9SQL G4ABC IO91", snr: -6f));
+        Assert.Equal("-06", seq.ReportSent);
+
+        seq.HaltTx();
+        Assert.True(seq.ForceReport(12f));
+        Assert.Equal("G4ABC MM9SQL -06", seq.CurrentTxMessage);
+        Assert.Equal(Ft4QsoPhase.InQso, seq.Phase);
+        Assert.True(seq.TransmitEnabled);
+        Assert.False(seq.OnTxCompleted());
+
+        Assert.True(seq.Force73());
+        Assert.Equal("G4ABC MM9SQL 73", seq.CurrentTxMessage);
+        Assert.True(seq.TransmitEnabled);
+        Assert.False(seq.OnTxCompleted());
+        Assert.Equal(Ft4QsoPhase.Finished, seq.Phase);
+        Assert.False(seq.TransmitEnabled);
+
+        var fresh = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        fresh.StartAnswer(Msg("CQ G4ABC JO01"), oppositeEvenSlot: false);
+        Assert.Null(fresh.ReportSent);
+        Assert.True(fresh.ForceReport(4f));
+        Assert.Equal("G4ABC MM9SQL +04", fresh.CurrentTxMessage);
+    }
 }
