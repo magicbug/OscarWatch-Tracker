@@ -34,6 +34,15 @@ if(UNIX)
   target_link_libraries(oscarwatch_ft8 PRIVATE m pthread)
 endif()
 
+if(MSVC)
+  target_compile_options(oscarwatch_ft8 PRIVATE /O2)
+  target_link_options(oscarwatch_ft8 PRIVATE /LTCG)
+else()
+  # Always optimise the shipped native decode library (WSL MinGW and CI Release builds).
+  target_compile_options(oscarwatch_ft8 PRIVATE -O3 -flto)
+  target_link_options(oscarwatch_ft8 PRIVATE -flto)
+endif()
+
 # Output name without lib prefix quirks for P/Invoke discovery
 set_target_properties(oscarwatch_ft8 PROPERTIES
   OUTPUT_NAME "oscarwatch_ft8"

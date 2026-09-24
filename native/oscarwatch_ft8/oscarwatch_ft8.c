@@ -146,7 +146,7 @@ typedef struct
     monitor_t mon;
 } ow_monitor_cache_t;
 
-#ifdef _WIN32
+#if defined(_MSC_VER)
 static __declspec(thread) ow_monitor_cache_t g_mon_cache;
 #else
 static __thread ow_monitor_cache_t g_mon_cache;
