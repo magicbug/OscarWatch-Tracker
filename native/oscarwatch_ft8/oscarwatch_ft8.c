@@ -24,7 +24,8 @@
 
 #define CALLSIGN_HASHTABLE_SIZE 256
 #define kMin_score 10
-#define kMax_candidates 140
+#define kMax_candidates 60
+#define kLDPC_iterations_fast 10
 #define kLDPC_iterations 25
 #define kFreq_osr 2
 #define kTime_osr 2
@@ -341,8 +342,12 @@ OW_FT8_API int ow_ft8_decode_pcm(
 
         ftx_message_t message;
         ftx_decode_status_t status;
-        if (!ftx_decode_candidate(&mon.wf, cand, kLDPC_iterations, &message, &status))
+        /* Sparse satellite slots rarely need full LDPC; try a short pass first. */
+        if (!ftx_decode_candidate(&mon.wf, cand, kLDPC_iterations_fast, &message, &status)
+            && !ftx_decode_candidate(&mon.wf, cand, kLDPC_iterations, &message, &status))
+        {
             continue;
+        }
 
         int idx_hash = message.hash % OW_FT8_MAX_DECODES;
         bool found_empty_slot = false;
