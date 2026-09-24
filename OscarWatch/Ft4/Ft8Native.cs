@@ -8,6 +8,12 @@ internal static class Ft8Native
 {
     private const string LibraryName = "oscarwatch_ft8";
 
+    /// <summary>
+    /// Serialises native calls that share the callsign hashtable until a thread-safe
+    /// oscarwatch_ft8 build is loaded. Parallel TX echo still overlaps alignment work.
+    /// </summary>
+    private static readonly object NativeGate = new();
+
     static Ft8Native()
     {
         NativeLibrary.SetDllImportResolver(typeof(Ft8Native).Assembly, Resolve);
@@ -61,7 +67,8 @@ internal static class Ft8Native
         {
             try
             {
-                ow_ft8_clear_callsigns();
+                lock (NativeGate)
+                    ow_ft8_clear_callsigns();
                 return true;
             }
             catch (DllNotFoundException)
@@ -105,11 +112,23 @@ internal static class Ft8Native
         int outCapacity);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void ow_ft8_remember_callsign(
+    private static extern void ow_ft8_remember_callsign(
         [MarshalAs(UnmanagedType.LPUTF8Str)] string callsign);
 
     [DllImport(LibraryName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void ow_ft8_clear_callsigns();
+    private static extern void ow_ft8_clear_callsigns();
+
+    public static void RememberCallsign(string callsign)
+    {
+        lock (NativeGate)
+            ow_ft8_remember_callsign(callsign);
+    }
+
+    public static void ClearCallsigns()
+    {
+        lock (NativeGate)
+            ow_ft8_clear_callsigns();
+    }
 
     public static float[]? EncodeFt4(string message, float freqHz, int sampleRate = 12000)
     {
@@ -143,9 +162,12 @@ internal static class Ft8Native
         int count;
         try
         {
-            // Hashed / portable callsigns (e.g. MM9SQL/M) need to be in the table first.
-            RememberHashedTokens(text);
-            rc = ow_ft8_encode_pcm(text, freqHz, isFt4: 1, buffer, capacity, sampleRate, out count);
+            lock (NativeGate)
+            {
+                // Hashed / portable callsigns (e.g. MM9SQL/M) need to be in the table first.
+                RememberHashedTokens(text);
+                rc = ow_ft8_encode_pcm(text, freqHz, isFt4: 1, buffer, capacity, sampleRate, out count);
+            }
         }
         catch (DllNotFoundException)
         {
@@ -207,7 +229,9 @@ internal static class Ft8Native
     public static Decode[] DecodeFt4(float[] samples, int sampleRate = 12000)
     {
         var output = new Decode[50];
-        var n = ow_ft8_decode_pcm(samples, samples.Length, sampleRate, isFt4: 1, output, output.Length);
+        int n;
+        lock (NativeGate)
+            n = ow_ft8_decode_pcm(samples, samples.Length, sampleRate, isFt4: 1, output, output.Length);
         if (n <= 0)
             return [];
         var result = new Decode[n];

@@ -3984,6 +3984,12 @@
   <data name="Ft4.AudioDopplerRx">
     <value>RX 音频多普勒</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>并行 TX 回波解码</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>在发射时隙同时运行正常解码与迟到回波处理，以便更快显示本台回波。该时隙会占用更多 CPU。除非电脑吃力，否则请保持开启。</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>解码文字大小</value>
   </data>

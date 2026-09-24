@@ -3984,6 +3984,12 @@
   <data name="Ft4.AudioDopplerRx">
     <value>RXオーディオドップラー</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>TXエコー並列デコード</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>送信スロットでは通常デコードと遅延エコー処理を同時に行い、自分のコピーを早く表示します。そのスロットのCPU使用量が増えます。PCが厳しいとき以外はオンのままにしてください。</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>デコード文字サイズ</value>
   </data>

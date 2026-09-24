@@ -3988,6 +3988,12 @@ LOS: {2}
   <data name="Ft4.AudioDopplerRx">
     <value>ดอปเปลอร์เสียงบน RX</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>ถอดรหัสเอคโค่ TX แบบขนาน</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>ในช่วงส่ง จะถอดรหัสปกติและรอบเอคโค่ที่มาช้าพร้อมกัน เพื่อให้เห็นสำเนาของตัวเองเร็วขึ้น ใช้ CPU มากขึ้นในช่วงนั้น เปิดไว้ได้ เว้นแต่เครื่องช้า</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>ขนาดข้อความถอดรหัส</value>
   </data>

@@ -3988,6 +3988,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.AudioDopplerRx">
     <value>Doppler audio pada RX</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>Decode gema TX paralel</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>Pada slot TX, decode biasa dan pass gema terlambat dijalankan bersama agar salinan Anda muncul lebih cepat. Memakai lebih banyak CPU pada slot itu. Biarkan aktif kecuali PC kewalahan.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Ukuran teks decode</value>
   </data>

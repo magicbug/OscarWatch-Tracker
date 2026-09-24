@@ -3984,6 +3984,12 @@ Latest: {1} ({2})</value>
   <data name="Ft4.AudioDopplerRx">
     <value>Audio Doppler on RX</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>Parallel TX echo decode</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>On transmit slots, run the normal decode and a late-echo pass together so your own copy appears sooner. Uses more CPU for that slot. Leave on unless the PC struggles.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Decode text size</value>
   </data>

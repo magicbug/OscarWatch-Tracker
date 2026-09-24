@@ -65,6 +65,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _holdTxFrequency = ft4.HoldTxFrequency;
         _audioDopplerTx = ft4.AudioDopplerTx;
         _audioDopplerRx = ft4.AudioDopplerRx;
+        _parallelTxEchoDecode = ft4.ParallelTxEchoDecode;
         _pttLeadMs = Math.Clamp(ft4.PttLeadMs, 0, 2000);
         _pttTailMs = Math.Clamp(ft4.PttTailMs, 0, 2000);
         _decodeFontSize = Math.Clamp(ft4.DecodeFontSize, 10, 28);
@@ -169,6 +170,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _holdTxFrequency = true;
     [ObservableProperty] private bool _audioDopplerTx = true;
     [ObservableProperty] private bool _audioDopplerRx = true;
+    [ObservableProperty] private bool _parallelTxEchoDecode = true;
     [ObservableProperty] private int _pttLeadMs = 200;
     [ObservableProperty] private int _pttTailMs = 100;
     [ObservableProperty] private double _decodeFontSize = 12;
@@ -216,6 +218,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     partial void OnAudioDopplerRxChanged(bool value)
     {
         _settings.Current.Ft4.AudioDopplerRx = value;
+        _settings.RequestSave();
+    }
+
+    partial void OnParallelTxEchoDecodeChanged(bool value)
+    {
+        _settings.Current.Ft4.ParallelTxEchoDecode = value;
         _settings.RequestSave();
     }
 

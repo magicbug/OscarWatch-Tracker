@@ -3984,6 +3984,12 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.AudioDopplerRx">
     <value>Doppler de áudio no RX</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>Decode paralelo de eco TX</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>Nas janelas de transmissão, executa o decode normal e um passe de eco tardio juntos para a sua cópia aparecer mais cedo. Usa mais CPU nessa janela. Deixe ligado, a menos que o PC fique sobrecarregado.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Tamanho do texto de decode</value>
   </data>

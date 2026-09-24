@@ -3988,6 +3988,12 @@ LOS: {2}
   <data name="Ft4.AudioDopplerRx">
     <value>Аудио-Доплер на RX</value>
   </data>
+  <data name="Ft4.ParallelTxEchoDecode">
+    <value>Параллельная декодировка TX-эха</value>
+  </data>
+  <data name="Ft4.ParallelTxEchoDecode.Note">
+    <value>В TX-слотах обычная декодировка и поздний проход эха идут вместе, чтобы своя копия появлялась быстрее. Больше нагрузка на CPU в этом слоте. Оставляйте включённым, если ПК не слабый.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Размер текста декодов</value>
   </data>

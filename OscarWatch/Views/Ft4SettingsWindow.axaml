@@ -174,6 +174,13 @@
                       IsChecked="{Binding AudioDopplerTx}" />
             <CheckBox Content="{loc:Localize Key=Ft4.AudioDopplerRx}"
                       IsChecked="{Binding AudioDopplerRx}" />
+            <CheckBox Content="{loc:Localize Key=Ft4.ParallelTxEchoDecode}"
+                      IsChecked="{Binding ParallelTxEchoDecode}" />
+            <TextBlock Text="{loc:Localize Key=Ft4.ParallelTxEchoDecode.Note}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Opacity="0.85"
+                       Margin="24,0,0,0" />
           </StackPanel>
         </ScrollViewer>
       </TabItem>

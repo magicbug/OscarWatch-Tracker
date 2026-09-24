@@ -81,6 +81,12 @@ public sealed class Ft4Settings
     /// </summary>
     public bool AudioDopplerRx { get; set; } = true;
 
+    /// <summary>
+    /// When true (default), on TX slots run the normal decode and a late-echo pass
+    /// together so a full-duplex own copy appears sooner (uses more CPU for that slot).
+    /// </summary>
+    public bool ParallelTxEchoDecode { get; set; } = true;
+
     /// <summary>Font size for the decode / activity list (points). Default 12.</summary>
     public double DecodeFontSize { get; set; } = 12;
 

@@ -180,8 +180,8 @@ public sealed class Ft4ModemService : IDisposable
         _sequencer.TxAudioHz = Math.Clamp(_settings.Current.Ft4.TxAudioHz, 200, 3000);
         _lastLoggedKey = null;
 
-        Ft8Native.ow_ft8_clear_callsigns();
-        Ft8Native.ow_ft8_remember_callsign(call);
+        Ft8Native.ClearCallsigns();
+        Ft8Native.RememberCallsign(call);
 
         _audio.StartCapture(
             _settings.Current.Ft4.InputDeviceId,
@@ -996,21 +996,77 @@ public sealed class Ft4ModemService : IDisposable
             corrected = Ft4AudioDoppler.RemoveLinearDrift(raw, 12000, dlSlope);
         }
 
+        var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
+        if (txSlot && _settings.Current.Ft4.ParallelTxEchoDecode)
+        {
+            DecodeTxSlotParallel(slotStart, raw, corrected, hz);
+            return;
+        }
+
         var foundOwn = PublishDecoded(slotStart, corrected, txSlot, timeShiftSec: 0, ownOnly: false);
         if (!txSlot || foundOwn)
             return;
 
+        RecoverOwnEchoSequential(slotStart, raw, corrected, hz);
+    }
+
+    /// <summary>
+    /// Normal decode and late-echo pass together so wall-clock is about one decode, not two in a row.
+    /// </summary>
+    private void DecodeTxSlotParallel(
+        DateTime slotStart,
+        float[] raw,
+        float[] corrected,
+        double txHz)
+    {
+        var primary = Task.Run(() =>
+        {
+            var own = PublishDecoded(slotStart, corrected, txSlot: true, timeShiftSec: 0, ownOnly: false);
+            if (!own && !ReferenceEquals(corrected, raw))
+                own = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true);
+            return own;
+        });
+
+        var late = Task.Run(() =>
+        {
+            foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, txHz))
+            {
+                if (!PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true))
+                    continue;
+
+                Log.Information(
+                    "FT4 own echo recovered after shifting the slot by {Shift:0.00} s (parallel pass)",
+                    shiftSec);
+                return true;
+            }
+
+            return false;
+        });
+
+        Task.WaitAll(primary, late);
+        if (primary.Result || late.Result)
+            return;
+
+        TryCalibrateEchoFromSpectrum(raw, txHz);
+    }
+
+    private void RecoverOwnEchoSequential(
+        DateTime slotStart,
+        float[] raw,
+        float[] corrected,
+        double txHz)
+    {
         // The waterfall is the raw capture. Doppler removal and the decoder's early
         // time window both hide a full-duplex copy that is obvious on screen.
+        var foundOwn = false;
         if (!ReferenceEquals(corrected, raw))
-            foundOwn = PublishDecoded(slotStart, raw, txSlot, timeShiftSec: 0, ownOnly: true);
+            foundOwn = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true);
         if (foundOwn)
             return;
 
-        var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
-        foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, hz))
+        foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, txHz))
         {
-            foundOwn = PublishDecoded(slotStart, aligned, txSlot, shiftSec, ownOnly: true);
+            foundOwn = PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true);
             if (foundOwn)
             {
                 Log.Information(
@@ -1020,7 +1076,7 @@ public sealed class Ft4ModemService : IDisposable
             }
         }
 
-        TryCalibrateEchoFromSpectrum(raw, hz);
+        TryCalibrateEchoFromSpectrum(raw, txHz);
     }
 
     /// <summary>Post decoder output. Returns true when our own callsign was published.</summary>
@@ -1050,7 +1106,7 @@ public sealed class Ft4ModemService : IDisposable
                 _lastRelevantDecodeUtc = DateTime.UtcNow;
 
             if (!string.IsNullOrWhiteSpace(callDe))
-                Ft8Native.ow_ft8_remember_callsign(callDe);
+                Ft8Native.RememberCallsign(callDe);
 
             var timeSec = d.time_sec + (float)timeShiftSec;
 
@@ -1066,7 +1122,6 @@ public sealed class Ft4ModemService : IDisposable
                     callDe,
                     extra,
                     IsOwnEcho: true);
-                ApplyEchoCalibration(echo);
 
                 var echoKey = slotStart.Ticks + "|echo|" + d.text + "|" + ((int)Math.Round(d.freq_hz / 5.0) * 5);
                 lock (_decodePostGate)
@@ -1074,6 +1129,9 @@ public sealed class Ft4ModemService : IDisposable
                     if (!_postedDecodeKeys.Add(echoKey))
                         continue;
                 }
+
+                // Calibrate only for the first accepted Echo of this key (parallel passes may both see it).
+                ApplyEchoCalibration(echo);
 
                 foundOwn = true;
                 any = true;

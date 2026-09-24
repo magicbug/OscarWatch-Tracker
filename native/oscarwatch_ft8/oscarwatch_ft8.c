@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
+
 #include <common/common.h>
 #include <common/monitor.h>
 #include <ft8/constants.h>
@@ -31,6 +37,35 @@ static struct
 
 static int callsign_hashtable_size;
 
+#ifdef _WIN32
+static CRITICAL_SECTION g_hash_lock;
+static LONG g_hash_lock_ready;
+static void hash_lock_ensure(void)
+{
+    if (InterlockedCompareExchange(&g_hash_lock_ready, 1, 0) == 0)
+        InitializeCriticalSection(&g_hash_lock);
+}
+static void hash_lock(void)
+{
+    hash_lock_ensure();
+    EnterCriticalSection(&g_hash_lock);
+}
+static void hash_unlock(void)
+{
+    LeaveCriticalSection(&g_hash_lock);
+}
+#else
+static pthread_mutex_t g_hash_lock = PTHREAD_MUTEX_INITIALIZER;
+static void hash_lock(void)
+{
+    pthread_mutex_lock(&g_hash_lock);
+}
+static void hash_unlock(void)
+{
+    pthread_mutex_unlock(&g_hash_lock);
+}
+#endif
+
 static void hashtable_init(void)
 {
     callsign_hashtable_size = 0;
@@ -39,6 +74,7 @@ static void hashtable_init(void)
 
 static void hashtable_add(const char* callsign, uint32_t hash)
 {
+    hash_lock();
     uint16_t hash10 = (hash >> 12) & 0x3FFu;
     int idx_hash = (hash10 * 23) % CALLSIGN_HASHTABLE_SIZE;
     while (callsign_hashtable[idx_hash].callsign[0] != '\0')
@@ -47,6 +83,7 @@ static void hashtable_add(const char* callsign, uint32_t hash)
             && (0 == strcmp(callsign_hashtable[idx_hash].callsign, callsign)))
         {
             callsign_hashtable[idx_hash].hash &= 0x3FFFFFu;
+            hash_unlock();
             return;
         }
         idx_hash = (idx_hash + 1) % CALLSIGN_HASHTABLE_SIZE;
@@ -55,10 +92,12 @@ static void hashtable_add(const char* callsign, uint32_t hash)
     strncpy(callsign_hashtable[idx_hash].callsign, callsign, 11);
     callsign_hashtable[idx_hash].callsign[11] = '\0';
     callsign_hashtable[idx_hash].hash = hash;
+    hash_unlock();
 }
 
 static bool hashtable_lookup(ftx_callsign_hash_type_t hash_type, uint32_t hash, char* callsign)
 {
+    hash_lock();
     uint8_t hash_shift = (hash_type == FTX_CALLSIGN_HASH_10_BITS) ? 12
         : (hash_type == FTX_CALLSIGN_HASH_12_BITS ? 10 : 0);
     uint16_t hash10 = (hash >> (12 - hash_shift)) & 0x3FFu;
@@ -68,11 +107,13 @@ static bool hashtable_lookup(ftx_callsign_hash_type_t hash_type, uint32_t hash, 
         if (((callsign_hashtable[idx_hash].hash & 0x3FFFFFu) >> hash_shift) == hash)
         {
             strcpy(callsign, callsign_hashtable[idx_hash].callsign);
+            hash_unlock();
             return true;
         }
         idx_hash = (idx_hash + 1) % CALLSIGN_HASHTABLE_SIZE;
     }
     callsign[0] = '\0';
+    hash_unlock();
     return false;
 }
 
@@ -85,11 +126,13 @@ static int hashtable_ready;
 
 static void ensure_hashtable(void)
 {
+    hash_lock();
     if (!hashtable_ready)
     {
         hashtable_init();
         hashtable_ready = 1;
     }
+    hash_unlock();
 }
 
 static void gfsk_pulse(int n_spsym, float symbol_bt, float* pulse)
@@ -177,8 +220,10 @@ OW_FT8_API void ow_ft8_remember_callsign(const char* callsign)
 
 OW_FT8_API void ow_ft8_clear_callsigns(void)
 {
+    hash_lock();
     hashtable_init();
     hashtable_ready = 1;
+    hash_unlock();
 }
 
 OW_FT8_API int ow_ft8_encode_pcm(

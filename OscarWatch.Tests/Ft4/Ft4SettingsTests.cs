@@ -31,6 +31,7 @@ public sealed class Ft4SettingsTests
         Assert.True(settings.HoldTxFrequency);
         Assert.True(settings.AudioDopplerTx);
         Assert.True(settings.AudioDopplerRx);
+        Assert.True(settings.ParallelTxEchoDecode);
         Assert.Equal(12, settings.DecodeFontSize);
     }
 

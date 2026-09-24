@@ -31,7 +31,7 @@ target_include_directories(oscarwatch_ft8 PRIVATE
 )
 target_compile_definitions(oscarwatch_ft8 PRIVATE OSCARWATCH_FT8_EXPORTS)
 if(UNIX)
-  target_link_libraries(oscarwatch_ft8 PRIVATE m)
+  target_link_libraries(oscarwatch_ft8 PRIVATE m pthread)
 endif()
 
 # Output name without lib prefix quirks for P/Invoke discovery
