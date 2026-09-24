@@ -5,14 +5,28 @@ namespace OscarWatch.Tests.Ft4;
 
 public sealed class Ft8NativeRoundTripTests
 {
+    private static bool RequireNativeOrReturn()
+    {
+        // Linux/macOS CI may not ship the native library into test output yet.
+        return Ft8Native.IsAvailable;
+    }
+
+    [Fact]
+    public void Native_library_is_available_on_windows()
+    {
+        if (!OperatingSystem.IsWindows())
+            return;
+
+        Assert.True(
+            Ft8Native.IsAvailable,
+            "win-x64 oscarwatch_ft8.dll must be present under runtimes for Windows tests.");
+    }
+
     [Fact]
     public void Encode_then_decode_standard_cq()
     {
-        if (!Ft8Native.IsAvailable)
-        {
-            // Native library not on PATH/output yet (e.g. clean CI without RID copy).
+        if (!RequireNativeOrReturn())
             return;
-        }
 
         const string message = "CQ MM9SQL IO85";
         var pcm = Ft8Native.EncodeFt4(message, freqHz: 1200f);
@@ -28,7 +42,7 @@ public sealed class Ft8NativeRoundTripTests
     [Fact]
     public void Encode_report_message()
     {
-        if (!Ft8Native.IsAvailable)
+        if (!RequireNativeOrReturn())
             return;
 
         var pcm = Ft8Native.EncodeFt4("G4ABC MM9SQL +05", freqHz: 1500f);
@@ -42,7 +56,7 @@ public sealed class Ft8NativeRoundTripTests
     [Fact]
     public void Encode_portable_callsign_MM9SQL_M()
     {
-        if (!Ft8Native.IsAvailable)
+        if (!RequireNativeOrReturn())
             return;
 
         // Hashed portable calls are valid FT4; pack77 needs remember_callsign first.
@@ -56,7 +70,7 @@ public sealed class Ft8NativeRoundTripTests
     [Fact]
     public void Decode_search_band_around_operating_tone_finds_message()
     {
-        if (!Ft8Native.IsAvailable)
+        if (!RequireNativeOrReturn())
             return;
 
         const float toneHz = 1500f;
@@ -72,9 +86,33 @@ public sealed class Ft8NativeRoundTripTests
     }
 
     [Fact]
+    public void Search_band_spans_rx_and_tx_when_hold_tx_separates_them()
+    {
+        Ft8Native.ResolveSearchBand(rxHz: 500, txHz: 2000, out var fMin, out var fMax);
+        Assert.True(fMin <= 500 - 100);
+        Assert.True(fMax >= 2000 + 100);
+        Assert.True(fMax - fMin > 1400);
+    }
+
+    [Fact]
+    public void Availability_probe_does_not_clear_remembered_callsigns()
+    {
+        if (!RequireNativeOrReturn())
+            return;
+
+        Ft8Native.ClearCallsigns();
+        Ft8Native.RememberCallsign("MM9SQL/M");
+        Assert.True(Ft8Native.IsAvailable);
+        Assert.True(
+            Ft8Native.TryEncodeFt4("CQ MM9SQL/M IO85", 1200f, 12000, out var pcm, out var error),
+            error);
+        Assert.NotNull(pcm);
+    }
+
+    [Fact]
     public void Late_start_within_extended_window_decodes_without_echo_alignment()
     {
-        if (!Ft8Native.IsAvailable)
+        if (!RequireNativeOrReturn())
             return;
 
         const int rate = 12000;
@@ -99,7 +137,7 @@ public sealed class Ft8NativeRoundTripTests
     [Fact]
     public async Task Parallel_encode_and_decode_do_not_crash()
     {
-        if (!Ft8Native.IsAvailable)
+        if (!RequireNativeOrReturn())
             return;
 
         var encodeA = Task.Run(() => Ft8Native.EncodeFt4("CQ MM9SQL IO85", 1200f));

@@ -80,6 +80,9 @@ public sealed class Ft4ModemService : IDisposable
     public bool IsTuning => Volatile.Read(ref _tuning) == 1;
     public bool NativeAvailable => Ft8Native.IsAvailable;
     public Ft4QsoSequencer? Sequencer => _sequencer;
+
+    /// <summary>Green-bracket RX audio Hz used for decode search (Hold Tx can differ from TX).</summary>
+    public double RxAudioHz { get; set; } = 1500;
     public double TxPlaybackPeak => _audio.PlaybackPeak;
     public event Action? Changed;
 
@@ -178,6 +181,7 @@ public sealed class Ft4ModemService : IDisposable
             () => _settings.Current.Ft4.SkipRrr,
             () => _settings.Current.Ft4.HoldTxFrequency);
         _sequencer.TxAudioHz = Math.Clamp(_settings.Current.Ft4.TxAudioHz, 200, 3000);
+        RxAudioHz = _sequencer.TxAudioHz;
         _lastLoggedKey = null;
 
         Ft8Native.ClearCallsigns();
@@ -996,18 +1000,19 @@ public sealed class Ft4ModemService : IDisposable
             corrected = Ft4AudioDoppler.RemoveLinearDrift(raw, 12000, dlSlope);
         }
 
-        var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
+        var txHz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
+        var rxHz = RxAudioHz > 0 ? RxAudioHz : txHz;
         if (txSlot && _settings.Current.Ft4.ParallelTxEchoDecode)
         {
-            DecodeTxSlotParallel(slotStart, raw, corrected, hz);
+            DecodeTxSlotParallel(slotStart, raw, corrected, rxHz, txHz);
             return;
         }
 
-        var foundOwn = PublishDecoded(slotStart, corrected, txSlot, timeShiftSec: 0, ownOnly: false, hz);
+        var foundOwn = PublishDecoded(slotStart, corrected, txSlot, timeShiftSec: 0, ownOnly: false, rxHz, txHz);
         if (!txSlot || foundOwn)
             return;
 
-        RecoverOwnEchoSequential(slotStart, raw, corrected, hz);
+        RecoverOwnEchoSequential(slotStart, raw, corrected, rxHz, txHz);
     }
 
     /// <summary>
@@ -1017,13 +1022,14 @@ public sealed class Ft4ModemService : IDisposable
         DateTime slotStart,
         float[] raw,
         float[] corrected,
+        double rxHz,
         double txHz)
     {
         var primary = Task.Run(() =>
         {
-            var own = PublishDecoded(slotStart, corrected, txSlot: true, timeShiftSec: 0, ownOnly: false, txHz);
+            var own = PublishDecoded(slotStart, corrected, txSlot: true, timeShiftSec: 0, ownOnly: false, rxHz, txHz);
             if (!own && !ReferenceEquals(corrected, raw))
-                own = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true, txHz);
+                own = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true, rxHz, txHz);
             return own;
         });
 
@@ -1031,7 +1037,7 @@ public sealed class Ft4ModemService : IDisposable
         {
             foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, txHz))
             {
-                if (!PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true, txHz))
+                if (!PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true, rxHz, txHz))
                     continue;
 
                 Log.Information(
@@ -1054,19 +1060,20 @@ public sealed class Ft4ModemService : IDisposable
         DateTime slotStart,
         float[] raw,
         float[] corrected,
+        double rxHz,
         double txHz)
     {
         // The waterfall is the raw capture. Doppler removal and the decoder's early
         // time window both hide a full-duplex copy that is obvious on screen.
         var foundOwn = false;
         if (!ReferenceEquals(corrected, raw))
-            foundOwn = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true, txHz);
+            foundOwn = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true, rxHz, txHz);
         if (foundOwn)
             return;
 
         foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, txHz))
         {
-            foundOwn = PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true, txHz);
+            foundOwn = PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true, rxHz, txHz);
             if (foundOwn)
             {
                 Log.Information(
@@ -1086,9 +1093,11 @@ public sealed class Ft4ModemService : IDisposable
         bool txSlot,
         double timeShiftSec,
         bool ownOnly,
-        double searchCentreHz)
+        double rxHz,
+        double txHz)
     {
-        var decoded = Ft8Native.DecodeFt4(samples, 12000, searchCentreHz);
+        Ft8Native.ResolveSearchBand(ownOnly ? txHz : rxHz, txHz, out var fMin, out var fMax);
+        var decoded = Ft8Native.DecodeFt4(samples, 12000, fMin, fMax);
         var my = Ft4MessageCodec.NormalizeCall(_settings.Current.GroundStation.Callsign ?? "");
         var any = false;
         var foundOwn = false;

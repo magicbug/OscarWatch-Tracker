@@ -71,6 +71,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _audioDopplerTx = ft4.AudioDopplerTx;
         _audioDopplerRx = ft4.AudioDopplerRx;
         _parallelTxEchoDecode = ft4.ParallelTxEchoDecode;
+        _modem.RxAudioHz = _rxAudioHz;
         _pttLeadMs = Math.Clamp(ft4.PttLeadMs, 0, 2000);
         _pttTailMs = Math.Clamp(ft4.PttTailMs, 0, 2000);
         _decodeFontSize = Math.Clamp(ft4.DecodeFontSize, 10, 28);
@@ -398,6 +399,24 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         // Without Hold Tx, keep RX locked to TX (WSJT-X behaviour).
         if (!_settings.Current.Ft4.HoldTxFrequency)
             RxAudioHz = clamped;
+    }
+
+    partial void OnRxAudioHzChanged(double value)
+    {
+        if (!double.IsFinite(value))
+        {
+            RxAudioHz = TxAudioHz;
+            return;
+        }
+
+        var clamped = Math.Clamp(value, 200, 3000);
+        if (Math.Abs(clamped - value) > 0.01)
+        {
+            RxAudioHz = clamped;
+            return;
+        }
+
+        _modem.RxAudioHz = clamped;
     }
 
     private void RefreshRxMarker()

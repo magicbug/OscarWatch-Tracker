@@ -40,15 +40,20 @@ static int callsign_hashtable_size;
 
 #ifdef _WIN32
 static CRITICAL_SECTION g_hash_lock;
-static LONG g_hash_lock_ready;
-static void hash_lock_ensure(void)
+static INIT_ONCE g_hash_once = INIT_ONCE_STATIC_INIT;
+
+static BOOL CALLBACK hash_lock_init_once(PINIT_ONCE once, PVOID param, PVOID* context)
 {
-    if (InterlockedCompareExchange(&g_hash_lock_ready, 1, 0) == 0)
-        InitializeCriticalSection(&g_hash_lock);
+    (void)once;
+    (void)param;
+    (void)context;
+    InitializeCriticalSection(&g_hash_lock);
+    return TRUE;
 }
+
 static void hash_lock(void)
 {
-    hash_lock_ensure();
+    InitOnceExecuteOnce(&g_hash_once, hash_lock_init_once, NULL, NULL);
     EnterCriticalSection(&g_hash_lock);
 }
 static void hash_unlock(void)
@@ -76,8 +81,14 @@ static void hashtable_init(void)
 static void hashtable_add(const char* callsign, uint32_t hash)
 {
     hash_lock();
+    if (callsign_hashtable_size >= CALLSIGN_HASHTABLE_SIZE - 1)
+    {
+        hash_unlock();
+        return;
+    }
     uint16_t hash10 = (hash >> 12) & 0x3FFu;
     int idx_hash = (hash10 * 23) % CALLSIGN_HASHTABLE_SIZE;
+    int probes = 0;
     while (callsign_hashtable[idx_hash].callsign[0] != '\0')
     {
         if (((callsign_hashtable[idx_hash].hash & 0x3FFFFFu) == hash)
@@ -88,6 +99,11 @@ static void hashtable_add(const char* callsign, uint32_t hash)
             return;
         }
         idx_hash = (idx_hash + 1) % CALLSIGN_HASHTABLE_SIZE;
+        if (++probes >= CALLSIGN_HASHTABLE_SIZE)
+        {
+            hash_unlock();
+            return;
+        }
     }
     callsign_hashtable_size++;
     strncpy(callsign_hashtable[idx_hash].callsign, callsign, 11);
@@ -103,6 +119,7 @@ static bool hashtable_lookup(ftx_callsign_hash_type_t hash_type, uint32_t hash, 
         : (hash_type == FTX_CALLSIGN_HASH_12_BITS ? 10 : 0);
     uint16_t hash10 = (hash >> (12 - hash_shift)) & 0x3FFu;
     int idx_hash = (hash10 * 23) % CALLSIGN_HASHTABLE_SIZE;
+    int probes = 0;
     while (callsign_hashtable[idx_hash].callsign[0] != '\0')
     {
         if (((callsign_hashtable[idx_hash].hash & 0x3FFFFFu) >> hash_shift) == hash)
@@ -112,6 +129,8 @@ static bool hashtable_lookup(ftx_callsign_hash_type_t hash_type, uint32_t hash, 
             return true;
         }
         idx_hash = (idx_hash + 1) % CALLSIGN_HASHTABLE_SIZE;
+        if (++probes >= CALLSIGN_HASHTABLE_SIZE)
+            break;
     }
     callsign[0] = '\0';
     hash_unlock();
@@ -201,7 +220,22 @@ static void gfsk_pulse(int n_spsym, float symbol_bt, float* pulse)
     }
 }
 
-static void synth_gfsk(
+/* FT4 @ 12 kHz: n_spsym = round(12000 * 0.048) = 576; pulse length 3*576. */
+static float g_ft4_12k_pulse[3 * 576];
+static int g_ft4_12k_pulse_ready;
+
+static const float* ft4_pulse_12k(void)
+{
+    if (!g_ft4_12k_pulse_ready)
+    {
+        gfsk_pulse(576, FT4_SYMBOL_BT, g_ft4_12k_pulse);
+        g_ft4_12k_pulse_ready = 1;
+    }
+    return g_ft4_12k_pulse;
+}
+
+/// @return 0 on success, -1 on allocation failure (signal left untouched).
+static int synth_gfsk(
     const uint8_t* symbols,
     int n_sym,
     float f0,
@@ -216,18 +250,31 @@ static void synth_gfsk(
     float dphi_peak = 2 * (float)M_PI * hmod / n_spsym;
 
     float* dphi = (float*)calloc((size_t)(n_wave + 2 * n_spsym), sizeof(float));
-    float* pulse = (float*)malloc((size_t)(3 * n_spsym) * sizeof(float));
+    float* pulse_storage = NULL;
+    const float* pulse;
+    if (n_spsym == 576 && signal_rate == 12000
+        && symbol_bt == FT4_SYMBOL_BT
+        && fabsf(symbol_period - FT4_SYMBOL_PERIOD) < 1e-6f)
+    {
+        pulse = ft4_pulse_12k();
+    }
+    else
+    {
+        pulse_storage = (float*)malloc((size_t)(3 * n_spsym) * sizeof(float));
+        if (pulse_storage)
+            gfsk_pulse(n_spsym, symbol_bt, pulse_storage);
+        pulse = pulse_storage;
+    }
+
     if (!dphi || !pulse)
     {
         free(dphi);
-        free(pulse);
-        return;
+        free(pulse_storage);
+        return -1;
     }
 
     for (int i = 0; i < n_wave + 2 * n_spsym; ++i)
         dphi[i] = 2 * (float)M_PI * f0 / signal_rate;
-
-    gfsk_pulse(n_spsym, symbol_bt, pulse);
 
     for (int i = 0; i < n_sym; ++i)
     {
@@ -258,7 +305,8 @@ static void synth_gfsk(
     }
 
     free(dphi);
-    free(pulse);
+    free(pulse_storage);
+    return 0;
 }
 
 OW_FT8_API void ow_ft8_remember_callsign(const char* callsign)
@@ -315,9 +363,8 @@ OW_FT8_API int ow_ft8_encode_pcm(
 
     int num_samples = (int)(0.5f + num_tones * symbol_period * sample_rate);
     int slot_samples = (int)(0.5f + slot_time * sample_rate);
-    /* FT4's candidate search only covers early time offsets. A long centred
-     * silence pad pushes the Costas symbols outside that window, so keep a
-     * short lead-in and put the remaining silence after the waveform. */
+    /* FT4: keep a short lead-in so the burst stays early in the slot for
+     * receive-side copies; remaining silence follows the waveform. */
     int num_silence_head = (int)(0.5f + 0.5f * sample_rate); /* 0.5 s */
     if (num_silence_head + num_samples > slot_samples)
         num_silence_head = 0;
@@ -332,7 +379,11 @@ OW_FT8_API int ow_ft8_encode_pcm(
     }
 
     memset(out_samples, 0, (size_t)num_total * sizeof(float));
-    synth_gfsk(tones, num_tones, freq_hz, symbol_bt, symbol_period, sample_rate, out_samples + num_silence_head);
+    if (synth_gfsk(tones, num_tones, freq_hz, symbol_bt, symbol_period, sample_rate, out_samples + num_silence_head) != 0)
+    {
+        free(tones);
+        return -3;
+    }
     free(tones);
 
     *out_count = num_total;
@@ -358,6 +409,9 @@ OW_FT8_API int ow_ft8_decode_pcm(
         f_min_hz = 200.0f;
         f_max_hz = 2800.0f;
     }
+
+    if (out_capacity > OW_FT8_MAX_DECODES)
+        out_capacity = OW_FT8_MAX_DECODES;
 
     ftx_protocol_t protocol = is_ft4 ? FTX_PROTOCOL_FT4 : FTX_PROTOCOL_FT8;
     (void)protocol;

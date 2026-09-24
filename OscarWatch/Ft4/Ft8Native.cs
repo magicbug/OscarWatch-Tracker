@@ -61,7 +61,8 @@ internal static class Ft8Native
         {
             try
             {
-                ow_ft8_clear_callsigns();
+                // Touch an export without clearing the callsign hashtable.
+                ow_ft8_remember_callsign("");
                 return true;
             }
             catch (DllNotFoundException)
@@ -172,6 +173,7 @@ internal static class Ft8Native
             error = rc switch
             {
                 -2 => $"Could not pack \"{text}\" as FT4 (check callsign/grid format).",
+                -3 => "Encode ran out of memory.",
                 -4 => "Encode buffer too small.",
                 _ => $"Encode failed (code {rc}) for \"{text}\"."
             };
@@ -213,8 +215,21 @@ internal static class Ft8Native
         }
     }
 
-    /// <summary>Half-width of the Costas search around the operating audio tone (Hz).</summary>
+    /// <summary>Half-width pad around RX/TX audio when building the Costas search band (Hz).</summary>
     public const double DefaultSearchHalfWidthHz = 700;
+
+    /// <summary>
+    /// Search band covering both RX and TX tones (plus pad), clamped to the USB passband.
+    /// </summary>
+    public static void ResolveSearchBand(double rxHz, double txHz, out float fMinHz, out float fMaxHz)
+    {
+        var a = Math.Clamp(rxHz, 200, 3000);
+        var b = Math.Clamp(txHz, 200, 3000);
+        var lo = Math.Min(a, b);
+        var hi = Math.Max(a, b);
+        fMinHz = (float)Math.Clamp(lo - DefaultSearchHalfWidthHz, 100, 2900);
+        fMaxHz = (float)Math.Clamp(hi + DefaultSearchHalfWidthHz, fMinHz + 100, 3000);
+    }
 
     public static Decode[] DecodeFt4(
         float[] samples,
@@ -224,14 +239,19 @@ internal static class Ft8Native
     {
         var fMin = (float)Math.Clamp(centreHz - halfWidthHz, 100, 2900);
         var fMax = (float)Math.Clamp(centreHz + halfWidthHz, fMin + 100, 3000);
+        return DecodeFt4(samples, sampleRate, fMin, fMax);
+    }
+
+    public static Decode[] DecodeFt4(float[] samples, int sampleRate, float fMinHz, float fMaxHz)
+    {
         var output = new Decode[50];
         var n = ow_ft8_decode_pcm(
             samples,
             samples.Length,
             sampleRate,
             isFt4: 1,
-            fMin,
-            fMax,
+            fMinHz,
+            fMaxHz,
             output,
             output.Length);
         if (n <= 0)
