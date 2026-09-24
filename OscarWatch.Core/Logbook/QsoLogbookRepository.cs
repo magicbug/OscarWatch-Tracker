@@ -601,6 +601,40 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<(IReadOnlySet<string> Calls, IReadOnlySet<string> GridFields)> LoadWorkedCallAndGridFieldsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        var calls = new HashSet<string>(StringComparer.Ordinal);
+        var grids = new HashSet<string>(StringComparer.Ordinal);
+
+        await using var connection = OpenConnection();
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT call, grid_square
+            FROM qsos
+            WHERE length(trim(call)) > 0
+            """;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var call = MaidenheadLocator.NormalizeCallsign(reader.GetString(0));
+            if (call.Length > 0)
+                calls.Add(call);
+
+            if (reader.IsDBNull(1))
+                continue;
+
+            foreach (var segment in MaidenheadLocator.NormalizeGrids(reader.GetString(1)).Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (segment.Length >= 4)
+                    grids.Add(segment[..4]);
+            }
+        }
+
+        return (calls, grids);
+    }
+
     public void Dispose() => _gate.Dispose();
 
     private async Task EnsureInitializedAsync(CancellationToken cancellationToken)

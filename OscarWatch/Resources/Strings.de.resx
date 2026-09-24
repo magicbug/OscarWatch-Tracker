@@ -4007,7 +4007,13 @@ Aktuell: {1} ({2})</value>
     <value>Antwortet</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>Hintergrund einer Zeile an die eigene Station. Antwortet ist die Station im aktuellen QSO. Farbe über die Auswahl; weniger Transparenz ergibt einen kräftigeren Ton.</value>
+    <value>Hintergrundfarben für Decode-Zeilen: an dich gerichtet, aktuelle QSO-Station, Rufzeichen noch nicht im Logbuch, oder 4-Zeichen-Grid noch nicht geloggt. Farbwähler nutzen; weniger Transparenz ergibt einen stärkeren Ton.</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>Neues Rufzeichen</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>Neues Grid</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Echo-Kalibrierung</value>

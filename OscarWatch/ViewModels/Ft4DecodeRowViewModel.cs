@@ -21,13 +21,24 @@ public sealed partial class Ft4DecodeRowViewModel : ObservableObject
         string? myCall,
         string? partnerCall,
         string callingMeColour,
-        string replyingColour)
+        string replyingColour,
+        string newCallColour,
+        string newGridColour,
+        IReadOnlySet<string>? workedCalls,
+        IReadOnlySet<string>? workedGridFields)
     {
-        var kind = Ft4DecodeHighlight.Classify(Message, myCall, partnerCall);
+        var kind = Ft4DecodeHighlight.Classify(
+            Message,
+            myCall,
+            partnerCall,
+            workedCalls,
+            workedGridFields);
         var hex = kind switch
         {
             Ft4DecodeHighlightKind.Replying => replyingColour,
             Ft4DecodeHighlightKind.CallingMe => callingMeColour,
+            Ft4DecodeHighlightKind.NewCall => newCallColour,
+            Ft4DecodeHighlightKind.NewGrid => newGridColour,
             _ => null
         };
         RowBackground = Ft4DecodeRowBackgroundConverter.BrushFromHex(hex);

@@ -399,6 +399,10 @@ public class QsoLogbookRepositoryTests : IDisposable
         var previous = await _repository.FindLatestQsoForCallAsync(logbook.Id, "G0ABC");
         Assert.NotNull(previous);
         Assert.Equal("IO91WM", previous!.GridSquare);
+
+        var (calls, grids) = await _repository.LoadWorkedCallAndGridFieldsAsync();
+        Assert.Contains("G0ABC", calls);
+        Assert.Contains("IO91", grids);
     }
 
     [Fact]

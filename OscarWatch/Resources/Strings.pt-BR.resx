@@ -4003,7 +4003,13 @@ Mais recente: {1} ({2})</value>
     <value>Respondendo</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>Fundo de uma linha endereçada a você. Respondendo é a estação do QSO atual. Use o seletor de cor; menos transparência deixa o tom mais forte.</value>
+    <value>Fundos das linhas de decodificação: dirigidas a você, a estação do QSO atual, um indicativo ainda não no logbook, ou um grid de 4 caracteres que você ainda não registrou. Use o seletor de cor; menos transparência deixa o tom mais forte.</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>Indicativo novo</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>Grid novo</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Calibração de eco</value>

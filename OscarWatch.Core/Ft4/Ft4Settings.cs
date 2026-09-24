@@ -96,6 +96,12 @@ public sealed class Ft4Settings
     /// <summary>Row background for the station in the current QSO. #RRGGBB or #AARRGGBB.</summary>
     public string ReplyingColour { get; set; } = Ft4DecodeHighlight.DefaultReplyingColour;
 
+    /// <summary>Row background for a receive decode whose callsign is not in the logbook.</summary>
+    public string NewCallColour { get; set; } = Ft4DecodeHighlight.DefaultNewCallColour;
+
+    /// <summary>Row background when the callsign was worked but the 4-character grid is new.</summary>
+    public string NewGridColour { get; set; } = Ft4DecodeHighlight.DefaultNewGridColour;
+
     /// <summary>Window size/position.</summary>
     public int? WindowWidth { get; set; }
     public int? WindowHeight { get; set; }

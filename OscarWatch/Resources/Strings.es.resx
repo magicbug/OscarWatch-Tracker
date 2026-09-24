@@ -4003,7 +4003,13 @@ Está utilizando la versión {0}.
     <value>Respondiendo</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>Fondo de una línea dirigida a ti. Respondiendo es la estación del QSO actual. Use el selector de color; menos transparencia da un tono más fuerte.</value>
+    <value>Fondos de las líneas de decodificación: dirigidas a ti, la estación del QSO actual, un indicativo aún no en el libro de guardia, o un grid de 4 caracteres que no has registrado. Use el selector de color; menos transparencia da un tono más fuerte.</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>Indicativo nuevo</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>Grid nuevo</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Calibración de eco</value>

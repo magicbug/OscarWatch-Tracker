@@ -4007,7 +4007,13 @@ LOS: {2}
     <value>ตอบกลับ</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>พื้นหลังของบรรทัดที่เรียกหาคุณ ตอบกลับคือสถานีใน QSO ปัจจุบัน เลือกสีจากตัวเลือก ความโปร่งใสน้อยลงจะได้สีเข้มขึ้น</value>
+    <value>สีพื้นหลังบรรทัดถอดรหัส: ที่เรียกหาคุณ สถานีใน QSO ปัจจุบัน สัญญาณเรียกที่ยังไม่มีในสมุดบันทึก หรือกริด 4 ตัวอักษที่ยังไม่ได้บันทึก ใช้ตัวเลือกสี ความโปร่งใสต่ำจะเข้มขึ้น</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>สัญญาณเรียกใหม่</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>กริดใหม่</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>การปรับเทียบเสียงสะท้อน</value>

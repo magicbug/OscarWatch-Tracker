@@ -8,14 +8,21 @@ public sealed class Ft4DecodeHighlightTests
         string text,
         string? callTo,
         string? callDe,
+        string? extra = null,
         bool echo = false,
         bool transmitted = false) =>
-        new(DateTime.UtcNow, text, 1500, 0.2f, -8, callTo, callDe, null, echo, transmitted);
+        new(DateTime.UtcNow, text, 1500, 0.2f, -8, callTo, callDe, extra, echo, transmitted);
+
+    private static HashSet<string> Calls(params string[] calls) =>
+        new(calls, StringComparer.Ordinal);
+
+    private static HashSet<string> Grids(params string[] grids) =>
+        new(grids, StringComparer.Ordinal);
 
     [Fact]
     public void Directed_decode_is_calling_me_until_they_are_the_qso_partner()
     {
-        var msg = Line("MM9SQL G4ABC IO91", "MM9SQL", "G4ABC");
+        var msg = Line("MM9SQL G4ABC IO91", "MM9SQL", "G4ABC", "IO91");
         Assert.Equal(Ft4DecodeHighlightKind.CallingMe, Ft4DecodeHighlight.Classify(msg, "MM9SQL", null));
         Assert.Equal(Ft4DecodeHighlightKind.Replying, Ft4DecodeHighlight.Classify(msg, "mm9sql", "G4ABC"));
     }
@@ -23,22 +30,55 @@ public sealed class Ft4DecodeHighlightTests
     [Fact]
     public void Other_callers_stay_calling_me_during_a_qso()
     {
-        var msg = Line("MM9SQL M0ABC +05", "MM9SQL", "M0ABC");
+        var msg = Line("MM9SQL M0ABC +05", "MM9SQL", "M0ABC", "+05");
         Assert.Equal(Ft4DecodeHighlightKind.CallingMe, Ft4DecodeHighlight.Classify(msg, "MM9SQL", "G4ABC"));
     }
 
     [Fact]
-    public void Cq_tx_and_echo_are_not_highlighted()
+    public void Tx_and_echo_are_not_highlighted()
     {
         Assert.Equal(
             Ft4DecodeHighlightKind.None,
-            Ft4DecodeHighlight.Classify(Line("CQ G4ABC JO01", "CQ", "G4ABC"), "MM9SQL", null));
+            Ft4DecodeHighlight.Classify(
+                Line("CQ MM9SQL IO87", "CQ", "MM9SQL", "IO87", transmitted: true),
+                "MM9SQL",
+                null));
         Assert.Equal(
             Ft4DecodeHighlightKind.None,
-            Ft4DecodeHighlight.Classify(Line("CQ MM9SQL IO87", "CQ", "MM9SQL", transmitted: true), "MM9SQL", null));
+            Ft4DecodeHighlight.Classify(
+                Line("G4ABC MM9SQL +10", "G4ABC", "MM9SQL", "+10", echo: true),
+                "MM9SQL",
+                "G4ABC"));
+    }
+
+    [Fact]
+    public void Unworked_callsign_is_new_call()
+    {
+        var msg = Line("CQ G4ABC JO01", "CQ", "G4ABC", "JO01");
+        Assert.Equal(
+            Ft4DecodeHighlightKind.NewCall,
+            Ft4DecodeHighlight.Classify(msg, "MM9SQL", null, Calls(), Grids()));
         Assert.Equal(
             Ft4DecodeHighlightKind.None,
-            Ft4DecodeHighlight.Classify(Line("G4ABC MM9SQL +10", "G4ABC", "MM9SQL", echo: true), "MM9SQL", "G4ABC"));
+            Ft4DecodeHighlight.Classify(msg, "MM9SQL", null, Calls("G4ABC"), Grids("JO01")));
+    }
+
+    [Fact]
+    public void Worked_call_with_new_grid_is_new_grid()
+    {
+        var msg = Line("CQ G4ABC JO01", "CQ", "G4ABC", "JO01");
+        Assert.Equal(
+            Ft4DecodeHighlightKind.NewGrid,
+            Ft4DecodeHighlight.Classify(msg, "MM9SQL", null, Calls("G4ABC"), Grids("IO91")));
+    }
+
+    [Fact]
+    public void Calling_me_outranks_new_call()
+    {
+        var msg = Line("MM9SQL G4ABC IO91", "MM9SQL", "G4ABC", "IO91");
+        Assert.Equal(
+            Ft4DecodeHighlightKind.CallingMe,
+            Ft4DecodeHighlight.Classify(msg, "MM9SQL", null, Calls(), Grids()));
     }
 
     [Fact]
@@ -49,5 +89,14 @@ public sealed class Ft4DecodeHighlightTests
         Assert.Equal("#FFFF8800", Ft4DecodeHighlight.NormalizeColour("#f80"));
         Assert.Null(Ft4DecodeHighlight.NormalizeColour("orange"));
         Assert.Null(Ft4DecodeHighlight.NormalizeColour("#12"));
+    }
+
+    [Fact]
+    public void Grid_field_uses_four_characters()
+    {
+        Assert.Equal("JO01", Ft4DecodeHighlight.GridField("JO01"));
+        Assert.Equal("IO91", Ft4DecodeHighlight.GridField("IO91WM"));
+        Assert.Null(Ft4DecodeHighlight.GridField("+10"));
+        Assert.Null(Ft4DecodeHighlight.GridField("RR73"));
     }
 }

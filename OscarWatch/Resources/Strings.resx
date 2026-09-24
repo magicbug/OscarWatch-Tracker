@@ -4003,7 +4003,13 @@ Latest: {1} ({2})</value>
     <value>Replying</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>Background of a decode line addressed to you. Replying is the station in the current QSO. Use the colour selector; the lower the transparency, the stronger the shade.</value>
+    <value>Background shades for decode lines: directed to you, the current QSO partner, a callsign not yet in the logbook, or a 4-character grid you have not logged. Use the colour selectors; the lower the transparency, the stronger the shade.</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>New call</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>New grid</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Echo calibration</value>

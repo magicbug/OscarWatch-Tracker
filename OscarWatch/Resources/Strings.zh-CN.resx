@@ -4003,7 +4003,13 @@
     <value>正在回复</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>呼叫本台的解码行背景。正在回复是当前 QSO 的电台。请用颜色选择器；透明度越低，底色越深。</value>
+    <value>解码行背景色：发给你的、当前QSO对方、日志中尚无的呼号、尚未记录的4字符网格。用颜色选择器设置；透明度越低颜色越深。</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>新呼号</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>新网格</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>回波校准</value>

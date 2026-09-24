@@ -4007,7 +4007,13 @@ Terbaru: {1} ({2})</value>
     <value>Membalas</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>Latar baris yang ditujukan kepada Anda. Membalas adalah stasiun pada QSO saat ini. Gunakan pemilih warna; transparansi lebih rendah membuat warna lebih kuat.</value>
+    <value>Latar baris decode: ditujukan kepada Anda, stasiun QSO saat ini, callsign yang belum ada di logbook, atau grid 4 karakter yang belum Anda catat. Gunakan pemilih warna; transparansi lebih rendah memberi warna lebih kuat.</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>Callsign baru</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>Grid baru</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>Kalibrasi gema</value>

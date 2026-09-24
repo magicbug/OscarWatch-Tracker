@@ -33,6 +33,10 @@ public sealed class Ft4SettingsTests
         Assert.True(settings.AudioDopplerRx);
         Assert.True(settings.ParallelTxEchoDecode);
         Assert.Equal(12, settings.DecodeFontSize);
+        Assert.Equal(Ft4DecodeHighlight.DefaultCallingMeColour, settings.CallingMeColour);
+        Assert.Equal(Ft4DecodeHighlight.DefaultReplyingColour, settings.ReplyingColour);
+        Assert.Equal(Ft4DecodeHighlight.DefaultNewCallColour, settings.NewCallColour);
+        Assert.Equal(Ft4DecodeHighlight.DefaultNewGridColour, settings.NewGridColour);
     }
 
     [Fact]

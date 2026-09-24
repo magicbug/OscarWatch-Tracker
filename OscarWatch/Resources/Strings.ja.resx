@@ -4003,7 +4003,13 @@
     <value>応答中</value>
   </data>
   <data name="Ft4.Decode.ColourNote">
-    <value>自分宛てのデコード行の背景です。応答中は現在のQSO相手です。色選択で指定します。透明度が低いほど色が濃くなります。</value>
+    <value>デコード行の背景色: 自局宛て、現在のQSO相手、ログにないコールサイン、未ログの4文字グリッド。色選択で設定。透明度を下げると濃くなります。</value>
+  </data>
+  <data name="Ft4.Decode.NewCall">
+    <value>新規コール</value>
+  </data>
+  <data name="Ft4.Decode.NewGrid">
+    <value>新規グリッド</value>
   </data>
   <data name="Ft4.Settings.EchoSection">
     <value>エコー校正</value>

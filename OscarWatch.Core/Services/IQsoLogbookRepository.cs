@@ -79,4 +79,11 @@ public interface IQsoLogbookRepository
         CancellationToken cancellationToken = default);
 
     Task ResetFailedCloudlogUploadsAsync(long logbookId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Distinct worked callsigns and 4-character Maidenhead fields from every logbook,
+    /// for FT4 decode shading of new stations and new grids.
+    /// </summary>
+    Task<(IReadOnlySet<string> Calls, IReadOnlySet<string> GridFields)> LoadWorkedCallAndGridFieldsAsync(
+        CancellationToken cancellationToken = default);
 }

@@ -24,23 +24,28 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     private readonly ILiveTrackerSnapshotProvider _tracker;
     private readonly ILocalizationService _l;
     private readonly Ft4ModemService _modem;
+    private readonly IQsoLogbookRepository _logbook;
     private readonly DispatcherTimer _uiTimer;
     private bool _disposed;
     private bool _loadingDevices;
     private bool _loadingEchoCalibration;
+    private IReadOnlySet<string> _workedCalls = new HashSet<string>(StringComparer.Ordinal);
+    private IReadOnlySet<string> _workedGridFields = new HashSet<string>(StringComparer.Ordinal);
 
     public Ft4ViewModel(
         ISettingsService settings,
         FrequencyOverlayViewModel frequencyOverlay,
         ILiveTrackerSnapshotProvider tracker,
         ILocalizationService localization,
-        Ft4ModemService modem)
+        Ft4ModemService modem,
+        IQsoLogbookRepository logbook)
     {
         _settings = settings;
         _frequencyOverlay = frequencyOverlay;
         _tracker = tracker;
         _l = localization;
         _modem = modem;
+        _logbook = logbook;
 
         PttMethodOptions =
         [
@@ -73,6 +78,10 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             ?? Ft4DecodeHighlight.DefaultCallingMeColour;
         _replyingColour = Ft4DecodeHighlight.NormalizeColour(ft4.ReplyingColour)
             ?? Ft4DecodeHighlight.DefaultReplyingColour;
+        _newCallColour = Ft4DecodeHighlight.NormalizeColour(ft4.NewCallColour)
+            ?? Ft4DecodeHighlight.DefaultNewCallColour;
+        _newGridColour = Ft4DecodeHighlight.NormalizeColour(ft4.NewGridColour)
+            ?? Ft4DecodeHighlight.DefaultNewGridColour;
         _preferEvenSlot = false;
         _pttInvert = ft4.PttInvert;
         _selectedPttMethod = PttMethodOptions.FirstOrDefault(o => o.Value == ft4.PttMethod)
@@ -93,6 +102,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _modem.SetManualPromptHandler(SetManualPttPrompt);
         _modem.Changed += OnModemChanged;
         ((INotifyCollectionChanged)_modem.Decodes).CollectionChanged += OnDecodesChanged;
+        _logbook.QsosChanged += OnLogbookQsosChanged;
+        _ = RefreshWorkedSetsAsync();
 
         _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
         _uiTimer.Tick += (_, _) => RefreshUiTick();
@@ -176,6 +187,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private double _decodeFontSize = 12;
     [ObservableProperty] private string _callingMeColour = Ft4DecodeHighlight.DefaultCallingMeColour;
     [ObservableProperty] private string _replyingColour = Ft4DecodeHighlight.DefaultReplyingColour;
+    [ObservableProperty] private string _newCallColour = Ft4DecodeHighlight.DefaultNewCallColour;
+    [ObservableProperty] private string _newGridColour = Ft4DecodeHighlight.DefaultNewGridColour;
     [ObservableProperty] private string? _qsoPartnerCall;
     [ObservableProperty] private string? _selectedEchoCalibrationSatellite;
     [ObservableProperty] private double _echoCalibrationHz;
@@ -281,6 +294,22 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             () => ReplyingColour,
             hex => ReplyingColour = hex,
             hex => _settings.Current.Ft4.ReplyingColour = hex);
+
+    partial void OnNewCallColourChanged(string value) =>
+        CommitDecodeColour(
+            value,
+            Ft4DecodeHighlight.DefaultNewCallColour,
+            () => NewCallColour,
+            hex => NewCallColour = hex,
+            hex => _settings.Current.Ft4.NewCallColour = hex);
+
+    partial void OnNewGridColourChanged(string value) =>
+        CommitDecodeColour(
+            value,
+            Ft4DecodeHighlight.DefaultNewGridColour,
+            () => NewGridColour,
+            hex => NewGridColour = hex,
+            hex => _settings.Current.Ft4.NewGridColour = hex);
 
     partial void OnQsoPartnerCallChanged(string? value) => RefreshDecodeHighlights();
 
@@ -1054,19 +1083,46 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         foreach (var message in messages)
         {
             var row = new Ft4DecodeRowViewModel(message);
-            row.RefreshHighlight(StationCallsign, QsoPartnerCall, CallingMeColour, ReplyingColour);
+            ApplyHighlight(row);
             Decodes.Add(row);
         }
     }
 
     private void RefreshDecodeHighlights()
     {
-        var myCall = StationCallsign;
-        var partner = QsoPartnerCall;
-        var calling = CallingMeColour;
-        var replying = ReplyingColour;
         foreach (var row in Decodes)
-            row.RefreshHighlight(myCall, partner, calling, replying);
+            ApplyHighlight(row);
+    }
+
+    private void ApplyHighlight(Ft4DecodeRowViewModel row) =>
+        row.RefreshHighlight(
+            StationCallsign,
+            QsoPartnerCall,
+            CallingMeColour,
+            ReplyingColour,
+            NewCallColour,
+            NewGridColour,
+            _workedCalls,
+            _workedGridFields);
+
+    private void OnLogbookQsosChanged(long logbookId) => _ = RefreshWorkedSetsAsync();
+
+    private async Task RefreshWorkedSetsAsync()
+    {
+        try
+        {
+            var (calls, grids) = await _logbook.LoadWorkedCallAndGridFieldsAsync().ConfigureAwait(false);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _workedCalls = calls;
+                _workedGridFields = grids;
+                RefreshDecodeHighlights();
+            });
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "FT4 worked-call / grid refresh failed");
+        }
     }
 
     private void RefreshUiTick()
@@ -1147,6 +1203,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _uiTimer.Stop();
         _modem.Changed -= OnModemChanged;
         ((INotifyCollectionChanged)_modem.Decodes).CollectionChanged -= OnDecodesChanged;
+        _logbook.QsosChanged -= OnLogbookQsosChanged;
         _ = StopSessionAsync();
     }
 }
