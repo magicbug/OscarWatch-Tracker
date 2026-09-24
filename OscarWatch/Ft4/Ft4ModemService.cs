@@ -23,6 +23,7 @@ public sealed class Ft4ModemService : IDisposable
     private readonly IOrbitPropagator _propagator;
     private readonly IRigController _rig;
     private readonly ILocalizationService _l;
+    private readonly IAudioRecordingService _recording;
     private readonly Ft4AudioService _audio = new();
     private readonly Ft4PttKeyer _ptt;
     private readonly object _gate = new();
@@ -30,6 +31,8 @@ public sealed class Ft4ModemService : IDisposable
     private CancellationTokenSource? _loopCts;
     private Task? _loopTask;
     private CancellationTokenSource? _txCts;
+    private CancellationTokenSource? _txScheduleCts;
+    private DateTime _scheduledTxSlot = DateTime.MinValue;
     private int _txRunning; // 0 idle, 1 in progress
     private int _prepareRunning;
     private int _preparedPlayed;
@@ -59,7 +62,8 @@ public sealed class Ft4ModemService : IDisposable
         ICloudlogQsoUploadService cloudlogUpload,
         ILiveTrackerSnapshotProvider snapshot,
         IOrbitPropagator propagator,
-        ILocalizationService localization)
+        ILocalizationService localization,
+        IAudioRecordingService recording)
     {
         _settings = settings;
         _tracking = tracking;
@@ -70,6 +74,7 @@ public sealed class Ft4ModemService : IDisposable
         _propagator = propagator;
         _rig = rig;
         _l = localization;
+        _recording = recording;
         _ptt = new Ft4PttKeyer(rig, settings);
     }
 
@@ -187,6 +192,10 @@ public sealed class Ft4ModemService : IDisposable
         Ft8Native.ClearCallsigns();
         Ft8Native.RememberCallsign(call);
 
+        // Pass recording shares the downlink capture card with FT4 RX. Stop it before we open
+        // PortAudio so the modem loop is not starved waiting on a contended input stream.
+        StopPassRecordingForModem();
+
         _audio.StartCapture(
             _settings.Current.Ft4.InputDeviceId,
             _settings.Current.Ft4.InputDeviceDisplayName);
@@ -207,7 +216,12 @@ public sealed class Ft4ModemService : IDisposable
         _rig.ForceFt4DopplerStep();
 
         _loopCts = new CancellationTokenSource();
-        _loopTask = Task.Run(() => LoopAsync(_loopCts.Token));
+        // Long-running: capture/TX timing must not share the thread-pool with native decode.
+        _loopTask = Task.Factory.StartNew(
+            () => LoopAsync(_loopCts.Token).GetAwaiter().GetResult(),
+            _loopCts.Token,
+            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+            TaskScheduler.Default);
         IsRunning = true;
         Status = _l.Get("Ft4.Status.Listening");
         Changed?.Invoke();
@@ -219,6 +233,7 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         StopTune();
+        CancelTxSchedule();
         _txCts?.Cancel();
         _loopCts?.Cancel();
         if (_loopTask is not null)
@@ -298,6 +313,7 @@ public sealed class Ft4ModemService : IDisposable
     {
         StopTune();
         _sequencer?.HaltTx();
+        CancelTxSchedule();
         _txCts?.Cancel();
         ClearPrepared();
         Interlocked.Exchange(ref _preparedPlayed, 0);
@@ -323,6 +339,7 @@ public sealed class Ft4ModemService : IDisposable
 
         // Stop sequenced FT4 bursts; Tune owns the transmitter until cancelled.
         _sequencer?.HaltTx();
+        CancelTxSchedule();
         _txCts?.Cancel();
         ClearPrepared();
         Interlocked.Exchange(ref _preparedPlayed, 0);
@@ -521,7 +538,8 @@ public sealed class Ft4ModemService : IDisposable
                     // never delays the next transmit or capture alignment.
                     float[]? previousSamples = null;
                     var previousSlot = _currentSlotStart;
-                    var previousWasTx = _txThisSlot;
+                    var alreadyTx = Volatile.Read(ref _txRunning) == 1;
+                    var previousWasTx = _txThisSlot || alreadyTx;
                     var needEndDecode = previousSlot != DateTime.MinValue
                         && (!_decodeQueuedThisSlot || previousWasTx);
                     lock (_gate)
@@ -532,22 +550,28 @@ public sealed class Ft4ModemService : IDisposable
                     }
 
                     _currentSlotStart = slotStart;
-                    _txThisSlot = false;
+                    // Soft timer may already have kicked TX; keep the TX-slot flag.
+                    _txThisSlot = alreadyTx;
                     _decodeQueuedThisSlot = false;
                     lock (_decodePostGate)
                         _postedDecodeKeys.Clear();
 
-                    _rig.ForceFt4DopplerStep();
-                    if (!IsTuning)
+                    // Audio first when the soft timer missed; Doppler can follow.
+                    if (!alreadyTx && !IsTuning)
                         KickTransmit(slotStart, ct);
+                    _rig.ForceFt4DopplerStep();
 
                     if (previousSamples is not null)
                         QueueDecode(previousSlot, previousSamples, previousWasTx);
                 }
 
                 // Build the next TX burst before its slot, so the boundary only starts playback.
+                // Soft-schedule KickTransmit so a slow capture loop cannot hold the tone.
                 if (!IsTuning)
+                {
                     MaybePrepareTransmit(now);
+                    MaybeScheduleTransmit(now, ct);
+                }
 
                 // Early RX decode once the FT4 burst should be in the buffer (~6 s).
                 MaybeQueueEarlyDecode(now);
@@ -621,10 +645,9 @@ public sealed class Ft4ModemService : IDisposable
         _txCts = CancellationTokenSource.CreateLinkedTokenSource(loopCt);
         var txCt = _txCts.Token;
 
-        // VOX keys from the audio itself, so start a ready buffer on this thread.
-        // Waiting for the TX task to encode and resample was holding the tone until about +1 s.
-        if (_ptt.Method == Ft4PttMethod.Vox
-            && TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
+        // Start a ready buffer on this thread for every PTT method. Waiting for the TX task
+        // (CAT lead, encode) was holding the tone; VOX also needs the tone as soon as the slot opens.
+        if (TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
             && _audio.TryPlayPrepared(ready, readyRate))
         {
             Interlocked.Exchange(ref _preparedPlayed, 1);
@@ -740,6 +763,95 @@ public sealed class Ft4ModemService : IDisposable
 
         Status = _l.Get("Ft4.Status.TxDone", seq.CurrentTxMessage);
         Changed?.Invoke();
+    }
+
+    private void StopPassRecordingForModem()
+    {
+        if (!_recording.IsRecording || AudioRecordingSessions.IsManualTest(_recording))
+            return;
+
+        try
+        {
+            _recording.StopAsync().GetAwaiter().GetResult();
+            Log.Information("FT4 stopped pass recording so the downlink capture card is free for the modem");
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "FT4 could not stop pass recording before opening capture");
+        }
+    }
+
+    private void CancelTxSchedule()
+    {
+        try
+        {
+            _txScheduleCts?.Cancel();
+        }
+        catch
+        {
+            // ignore
+        }
+
+        _txScheduleCts?.Dispose();
+        _txScheduleCts = null;
+        _scheduledTxSlot = DateTime.MinValue;
+    }
+
+    /// <summary>
+    /// Soft-schedule KickTransmit onto a dedicated waiter so a slow capture loop cannot hold TX.
+    /// </summary>
+    private void MaybeScheduleTransmit(DateTime utcNow, CancellationToken loopCt)
+    {
+        if (IsTuning)
+        {
+            CancelTxSchedule();
+            return;
+        }
+
+        var seq = _sequencer;
+        if (seq is not { TransmitEnabled: true } || string.IsNullOrWhiteSpace(seq.CurrentTxMessage))
+        {
+            CancelTxSchedule();
+            return;
+        }
+
+        var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, Ft4SlotClock.Ft4SlotSeconds, seq.PreferEvenSlot);
+        if (next == _currentSlotStart && Volatile.Read(ref _txRunning) == 1)
+            return;
+
+        if (_scheduledTxSlot == next && _txScheduleCts is { IsCancellationRequested: false })
+            return;
+
+        CancelTxSchedule();
+        _scheduledTxSlot = next;
+        var linked = CancellationTokenSource.CreateLinkedTokenSource(loopCt);
+        _txScheduleCts = linked;
+        var ct = linked.Token;
+        var slot = next;
+
+        _ = Task.Factory.StartNew(
+            () =>
+            {
+                try
+                {
+                    Ft4SlotWait.UntilUtc(slot, ct);
+                    if (ct.IsCancellationRequested)
+                        return;
+                    KickTransmit(slot, loopCt);
+                    _rig.ForceFt4DopplerStep();
+                }
+                catch (OperationCanceledException)
+                {
+                    // Halt / stop / retarget.
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "FT4 TX schedule failed for slot {Slot}", slot);
+                }
+            },
+            ct,
+            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+            TaskScheduler.Default);
     }
 
     private void MaybePrepareTransmit(DateTime utcNow)
@@ -973,17 +1085,22 @@ public sealed class Ft4ModemService : IDisposable
 
     private void QueueDecode(DateTime slotStart, float[] samples, bool txSlot)
     {
-        _ = Task.Run(() =>
-        {
-            try
+        // Long-running: native decode must not occupy a thread-pool worker the modem loop needs.
+        _ = Task.Factory.StartNew(
+            () =>
             {
-                DecodeSamples(slotStart, samples, txSlot);
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, "FT4 decode failed for slot {Slot}", slotStart);
-            }
-        });
+                try
+                {
+                    DecodeSamples(slotStart, samples, txSlot);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "FT4 decode failed for slot {Slot}", slotStart);
+                }
+            },
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+            TaskScheduler.Default);
     }
 
     private void DecodeSamples(DateTime slotStart, float[] samples, bool txSlot)
@@ -1025,29 +1142,37 @@ public sealed class Ft4ModemService : IDisposable
         double rxHz,
         double txHz)
     {
-        var primary = Task.Run(() =>
-        {
-            var own = PublishDecoded(slotStart, corrected, txSlot: true, timeShiftSec: 0, ownOnly: false, rxHz, txHz);
-            if (!own && !ReferenceEquals(corrected, raw))
-                own = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true, rxHz, txHz);
-            return own;
-        });
-
-        var late = Task.Run(() =>
-        {
-            foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, txHz))
+        var primary = Task.Factory.StartNew(
+            () =>
             {
-                if (!PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true, rxHz, txHz))
-                    continue;
+                var own = PublishDecoded(slotStart, corrected, txSlot: true, timeShiftSec: 0, ownOnly: false, rxHz, txHz);
+                if (!own && !ReferenceEquals(corrected, raw))
+                    own = PublishDecoded(slotStart, raw, txSlot: true, timeShiftSec: 0, ownOnly: true, rxHz, txHz);
+                return own;
+            },
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+            TaskScheduler.Default);
 
-                Log.Information(
-                    "FT4 own echo recovered after shifting the slot by {Shift:0.00} s (parallel pass)",
-                    shiftSec);
-                return true;
-            }
+        var late = Task.Factory.StartNew(
+            () =>
+            {
+                foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, txHz))
+                {
+                    if (!PublishDecoded(slotStart, aligned, txSlot: true, shiftSec, ownOnly: true, rxHz, txHz))
+                        continue;
 
-            return false;
-        });
+                    Log.Information(
+                        "FT4 own echo recovered after shifting the slot by {Shift:0.00} s (parallel pass)",
+                        shiftSec);
+                    return true;
+                }
+
+                return false;
+            },
+            CancellationToken.None,
+            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
+            TaskScheduler.Default);
 
         Task.WaitAll(primary, late);
         if (primary.Result || late.Result)

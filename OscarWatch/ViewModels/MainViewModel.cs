@@ -15,6 +15,7 @@ using OscarWatch.Core.Orbit;
 using OscarWatch.Core.Services;
 using OscarWatch.Theme;
 using OscarWatch.Diagnostics;
+using OscarWatch.Ft4;
 using OscarWatch.Help;
 using OscarWatch.Localization;
 using OscarWatch.Orbit;
@@ -38,6 +39,7 @@ public partial class MainViewModel : ViewModelBase
     private readonly PassRecordingCoordinator _passRecordingCoordinator;
     private readonly IAudioRecordingService _recording;
     private readonly IRecordingTaskScheduler _recordingTasks;
+    private readonly Ft4ModemService _ft4Modem;
     private readonly IRotatorController _rotator;
     private readonly IRigController _rig;
     private readonly IGpsService _gps;
@@ -397,6 +399,7 @@ public partial class MainViewModel : ViewModelBase
         PassRecordingCoordinator passRecordingCoordinator,
         IAudioRecordingService recording,
         IRecordingTaskScheduler recordingTasks,
+        Ft4ModemService ft4Modem,
         IRotatorController rotator,
         IRigController rig,
         IGpsService gps,
@@ -427,6 +430,7 @@ public partial class MainViewModel : ViewModelBase
         _passRecordingCoordinator = passRecordingCoordinator;
         _recording = recording;
         _recordingTasks = recordingTasks;
+        _ft4Modem = ft4Modem;
         _rotator = rotator;
         _rig = rig;
         _gps = gps;
@@ -2168,6 +2172,15 @@ public partial class MainViewModel : ViewModelBase
         if (IsStandby)
         {
             StopPassRecordingForStandby();
+            return;
+        }
+
+        // FT4 opens the same downlink capture path; keep pass recording off while the modem runs.
+        if (_ft4Modem.IsRunning)
+        {
+            if (_recording.IsRecording && !AudioRecordingSessions.IsManualTest(_recording))
+                _recordingTasks.Schedule(() => _recording.StopAsync(), "stop recording (FT4 modem)");
+            _passRecordingCoordinator.ResetTracking();
             return;
         }
 
