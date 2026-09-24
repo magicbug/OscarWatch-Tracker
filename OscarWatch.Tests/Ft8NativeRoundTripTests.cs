@@ -1,3 +1,4 @@
+using OscarWatch.Core.Ft4;
 using OscarWatch.Ft4;
 
 namespace OscarWatch.Tests.Ft4;
@@ -50,5 +51,71 @@ public sealed class Ft8NativeRoundTripTests
             error);
         Assert.NotNull(pcm);
         Assert.True(pcm!.Length > 12000 * 4);
+    }
+
+    [Fact]
+    public void Decode_search_band_around_operating_tone_finds_message()
+    {
+        if (!Ft8Native.IsAvailable)
+            return;
+
+        const float toneHz = 1500f;
+        var pcm = Ft8Native.EncodeFt4("CQ MM9SQL IO85", toneHz);
+        Assert.NotNull(pcm);
+
+        var inBand = Ft8Native.DecodeFt4(pcm!, 12000, centreHz: toneHz, halfWidthHz: 700);
+        Assert.Contains(inBand, d => d.text.Contains("MM9SQL", StringComparison.OrdinalIgnoreCase));
+
+        // Far from the tone: Costas search must not see 1500 Hz.
+        var outOfBand = Ft8Native.DecodeFt4(pcm!, 12000, centreHz: 2800, halfWidthHz: 150);
+        Assert.DoesNotContain(outOfBand, d => d.text.Contains("MM9SQL", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void Late_start_within_extended_window_decodes_without_echo_alignment()
+    {
+        if (!Ft8Native.IsAvailable)
+            return;
+
+        const int rate = 12000;
+        const float toneHz = 1500f;
+        var pcm = Ft8Native.EncodeFt4("CQ MM9SQL IO85", toneHz);
+        Assert.NotNull(pcm);
+
+        // Encoder already pads ~0.5 s. Push the burst start to ~1.8 s, still inside
+        // the extended FT4 candidate window (~2.5 s), so no EchoAligner pass.
+        var extraLead = (int)(1.3 * rate);
+        var shifted = new float[pcm!.Length + extraLead];
+        Array.Copy(pcm, 0, shifted, extraLead, pcm.Length);
+
+        var onsetSec = 0.5 + 1.3;
+        Assert.True(onsetSec < Ft4EchoAligner.NativeWindowSeconds);
+
+        var decoded = Ft8Native.DecodeFt4(shifted, rate, centreHz: toneHz);
+        Assert.Contains(decoded, d => d.text.Contains("MM9SQL", StringComparison.OrdinalIgnoreCase));
+        Assert.Empty(Ft4EchoAligner.EnumerateEchoAlignments(shifted, rate, toneHz));
+    }
+
+    [Fact]
+    public async Task Parallel_encode_and_decode_do_not_crash()
+    {
+        if (!Ft8Native.IsAvailable)
+            return;
+
+        var encodeA = Task.Run(() => Ft8Native.EncodeFt4("CQ MM9SQL IO85", 1200f));
+        var encodeB = Task.Run(() => Ft8Native.EncodeFt4("G4ABC MM9SQL +05", 1500f));
+        var pcmA = await encodeA;
+        var pcmB = await encodeB;
+
+        Assert.NotNull(pcmA);
+        Assert.NotNull(pcmB);
+
+        var decodeA = Task.Run(() => Ft8Native.DecodeFt4(pcmA!, 12000, 1200));
+        var decodeB = Task.Run(() => Ft8Native.DecodeFt4(pcmB!, 12000, 1500));
+        var textA = await decodeA;
+        var textB = await decodeB;
+
+        Assert.Contains(textA, d => d.text.Contains("MM9SQL", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(textB, d => d.text.Contains("G4ABC", StringComparison.OrdinalIgnoreCase));
     }
 }
