@@ -101,6 +101,8 @@ internal static class Ft8Native
         int numSamples,
         int sampleRate,
         int isFt4,
+        float fMinHz,
+        float fMaxHz,
         [Out] Decode[] outDecodes,
         int outCapacity);
 
@@ -211,10 +213,27 @@ internal static class Ft8Native
         }
     }
 
-    public static Decode[] DecodeFt4(float[] samples, int sampleRate = 12000)
+    /// <summary>Half-width of the Costas search around the operating audio tone (Hz).</summary>
+    public const double DefaultSearchHalfWidthHz = 700;
+
+    public static Decode[] DecodeFt4(
+        float[] samples,
+        int sampleRate = 12000,
+        double centreHz = 1500,
+        double halfWidthHz = DefaultSearchHalfWidthHz)
     {
+        var fMin = (float)Math.Clamp(centreHz - halfWidthHz, 100, 2900);
+        var fMax = (float)Math.Clamp(centreHz + halfWidthHz, fMin + 100, 3000);
         var output = new Decode[50];
-        var n = ow_ft8_decode_pcm(samples, samples.Length, sampleRate, isFt4: 1, output, output.Length);
+        var n = ow_ft8_decode_pcm(
+            samples,
+            samples.Length,
+            sampleRate,
+            isFt4: 1,
+            fMin,
+            fMax,
+            output,
+            output.Length);
         if (n <= 0)
             return [];
         var result = new Decode[n];

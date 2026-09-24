@@ -289,6 +289,8 @@ OW_FT8_API int ow_ft8_decode_pcm(
     int num_samples,
     int sample_rate,
     int is_ft4,
+    float f_min_hz,
+    float f_max_hz,
     ow_ft8_decode_t* out_decodes,
     int out_capacity)
 {
@@ -296,11 +298,17 @@ OW_FT8_API int ow_ft8_decode_pcm(
     if (!samples || num_samples <= 0 || sample_rate <= 0 || !out_decodes || out_capacity <= 0)
         return -1;
 
+    if (!(f_max_hz > f_min_hz + 99.0f) || f_min_hz < 50.0f || f_max_hz > 3500.0f)
+    {
+        f_min_hz = 200.0f;
+        f_max_hz = 2800.0f;
+    }
+
     ftx_protocol_t protocol = is_ft4 ? FTX_PROTOCOL_FT4 : FTX_PROTOCOL_FT8;
     monitor_t mon;
     monitor_config_t mon_cfg = {
-        .f_min = 100,
-        .f_max = 3000,
+        .f_min = f_min_hz,
+        .f_max = f_max_hz,
         .sample_rate = sample_rate,
         .time_osr = kTime_osr,
         .freq_osr = kFreq_osr,

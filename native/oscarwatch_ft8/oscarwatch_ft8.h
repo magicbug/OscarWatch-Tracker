@@ -51,6 +51,8 @@ OW_FT8_API int ow_ft8_encode_pcm(
 /// @param num_samples length of samples
 /// @param sample_rate sample rate in Hz
 /// @param is_ft4 non-zero for FT4
+/// @param f_min_hz lower audio search bound (Hz); invalid ranges fall back to 200–2800
+/// @param f_max_hz upper audio search bound (Hz)
 /// @param out_decodes output array
 /// @param out_capacity max entries in out_decodes
 /// @return number of decoded messages, or negative on error
@@ -59,6 +61,8 @@ OW_FT8_API int ow_ft8_decode_pcm(
     int num_samples,
     int sample_rate,
     int is_ft4,
+    float f_min_hz,
+    float f_max_hz,
     ow_ft8_decode_t* out_decodes,
     int out_capacity);
 
