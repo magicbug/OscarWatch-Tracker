@@ -44,6 +44,9 @@ public sealed class GpsService : IGpsService, IDisposable
     public DateTime? GetTrackingUtc() =>
         (_active ?? _serial).GetTrackingUtc();
 
+    public TimeSpan? GetFt4ClockOffset() =>
+        (_active ?? _serial).GetFt4ClockOffset();
+
     public void Dispose()
     {
         _serial.Dispose();

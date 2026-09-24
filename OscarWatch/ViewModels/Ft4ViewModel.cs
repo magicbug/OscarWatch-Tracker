@@ -165,6 +165,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty] private string _waterfallStatusText = "";
     [ObservableProperty] private string _slotClockText = "";
+    [ObservableProperty] private string _clockSourceText = "";
     [ObservableProperty] private string _slotPeriodLabel = "";
     [ObservableProperty] private string _slotProgressText = "";
     [ObservableProperty] private double _slotProgressPercent;
@@ -1146,11 +1147,16 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     private void RefreshUiTick()
     {
-        var utc = DateTime.UtcNow;
+        var utc = Ft4Clock.UtcNow;
         var slotStart = Ft4SlotClock.SlotStartUtc(utc, Ft4SlotClock.Ft4SlotSeconds);
         var into = Ft4SlotClock.SecondsIntoSlot(utc, Ft4SlotClock.Ft4SlotSeconds);
         var even = Ft4SlotClock.IsEvenSlot(slotStart, Ft4SlotClock.Ft4SlotSeconds);
         SlotClockText = $"{slotStart:HH:mm:ss.f} UTC  +{into:0.0}s  {(even ? "even" : "odd")}";
+        ClockSourceText = Ft4Clock.MeasuredOffset is not { } measured
+            ? _l.Get("Ft4.ClockSource.Pc")
+            : Ft4Clock.UsingGps
+                ? _l.Get("Ft4.ClockSource.Gps", -measured.TotalSeconds)
+                : _l.Get("Ft4.ClockSource.PcGpsAgrees");
 
         var progress = Math.Clamp(100.0 * into / Ft4SlotClock.Ft4SlotSeconds, 0, 100);
         SlotProgressPercent = progress;

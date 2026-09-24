@@ -74,6 +74,13 @@
         half a second. Use Windows time synchronisation (or a tool such as Meinberg NTP) before a pass.
         OscarWatch warns you in the FT4 window if the clock looks wrong.
       </div>
+      <div class="tip">
+        No internet in the field? If you have a GPS set up in
+        <a href="settings.html#gps">Settings → Integrations → GPS</a>, OscarWatch can time FT4 from the GPS
+        instead. About ten seconds after the GPS has a fix, it compares the GPS time with your PC clock.
+        If the PC is more than a quarter of a second out, FT4 uses GPS time for its slots, transmit timing,
+        and logged QSO times. The Windows clock itself is not changed. See <a href="#clock-source">Clock source</a>.
+      </div>
 
       <h2 id="before-you-start">Before you start</h2>
       <ul>
@@ -169,6 +176,17 @@
         <li><strong>RX / TX and progress bar</strong>: whether the current slot is a receive or transmit slot, and
           how far through the 7.5 seconds it is.</li>
         <li><strong>Slot clock</strong>: the current UTC time, time into the slot, and whether it is an even or odd slot.</li>
+        <li id="clock-source"><strong>Clock source</strong> (in brackets after the slot clock):
+          <ul>
+            <li><em>PC clock</em>: FT4 is using the Windows clock. You have no GPS set up, or it has no fix yet.</li>
+            <li><em>PC clock, GPS agrees</em>: your GPS confirms the PC clock is within a quarter of a second, so nothing needs correcting.</li>
+            <li><em>GPS time, PC clock +1.20 s out</em>: the PC clock is wrong by the amount shown, so FT4 is timing its
+              slots from the GPS instead. A plus sign means the PC is ahead; a minus sign means it is behind.</li>
+          </ul>
+          GPS time usually runs a tenth of a second or so behind true UTC, because the GPS sends each time report
+          slightly after the second it describes. FT4 copes with that easily.
+          You can turn this off with <strong>Use GPS time for FT4 slot timing</strong> in
+          <a href="settings.html#gps">Settings → Integrations → GPS</a>.</li>
         <li><strong>Uplink / Downlink</strong>: the radio frequencies OscarWatch is setting for the focused satellite.</li>
         <li><strong>Status</strong>: what FT4 is doing now, for example <em>Listening</em>, <em>Calling CQ</em>,
           <em>Answering</em>, or <em>Echo calibration</em>.</li>
@@ -309,7 +327,8 @@
       <h2 id="problems">Problems</h2>
       <ul>
         <li><strong>No decodes at all</strong>: check the input soundcard, that the waterfall shows signals, and that the
-          radio is in the right mode. A clock warning means your PC time needs syncing.</li>
+          radio is in the right mode. A clock warning means your PC time needs syncing
+          (or connect a GPS so FT4 can correct it for you).</li>
         <li><strong>The radio does not transmit</strong>: check the PTT method and output soundcard in Settings. With VOX,
           make sure the radio's VOX or data VOX is on.</li>
         <li><strong>Transmit is blocked</strong>: read the status line. It tells you if the satellite does not allow FT4,

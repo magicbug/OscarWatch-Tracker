@@ -2076,6 +2076,12 @@ Continuar?</value>
   <data name="Settings.Gps.UseTimeNote">
     <value>Usa o horário do GPS apenas para propagação orbital — não altera o relógio do Windows.</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>Usar a hora do GPS para os intervalos do FT4</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>Quando há um GPS configurado e com posição, o FT4 compara o relógio do PC com ele. Se o PC estiver mais de um quarto de segundo fora, o FT4 usa a hora do GPS para os intervalos. Não altera o relógio do Windows.</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>Satélites mínimos para fix</value>
   </data>
@@ -4172,6 +4178,15 @@ Mais recente: {1} ({2})</value>
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>O relógio do PC pode estar desalinhado com o UTC (DT recente ~{0:0.0} s). Sincronize a hora e tente novamente.</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(relógio do PC)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(relógio do PC, confere com o GPS)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(hora do GPS, relógio do PC fora {0:+0.00;-0.00} s)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>Medidor de nível TX</value>

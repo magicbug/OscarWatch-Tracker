@@ -1586,6 +1586,12 @@
                            FontSize="11"
                            TextWrapping="Wrap"
                            Text="{loc:Localize Key=Settings.Gps.UseTimeNote}" />
+                <CheckBox Content="{loc:Localize Key=Settings.Gps.UseTimeForFt4}"
+                          IsChecked="{Binding GpsUseTimeForFt4, Mode=TwoWay}" />
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Gps.UseTimeForFt4Note}" />
                 <TextBlock Text="{loc:Localize Key=Settings.Gps.MinSatellites}" />
                 <NumericUpDown Value="{Binding GpsMinSatellites, Mode=TwoWay}"
                                Minimum="1" Maximum="20"

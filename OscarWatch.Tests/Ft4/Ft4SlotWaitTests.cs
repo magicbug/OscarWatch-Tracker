@@ -3,6 +3,7 @@ using OscarWatch.Core.Ft4;
 
 namespace OscarWatch.Tests.Ft4;
 
+[Collection(Ft4ClockCollection.Name)]
 public sealed class Ft4SlotWaitTests
 {
     [Fact]

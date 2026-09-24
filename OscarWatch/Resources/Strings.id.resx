@@ -2080,6 +2080,12 @@ Lanjutkan?</value>
   <data name="Settings.Gps.UseTimeNote">
     <value>Memakai waktu GPS hanya untuk propagasi orbit: tidak mengubah jam sistem Windows.</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>Gunakan waktu GPS untuk slot FT4</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>Jika GPS sudah diatur dan mendapat posisi, FT4 membandingkan jam PC dengannya. Jika jam PC meleset lebih dari seperempat detik, FT4 memakai waktu GPS untuk slotnya. Jam Windows tidak diubah.</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>Satelit minimum untuk fix</value>
   </data>
@@ -4176,6 +4182,15 @@ Terbaru: {1} ({2})</value>
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>Jam PC mungkin tidak selaras UTC (DT terbaru sekitar {0:0.0} dtk). Sinkronkan waktu lalu coba lagi.</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(jam PC)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(jam PC, sesuai GPS)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(waktu GPS, jam PC meleset {0:+0.00;-0.00} dtk)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>Meter level TX</value>

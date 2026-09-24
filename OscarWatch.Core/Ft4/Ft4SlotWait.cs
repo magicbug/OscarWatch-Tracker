@@ -13,7 +13,7 @@ public static class Ft4SlotWait
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var left = target - DateTime.UtcNow;
+            var left = target - Ft4Clock.UtcNow;
             if (left <= TimeSpan.Zero)
                 return;
 
@@ -25,7 +25,7 @@ public static class Ft4SlotWait
                 continue;
             }
 
-            while (DateTime.UtcNow < target)
+            while (Ft4Clock.UtcNow < target)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 Thread.SpinWait(80);

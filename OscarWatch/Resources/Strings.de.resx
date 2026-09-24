@@ -2080,6 +2080,12 @@ Fortfahren?</value>
   <data name="Settings.Gps.UseTimeNote">
     <value>Nutzt die GPS-Zeit nur für die Bahnausbreitung und ändert nicht die Windows-Systemuhr.</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>GPS-Zeit für FT4-Zeitschlitze verwenden</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>Wenn ein GPS eingerichtet ist und eine Position hat, vergleicht FT4 die PC-Uhr damit. Weicht der PC um mehr als eine Viertelsekunde ab, richtet FT4 seine Zeitschlitze nach der GPS-Zeit. Die Windows-Uhr wird nicht geändert.</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>Mindestanzahl Satelliten für Fix</value>
   </data>
@@ -4176,6 +4182,15 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>PC-Uhr weicht möglicherweise von UTC ab (aktuelles DT ca. {0:0.0} s). Zeit synchronisieren und erneut versuchen.</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(PC-Uhr)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(PC-Uhr, stimmt mit GPS überein)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(GPS-Zeit, PC-Uhr weicht {0:+0.00;-0.00} s ab)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>TX-Pegelanzeige</value>

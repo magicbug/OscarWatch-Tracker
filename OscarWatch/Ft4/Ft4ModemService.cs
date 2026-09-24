@@ -24,6 +24,7 @@ public sealed class Ft4ModemService : IDisposable
     private readonly IRigController _rig;
     private readonly ILocalizationService _l;
     private readonly IAudioRecordingService _recording;
+    private readonly IGpsService _gps;
     private readonly Ft4AudioService _audio = new();
     private readonly Ft4PttKeyer _ptt;
     private readonly object _gate = new();
@@ -66,7 +67,8 @@ public sealed class Ft4ModemService : IDisposable
         ILiveTrackerSnapshotProvider snapshot,
         IOrbitPropagator propagator,
         ILocalizationService localization,
-        IAudioRecordingService recording)
+        IAudioRecordingService recording,
+        IGpsService gps)
     {
         _settings = settings;
         _tracking = tracking;
@@ -78,6 +80,7 @@ public sealed class Ft4ModemService : IDisposable
         _rig = rig;
         _l = localization;
         _recording = recording;
+        _gps = gps;
         _ptt = new Ft4PttKeyer(rig, settings);
     }
 
@@ -217,6 +220,7 @@ public sealed class Ft4ModemService : IDisposable
             _lastEchoCalibrationSlot = DateTime.MinValue;
         }
         _lastRelevantDecodeUtc = DateTime.UtcNow;
+        RefreshClockFromGps();
 
         // OrbitDeck: hold CAT dial within each slot; audio-domain corrects within-slot drift.
         _rig.SetFt4SlotGatedDoppler(true);
@@ -537,9 +541,10 @@ public sealed class Ft4ModemService : IDisposable
         {
             try
             {
-                var now = DateTime.UtcNow;
+                var now = Ft4Clock.UtcNow;
                 var slotStart = Ft4SlotClock.SlotStartUtc(now, Ft4SlotClock.Ft4SlotSeconds);
-                if (_currentSlotStart != slotStart)
+                // Forward only: a GPS clock correction stepping back must not reopen the previous slot.
+                if (slotStart > _currentSlotStart)
                 {
                     // Snapshot the previous slot, clear, and start TX first so decode CPU
                     // never delays the next transmit or capture alignment.
@@ -571,6 +576,7 @@ public sealed class Ft4ModemService : IDisposable
                     if (!alreadyTx && !IsTuning)
                         KickTransmit(slotStart, ct);
                     _rig.ForceFt4DopplerStep();
+                    RefreshClockFromGps();
 
                     if (previousSamples is not null)
                         QueueDecode(previousSlot, previousSamples, previousWasTx);
@@ -632,6 +638,20 @@ public sealed class Ft4ModemService : IDisposable
         }
     }
 
+    private void RefreshClockFromGps()
+    {
+        var before = Ft4Clock.UsingGps;
+        Ft4Clock.Update(_gps.GetFt4ClockOffset());
+        if (Ft4Clock.UsingGps == before)
+            return;
+
+        var pcErrorMs = -(Ft4Clock.MeasuredOffset ?? TimeSpan.Zero).TotalMilliseconds;
+        if (Ft4Clock.UsingGps)
+            Log.Information("FT4 slot timing now follows GPS (PC clock {PcErrorMs:0} ms out)", pcErrorMs);
+        else
+            Log.Information("FT4 slot timing back on the PC clock (measured {PcErrorMs:0} ms)", pcErrorMs);
+    }
+
     private void KickTransmit(DateTime slotStart, CancellationToken loopCt)
     {
         if (IsTuning)
@@ -663,7 +683,7 @@ public sealed class Ft4ModemService : IDisposable
             && _audio.TryPlayPrepared(ready, readyRate))
         {
             Interlocked.Exchange(ref _preparedPlayed, 1);
-            var intoMs = (DateTime.UtcNow - slotStart).TotalMilliseconds;
+            var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
             Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot from a prepared buffer", intoMs);
         }
 
@@ -720,7 +740,7 @@ public sealed class Ft4ModemService : IDisposable
                 if (TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
                     && _audio.TryPlayPrepared(ready, readyRate))
                 {
-                    var intoMs = (DateTime.UtcNow - slotStart).TotalMilliseconds;
+                    var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
                     Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot from a prepared buffer", intoMs);
                 }
                 else if (!TryBuildTransmitPcm(slotStart, seq.CurrentTxMessage, audioHz, out var pcm, out var encodeError)
@@ -741,14 +761,14 @@ public sealed class Ft4ModemService : IDisposable
                         ft4.TxLevel,
                         ft4.OutputDeviceId,
                         ft4.OutputDeviceDisplayName);
-                    var intoMs = (DateTime.UtcNow - slotStart).TotalMilliseconds;
+                    var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
                     Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot after building on the slot", intoMs);
                 }
             }
 
             while (!ct.IsCancellationRequested)
             {
-                var remaining = keyedUntil - DateTime.UtcNow;
+                var remaining = keyedUntil - Ft4Clock.UtcNow;
                 if (remaining <= TimeSpan.Zero)
                     break;
                 if (!_audio.IsPlaying)
@@ -1488,7 +1508,7 @@ public sealed class Ft4ModemService : IDisposable
             var record = await _logbook.AddQsoAsync(new QsoRecordCreateRequest
             {
                 LogbookId = book.Id,
-                QsoUtc = DateTime.UtcNow,
+                QsoUtc = Ft4Clock.UtcNow,
                 Call = seq.TheirCall,
                 RstSent = Ft4MessageCodec.NormalizeSnrReport(seq.ReportSent),
                 RstRcvd = Ft4MessageCodec.NormalizeSnrReport(seq.ReportReceived),

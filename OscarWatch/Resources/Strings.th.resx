@@ -2080,6 +2080,12 @@ LOS: {2}
   <data name="Settings.Gps.UseTimeNote">
     <value>ใช้เวลา GPS สำหรับการคำนวณวงโคจรเท่านั้น ไม่ได้เปลี่ยนนาฬิการะบบ Windows</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>ใช้เวลา GPS สำหรับช่วงเวลา FT4</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>เมื่อตั้งค่า GPS และจับตำแหน่งได้แล้ว FT4 จะเทียบนาฬิกา PC กับ GPS หากนาฬิกา PC คลาดเคลื่อนเกิน 0.25 วินาที FT4 จะใช้เวลา GPS กำหนดช่วงเวลา ไม่เปลี่ยนนาฬิกา Windows</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>จำนวนดาวเทียมต่ำสุดสำหรับการล็อก</value>
   </data>
@@ -4176,6 +4182,15 @@ LOS: {2}
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>นาฬิกา PC อาจคลาดจาก UTC (DT ล่าสุดประมาณ {0:0.0} วินาที) ซิงก์เวลาแล้วลองใหม่</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(นาฬิกา PC)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(นาฬิกา PC ตรงกับ GPS)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(เวลา GPS นาฬิกา PC คลาด {0:+0.00;-0.00} วินาที)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>มิเตอร์ระดับ TX</value>

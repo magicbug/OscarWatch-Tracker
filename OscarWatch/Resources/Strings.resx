@@ -2076,6 +2076,12 @@ Continue?</value>
   <data name="Settings.Gps.UseTimeNote">
     <value>Uses GPS time for orbit propagation only — does not change the Windows system clock.</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>Use GPS time for FT4 slot timing</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>When a GPS is set up and has a fix, FT4 checks the PC clock against it. If the PC is more than a quarter of a second out, FT4 times its slots from GPS instead. Does not change the Windows clock.</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>Minimum satellites for fix</value>
   </data>
@@ -4172,6 +4178,15 @@ Latest: {1} ({2})</value>
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>PC clock may be off UTC (recent DT about {0:0.0} s). Sync time and try again.</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(PC clock)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(PC clock, GPS agrees)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(GPS time, PC clock {0:+0.00;-0.00} s out)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>TX level meter</value>

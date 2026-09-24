@@ -240,6 +240,10 @@ sudo apt install ffmpeg</code></pre>
         <li><strong>Automatically update station position from GPS fix</strong> — keeps your QTH in sync while roving (saves periodically).</li>
         <li><strong>Update altitude from GGA</strong> — when auto-update is on, applies height from the GGA sentence.</li>
         <li><strong>Use GPS UTC for satellite tracking</strong> — pass predictions and live tracking use GPS time instead of the PC clock. Does <strong>not</strong> change the Windows system clock.</li>
+        <li><strong>Use GPS time for FT4 slot timing</strong> (on by default): while the GPS has a fix, FT4 compares
+          GPS time with the PC clock. If the PC is more than a quarter of a second out, the
+          <a href="ft4.html#clock-source">FT4 window</a> times its slots from GPS instead. Useful in the field with no
+          internet time sync. Does <strong>not</strong> change the Windows system clock.</li>
         <li><strong>Minimum satellites for fix</strong> — ignore fixes with fewer satellites in view (default 3).</li>
       </ul>
       <p>

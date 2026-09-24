@@ -27,6 +27,9 @@ public sealed class GpsSettings
     /// <summary>Use GPS UTC for satellite tracking instead of the system clock.</summary>
     public bool UseGpsTimeForTracking { get; set; }
 
+    /// <summary>Correct FT4 slot timing from GPS when the PC clock is out (never changes the system clock).</summary>
+    public bool UseGpsTimeForFt4 { get; set; } = true;
+
     /// <summary>Minimum satellites in use before accepting a fix (GGA).</summary>
     public int MinSatellites { get; set; } = 3;
 

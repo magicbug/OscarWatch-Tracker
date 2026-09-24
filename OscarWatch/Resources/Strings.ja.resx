@@ -1212,6 +1212,12 @@
   <data name="Settings.Gps.UseTimeNote">
     <value>軌道計算にのみGPS時刻を使用します — Windowsのシステム時計は変更しません。</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>FT4 のスロットタイミングに GPS 時刻を使用</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>GPS が設定され測位している場合、FT4 は PC の時計を GPS と比較します。PC が 0.25 秒以上ずれていると、FT4 は GPS 時刻でスロットを計ります。Windows の時計は変更しません。</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>測位に必要な最小衛星数</value>
   </data>
@@ -4172,6 +4178,15 @@
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>PCの時計がUTCからずれている可能性があります（最近のDT約{0:0.0}秒）。時刻を同期して再試行してください。</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(PC の時計)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(PC の時計、GPS と一致)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(GPS 時刻、PC の時計のずれ {0:+0.00;-0.00} 秒)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>TXレベルメーター</value>

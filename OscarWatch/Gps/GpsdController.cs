@@ -13,6 +13,7 @@ public sealed class GpsdController : IGpsService, IDisposable
 {
     private static readonly ILogger Log = Serilog.Log.ForContext<GpsdController>();
     private static readonly TimeSpan LoopInterval = TimeSpan.FromMilliseconds(200);
+    private static readonly TimeSpan ClockLoopInterval = TimeSpan.FromMilliseconds(20);
     private static readonly TimeSpan CommandWaitTimeout = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan FixStaleAfter = TimeSpan.FromSeconds(30);
     private static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(5);
@@ -35,6 +36,7 @@ public sealed class GpsdController : IGpsService, IDisposable
     private GpsConnectionStatus _status = new(false, false, null, null, null, null, null, null);
     private DateTime? _lastFixUtc;
     private string? _lastConnectError;
+    private readonly GpsClockOffsetEstimator _clock = new();
 
     public void Update(GpsSettings settings) =>
         Enqueue(new GpsCommand(GpsCommandKind.Update, settings));
@@ -64,6 +66,20 @@ public sealed class GpsdController : IGpsService, IDisposable
 
             return _status.FixUtc ?? _lastFixUtc;
         }
+    }
+
+    public TimeSpan? GetFt4ClockOffset()
+    {
+        lock (_statusLock)
+        {
+            if (!_cachedSettings.Enabled || !_cachedSettings.UseGpsTimeForFt4 || !_status.HasFix || _lastFixUtc is null)
+                return null;
+
+            if (DateTime.UtcNow - _lastFixUtc.Value > FixStaleAfter)
+                return null;
+        }
+
+        return _clock.CurrentOffset;
     }
 
     public void Dispose()
@@ -137,7 +153,9 @@ public sealed class GpsdController : IGpsService, IDisposable
                 if (commands is null)
                     break;
 
-                if (commands.TryTake(out var command, LoopInterval))
+                // Poll quickly while FT4 GPS time is on so arrival stamps stay close to the report.
+                var interval = _cachedSettings.UseGpsTimeForFt4 ? ClockLoopInterval : LoopInterval;
+                if (commands.TryTake(out var command, interval))
                 {
                     ProcessCommand(command);
                     DrainPendingCommands();
@@ -299,6 +317,7 @@ public sealed class GpsdController : IGpsService, IDisposable
 
     private void ApplyTpv(GpsdJsonParser.GpsFixData parsed)
     {
+        var receivedUtc = DateTime.UtcNow;
         lock (_statusLock)
         {
             var lat = parsed.LatitudeDeg ?? _status.LatitudeDeg;
@@ -312,7 +331,11 @@ public sealed class GpsdController : IGpsService, IDisposable
                 && MeetsMinSatellites(sats);
 
             if (hasFix)
-                _lastFixUtc = DateTime.UtcNow;
+            {
+                _lastFixUtc = receivedUtc;
+                if (parsed.UtcTime is { } gpsUtc)
+                    _clock.AddSample(gpsUtc, receivedUtc);
+            }
 
             _status = new GpsConnectionStatus(
                 _stream is not null,
@@ -402,6 +425,7 @@ public sealed class GpsdController : IGpsService, IDisposable
         _stream = null;
         _client = null;
         _connectedKey = null;
+        _clock.Reset();
     }
 
     private void SetStatus(GpsConnectionStatus status)

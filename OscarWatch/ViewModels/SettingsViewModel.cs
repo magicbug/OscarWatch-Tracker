@@ -522,6 +522,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private bool _gpsUseTimeForTracking;
 
     [ObservableProperty]
+    private bool _gpsUseTimeForFt4 = true;
+
+    [ObservableProperty]
     private int _gpsMinSatellites = 3;
 
     [ObservableProperty]
@@ -1354,6 +1357,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             AutoUpdateStation = GpsAutoUpdateStation,
             UseGpsAltitude = GpsUseAltitude,
             UseGpsTimeForTracking = GpsUseTimeForTracking,
+            UseGpsTimeForFt4 = GpsUseTimeForFt4,
             MinSatellites = Math.Clamp(GpsMinSatellites, 1, 20)
         };
         _gps.Update(_settings.Current.Gps);
@@ -1627,6 +1631,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             GpsAutoUpdateStation = gps.AutoUpdateStation;
             GpsUseAltitude = gps.UseGpsAltitude;
             GpsUseTimeForTracking = gps.UseGpsTimeForTracking;
+            GpsUseTimeForFt4 = gps.UseGpsTimeForFt4;
             GpsMinSatellites = gps.MinSatellites > 0 ? gps.MinSatellites : 3;
             PushDraftGpsToService();
             RefreshComPortConflict();
@@ -2196,6 +2201,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         AutoUpdateStation = GpsAutoUpdateStation,
         UseGpsAltitude = GpsUseAltitude,
         UseGpsTimeForTracking = GpsUseTimeForTracking,
+        UseGpsTimeForFt4 = GpsUseTimeForFt4,
         MinSatellites = Math.Clamp(GpsMinSatellites, 1, 20)
     };
 

@@ -99,6 +99,9 @@
             <TextBlock Text="{Binding SlotClockText}"
                        Classes="ft4-mono"
                        FontWeight="SemiBold" />
+            <TextBlock Text="{Binding ClockSourceText}"
+                       Classes="ft4-status-label"
+                       VerticalAlignment="Center" />
           </StackPanel>
           <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
             <TextBlock Text="{loc:Localize Key=Ft4.DopplerUplink}"

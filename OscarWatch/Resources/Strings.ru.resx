@@ -2080,6 +2080,12 @@ LOS: {2}
   <data name="Settings.Gps.UseTimeNote">
     <value>Время GPS идёт только на расчёт орбиты и не меняет системные часы Windows.</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>Использовать время GPS для слотов FT4</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>Если GPS настроен и определил местоположение, FT4 сверяет с ним часы ПК. Если часы ПК расходятся более чем на четверть секунды, FT4 отсчитывает слоты по времени GPS. Часы Windows не изменяются.</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>Минимум спутников для фикса</value>
   </data>
@@ -4176,6 +4182,15 @@ LOS: {2}
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>Часы ПК могут отличаться от UTC (недавний DT около {0:0.0} с). Синхронизируйте время и повторите.</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(часы ПК)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(часы ПК, совпадают с GPS)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(время GPS, часы ПК расходятся на {0:+0.00;-0.00} с)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>Индикатор уровня TX</value>

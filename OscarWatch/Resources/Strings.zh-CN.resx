@@ -2076,6 +2076,12 @@
   <data name="Settings.Gps.UseTimeNote">
     <value>仅将 GPS 时间用于轨道推算，不会更改 Windows 系统时钟。</value>
   </data>
+  <data name="Settings.Gps.UseTimeForFt4">
+    <value>FT4 时隙计时使用 GPS 时间</value>
+  </data>
+  <data name="Settings.Gps.UseTimeForFt4Note">
+    <value>当已设置 GPS 且已定位时，FT4 会将电脑时钟与 GPS 比较。如果电脑时钟偏差超过 0.25 秒，FT4 将按 GPS 时间计算时隙。不会更改 Windows 时钟。</value>
+  </data>
   <data name="Settings.Gps.MinSatellites">
     <value>定位所需最少卫星数</value>
   </data>
@@ -4172,6 +4178,15 @@
   </data>
   <data name="Ft4.Status.ClockWarning">
     <value>电脑时钟可能偏离 UTC（近期 DT 约 {0:0.0} 秒）。请同步时间后重试。</value>
+  </data>
+  <data name="Ft4.ClockSource.Pc">
+    <value>(电脑时钟)</value>
+  </data>
+  <data name="Ft4.ClockSource.PcGpsAgrees">
+    <value>(电脑时钟，与 GPS 一致)</value>
+  </data>
+  <data name="Ft4.ClockSource.Gps">
+    <value>(GPS 时间，电脑时钟偏差 {0:+0.00;-0.00} 秒)</value>
   </data>
   <data name="Ft4.TxLevelMeter">
     <value>发射电平表</value>
