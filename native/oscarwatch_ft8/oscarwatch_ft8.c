@@ -136,6 +136,60 @@ static void ensure_hashtable(void)
     hash_unlock();
 }
 
+typedef struct
+{
+    int ready;
+    int sample_rate;
+    int is_ft4;
+    float f_min;
+    float f_max;
+    monitor_t mon;
+} ow_monitor_cache_t;
+
+#ifdef _WIN32
+static __declspec(thread) ow_monitor_cache_t g_mon_cache;
+#else
+static __thread ow_monitor_cache_t g_mon_cache;
+#endif
+
+static monitor_t* acquire_monitor(int sample_rate, int is_ft4, float f_min_hz, float f_max_hz)
+{
+    ftx_protocol_t protocol = is_ft4 ? FTX_PROTOCOL_FT4 : FTX_PROTOCOL_FT8;
+    if (g_mon_cache.ready
+        && g_mon_cache.sample_rate == sample_rate
+        && g_mon_cache.is_ft4 == is_ft4
+        && g_mon_cache.f_min == f_min_hz
+        && g_mon_cache.f_max == f_max_hz)
+    {
+        monitor_reset(&g_mon_cache.mon);
+        if (g_mon_cache.mon.last_frame && g_mon_cache.mon.nfft > 0)
+            memset(g_mon_cache.mon.last_frame, 0, (size_t)g_mon_cache.mon.nfft * sizeof(float));
+        return &g_mon_cache.mon;
+    }
+
+    if (g_mon_cache.ready)
+    {
+        monitor_free(&g_mon_cache.mon);
+        g_mon_cache.ready = 0;
+    }
+
+    monitor_config_t mon_cfg = {
+        .f_min = f_min_hz,
+        .f_max = f_max_hz,
+        .sample_rate = sample_rate,
+        .time_osr = kTime_osr,
+        .freq_osr = kFreq_osr,
+        .protocol = protocol
+    };
+    monitor_init(&g_mon_cache.mon, &mon_cfg);
+    g_mon_cache.sample_rate = sample_rate;
+    g_mon_cache.is_ft4 = is_ft4;
+    g_mon_cache.f_min = f_min_hz;
+    g_mon_cache.f_max = f_max_hz;
+    g_mon_cache.ready = 1;
+    return &g_mon_cache.mon;
+}
+
 static void gfsk_pulse(int n_spsym, float symbol_bt, float* pulse)
 {
     for (int i = 0; i < 3 * n_spsym; ++i)
@@ -306,27 +360,19 @@ OW_FT8_API int ow_ft8_decode_pcm(
     }
 
     ftx_protocol_t protocol = is_ft4 ? FTX_PROTOCOL_FT4 : FTX_PROTOCOL_FT8;
-    monitor_t mon;
-    monitor_config_t mon_cfg = {
-        .f_min = f_min_hz,
-        .f_max = f_max_hz,
-        .sample_rate = sample_rate,
-        .time_osr = kTime_osr,
-        .freq_osr = kFreq_osr,
-        .protocol = protocol
-    };
-    monitor_init(&mon, &mon_cfg);
+    (void)protocol;
+    monitor_t* mon = acquire_monitor(sample_rate, is_ft4, f_min_hz, f_max_hz);
 
-    const int block_size = mon.block_size;
+    const int block_size = mon->block_size;
     int pos = 0;
     while (pos + block_size <= num_samples)
     {
-        monitor_process(&mon, samples + pos);
+        monitor_process(mon, samples + pos);
         pos += block_size;
     }
 
     ftx_candidate_t candidate_list[kMax_candidates];
-    int num_candidates = ftx_find_candidates(&mon.wf, kMax_candidates, candidate_list, kMin_score);
+    int num_candidates = ftx_find_candidates(&mon->wf, kMax_candidates, candidate_list, kMin_score);
 
     int num_decoded = 0;
     ftx_message_t decoded[OW_FT8_MAX_DECODES];
@@ -337,14 +383,14 @@ OW_FT8_API int ow_ft8_decode_pcm(
     for (int idx = 0; idx < num_candidates && num_decoded < out_capacity; ++idx)
     {
         const ftx_candidate_t* cand = &candidate_list[idx];
-        float freq_hz = (mon.min_bin + cand->freq_offset + (float)cand->freq_sub / mon.wf.freq_osr) / mon.symbol_period;
-        float time_sec = (cand->time_offset + (float)cand->time_sub / mon.wf.time_osr) * mon.symbol_period;
+        float freq_hz = (mon->min_bin + cand->freq_offset + (float)cand->freq_sub / mon->wf.freq_osr) / mon->symbol_period;
+        float time_sec = (cand->time_offset + (float)cand->time_sub / mon->wf.time_osr) * mon->symbol_period;
 
         ftx_message_t message;
         ftx_decode_status_t status;
         /* Sparse satellite slots rarely need full LDPC; try a short pass first. */
-        if (!ftx_decode_candidate(&mon.wf, cand, kLDPC_iterations_fast, &message, &status)
-            && !ftx_decode_candidate(&mon.wf, cand, kLDPC_iterations, &message, &status))
+        if (!ftx_decode_candidate(&mon->wf, cand, kLDPC_iterations_fast, &message, &status)
+            && !ftx_decode_candidate(&mon->wf, cand, kLDPC_iterations, &message, &status))
         {
             continue;
         }
@@ -383,6 +429,5 @@ OW_FT8_API int ow_ft8_decode_pcm(
         out->text[OW_FT8_MAX_MESSAGE_LEN - 1] = '\0';
     }
 
-    monitor_free(&mon);
     return num_decoded;
 }
