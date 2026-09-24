@@ -4119,6 +4119,9 @@ Está utilizando la versión {0}.
   <data name="Ft4.Status.Tuning">
     <value>Sintonía en {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>Tune no encontró su propio tono en el enlace de bajada, así que se restauró el ajuste de subida. Llame CQ para calibrar con su eco.</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>Sintonía detenida</value>
   </data>

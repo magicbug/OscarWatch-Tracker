@@ -4123,6 +4123,9 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Status.Tuning">
     <value>Tune pada {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>Tune tidak menemukan nadanya sendiri di downlink, jadi koreksi uplink dikembalikan. Panggil CQ untuk kalibrasi dari echo Anda.</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>Tune dihentikan</value>
   </data>

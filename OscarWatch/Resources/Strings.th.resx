@@ -4123,6 +4123,9 @@ LOS: {2}
   <data name="Ft4.Status.Tuning">
     <value>กำลังจูนที่ {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>Tune หาโทนของตัวเองในดาวน์ลิงก์ไม่พบ จึงคืนค่าการปรับอัปลิงก์ ให้เรียก CQ เพื่อปรับเทียบจากเสียงสะท้อนแทน</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>หยุดจูนแล้ว</value>
   </data>

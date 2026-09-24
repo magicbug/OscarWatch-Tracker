@@ -4119,6 +4119,9 @@
   <data name="Ft4.Status.Tuning">
     <value>チューン中 {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>チューンでダウンリンク上の自局トーンを見つけられなかったため、アップリンク補正を元に戻しました。代わりに CQ を出してエコーで校正してください。</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>チューン停止</value>
   </data>

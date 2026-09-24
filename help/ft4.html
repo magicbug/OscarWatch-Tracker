@@ -241,7 +241,10 @@
         <li>Corrections are made at most once per slot, so they do not overshoot.</li>
         <li>If your echo is visible on the waterfall but not decoded, OscarWatch only makes small corrections
           (up to 50 Hz) from the waterfall, so another station nearby cannot pull your signal away.</li>
-        <li><strong>Tune</strong> uses the same method on its steady tone, once per slot.</li>
+        <li><strong>Tune</strong> uses the same method on its steady tone. To avoid chasing another signal, it only
+          corrects once two slots in a row agree, then checks the next slot. If the tone has not landed on the
+          red marker, it puts the trim back, stops calibrating, and asks you to call CQ so your echo can be used
+          instead. Calibration from the CQ echo is the most reliable method.</li>
         <li>To see, change, or reset the saved adjustment, open <strong>Settings → Echo calibration</strong>. Use
           <strong>Clear</strong> for the focused satellite or <strong>Clear all</strong> for every satellite.</li>
       </ul>

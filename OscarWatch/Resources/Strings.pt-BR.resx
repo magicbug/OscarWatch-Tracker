@@ -4119,6 +4119,9 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.Status.Tuning">
     <value>Sintonizando em {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>O Tune não encontrou o próprio tom no downlink, então o ajuste de uplink foi restaurado. Chame CQ para calibrar pelo seu eco.</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>Sintonização parada</value>
   </data>

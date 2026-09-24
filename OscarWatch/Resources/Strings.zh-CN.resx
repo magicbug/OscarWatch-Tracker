@@ -4119,6 +4119,9 @@
   <data name="Ft4.Status.Tuning">
     <value>调谐中 {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>调谐未能在下行中找到自己的音调，已恢复上行微调。请改为呼叫 CQ，用回波进行校准。</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>调谐已停止</value>
   </data>

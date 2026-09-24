@@ -4123,6 +4123,9 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Status.Tuning">
     <value>Tune bei {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>Tune hat den eigenen Ton im Downlink nicht gefunden, daher wurde die Uplink-Korrektur zurückgesetzt. Rufen Sie CQ, um über Ihr Echo zu kalibrieren.</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>Tune gestoppt</value>
   </data>

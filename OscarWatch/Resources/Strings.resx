@@ -4119,6 +4119,9 @@ Latest: {1} ({2})</value>
   <data name="Ft4.Status.Tuning">
     <value>Tune on at {0} Hz</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>Tune could not find its own tone on the downlink, so the uplink trim was put back. Call CQ to calibrate from your echo instead.</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>Tune stopped</value>
   </data>

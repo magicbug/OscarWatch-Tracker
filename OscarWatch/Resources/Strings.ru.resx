@@ -4123,6 +4123,9 @@ LOS: {2}
   <data name="Ft4.Status.Tuning">
     <value>Tune на {0} Гц</value>
   </data>
+  <data name="Ft4.Status.TuneCalibrationFailed">
+    <value>Tune не нашёл свой тон в нисходящем канале, поэтому поправка восходящего канала отменена. Дайте CQ, чтобы откалибровать по своему эху.</value>
+  </data>
   <data name="Ft4.Status.TuneStopped">
     <value>Tune остановлен</value>
   </data>

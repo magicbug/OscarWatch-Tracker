@@ -54,6 +54,7 @@ public sealed class Ft4ModemService : IDisposable
     private readonly object _decodePostGate = new();
     private DateTime _lastRelevantDecodeUtc = DateTime.UtcNow;
     private DateTime _lastTuneCalUtc = DateTime.MinValue;
+    private readonly Ft4TuneCalibrator _tuneCalibrator = new();
     private int _tuning; // 0 off, 1 on
     private Ft4QsoSequencer? _sequencer;
 
@@ -359,6 +360,7 @@ public sealed class Ft4ModemService : IDisposable
 
         Volatile.Write(ref _tuning, 1);
         _lastTuneCalUtc = DateTime.UtcNow;
+        _tuneCalibrator.Reset();
         Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
         Changed?.Invoke();
 
@@ -1060,22 +1062,20 @@ public sealed class Ft4ModemService : IDisposable
 
     /// <summary>
     /// While Tune is on, measure the downlink tone and nudge uplink trim toward the red bracket.
+    /// A correction is only applied when two slots agree, and it is undone if the next slot
+    /// does not show the tone on the marker (the peak was not our tone, or the trim did not land).
     /// </summary>
     private void MaybeCalibrateTune(DateTime utcNow)
     {
-        if (utcNow - _lastTuneCalUtc < TimeSpan.FromSeconds(1.5))
+        if (_tuneCalibrator.GaveUp || utcNow - _lastTuneCalUtc < TimeSpan.FromSeconds(1.5))
             return;
 
         // The uplink trim only reaches the rig at the next slot-boundary CAT step, so measure
-        // once per slot, after this slot's step has landed, or repeated corrections stack up.
+        // once per slot, after this slot's step has landed.
         var slot = _currentSlotStart;
-        if (slot == DateTime.MinValue || (utcNow - slot).TotalSeconds < 2.0)
+        var intoSlot = (utcNow - slot).TotalSeconds;
+        if (slot == DateTime.MinValue || intoSlot < 2.0 || !TryClaimEchoCalibration(slot))
             return;
-        lock (_decodePostGate)
-        {
-            if (_lastEchoCalibrationSlot == slot)
-                return;
-        }
 
         _lastTuneCalUtc = utcNow;
         var txHz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
@@ -1085,25 +1085,46 @@ public sealed class Ft4ModemService : IDisposable
         if (rate < 8000)
             return;
 
-        if (!Ft4EchoAligner.TryMeasureTonePeakHz(scratch[..n], rate, txHz, out var peakHz))
-            return;
-
-        var errorHz = peakHz - txHz;
-        if (Math.Abs(errorHz) < 15)
-            return;
-
-        if (!TryClaimEchoCalibration(slot))
-            return;
-
-        Log.Information(
-            "FT4 Tune tone on the waterfall is {Peak:0} Hz, TX marker {Tx:0} Hz, error {Error:0} Hz",
-            peakHz,
+        double? errorHz = Ft4EchoAligner.TryMeasureTonePeakHz(scratch[..n], rate, txHz, out var peakHz)
+            ? peakHz - txHz
+            : null;
+        Log.Debug(
+            "FT4 Tune measurement {IntoSlot:0.0} s into the slot: peak {Peak} Hz, TX marker {Tx:0} Hz, candidate {Candidate}, awaiting confirm {Applied}",
+            intoSlot,
+            errorHz is null ? "none" : peakHz.ToString("0", System.Globalization.CultureInfo.InvariantCulture),
             txHz,
-            errorHz);
-        ApplyEchoCalibrationHz(errorHz);
-        // Keep the Tune status visible after a calibration note.
-        Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
-        Changed?.Invoke();
+            _tuneCalibrator.CandidateErrorHz,
+            _tuneCalibrator.AwaitingConfirmHz);
+
+        var decision = _tuneCalibrator.Next(errorHz);
+        switch (decision.Kind)
+        {
+            case Ft4TuneCalibrator.ActionKind.Confirmed:
+                Log.Information("FT4 Tune calibration confirmed: tone now {Error:0} Hz from the TX marker", decision.CorrectionHz);
+                break;
+
+            case Ft4TuneCalibrator.ActionKind.Undo:
+                Log.Information(
+                    "FT4 Tune calibration undone: after a {Applied:0} Hz correction the tone was {After} Hz from the marker",
+                    -decision.CorrectionHz,
+                    errorHz is null ? "not found" : errorHz.Value.ToString("0", System.Globalization.CultureInfo.InvariantCulture));
+                ApplyEchoCalibrationHz(decision.CorrectionHz);
+                Status = _l.Get("Ft4.Status.TuneCalibrationFailed");
+                Changed?.Invoke();
+                break;
+
+            case Ft4TuneCalibrator.ActionKind.Apply:
+                Log.Information(
+                    "FT4 Tune tone on the waterfall is {Peak:0} Hz, TX marker {Tx:0} Hz, error {Error:0} Hz (two slots agree)",
+                    peakHz,
+                    txHz,
+                    decision.CorrectionHz);
+                ApplyEchoCalibrationHz(decision.CorrectionHz);
+                // Keep the Tune status visible after a calibration note.
+                Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
+                Changed?.Invoke();
+                break;
+        }
     }
 
     private void MaybeQueueEarlyDecode(DateTime utcNow)
