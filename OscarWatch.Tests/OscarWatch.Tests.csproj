@@ -44,6 +44,14 @@
       <Link>runtimes\win-x64\native\oscarwatch_ft8.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\OscarWatch\runtimes\linux-x64\native\oscarwatch_ft8.so" Condition="Exists('..\OscarWatch\runtimes\linux-x64\native\oscarwatch_ft8.so')">
+      <Link>oscarwatch_ft8.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\OscarWatch\runtimes\linux-x64\native\oscarwatch_ft8.so" Condition="Exists('..\OscarWatch\runtimes\linux-x64\native\oscarwatch_ft8.so')">
+      <Link>runtimes\linux-x64\native\oscarwatch_ft8.so</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <Target Name="CopyPortAudioProbeToTestOutput" AfterTargets="Build">

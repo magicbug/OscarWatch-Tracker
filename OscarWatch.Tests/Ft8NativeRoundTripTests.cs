@@ -23,6 +23,17 @@ public sealed class Ft8NativeRoundTripTests
     }
 
     [Fact]
+    public void Native_library_is_available_on_linux()
+    {
+        if (!OperatingSystem.IsLinux())
+            return;
+
+        Assert.True(
+            Ft8Native.IsAvailable,
+            "linux-x64 oscarwatch_ft8.so must be present under runtimes for Linux CI tests.");
+    }
+
+    [Fact]
     public void Encode_then_decode_standard_cq()
     {
         if (!RequireNativeOrReturn())
