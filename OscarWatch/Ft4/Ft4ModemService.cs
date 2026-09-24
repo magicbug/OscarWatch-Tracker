@@ -45,6 +45,9 @@ public sealed class Ft4ModemService : IDisposable
     private int _deviceSampleRate = 48000;
     private DateTime _currentSlotStart = DateTime.MinValue;
     private bool _txThisSlot;
+    private const double MaxWaterfallEchoCorrectionHz = 50;
+    private long _txKickedSlotTicks; // slot start of the last KickTransmit, set from the TX timer thread
+    private DateTime _lastEchoCalibrationSlot = DateTime.MinValue;
     private bool _decodeQueuedThisSlot;
     private readonly HashSet<string> _postedDecodeKeys = new(StringComparer.Ordinal);
     private readonly object _decodePostGate = new();
@@ -206,9 +209,13 @@ public sealed class Ft4ModemService : IDisposable
         _slotBuffer.Clear();
         _currentSlotStart = DateTime.MinValue;
         _txThisSlot = false;
+        Interlocked.Exchange(ref _txKickedSlotTicks, 0);
         _decodeQueuedThisSlot = false;
         lock (_decodePostGate)
+        {
             _postedDecodeKeys.Clear();
+            _lastEchoCalibrationSlot = DateTime.MinValue;
+        }
         _lastRelevantDecodeUtc = DateTime.UtcNow;
 
         // OrbitDeck: hold CAT dial within each slot; audio-domain corrects within-slot drift.
@@ -538,8 +545,9 @@ public sealed class Ft4ModemService : IDisposable
                     // never delays the next transmit or capture alignment.
                     float[]? previousSamples = null;
                     var previousSlot = _currentSlotStart;
-                    var alreadyTx = Volatile.Read(ref _txRunning) == 1;
-                    var previousWasTx = _txThisSlot || alreadyTx;
+                    var kickedTicks = Interlocked.Read(ref _txKickedSlotTicks);
+                    var alreadyTx = kickedTicks == slotStart.Ticks;
+                    var previousWasTx = previousSlot != DateTime.MinValue && kickedTicks == previousSlot.Ticks;
                     var needEndDecode = previousSlot != DateTime.MinValue
                         && (!_decodeQueuedThisSlot || previousWasTx);
                     lock (_gate)
@@ -553,8 +561,11 @@ public sealed class Ft4ModemService : IDisposable
                     // Soft timer may already have kicked TX; keep the TX-slot flag.
                     _txThisSlot = alreadyTx;
                     _decodeQueuedThisSlot = false;
+                    // Keep the finished slot's keys: its end-of-slot decode runs after this point
+                    // and must not republish (or re-calibrate from) lines the early decode posted.
+                    var keepPrefix = previousSlot.Ticks + "|";
                     lock (_decodePostGate)
-                        _postedDecodeKeys.Clear();
+                        _postedDecodeKeys.RemoveWhere(k => !k.StartsWith(keepPrefix, StringComparison.Ordinal));
 
                     // Audio first when the soft timer missed; Doppler can follow.
                     if (!alreadyTx && !IsTuning)
@@ -639,6 +650,7 @@ public sealed class Ft4ModemService : IDisposable
         if (Interlocked.CompareExchange(ref _txRunning, 1, 0) != 0)
             return;
 
+        Interlocked.Exchange(ref _txKickedSlotTicks, slotStart.Ticks);
         _txThisSlot = true;
         _txCts?.Cancel();
         _txCts?.Dispose();
@@ -1034,19 +1046,33 @@ public sealed class Ft4ModemService : IDisposable
         if (utcNow - _lastTuneCalUtc < TimeSpan.FromSeconds(1.5))
             return;
 
+        // The uplink trim only reaches the rig at the next slot-boundary CAT step, so measure
+        // once per slot, after this slot's step has landed, or repeated corrections stack up.
+        var slot = _currentSlotStart;
+        if (slot == DateTime.MinValue || (utcNow - slot).TotalSeconds < 2.0)
+            return;
+        lock (_decodePostGate)
+        {
+            if (_lastEchoCalibrationSlot == slot)
+                return;
+        }
+
         _lastTuneCalUtc = utcNow;
         var txHz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
-        Span<float> scratch = stackalloc float[4096];
+        Span<float> scratch = stackalloc float[8192];
         var n = _audio.CopyMonitorSamples(scratch);
         var rate = _audio.CaptureSampleRate;
-        if (n < rate / 2 || rate < 8000)
+        if (rate < 8000)
             return;
 
-        if (!Ft4EchoAligner.TryMeasurePeakHz(scratch[..n], rate, txHz, out var peakHz))
+        if (!Ft4EchoAligner.TryMeasureTonePeakHz(scratch[..n], rate, txHz, out var peakHz))
             return;
 
         var errorHz = peakHz - txHz;
         if (Math.Abs(errorHz) < 15)
+            return;
+
+        if (!TryClaimEchoCalibration(slot))
             return;
 
         Log.Information(
@@ -1178,7 +1204,7 @@ public sealed class Ft4ModemService : IDisposable
         if (primary.Result || late.Result)
             return;
 
-        TryCalibrateEchoFromSpectrum(raw, txHz);
+        TryCalibrateEchoFromSpectrum(slotStart, raw, txHz);
     }
 
     private void RecoverOwnEchoSequential(
@@ -1208,7 +1234,7 @@ public sealed class Ft4ModemService : IDisposable
             }
         }
 
-        TryCalibrateEchoFromSpectrum(raw, txHz);
+        TryCalibrateEchoFromSpectrum(slotStart, raw, txHz);
     }
 
     /// <summary>Post decoder output. Returns true when our own callsign was published.</summary>
@@ -1265,8 +1291,7 @@ public sealed class Ft4ModemService : IDisposable
                         continue;
                 }
 
-                // Calibrate only for the first accepted Echo of this key (parallel passes may both see it).
-                ApplyEchoCalibration(echo);
+                ApplyEchoCalibration(slotStart, echo);
 
                 foundOwn = true;
                 any = true;
@@ -1327,20 +1352,21 @@ public sealed class Ft4ModemService : IDisposable
         return foundOwn;
     }
 
-    private void ApplyEchoCalibration(Ft4DecodedMessage own)
+    private void ApplyEchoCalibration(DateTime slotStart, Ft4DecodedMessage own)
     {
         var seq = _sequencer;
         if (seq is null)
             return;
 
-        ApplyEchoCalibrationHz(own.FreqHz - seq.TxAudioHz);
+        if (TryClaimEchoCalibration(slotStart))
+            ApplyEchoCalibrationHz(own.FreqHz - seq.TxAudioHz);
     }
 
     /// <summary>
     /// The trace is on the waterfall but the decoder missed the message.
     /// Measure that tone and nudge the uplink so the next slot sits on the red bracket.
     /// </summary>
-    private void TryCalibrateEchoFromSpectrum(float[] raw, double txHz)
+    private void TryCalibrateEchoFromSpectrum(DateTime slotStart, float[] raw, double txHz)
     {
         if (!Ft4EchoAligner.TryMeasurePeakHz(raw, 12000, txHz, out var peakHz))
             return;
@@ -1349,12 +1375,41 @@ public sealed class Ft4ModemService : IDisposable
         if (Math.Abs(errorHz) < 15)
             return;
 
+        // Undecoded peaks can be another station near the bracket. Only trim small drift here;
+        // large corrections come from a decoded echo (or Tune).
+        if (Math.Abs(errorHz) > MaxWaterfallEchoCorrectionHz)
+        {
+            Log.Debug(
+                "FT4 waterfall peak {Peak:0} Hz is {Error:0} Hz from the TX marker; left for a decoded echo",
+                peakHz,
+                errorHz);
+            return;
+        }
+
+        if (!TryClaimEchoCalibration(slotStart))
+            return;
+
         Log.Information(
             "FT4 echo on the waterfall is {Peak:0} Hz, TX marker {Tx:0} Hz, error {Error:0} Hz",
             peakHz,
             txHz,
             errorHz);
         ApplyEchoCalibrationHz(errorHz);
+    }
+
+    /// <summary>
+    /// A TX slot is decoded more than once (early and end-of-slot passes), and each trim only
+    /// takes effect on the next transmit. Correct at most once per slot or the trim overshoots.
+    /// </summary>
+    private bool TryClaimEchoCalibration(DateTime slotStart)
+    {
+        lock (_decodePostGate)
+        {
+            if (_lastEchoCalibrationSlot == slotStart)
+                return false;
+            _lastEchoCalibrationSlot = slotStart;
+            return true;
+        }
     }
 
     private void ApplyEchoCalibrationHz(double errorHz)

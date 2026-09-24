@@ -26,6 +26,21 @@ public sealed class Ft4EchoAlignerTests
     }
 
     [Fact]
+    public void Tune_tone_far_from_the_marker_is_measured_from_a_short_monitor_window()
+    {
+        const int rate = 48000;
+        const double hz = 2150;
+        var rng = new Random(7);
+        var samples = new float[8192];
+        for (var i = 0; i < samples.Length; i++)
+            samples[i] = (float)(0.5 * Math.Sin(2 * Math.PI * hz * i / rate) + 0.05 * (rng.NextDouble() - 0.5));
+
+        Assert.False(Ft4EchoAligner.TryMeasurePeakHz(samples, rate, 1680, out _));
+        Assert.True(Ft4EchoAligner.TryMeasureTonePeakHz(samples, rate, 1680, out var peak));
+        Assert.InRange(peak, hz - 8, hz + 8);
+    }
+
+    [Fact]
     public void Tone_offset_from_the_marker_is_still_found()
     {
         const int rate = 12000;

@@ -120,7 +120,9 @@
       <p>
         When your echo sits off the red TX bracket, OscarWatch stores a per-satellite uplink offset
         and applies it to Doppler CAT for FT4 so the next slot lines up with that bracket.
-        A decoded echo is used when there is one. If the message is missed, the tone on the waterfall is used instead.
+        A decoded echo is used when there is one. If the message is missed, the tone on the waterfall
+        is used instead, but only for small drift (up to 50 Hz), so a nearby station cannot pull the uplink.
+        The trim is corrected at most once per slot, and <strong>Tune</strong> measures its tone once per slot as well.
         Open <strong>FT4 Settings</strong> to view, edit, or clear the uplink trim (Hz) for the
         focused satellite, or clear all stored calibrations.
       </p>
