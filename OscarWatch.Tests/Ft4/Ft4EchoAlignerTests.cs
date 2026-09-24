@@ -9,7 +9,7 @@ public sealed class Ft4EchoAlignerTests
     {
         const int rate = 12000;
         const double hz = 1500;
-        var onset = (int)(2.0 * rate);
+        var onset = (int)(3.0 * rate);
         var samples = new float[rate * 7];
         for (var i = onset; i < samples.Length; i++)
             samples[i] = (float)Math.Sin(2 * Math.PI * hz * (i - onset) / rate);
@@ -62,20 +62,29 @@ public sealed class Ft4EchoAlignerTests
     }
 
     [Fact]
-    public void Forced_alignments_are_offered_when_onset_is_muddy_but_the_tone_is_visible()
+    public void Alignments_are_skipped_when_onset_is_already_in_the_native_window()
     {
         const int rate = 12000;
         const double hz = 1760;
         var samples = new float[rate * 7];
-        // Ramp in slowly so the sharp onset detector is unsure, but power is obvious.
         var from = (int)(1.4 * rate);
         var to = (int)(5.0 * rate);
         for (var i = from; i < to; i++)
-        {
-            var t = (i - from) / (double)rate;
-            var env = Math.Min(1.0, t / 0.4);
-            samples[i] = (float)(0.35 * env * Math.Sin(2 * Math.PI * hz * i / rate));
-        }
+            samples[i] = 0.35f * (float)Math.Sin(2 * Math.PI * hz * i / rate);
+
+        Assert.Empty(Ft4EchoAligner.EnumerateEchoAlignments(samples, rate, 1780));
+    }
+
+    [Fact]
+    public void Alignments_are_offered_when_onset_is_past_the_native_window()
+    {
+        const int rate = 12000;
+        const double hz = 1760;
+        var samples = new float[rate * 7];
+        var from = (int)(3.1 * rate);
+        var to = (int)(6.5 * rate);
+        for (var i = from; i < to; i++)
+            samples[i] = 0.35f * (float)Math.Sin(2 * Math.PI * hz * i / rate);
 
         var alignments = Ft4EchoAligner.EnumerateEchoAlignments(samples, rate, 1780).ToList();
         Assert.NotEmpty(alignments);

@@ -2,13 +2,17 @@ namespace OscarWatch.Core.Ft4;
 
 /// <summary>
 /// Finds a late FT4 burst in a slot recording so it can be shifted into the
-/// native decoder's early time window. ft8_lib only searches about the first
-/// 0.9 s; a full-duplex echo often starts later and is still obvious on the waterfall.
+/// native decoder's time window. Stock ft8_lib only searched about the first
+/// 0.9 s; OscarWatch extends FT4 search to about 2.5 s. Alignment is only
+/// needed when the tone starts after that.
 /// </summary>
 public static class Ft4EchoAligner
 {
-    /// <summary>Latest burst start the stock FT4 candidate search will still see.</summary>
-    public const double NativeWindowSeconds = 0.90;
+    /// <summary>
+    /// Latest burst start the OscarWatch FT4 candidate search will still see
+    /// (time_offset &lt; 55 at 48 ms/symbol).
+    /// </summary>
+    public const double NativeWindowSeconds = 2.50;
 
     /// <summary>Lead-in left in front of the tone after alignment.</summary>
     public const double AlignedLeadSeconds = 0.35;
@@ -173,8 +177,8 @@ public static class Ft4EchoAligner
     }
 
     /// <summary>
-    /// Candidate buffers that put a late full-duplex echo into the native decoder window.
-    /// Prefers a measured onset at the waterfall peak; otherwise tries a few fixed shifts.
+    /// Candidate buffers that put a very late full-duplex echo into the native window.
+    /// Only runs when the measured onset sits past <see cref="NativeWindowSeconds"/>.
     /// </summary>
     public static IEnumerable<(float[] Samples, double ShiftSeconds)> EnumerateEchoAlignments(
         float[] samples,
@@ -185,38 +189,20 @@ public static class Ft4EchoAligner
             yield break;
 
         var searchHz = centreHz;
-        var havePeak = TryMeasurePeakHz(samples, sampleRate, centreHz, out var peakHz);
-        if (havePeak)
+        if (TryMeasurePeakHz(samples, sampleRate, centreHz, out var peakHz))
             searchHz = peakHz;
 
-        if (TryFindToneOnset(samples, sampleRate, searchHz, out var onset)
-            && onset > (int)(AlignedLeadSeconds * sampleRate))
-        {
-            var aligned = AlignToNativeWindow(samples, sampleRate, onset, out var shiftSec);
-            if (shiftSec >= 0.15 && aligned.Length >= (int)(5.3 * sampleRate))
-            {
-                yield return (aligned, shiftSec);
-                yield break;
-            }
-        }
-
-        // Tone is visible on the waterfall but the onset edge is muddy (common on a
-        // strong satellite echo). Try a few plausible starts so DecodeFt4 still sees it.
-        if (!havePeak)
+        if (!TryFindToneOnset(samples, sampleRate, searchHz, out var onset))
             yield break;
 
-        foreach (var assumeOnsetSec in new[] { 0.9, 1.2, 1.5, 1.8, 2.2, 2.6 })
-        {
-            var assumed = (int)(assumeOnsetSec * sampleRate);
-            if (assumed >= samples.Length)
-                break;
+        var onsetSec = onset / (double)sampleRate;
+        // Primary decode already covers starts up to NativeWindowSeconds.
+        if (onsetSec <= NativeWindowSeconds - 0.15)
+            yield break;
 
-            var aligned = AlignToNativeWindow(samples, sampleRate, assumed, out var shiftSec);
-            if (shiftSec < 0.15 || aligned.Length < (int)(5.3 * sampleRate))
-                continue;
-
+        var aligned = AlignToNativeWindow(samples, sampleRate, onset, out var shiftSec);
+        if (shiftSec >= 0.15 && aligned.Length >= (int)(5.3 * sampleRate))
             yield return (aligned, shiftSec);
-        }
     }
 
     private static bool TryOnsetAt(

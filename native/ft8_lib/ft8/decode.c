@@ -202,7 +202,11 @@ int ftx_find_candidates(const ftx_waterfall_t* wf, int num_candidates, ftx_candi
     {
         for (candidate.freq_sub = 0; candidate.freq_sub < wf->freq_osr; ++candidate.freq_sub)
         {
-            for (candidate.time_offset = -10; candidate.time_offset < 20; ++candidate.time_offset)
+            // FT4 symbols are short (48 ms). Extend the start-time search so a
+            // full-duplex satellite echo that begins ~1–2.5 s into the slot can
+            // still land in one decode without a second aligned pass.
+            int time_max = (wf->protocol == FTX_PROTOCOL_FT4) ? 55 : 20;
+            for (candidate.time_offset = -10; candidate.time_offset < time_max; ++candidate.time_offset)
             {
                 for (candidate.freq_offset = 0; (candidate.freq_offset + num_tones - 1) < wf->num_bins; ++candidate.freq_offset)
                 {

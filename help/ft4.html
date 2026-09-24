@@ -74,7 +74,8 @@
           audio frequency that came back. A trace on the waterfall is not an Echo until the
           decoder copies it. Full-duplex copies often start late in the slot; OscarWatch decodes
           during your TX slots as well, and can run a late-echo pass in parallel with the normal
-          decode (FT4 Settings, Modem) so the copy appears sooner.
+          decode (FT4 Settings, Modem) so the copy appears sooner. The FT4 candidate search also
+          covers starts up to about 2.5 s into the slot, so most echoes need no extra pass.
           A line addressed to you is shaded, and the station
           in the current QSO uses a second shade. Receive lines for a callsign not yet in your
           logbook, or a 4-character grid you have not logged, use further shades. All colours are
