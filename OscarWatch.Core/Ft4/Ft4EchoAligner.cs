@@ -172,6 +172,53 @@ public static class Ft4EchoAligner
         return aligned;
     }
 
+    /// <summary>
+    /// Candidate buffers that put a late full-duplex echo into the native decoder window.
+    /// Prefers a measured onset at the waterfall peak; otherwise tries a few fixed shifts.
+    /// </summary>
+    public static IEnumerable<(float[] Samples, double ShiftSeconds)> EnumerateEchoAlignments(
+        float[] samples,
+        int sampleRate,
+        double centreHz)
+    {
+        if (samples.Length < (int)(5.3 * sampleRate) || sampleRate < 8000)
+            yield break;
+
+        var searchHz = centreHz;
+        var havePeak = TryMeasurePeakHz(samples, sampleRate, centreHz, out var peakHz);
+        if (havePeak)
+            searchHz = peakHz;
+
+        if (TryFindToneOnset(samples, sampleRate, searchHz, out var onset)
+            && onset > (int)(AlignedLeadSeconds * sampleRate))
+        {
+            var aligned = AlignToNativeWindow(samples, sampleRate, onset, out var shiftSec);
+            if (shiftSec >= 0.15 && aligned.Length >= (int)(5.3 * sampleRate))
+            {
+                yield return (aligned, shiftSec);
+                yield break;
+            }
+        }
+
+        // Tone is visible on the waterfall but the onset edge is muddy (common on a
+        // strong satellite echo). Try a few plausible starts so DecodeFt4 still sees it.
+        if (!havePeak)
+            yield break;
+
+        foreach (var assumeOnsetSec in new[] { 0.9, 1.2, 1.5, 1.8, 2.2, 2.6 })
+        {
+            var assumed = (int)(assumeOnsetSec * sampleRate);
+            if (assumed >= samples.Length)
+                break;
+
+            var aligned = AlignToNativeWindow(samples, sampleRate, assumed, out var shiftSec);
+            if (shiftSec < 0.15 || aligned.Length < (int)(5.3 * sampleRate))
+                continue;
+
+            yield return (aligned, shiftSec);
+        }
+    }
+
     private static bool TryOnsetAt(
         ReadOnlySpan<float> samples,
         int sampleRate,

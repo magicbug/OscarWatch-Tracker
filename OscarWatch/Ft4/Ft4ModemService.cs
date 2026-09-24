@@ -946,7 +946,7 @@ public sealed class Ft4ModemService : IDisposable
 
     private void MaybeQueueEarlyDecode(DateTime utcNow)
     {
-        if (_decodeQueuedThisSlot || _txThisSlot || _currentSlotStart == DateTime.MinValue)
+        if (_decodeQueuedThisSlot || _currentSlotStart == DateTime.MinValue)
             return;
 
         var into = (utcNow - _currentSlotStart).TotalSeconds;
@@ -963,7 +963,8 @@ public sealed class Ft4ModemService : IDisposable
         }
 
         _decodeQueuedThisSlot = true;
-        QueueDecode(_currentSlotStart, snapshot, txSlot: false);
+        // TX slots still decode: that is when the full-duplex own echo is in the buffer.
+        QueueDecode(_currentSlotStart, snapshot, txSlot: _txThisSlot);
     }
 
     private void QueueDecode(DateTime slotStart, float[] samples, bool txSlot)
@@ -1007,16 +1008,19 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         var hz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
-        if (Ft4EchoAligner.TryFindToneOnset(raw, 12000, hz, out var onset)
-            && onset >= (int)(Ft4EchoAligner.NativeWindowSeconds * 12000))
+        foreach (var (aligned, shiftSec) in Ft4EchoAligner.EnumerateEchoAlignments(raw, 12000, hz))
         {
-            var aligned = Ft4EchoAligner.AlignToNativeWindow(raw, 12000, onset, out var shiftSec);
-            if (aligned.Length >= (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2) && shiftSec >= 0.2)
-                foundOwn = PublishDecoded(slotStart, aligned, txSlot, shiftSec, ownOnly: true);
+            foundOwn = PublishDecoded(slotStart, aligned, txSlot, shiftSec, ownOnly: true);
+            if (foundOwn)
+            {
+                Log.Information(
+                    "FT4 own echo recovered after shifting the slot by {Shift:0.00} s",
+                    shiftSec);
+                return;
+            }
         }
 
-        if (!foundOwn)
-            TryCalibrateEchoFromSpectrum(raw, hz);
+        TryCalibrateEchoFromSpectrum(raw, hz);
     }
 
     /// <summary>Post decoder output. Returns true when our own callsign was published.</summary>

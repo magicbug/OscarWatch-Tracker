@@ -62,6 +62,38 @@ public sealed class Ft4EchoAlignerTests
     }
 
     [Fact]
+    public void Forced_alignments_are_offered_when_onset_is_muddy_but_the_tone_is_visible()
+    {
+        const int rate = 12000;
+        const double hz = 1760;
+        var samples = new float[rate * 7];
+        // Ramp in slowly so the sharp onset detector is unsure, but power is obvious.
+        var from = (int)(1.4 * rate);
+        var to = (int)(5.0 * rate);
+        for (var i = from; i < to; i++)
+        {
+            var t = (i - from) / (double)rate;
+            var env = Math.Min(1.0, t / 0.4);
+            samples[i] = (float)(0.35 * env * Math.Sin(2 * Math.PI * hz * i / rate));
+        }
+
+        var alignments = Ft4EchoAligner.EnumerateEchoAlignments(samples, rate, 1780).ToList();
+        Assert.NotEmpty(alignments);
+        Assert.All(alignments, a =>
+        {
+            Assert.True(a.ShiftSeconds >= 0.15);
+            Assert.True(a.Samples.Length >= (int)(5.3 * rate));
+        });
+    }
+
+    [Fact]
+    public void Silence_has_no_echo_alignments()
+    {
+        var samples = new float[12000 * 7];
+        Assert.Empty(Ft4EchoAligner.EnumerateEchoAlignments(samples, 12000, 1780));
+    }
+
+    [Fact]
     public void Silence_has_no_tone_onset()
     {
         var samples = new float[12000 * 2];

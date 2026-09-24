@@ -72,8 +72,9 @@
           <strong>TX</strong> is the message OscarWatch sent (no SNR, a dash in the DT column).
           <strong>Echo</strong> is that transmission decoded from the receiver, with the SNR and
           audio frequency that came back. A trace on the waterfall is not an Echo until the
-          decoder copies it. Full-duplex copies often start late in the slot; OscarWatch searches
-          that later audio on your TX slots. A line addressed to you is shaded, and the station
+          decoder copies it. Full-duplex copies often start late in the slot; OscarWatch decodes
+          during your TX slots as well, and shifts that later audio into the decoder window.
+          A line addressed to you is shaded, and the station
           in the current QSO uses a second shade. Both colours are set under FT4 Settings, Appearance.</li>
         <li><strong>TX message</strong>: text you will transmit; use <strong>CQ</strong> to build a standard call from your station callsign and grid.</li>
       </ul>
