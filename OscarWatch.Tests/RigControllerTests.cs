@@ -2200,6 +2200,12 @@ public class RigControllerTests
         controller.Update(settings, ctx);
         Thread.Sleep(650);
 
+        // Slow CI runners can still be inside the post-write dial settle window, which would skip the sync.
+        var ignoreDialUntil = typeof(RigController).GetField("_ignoreDialUntilUtc", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+        var settleDeadline = DateTime.UtcNow.AddSeconds(5);
+        while (DateTime.UtcNow < settleDeadline && (DateTime)ignoreDialUntil.GetValue(controller)! > DateTime.UtcNow)
+            Thread.Sleep(20);
+
         // Simulate accumulated phantom manual (false knob detect) while rig stayed at doppler target.
         typeof(RigController).GetField("_passbandDownlinkAdjustKHz", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
             .SetValue(controller, -9.8);
