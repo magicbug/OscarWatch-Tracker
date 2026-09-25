@@ -4179,9 +4179,6 @@ Latest: {1} ({2})</value>
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>Logbook save failed</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>PC clock may be off UTC (recent DT about {0:0.0} s). Sync time and try again.</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(PC clock)</value>
   </data>

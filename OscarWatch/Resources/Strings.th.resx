@@ -4183,9 +4183,6 @@ LOS: {2}
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>บันทึกสมุดปูมล้มเหลว</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>นาฬิกา PC อาจคลาดจาก UTC (DT ล่าสุดประมาณ {0:0.0} วินาที) ซิงก์เวลาแล้วลองใหม่</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(นาฬิกา PC)</value>
   </data>

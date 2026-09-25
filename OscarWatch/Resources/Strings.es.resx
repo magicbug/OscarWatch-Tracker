@@ -4179,9 +4179,6 @@ Está utilizando la versión {0}.
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>Error al guardar en el logbook</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>El reloj del PC puede estar desfasado respecto a UTC (DT reciente ~{0:0.0} s). Sincroniza la hora e inténtalo de nuevo.</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(reloj del PC)</value>
   </data>

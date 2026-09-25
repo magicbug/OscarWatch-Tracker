@@ -4179,9 +4179,6 @@
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>ログブックの保存に失敗しました</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>PCの時計がUTCからずれている可能性があります（最近のDT約{0:0.0}秒）。時刻を同期して再試行してください。</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(PC の時計)</value>
   </data>

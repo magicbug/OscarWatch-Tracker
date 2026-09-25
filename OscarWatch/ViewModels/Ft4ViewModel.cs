@@ -161,8 +161,6 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     public bool HasEchoCalibrationSatellite =>
         !string.IsNullOrWhiteSpace(SelectedEchoCalibrationSatellite);
 
-    public bool ShowClockWarning => !string.IsNullOrWhiteSpace(ClockWarningText);
-
     [ObservableProperty] private string _waterfallStatusText = "";
     [ObservableProperty] private string _slotClockText = "";
     [ObservableProperty] private string _clockSourceText = "";
@@ -175,7 +173,6 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private string _currentTxMessage = "";
     [ObservableProperty] private string _manualPttPrompt = "";
     [ObservableProperty] private string _statusLine = "";
-    [ObservableProperty] private string _clockWarningText = "";
     [ObservableProperty] private string _separatePttConflictText = "";
     [ObservableProperty] private double _txPlaybackPeakPercent;
     [ObservableProperty] private bool _skipRrr;
@@ -513,9 +510,6 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
         RefreshSeparatePttConflict();
     }
-
-    partial void OnClockWarningTextChanged(string value) =>
-        OnPropertyChanged(nameof(ShowClockWarning));
 
     partial void OnSeparatePttConflictTextChanged(string value) =>
         OnPropertyChanged(nameof(ShowSeparatePttConflict));
@@ -1191,33 +1185,6 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         }
 
         TxPlaybackPeakPercent = Math.Clamp(_modem.TxPlaybackPeak * 100.0, 0, 100);
-        RefreshClockWarning();
-    }
-
-    private void RefreshClockWarning()
-    {
-        // WSJT-X style: large DT across recent RX decodes usually means the PC clock is off UTC.
-        const float thresholdSec = 1.0f;
-        var recent = Decodes
-            .Where(d => d.Message.IsReceiveActivity)
-            .Take(8)
-            .Select(d => Math.Abs(d.Message.TimeSec))
-            .ToList();
-        if (recent.Count < 3)
-        {
-            ClockWarningText = "";
-            return;
-        }
-
-        var over = recent.Count(dt => dt >= thresholdSec);
-        if (over < 3)
-        {
-            ClockWarningText = "";
-            return;
-        }
-
-        var worst = recent.Max();
-        ClockWarningText = _l.Get("Ft4.Status.ClockWarning", worst);
     }
 
     public void Dispose()

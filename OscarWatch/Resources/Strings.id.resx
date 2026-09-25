@@ -4183,9 +4183,6 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>Gagal menyimpan logbook</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>Jam PC mungkin tidak selaras UTC (DT terbaru sekitar {0:0.0} dtk). Sinkronkan waktu lalu coba lagi.</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(jam PC)</value>
   </data>

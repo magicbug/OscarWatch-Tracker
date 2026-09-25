@@ -4179,9 +4179,6 @@
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>日志本保存失败</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>电脑时钟可能偏离 UTC（近期 DT 约 {0:0.0} 秒）。请同步时间后重试。</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(电脑时钟)</value>
   </data>

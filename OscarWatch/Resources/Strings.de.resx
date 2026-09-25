@@ -4183,9 +4183,6 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>Logbuch speichern fehlgeschlagen</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>PC-Uhr weicht möglicherweise von UTC ab (aktuelles DT ca. {0:0.0} s). Zeit synchronisieren und erneut versuchen.</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(PC-Uhr)</value>
   </data>

@@ -199,14 +199,6 @@
                        HorizontalAlignment="Right" />
           </Grid>
 
-          <TextBlock DockPanel.Dock="Top"
-                     Text="{Binding ClockWarningText}"
-                     IsVisible="{Binding ShowClockWarning}"
-                     Foreground="{DynamicResource PassInProgressBadgeForegroundBrush}"
-                     FontWeight="SemiBold"
-                     TextWrapping="Wrap"
-                     Margin="4,0,4,6" />
-
           <ListBox ItemsSource="{Binding Decodes}"
                    SelectedItem="{Binding SelectedDecode}"
                    FontFamily="Consolas,Courier New,monospace"

@@ -4179,9 +4179,6 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.Status.LogbookSaveFailed">
     <value>Falha ao guardar no logbook</value>
   </data>
-  <data name="Ft4.Status.ClockWarning">
-    <value>O relógio do PC pode estar desalinhado com o UTC (DT recente ~{0:0.0} s). Sincronize a hora e tente novamente.</value>
-  </data>
   <data name="Ft4.ClockSource.Pc">
     <value>(relógio do PC)</value>
   </data>

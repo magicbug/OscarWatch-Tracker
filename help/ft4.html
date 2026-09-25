@@ -72,7 +72,6 @@
       <div class="tip">
         Because every slot starts on an exact second, your PC clock must be accurate to within about
         half a second. Use Windows time synchronisation (or a tool such as Meinberg NTP) before a pass.
-        OscarWatch warns you in the FT4 window if the clock looks wrong.
       </div>
       <div class="tip">
         No internet in the field? If you have a GPS set up in
@@ -155,7 +154,7 @@
         <tr><th>Column</th><th>Meaning</th></tr>
         <tr><td>UTC</td><td>Start time of the slot the message was sent in.</td></tr>
         <tr><td>TX</td><td>Blank for stations you received, <strong>TX</strong> for a message you sent, <strong>Echo</strong> for your own message heard back from the satellite.</td></tr>
-        <tr><td>DT</td><td>Time offset in seconds. Small values are normal on satellites; large values on every station usually mean your PC clock is wrong.</td></tr>
+        <tr><td>DT</td><td>When the signal started, in seconds from the start of the slot. About +0.5 s is on time, and your own echo is usually a little later. One station well off is their clock; every station well off usually means your PC clock is wrong.</td></tr>
         <tr><td>SNR</td><td>Signal strength compared with the noise, in dB. Higher is stronger; FT4 still works well below 0 dB.</td></tr>
         <tr><td>Message</td><td>The decoded text.</td></tr>
         <tr><td>Hz</td><td>Audio frequency of the signal on the waterfall.</td></tr>
@@ -330,8 +329,8 @@
       <h2 id="problems">Problems</h2>
       <ul>
         <li><strong>No decodes at all</strong>: check the input soundcard, that the waterfall shows signals, and that the
-          radio is in the right mode. A clock warning means your PC time needs syncing
-          (or connect a GPS so FT4 can correct it for you).</li>
+          radio is in the right mode. If the DT column shows most stations well away from +0.5 s, your PC time
+          needs syncing (or connect a GPS so FT4 can correct it for you).</li>
         <li><strong>The radio does not transmit</strong>: check the PTT method and output soundcard in Settings. With VOX,
           make sure the radio's VOX or data VOX is on.</li>
         <li><strong>Transmit is blocked</strong>: read the status line. It tells you if the satellite does not allow FT4,
