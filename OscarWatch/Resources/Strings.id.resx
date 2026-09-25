@@ -3982,6 +3982,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Ptt.TailMs">
     <value>Tail PTT (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>Balas otomatis</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>Saat memanggil CQ, jawab stasiun pertama yang memanggil Anda. Nonaktifkan untuk terus memanggil CQ sampai Anda mengklik stasiun.</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>Tahan frek. TX</value>
   </data>

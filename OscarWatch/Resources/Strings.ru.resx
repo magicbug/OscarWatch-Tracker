@@ -3982,6 +3982,12 @@ LOS: {2}
   <data name="Ft4.Ptt.TailMs">
     <value>Хвост PTT (мс)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>Автоответ</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>При вызове CQ отвечает первой станции, которая вас вызвала. Снимите флажок, чтобы продолжать CQ, пока вы не выберете станцию.</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>Держать частоту TX</value>
   </data>

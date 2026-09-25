@@ -3978,6 +3978,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.Ptt.TailMs">
     <value>Cola PTT (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>Respuesta automática</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>Al llamar CQ, responde a la primera estación que le llame. Desmarque para seguir llamando CQ hasta que haga clic en una estación.</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>Mantener frec. TX</value>
   </data>

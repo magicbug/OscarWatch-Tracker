@@ -3978,6 +3978,12 @@
   <data name="Ft4.Ptt.TailMs">
     <value>PTT 延后 (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>自动应答</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>呼叫 CQ 时，应答第一个呼叫您的电台。取消后会继续呼叫 CQ，直到您点击某个电台。</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>保持 TX 频率</value>
   </data>

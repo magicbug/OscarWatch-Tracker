@@ -68,6 +68,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _rxAudioHz = _txAudioHz;
         _txLevel = Math.Clamp(ft4.TxLevel, 0.05, 1.0);
         _holdTxFrequency = ft4.HoldTxFrequency;
+        _autoReply = ft4.AutoReply;
         _audioDopplerTx = ft4.AudioDopplerTx;
         _audioDopplerRx = ft4.AudioDopplerRx;
         _parallelTxEchoDecode = ft4.ParallelTxEchoDecode;
@@ -179,6 +180,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _skipRrr;
     [ObservableProperty] private bool _preferEvenSlot;
     [ObservableProperty] private bool _holdTxFrequency = true;
+    [ObservableProperty] private bool _autoReply = true;
     [ObservableProperty] private bool _audioDopplerTx = true;
     [ObservableProperty] private bool _audioDopplerRx = true;
     [ObservableProperty] private bool _parallelTxEchoDecode = true;
@@ -210,6 +212,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     partial void OnSkipRrrChanged(bool value)
     {
         _settings.Current.Ft4.SkipRrr = value;
+        _settings.RequestSave();
+    }
+
+    partial void OnAutoReplyChanged(bool value)
+    {
+        _settings.Current.Ft4.AutoReply = value;
         _settings.RequestSave();
     }
 

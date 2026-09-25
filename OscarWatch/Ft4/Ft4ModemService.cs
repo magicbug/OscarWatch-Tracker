@@ -237,7 +237,8 @@ public sealed class Ft4ModemService : IDisposable
                 return g.Length >= 4 ? g[..4] : g;
             },
             () => _settings.Current.Ft4.SkipRrr,
-            () => _settings.Current.Ft4.HoldTxFrequency);
+            () => _settings.Current.Ft4.HoldTxFrequency,
+            () => _settings.Current.Ft4.AutoReply);
         _sequencer.TxAudioHz = Math.Clamp(_settings.Current.Ft4.TxAudioHz, 200, 3000);
         RxAudioHz = _sequencer.TxAudioHz;
         _lastLoggedKey = null;

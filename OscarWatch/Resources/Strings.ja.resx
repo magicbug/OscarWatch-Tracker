@@ -3978,6 +3978,12 @@
   <data name="Ft4.Ptt.TailMs">
     <value>PTT後尾 (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>自動応答</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>CQ中は、最初に呼んできた局に応答します。オフにすると、局をクリックするまでCQを続けます。</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>TX周波数保持</value>
   </data>

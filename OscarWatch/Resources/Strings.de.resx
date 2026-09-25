@@ -3982,6 +3982,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Ptt.TailMs">
     <value>PTT-Nachlauf (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>Auto-Antwort</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>Beim CQ-Rufen wird die erste Station beantwortet, die Sie ruft. Abwählen, um CQ weiterzurufen, bis Sie eine Station anklicken.</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>TX-Freq halten</value>
   </data>

@@ -217,6 +217,26 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
+    public void Auto_reply_off_keeps_calling_cq_until_a_station_is_clicked()
+    {
+        var seq = new Ft4QsoSequencer(
+            () => "MM9SQL", () => "IO85", () => true, holdTxFrequency: () => true, autoReply: () => false);
+        seq.StartCq(evenSlot: true);
+
+        Assert.False(seq.OnDecoded(Msg("MM9SQL G4ABC IO91", snr: -6f)));
+        Assert.Equal(Ft4QsoPhase.CallingCq, seq.Phase);
+        Assert.Null(seq.TheirCall);
+        Assert.Equal("CQ MM9SQL IO85", seq.CurrentTxMessage);
+        Assert.True(seq.TransmitEnabled);
+
+        seq.StartAnswer(Msg("MM9SQL M0XYZ IO92", snr: -4f), oppositeEvenSlot: false);
+        Assert.Equal(Ft4QsoPhase.InQso, seq.Phase);
+        Assert.Equal("M0XYZ", seq.TheirCall);
+        Assert.False(seq.OnDecoded(Msg("MM9SQL M0XYZ +02", snr: 2f)));
+        Assert.Equal("M0XYZ MM9SQL RR73", seq.CurrentTxMessage);
+    }
+
+    [Fact]
     public void Second_caller_ignored_while_in_qso()
     {
         var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);

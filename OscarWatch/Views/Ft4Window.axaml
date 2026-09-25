@@ -327,6 +327,10 @@
               <CheckBox Content="{loc:Localize Key=Ft4.HoldTxFrequency}"
                         IsChecked="{Binding HoldTxFrequency}"
                         VerticalAlignment="Center" />
+              <CheckBox Content="{loc:Localize Key=Ft4.AutoReply}"
+                        IsChecked="{Binding AutoReply}"
+                        ToolTip.Tip="{loc:Localize Key=Ft4.AutoReply.Note}"
+                        VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel DockPanel.Dock="Right"
                         Orientation="Horizontal"

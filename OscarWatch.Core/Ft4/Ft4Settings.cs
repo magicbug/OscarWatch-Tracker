@@ -72,6 +72,12 @@ public sealed class Ft4Settings
     public bool HoldTxFrequency { get; set; } = true;
 
     /// <summary>
+    /// When true (default), the first station that calls while CQ is running is answered
+    /// automatically. When false, CQ continues until the operator clicks a station.
+    /// </summary>
+    public bool AutoReply { get; set; } = true;
+
+    /// <summary>
     /// When true (default), hold CAT Doppler for each FT4 slot and cancel within-slot
     /// uplink drift in the TX audio (OrbitDeck audioDopplerTX).
     /// </summary>

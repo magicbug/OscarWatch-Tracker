@@ -3978,6 +3978,12 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.Ptt.TailMs">
     <value>Cauda PTT (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>Resposta automática</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>Ao chamar CQ, responde à primeira estação que o chamar. Desmarque para continuar chamando CQ até clicar numa estação.</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>Manter freq. TX</value>
   </data>

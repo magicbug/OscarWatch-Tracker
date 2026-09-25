@@ -163,6 +163,13 @@
       <TabItem Header="{loc:Localize Key=Ft4.Settings.ModemSection}">
         <ScrollViewer Margin="8,10,4,4" VerticalScrollBarVisibility="Auto">
           <StackPanel Spacing="8">
+            <CheckBox Content="{loc:Localize Key=Ft4.AutoReply}"
+                      IsChecked="{Binding AutoReply}" />
+            <TextBlock Text="{loc:Localize Key=Ft4.AutoReply.Note}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Opacity="0.85"
+                       Margin="24,0,0,0" />
             <CheckBox Content="{loc:Localize Key=Ft4.HoldTxFrequency}"
                       IsChecked="{Binding HoldTxFrequency}" />
             <TextBlock Text="{loc:Localize Key=Ft4.HoldTxFrequency.Note}"

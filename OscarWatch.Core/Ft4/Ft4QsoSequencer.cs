@@ -15,17 +15,20 @@ public sealed class Ft4QsoSequencer
     private readonly Func<string> _myGrid;
     private readonly Func<bool> _skipRrr;
     private readonly Func<bool> _holdTxFrequency;
+    private readonly Func<bool> _autoReply;
 
     public Ft4QsoSequencer(
         Func<string> myCall,
         Func<string> myGrid,
         Func<bool> skipRrr,
-        Func<bool>? holdTxFrequency = null)
+        Func<bool>? holdTxFrequency = null,
+        Func<bool>? autoReply = null)
     {
         _myCall = myCall;
         _myGrid = myGrid;
         _skipRrr = skipRrr;
         _holdTxFrequency = holdTxFrequency ?? (() => true);
+        _autoReply = autoReply ?? (() => true);
     }
 
     public Ft4QsoPhase Phase { get; private set; } = Ft4QsoPhase.Idle;
@@ -168,6 +171,10 @@ public sealed class Ft4QsoSequencer
             && Ft4MessageCodec.IsAddressedTo(callTo, my)
             && !callDe.Equals(my, StringComparison.OrdinalIgnoreCase))
         {
+            // Auto reply off: keep calling CQ until the operator clicks a station.
+            if (!_autoReply())
+                return false;
+
             TheirCall = Ft4MessageCodec.NormalizeCall(callDe);
             TheirGrid = Ft4MessageCodec.IsGrid(extra) ? extra : TheirGrid;
             // Stay on our CQ frequency (WSJT-X). Only answering a decode moves TX.

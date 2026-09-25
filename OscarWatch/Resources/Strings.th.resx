@@ -3982,6 +3982,12 @@ LOS: {2}
   <data name="Ft4.Ptt.TailMs">
     <value>ท้าย PTT (ms)</value>
   </data>
+  <data name="Ft4.AutoReply">
+    <value>ตอบอัตโนมัติ</value>
+  </data>
+  <data name="Ft4.AutoReply.Note">
+    <value>ขณะเรียก CQ จะตอบสถานีแรกที่เรียกคุณ ยกเลิกเพื่อเรียก CQ ต่อไปจนกว่าจะคลิกสถานี</value>
+  </data>
   <data name="Ft4.HoldTxFrequency">
     <value>คงความถี่ TX</value>
   </data>
