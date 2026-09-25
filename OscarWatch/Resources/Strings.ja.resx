@@ -3996,6 +3996,12 @@
   <data name="Ft4.ParallelTxEchoDecode.Note">
     <value>送信スロットでは通常デコードと遅延エコー処理を同時に行い、自分のコピーを早く表示します。そのスロットのCPU使用量が増えます。PCが厳しいとき以外はオンのままにしてください。</value>
   </data>
+  <data name="Ft4.PskReporter">
+    <value>デコードをPSK Reporterに報告</value>
+  </data>
+  <data name="Ft4.PskReporter.Note">
+    <value>デコードした局を、局のコールサインとグリッドを使って約5分ごとにpskreporter.infoへ送信します。スポットにはアップリンク周波数を使い、衛星名はアンテナとして送信されます。</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>デコード文字サイズ</value>
   </data>

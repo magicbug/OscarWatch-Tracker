@@ -4000,6 +4000,12 @@ LOS: {2}
   <data name="Ft4.ParallelTxEchoDecode.Note">
     <value>ในช่วงส่ง จะถอดรหัสปกติและรอบเอคโค่ที่มาช้าพร้อมกัน เพื่อให้เห็นสำเนาของตัวเองเร็วขึ้น ใช้ CPU มากขึ้นในช่วงนั้น เปิดไว้ได้ เว้นแต่เครื่องช้า</value>
   </data>
+  <data name="Ft4.PskReporter">
+    <value>รายงานการถอดรหัสไปยัง PSK Reporter</value>
+  </data>
+  <data name="Ft4.PskReporter.Note">
+    <value>ส่งสถานีที่ถอดรหัสได้ไปยัง pskreporter.info ประมาณทุกห้านาที โดยใช้คอลซายน์และกริดของสถานีคุณ สปอตใช้ความถี่อัปลิงก์ และส่งชื่อดาวเทียมเป็นข้อมูลสายอากาศ</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>ขนาดข้อความถอดรหัส</value>
   </data>

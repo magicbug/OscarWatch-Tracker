@@ -1,3 +1,5 @@
+using OscarWatch.Core.PskReporter;
+
 namespace OscarWatch.Core.Ft4;
 
 /// <summary>Persisted FT4 modem preferences.</summary>
@@ -86,6 +88,15 @@ public sealed class Ft4Settings
     /// together so a full-duplex own copy appears sooner (uses more CPU for that slot).
     /// </summary>
     public bool ParallelTxEchoDecode { get; set; } = true;
+
+    /// <summary>When true, receive decodes are reported to PSK Reporter. Off by default.</summary>
+    public bool PskReporterEnabled { get; set; }
+
+    /// <summary>PSK Reporter UDP host. Not shown in the UI.</summary>
+    public string PskReporterHost { get; set; } = PskReporterClient.DefaultHost;
+
+    /// <summary>PSK Reporter UDP port. 14739 is the analyse-only test listener.</summary>
+    public int PskReporterPort { get; set; } = PskReporterClient.DefaultPort;
 
     /// <summary>Font size for the decode / activity list (points). Default 12.</summary>
     public double DecodeFontSize { get; set; } = 12;

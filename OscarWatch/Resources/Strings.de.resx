@@ -4000,6 +4000,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.ParallelTxEchoDecode.Note">
     <value>In TX-Slots laufen normale Dekodierung und ein später Echo-Durchlauf zusammen, damit die eigene Kopie schneller erscheint. Nutzt mehr CPU in diesem Slot. An lassen, außer der PC kommt nicht mit.</value>
   </data>
+  <data name="Ft4.PskReporter">
+    <value>Dekodierungen an PSK Reporter melden</value>
+  </data>
+  <data name="Ft4.PskReporter.Note">
+    <value>Sendet dekodierte Stationen etwa alle fünf Minuten mit Rufzeichen und Locator Ihrer Station an pskreporter.info. Spots verwenden die Uplink-Frequenz, und der Satellitenname wird als Antenne übermittelt.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Decode-Schriftgröße</value>
   </data>

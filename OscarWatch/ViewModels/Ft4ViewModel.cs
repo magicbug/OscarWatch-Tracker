@@ -71,6 +71,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _audioDopplerTx = ft4.AudioDopplerTx;
         _audioDopplerRx = ft4.AudioDopplerRx;
         _parallelTxEchoDecode = ft4.ParallelTxEchoDecode;
+        _pskReporterEnabled = ft4.PskReporterEnabled;
         _modem.RxAudioHz = _rxAudioHz;
         _pttLeadMs = Math.Clamp(ft4.PttLeadMs, 0, 2000);
         _pttTailMs = Math.Clamp(ft4.PttTailMs, 0, 2000);
@@ -181,6 +182,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _audioDopplerTx = true;
     [ObservableProperty] private bool _audioDopplerRx = true;
     [ObservableProperty] private bool _parallelTxEchoDecode = true;
+    [ObservableProperty] private bool _pskReporterEnabled;
     [ObservableProperty] private int _pttLeadMs = 200;
     [ObservableProperty] private int _pttTailMs = 100;
     [ObservableProperty] private double _decodeFontSize = 12;
@@ -237,6 +239,13 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         _settings.Current.Ft4.ParallelTxEchoDecode = value;
         _settings.RequestSave();
+    }
+
+    partial void OnPskReporterEnabledChanged(bool value)
+    {
+        _settings.Current.Ft4.PskReporterEnabled = value;
+        _settings.RequestSave();
+        _modem.ApplyPskReporterSettings();
     }
 
     partial void OnPttLeadMsChanged(int value)

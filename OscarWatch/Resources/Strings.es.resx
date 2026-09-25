@@ -3996,6 +3996,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.ParallelTxEchoDecode.Note">
     <value>En ranuras de transmisión, ejecuta el decode normal y un pase de eco tardío juntos para que tu propia copia aparezca antes. Usa más CPU en esa ranura. Déjalo activo salvo que el PC vaya justo.</value>
   </data>
+  <data name="Ft4.PskReporter">
+    <value>Enviar decodificaciones a PSK Reporter</value>
+  </data>
+  <data name="Ft4.PskReporter.Note">
+    <value>Envía las estaciones que decodificas a pskreporter.info cada cinco minutos aproximadamente, con tu indicativo y locator de estación. Los spots usan la frecuencia de subida y el nombre del satélite se envía como tu antena.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Tamaño del texto de decode</value>
   </data>

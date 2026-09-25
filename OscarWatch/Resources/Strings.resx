@@ -3996,6 +3996,12 @@ Latest: {1} ({2})</value>
   <data name="Ft4.ParallelTxEchoDecode.Note">
     <value>On transmit slots, run the normal decode and a late-echo pass together so your own copy appears sooner. Uses more CPU for that slot. Leave on unless the PC struggles.</value>
   </data>
+  <data name="Ft4.PskReporter">
+    <value>Report decodes to PSK Reporter</value>
+  </data>
+  <data name="Ft4.PskReporter.Note">
+    <value>Sends stations you decode to pskreporter.info about every five minutes, using your station callsign and grid. Spots use the uplink frequency, and the satellite name is sent as your antenna.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Decode text size</value>
   </data>

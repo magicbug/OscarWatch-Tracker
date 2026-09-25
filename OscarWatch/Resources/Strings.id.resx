@@ -4000,6 +4000,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.ParallelTxEchoDecode.Note">
     <value>Pada slot TX, decode biasa dan pass gema terlambat dijalankan bersama agar salinan Anda muncul lebih cepat. Memakai lebih banyak CPU pada slot itu. Biarkan aktif kecuali PC kewalahan.</value>
   </data>
+  <data name="Ft4.PskReporter">
+    <value>Laporkan decode ke PSK Reporter</value>
+  </data>
+  <data name="Ft4.PskReporter.Note">
+    <value>Mengirim stasiun yang Anda decode ke pskreporter.info kira-kira setiap lima menit, memakai callsign dan grid stasiun Anda. Spot memakai frekuensi uplink, dan nama satelit dikirim sebagai antena Anda.</value>
+  </data>
   <data name="Ft4.DecodeFontSize">
     <value>Ukuran teks decode</value>
   </data>

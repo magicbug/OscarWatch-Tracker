@@ -2,7 +2,9 @@ using System.Collections.ObjectModel;
 using OscarWatch.Core.Ft4;
 using OscarWatch.Core.Logbook;
 using OscarWatch.Core.Models;
+using OscarWatch.Core.Net;
 using OscarWatch.Core.Orbit;
+using OscarWatch.Core.PskReporter;
 using OscarWatch.Core.Services;
 using OscarWatch.Localization;
 using OscarWatch.ViewModels;
@@ -27,6 +29,7 @@ public sealed class Ft4ModemService : IDisposable
     private readonly IGpsService _gps;
     private readonly Ft4AudioService _audio = new();
     private readonly Ft4PttKeyer _ptt;
+    private readonly PskReporterClient _pskReporter = new();
     private readonly object _gate = new();
 
     private CancellationTokenSource? _loopCts;
@@ -83,6 +86,49 @@ public sealed class Ft4ModemService : IDisposable
         _recording = recording;
         _gps = gps;
         _ptt = new Ft4PttKeyer(rig, settings);
+        _pskReporter.Diagnostic += (message, ex) =>
+        {
+            if (ex is null)
+                Log.Information("{Message}", message);
+            else
+                Log.Warning(ex, "{Message}", message);
+        };
+        ApplyPskReporterSettings();
+    }
+
+    /// <summary>Open or close the PSK Reporter socket to match FT4 settings.</summary>
+    public void ApplyPskReporterSettings()
+    {
+        var ft4 = _settings.Current.Ft4;
+        _pskReporter.Configure(ft4.PskReporterEnabled, ft4.PskReporterHost, ft4.PskReporterPort);
+    }
+
+    private void ReportToPskReporter(Ft4DecodedMessage msg)
+    {
+        if (!_pskReporter.IsEnabled)
+            return;
+
+        try
+        {
+            var snap = _snapshot.GetCurrent();
+            if (!Ft4PskReporterSpots.TryCreateSpot(msg, snap, out var spot))
+                return;
+
+            var station = _settings.Current.GroundStation;
+            if (!Ft4PskReporterSpots.TryCreateReceiver(
+                    station.Callsign,
+                    station.GridSquare,
+                    snap.SatelliteName,
+                    $"{OscarWatchHttpClients.ProductName} {OscarWatchHttpClients.GetProductVersion()}",
+                    out var receiver))
+                return;
+
+            _pskReporter.Enqueue(receiver, spot);
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "PSK Reporter spot skipped");
+        }
     }
 
     public ObservableCollection<Ft4DecodedMessage> Decodes { get; } = new();
@@ -1372,6 +1418,7 @@ public sealed class Ft4ModemService : IDisposable
             any = true;
             if (isOwn)
                 foundOwn = true;
+            ReportToPskReporter(msg);
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
                 Decodes.Insert(0, msg);
@@ -1630,6 +1677,7 @@ public sealed class Ft4ModemService : IDisposable
     public void Dispose()
     {
         StopAsync().GetAwaiter().GetResult();
+        _pskReporter.Dispose();
         _ptt.Dispose();
         _audio.Dispose();
     }
