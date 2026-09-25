@@ -95,10 +95,13 @@ public sealed class Ft4QsoSequencer
             if (Ft4MessageCodec.IsReport(extra))
             {
                 ReportReceived = Ft4MessageCodec.NormalizeSnrReport(extra);
-                ReportSent ??= Ft4MessageCodec.FormatSnrReport(decode.SnrDb);
-                CurrentTxMessage = _skipRrr()
-                    ? Ft4MessageCodec.BuildRr73(TheirCall, my)
-                    : Ft4MessageCodec.BuildRrr(TheirCall, my);
+                ReportSent = Ft4MessageCodec.FormatSnrReport(decode.SnrDb);
+                // A plain report still needs ours back (R+NN); only an R+NN is ready for RR73.
+                CurrentTxMessage = !Ft4MessageCodec.IsRogerReport(extra)
+                    ? Ft4MessageCodec.BuildReport(TheirCall, my, Ft4MessageCodec.FormatRogerReport(decode.SnrDb))
+                    : _skipRrr()
+                        ? Ft4MessageCodec.BuildRr73(TheirCall, my)
+                        : Ft4MessageCodec.BuildRrr(TheirCall, my);
                 return;
             }
 

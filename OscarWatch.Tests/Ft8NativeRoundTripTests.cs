@@ -50,6 +50,22 @@ public sealed class Ft8NativeRoundTripTests
         Assert.Contains(decoded, d => d.text.Contains("CQ", StringComparison.OrdinalIgnoreCase));
     }
 
+    [Theory]
+    [InlineData("<R0CM/4> MM9SQL RR73")]
+    [InlineData("<R0CM/4> MM9SQL R-12")]
+    [InlineData("R0CM/4 MM9SQL IO87")]
+    public void Encode_accepts_hashed_compound_call_with_or_without_brackets(string message)
+    {
+        if (!RequireNativeOrReturn())
+            return;
+
+        Assert.True(Ft8Native.TryEncodeFt4(message, 1500f, 12000, out var pcm, out var error), error);
+
+        var decoded = Ft8Native.DecodeFt4(pcm!, 12000, centreHz: 1500);
+        Assert.Contains(decoded, d => d.text.Contains("R0CM/4", StringComparison.OrdinalIgnoreCase)
+            && d.text.Contains("MM9SQL", StringComparison.OrdinalIgnoreCase));
+    }
+
     [Fact]
     public void Encode_report_message()
     {

@@ -198,10 +198,13 @@ internal static class Ft8Native
         if (string.IsNullOrWhiteSpace(message))
             return "";
 
+        // ft8_lib cannot pack the <CALL> display form; the bare call is hashed the same way.
         return message.Trim()
             .Replace('\u2215', '/')
             .Replace('\u2044', '/')
             .Replace('\\', '/')
+            .Replace("<", "", StringComparison.Ordinal)
+            .Replace(">", "", StringComparison.Ordinal)
             .ToUpperInvariant();
     }
 

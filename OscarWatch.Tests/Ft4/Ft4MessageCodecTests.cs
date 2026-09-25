@@ -64,6 +64,17 @@ public sealed class Ft4MessageCodecTests
     }
 
     [Fact]
+    public void Hashed_display_form_is_read_as_the_bare_call()
+    {
+        Assert.Equal("R0CM/4", Ft4MessageCodec.NormalizeCall("<R0CM/4>"));
+        Assert.Equal("", Ft4MessageCodec.NormalizeCall("<...>"));
+        Assert.True(Ft4MessageCodec.TryParse("MM9SQL <R0CM/4> -14", out var to, out var de, out var extra));
+        Assert.Equal("MM9SQL", to);
+        Assert.Equal("R0CM/4", de);
+        Assert.Equal("-14", extra);
+    }
+
+    [Fact]
     public void Portable_callsign_MM9SQL_M_is_preserved()
     {
         Assert.Equal("MM9SQL/M", Ft4MessageCodec.NormalizeCall("mm9sql/m"));

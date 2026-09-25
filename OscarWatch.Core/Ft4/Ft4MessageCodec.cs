@@ -130,11 +130,14 @@ public static partial class Ft4MessageCodec
             return "";
 
         // Operators sometimes paste a Unicode slash; ft8_lib only accepts ASCII '/'.
+        // <CALL> is only how a hashed call is shown; it is sent (and matched) as the bare call,
+        // and <...> is a hash nobody has resolved yet.
         var normalized = call.Trim()
             .Replace('\u2215', '/') // division slash
             .Replace('\u2044', '/') // fraction slash
-            .Replace('\\', '/');
-        return normalized.ToUpperInvariant();
+            .Replace('\\', '/')
+            .Trim('<', '>');
+        return normalized == "..." ? "" : normalized.ToUpperInvariant();
     }
 
     public static string NormalizeGrid(string grid)

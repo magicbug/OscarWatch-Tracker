@@ -172,12 +172,48 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
-    public void Answer_report_with_skip_rrr_sends_rr73()
+    public void Answer_plain_report_sends_roger_report_back()
     {
         var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
-        seq.StartAnswer(Msg("MM9SQL G4ABC -07"), oppositeEvenSlot: true);
-        Assert.Equal("G4ABC MM9SQL RR73", seq.CurrentTxMessage);
+        seq.StartAnswer(Msg("MM9SQL G4ABC -07", snr: -8f), oppositeEvenSlot: true);
+        Assert.Equal("G4ABC MM9SQL R-08", seq.CurrentTxMessage);
         Assert.Equal("-07", seq.ReportReceived);
+        Assert.Equal("-08", seq.ReportSent);
+    }
+
+    [Fact]
+    public void Answer_roger_report_with_skip_rrr_sends_rr73()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        seq.StartAnswer(Msg("MM9SQL G4ABC R-07"), oppositeEvenSlot: true);
+        Assert.Equal("G4ABC MM9SQL RR73", seq.CurrentTxMessage);
+    }
+
+    [Fact]
+    public void Hashed_compound_call_is_worked_without_angle_brackets()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO87", () => true);
+        seq.StartAnswer(Msg("CQ R0CM/4"), oppositeEvenSlot: false);
+        Assert.Equal("R0CM/4 MM9SQL IO87", seq.CurrentTxMessage);
+
+        // Their report comes back with their call shown hashed.
+        Assert.False(seq.OnDecoded(Msg("MM9SQL <R0CM/4> -14", snr: -12f)));
+        Assert.Equal("R0CM/4 MM9SQL R-12", seq.CurrentTxMessage);
+
+        Assert.False(seq.OnDecoded(Msg("MM9SQL <R0CM/4> RR73")));
+        Assert.Equal("R0CM/4 MM9SQL 73", seq.CurrentTxMessage);
+        Assert.True(seq.OnTxCompleted());
+        Assert.Equal("R0CM/4", seq.TheirCall);
+    }
+
+    [Fact]
+    public void Clicking_a_hashed_report_answers_the_bare_call()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO87", () => true);
+        seq.StartAnswer(Msg("MM9SQL <R0CM/4> -14", snr: -12f), oppositeEvenSlot: false);
+
+        Assert.Equal("R0CM/4", seq.TheirCall);
+        Assert.Equal("R0CM/4 MM9SQL R-12", seq.CurrentTxMessage);
     }
 
     [Fact]
