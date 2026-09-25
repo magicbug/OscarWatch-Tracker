@@ -170,8 +170,7 @@ public sealed class Ft4QsoSequencer
         {
             TheirCall = Ft4MessageCodec.NormalizeCall(callDe);
             TheirGrid = Ft4MessageCodec.IsGrid(extra) ? extra : TheirGrid;
-            if (!_holdTxFrequency())
-                TxAudioHz = decode.FreqHz;
+            // Stay on our CQ frequency (WSJT-X). Only answering a decode moves TX.
             // Keep our CQ slot parity. The caller answered on the opposite slot; flipping
             // would put both stations on the same TX slots (WSJT-X then cannot decode us).
             Phase = Ft4QsoPhase.InQso;

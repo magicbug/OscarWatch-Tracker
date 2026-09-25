@@ -94,13 +94,13 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
-    public void Cq_reply_jumps_to_their_hz_when_hold_disabled()
+    public void Cq_reply_keeps_tx_hz_when_hold_disabled()
     {
         var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true, () => false);
         seq.TxAudioHz = 1650;
         seq.StartCq(evenSlot: true);
         seq.OnDecoded(Msg("MM9SQL G4ABC IO91", freq: 1100f));
-        Assert.Equal(1100f, seq.TxAudioHz);
+        Assert.Equal(1650f, seq.TxAudioHz);
     }
 
     [Fact]
