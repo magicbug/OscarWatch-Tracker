@@ -188,16 +188,16 @@
     <value>{0} 小时</value>
   </data>
   <data name="Main.HamsAtRoves">
-    <value>即将进行的 rove</value>
+    <value>未来漫游电台</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
-    <value>没有适用于您 hams.at 位置的可用 rove。</value>
+    <value>没有与您在 hams.at 上的位置有重叠部分的漫游电台。</value>
   </data>
   <data name="Main.HamsAtRoves.LoadFailed">
-    <value>无法从 hams.at 加载 rove。</value>
+    <value>无法从 hams.at 加载漫游电台。</value>
   </data>
   <data name="Main.HamsAtRoves.Unavailable">
-    <value>hams.at 暂时不可用。rove 列表将自动刷新。</value>
+    <value>hams.at 暂时不可用。漫游电台列表将自动刷新。</value>
   </data>
   <data name="Main.HamsAtRoves.InvalidApiKey">
     <value>hams.at API 密钥无效。请在设置中检查。</value>
@@ -215,7 +215,7 @@
     <value>hams.at 返回了意外响应。请稍后再试。</value>
   </data>
   <data name="Main.HamsAtRoves.ResizeGrip">
-    <value>拖动以调整 rove 列表大小</value>
+    <value>拖动以调整漫游电台列表大小</value>
   </data>
   <data name="Pass.Rec">
     <value>录音</value>
@@ -721,7 +721,7 @@
     <value>Cloudlog</value>
   </data>
   <data name="Settings.Tab.Integrations">
-    <value>集成</value>
+    <value>更多API设置</value>
   </data>
   <data name="Settings.Tab.Radio">
     <value>电台</value>
@@ -991,16 +991,16 @@
     <value>日志设置已保存。</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.Intro">
-    <value>记录 QSO 时自动上传到 Cloudlog。Cloudlog URL 和 API 密钥来自设置 → 集成。</value>
+    <value>记录 QSO 时自动上传到 Cloudlog。Cloudlog URL 和 API 密钥来自设置 → 更多API设置。</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.UrlLabel">
     <value>Cloudlog URL</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.UrlNote">
-    <value>在主应用程序的设置 → 集成中配置 URL 和 API 密钥。</value>
+    <value>在主应用程序的设置 → 更多API设置中配置 URL 和 API 密钥。</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.NotConfigured">
-    <value>未配置 — 请打开设置 → 集成</value>
+    <value>未配置，请打开设置 → 更多API设置</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.AutoUpload">
     <value>启用自动 QSO 上传</value>
@@ -1030,7 +1030,7 @@
     <value>无法从 Cloudlog 加载台站位置。</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.ConfigureIntegrationsFirst">
-    <value>启用上传前，请先在设置 → 集成中配置 Cloudlog。</value>
+    <value>启用上传前，请先在设置 → 更多API设置中配置 Cloudlog。</value>
   </data>
   <data name="Logbook.Settings.Cloudlog.StationRequired">
     <value>请选择 Cloudlog 上传的台站位置。</value>
@@ -2740,10 +2740,10 @@
     <value>hams.at</value>
   </data>
   <data name="Settings.HamsAt.Intro">
-    <value>在侧边栏显示 hams.at 的即将进行的卫星 rove。仅列出对您 hams.at 位置可用的警报 — 若列表为空，请在 hams.at 上设置观测位置。API 密钥存储在本地 settings.json 中。</value>
+    <value>在侧边栏中显示 hams.at 的未来漫游电台的时刻表，仅列出对您在 hams.at 上的位置有重叠部分的过境。若该列表为空，请先在 hams.at 上设置电台位置。API 密钥只存储在 settings.json 中。</value>
   </data>
   <data name="Settings.HamsAt.Enable">
-    <value>启用 hams.at 即将进行的 rove</value>
+    <value>启用 hams.at 未来漫游电台</value>
   </data>
   <data name="Settings.HamsAt.ApiKey">
     <value>hams.at API 密钥</value>
@@ -3058,7 +3058,7 @@
     <value>日志本</value>
   </data>
   <data name="Settings.Cloudlog.CheckRoveGrids">
-    <value>在 hams.at rove 上高亮我仍需要的网格</value>
+    <value>在 hams.at 漫游电台上高亮我仍需要的网格</value>
   </data>
   <data name="Settings.Cloudlog.LogbooksLoaded">
     <value>找到 {0} 个日志本</value>
