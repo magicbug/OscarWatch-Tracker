@@ -620,7 +620,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         _lastElevation = null;
         _parked = false;
         _manualParkActive = false;
-        _standbyActive = false;
+        // Standby belongs to the main window, which does not resend it after a disconnect.
         _standbyManualActive = false;
         _trackingHoldAfterStop = false;
         _retryUntilArrived = false;

@@ -326,6 +326,28 @@ public sealed class RotatorControllerTests
     }
 
     [Fact]
+    public void Standby_survives_disconnect_and_does_not_track()
+    {
+        var rotator = new RecordingRotatorDriver();
+        var controller = new RotatorController(_ => rotator);
+        var settings = new RotatorSettings
+        {
+            Enabled = true,
+            Port = "COM3",
+            ParkAfterPass = false
+        };
+
+        controller.SetStandby(true, settings);
+        controller.DrainCommandQueueForTests();
+        controller.Disconnect();
+        controller.DrainCommandQueueForTests();
+
+        controller.UpdateSynchronously(settings, TrackTarget("44909", 120, 30));
+
+        Assert.Equal(0, rotator.SetPositionCallCount);
+    }
+
+    [Fact]
     public void Manual_move_applies_calibration_offsets()
     {
         var rotator = new RecordingRotatorDriver();

@@ -2959,7 +2959,16 @@ public partial class MainViewModel : ViewModelBase
         ShowGreylineOverlay = _settings.Current.ShowGreylineOverlay;
         ShowMultiTrackOverlay = _settings.Current.ShowMultiTrackOverlay;
         ApplyMapCentreFromSettings();
-        RigCatPaused = _settings.Current.Rig.CatUpdatesPaused;
+        if (IsStandby)
+        {
+            // Standby holds CAT paused without persisting it. Restore the saved choice on resume.
+            _rigCatPausedBeforeStandby = _settings.Current.Rig.CatUpdatesPaused;
+            SetRigCatPausedWithoutPersist(true);
+        }
+        else
+        {
+            RigCatPaused = _settings.Current.Rig.CatUpdatesPaused;
+        }
         Frequencies.RefreshSatelliteStatusReportAvailability();
         _liveDisplayTimer?.Start();
         Tick();
