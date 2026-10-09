@@ -96,22 +96,29 @@ public static class DayNightTerminator
     private static double? TerminatorLatitudeDeg(double longitudeDeg, double subsolarLonDeg, double declinationRad)
     {
         var hourAngleRad = (longitudeDeg - subsolarLonDeg) * Math.PI / 180.0;
+        var sinDec = Math.Sin(declinationRad);
 
-        if (Math.Abs(Math.Sin(declinationRad)) < 1e-5)
+        if (Math.Abs(sinDec) < 1e-5)
         {
             var hCos = Math.Cos(hourAngleRad);
             if (Math.Abs(hCos) < 0.02)
                 return longitudeDeg > subsolarLonDeg ? 90.0 : -90.0;
 
-            return hCos > 0 ? -90.0 : 90.0;
+            // Whole meridian is day (cos > 0) or night. Park the terminator on a pole
+            // so the night fill covers the night column and leaves the day column clear.
+            // Northern declination shades south; southern declination shades north.
+            var daySide = hCos > 0;
+            if (declinationRad >= 0)
+                return daySide ? -90.0 : 90.0;
+
+            return daySide ? 90.0 : -90.0;
         }
 
-        var latRad = Math.Atan2(
-            -Math.Cos(declinationRad) * Math.Cos(hourAngleRad),
-            Math.Sin(declinationRad));
-
-        var latDeg = latRad * 180.0 / Math.PI;
-        return Math.Clamp(latDeg, -90.0, 90.0);
+        // atan(y/x) stays in (-90°, 90°). Atan2(y, x) leaves that range when sin(dec) < 0,
+        // and the clamped result shades the daylight side from the September equinox
+        // through to March.
+        var latRad = Math.Atan(-Math.Cos(declinationRad) * Math.Cos(hourAngleRad) / sinDec);
+        return latRad * 180.0 / Math.PI;
     }
 
     private static (double LatDeg, double LonDeg) ComputeSubsolar(DateTime utc)
