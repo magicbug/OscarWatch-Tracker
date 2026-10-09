@@ -120,6 +120,7 @@ public sealed class DiagnosticsBundleBuilderTests
         public void SetHandshakePtt(bool useRts, bool assert) { }
         public void SetFt4SlotGatedDoppler(bool hold) { }
         public void ForceFt4DopplerStep() { }
+        public bool TryForceFt4DopplerStep(DateTime frequencyAtUtc, TimeSpan timeout) => true;
         public bool TryGetUplinkRfPowerWatts(out double watts)
         {
             watts = 0;

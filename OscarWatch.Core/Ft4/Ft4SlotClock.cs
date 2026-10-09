@@ -13,6 +13,17 @@ public static class Ft4SlotClock
     /// </summary>
     public const double Ft4EarlyDecodeSeconds = 6.0;
 
+    /// <summary>
+    /// How long before a transmit slot to start the CAT Doppler write.
+    /// That write shares the radio port with CAT PTT. On a slow CI-V radio
+    /// (IC-9700 with a long CAT delay, Main and Sub) it can take a couple of
+    /// seconds, which used to hold PTT until part-way through the burst.
+    /// The lead starts after the receive burst (0.5 s silence plus the 5.04 s
+    /// waveform) and still leaves a short gap before the next slot.
+    /// </summary>
+    public static readonly TimeSpan PreTransmitCatLead =
+        TimeSpan.FromSeconds(Ft4SlotSeconds - (0.5 + Ft4SymbolBurstSeconds) - 0.16);
+
     public const double Ft8SlotSeconds = 15.0;
 
     public static DateTime SlotStartUtc(DateTime utc, double slotSeconds)

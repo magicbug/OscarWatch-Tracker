@@ -378,8 +378,10 @@
 
       <h3>During each slot</h3>
       <p>
-        The radio's frequency is updated once at the start of each 7.5 second slot, then held still, so it is not
-        being tuned while a message is going out. The small drift inside the slot is taken out in the audio.
+        The radio's frequency is updated once for each 7.5 second slot, then held still, so it is not
+        being tuned while a message is going out. Before a transmit slot that update is sent early, so
+        keying the radio (CAT PTT, for example on the IC-9700) is not held up behind it.
+        The small drift inside the slot is taken out in the audio.
         You can turn that audio correction off for transmit or receive under <strong>Settings → Modem</strong>.
         Leave it on.
       </p>

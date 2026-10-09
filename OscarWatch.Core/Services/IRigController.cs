@@ -33,6 +33,14 @@ public interface IRigController
     void ForceFt4DopplerStep();
 
     /// <summary>
+    /// Apply one FT4 Doppler write aimed at <paramref name="frequencyAtUtc"/> and wait
+    /// up to <paramref name="timeout"/> for the rig thread to finish it.
+    /// Returns false when it did not finish in time. The write may still be running,
+    /// and a later <see cref="SetPtt"/> is sent before the rest of that write.
+    /// </summary>
+    bool TryForceFt4DopplerStep(DateTime frequencyAtUtc, TimeSpan timeout);
+
+    /// <summary>
     /// Read the uplink radio’s set RF power in approximate watts when the driver supports it
     /// (e.g. ICOM CI-V 0x14 0x0A mapped via band maximum). Returns false when unsupported,
     /// disconnected, or the read failed.

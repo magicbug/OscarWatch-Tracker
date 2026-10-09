@@ -100,6 +100,22 @@ public sealed class RigController : IRigController, IDisposable
     /// <summary>FT4 modem holds CAT Doppler between explicit slot-boundary steps.</summary>
     private bool _ft4SlotGatedDoppler;
     private bool _ft4ForceDopplerStep;
+    /// <summary>True while a forced FT4 step should write frequencies and skip the dial read.</summary>
+    private bool _ft4DirectDopplerStep;
+    /// <summary>When set, the forced step uses range rate at this instant rather than "now".</summary>
+    private DateTime? _ft4DopplerInstantUtc;
+    /// <summary>Set when CAT PTT (or handshake PTT) interrupts a Doppler write. Skip further CI-V.</summary>
+    private bool _dopplerPreempted;
+    private readonly object _urgentLock = new();
+    private const int UrgentNone = 0;
+    private const int UrgentPttOn = 1;
+    private const int UrgentPttOff = 2;
+    private const int UrgentHandshake = 3;
+    private int _urgentKind;
+    private int _urgentGeneration;
+    private int _appliedUrgentGeneration;
+    private bool _urgentHandshakeUseRts;
+    private bool _urgentHandshakeAssert;
     private DateTime _ignoreDialUntilUtc = DateTime.MinValue;
     private DateTime _lastDialChangeUtc = DateTime.MinValue;
     /// <summary>When the receive dial last became still (or first sampled). MinValue means not yet observed.</summary>
@@ -173,20 +189,63 @@ public sealed class RigController : IRigController, IDisposable
         Enqueue(new RigCommand(RigCommandKind.ApplySelectedCtcss, settings, context));
     }
 
-    public void SetPtt(bool transmit) =>
-        Enqueue(new RigCommand(RigCommandKind.SetPtt, pttTransmit: transmit));
+    public void SetPtt(bool transmit)
+    {
+        var command = new RigCommand(RigCommandKind.SetPtt, pttTransmit: transmit);
+        lock (_urgentLock)
+        {
+            command.Generation = ++_urgentGeneration;
+            _urgentKind = transmit ? UrgentPttOn : UrgentPttOff;
+        }
 
-    public void SetHandshakePtt(bool useRts, bool assert) =>
-        Enqueue(new RigCommand(
+        Enqueue(command);
+    }
+
+    public void SetHandshakePtt(bool useRts, bool assert)
+    {
+        var command = new RigCommand(
             RigCommandKind.SetHandshakePtt,
             handshakeUseRts: useRts,
-            handshakeAssert: assert));
+            handshakeAssert: assert);
+        lock (_urgentLock)
+        {
+            command.Generation = ++_urgentGeneration;
+            _urgentKind = UrgentHandshake;
+            _urgentHandshakeUseRts = useRts;
+            _urgentHandshakeAssert = assert;
+        }
+
+        Enqueue(command);
+    }
 
     public void SetFt4SlotGatedDoppler(bool hold) =>
         Enqueue(new RigCommand(RigCommandKind.SetFt4SlotGatedDoppler, ft4HoldDoppler: hold));
 
     public void ForceFt4DopplerStep() =>
         Enqueue(new RigCommand(RigCommandKind.ForceFt4DopplerStep));
+
+    public bool TryForceFt4DopplerStep(DateTime frequencyAtUtc, TimeSpan timeout)
+    {
+        if (timeout <= TimeSpan.Zero)
+            return false;
+
+        using var done = new ManualResetEventSlim(false);
+        var command = new RigCommand(RigCommandKind.ForceFt4DopplerStep)
+        {
+            Completed = done,
+            DopplerAtUtc = frequencyAtUtc
+        };
+        try
+        {
+            Enqueue(command);
+        }
+        catch (ObjectDisposedException)
+        {
+            return false;
+        }
+
+        return done.Wait(timeout);
+    }
 
     public bool TryGetUplinkRfPowerWatts(out double watts)
     {
@@ -383,11 +442,14 @@ public sealed class RigController : IRigController, IDisposable
                     break;
 
                 case RigCommandKind.SetPtt:
-                    ApplyPttOnWorker(command.PttTransmit);
-                    break;
-
                 case RigCommandKind.SetHandshakePtt:
-                    ApplyHandshakePttOnWorker(command.HandshakeUseRts, command.HandshakeAssert);
+                    TryConsumeUrgentRigAction();
+                    if (command.Generation > _appliedUrgentGeneration)
+                    {
+                        ApplyQueuedRigAction(command);
+                        _appliedUrgentGeneration = command.Generation;
+                    }
+
                     break;
 
                 case RigCommandKind.SetFt4SlotGatedDoppler:
@@ -402,7 +464,17 @@ public sealed class RigController : IRigController, IDisposable
                     {
                         _ft4ForceDopplerStep = true;
                         _forceFrequencyApply = true;
-                        RunLoopIteration(ignoreDopplerSuspend: true);
+                        _ft4DirectDopplerStep = true;
+                        _ft4DopplerInstantUtc = command.DopplerAtUtc;
+                        try
+                        {
+                            RunLoopIteration(ignoreDopplerSuspend: true);
+                        }
+                        finally
+                        {
+                            _ft4DirectDopplerStep = false;
+                            _ft4DopplerInstantUtc = null;
+                        }
                     }
                     break;
 
@@ -446,7 +518,14 @@ public sealed class RigController : IRigController, IDisposable
         finally
         {
             RefreshStatusSnapshot();
-            command.Completed?.Set();
+            try
+            {
+                command.Completed?.Set();
+            }
+            catch (ObjectDisposedException)
+            {
+                // The waiter timed out and released the event. The command itself has finished.
+            }
         }
     }
 
@@ -724,10 +803,26 @@ public sealed class RigController : IRigController, IDisposable
         // OrbitDeck-style FT4: hold the dial within a slot; only write on ForceFt4DopplerStep.
         if (_ft4SlotGatedDoppler && !_ft4ForceDopplerStep)
             return;
+        var directStep = _ft4DirectDopplerStep;
         _ft4ForceDopplerStep = false;
+        _dopplerPreempted = false;
+
+        // CAT PTT shares this thread. Send it before a frequency write so a slow
+        // CI-V step cannot keep the radio in receive for the first seconds of an FT4 slot.
+        if (TryConsumeUrgentRigAction(duringDoppler: true))
+            return;
 
         if (_cachedContext.TrackState.LookAngles is null)
             return;
+
+        if (directStep)
+        {
+            // Skip the dial read and the second VFO select. Those extra CI-V turns are what
+            // pushed IC-9700 CAT PTT several seconds into the FT4 transmit slot.
+            WriteDopplerFrequencies(_cachedSettings, _cachedContext);
+            TryLogPeriodicSnapshot(_cachedSettings, _cachedContext);
+            return;
+        }
 
         TryClearPassbandOnOrbitalAos(_cachedSettings, _cachedContext);
 
@@ -1188,6 +1283,9 @@ public sealed class RigController : IRigController, IDisposable
         if (!CanWriteDoppler(settings, writeRx, writeTx))
             return false;
 
+        if (TryConsumeUrgentRigAction(duringDoppler: true))
+            return false;
+
         var wroteRx = false;
         var wroteTx = false;
         if (settings.Type == RigType.KenwoodTs2000 && _useMainSub && _driver is KenwoodTs2000Driver kenwoodDoppler
@@ -1224,6 +1322,8 @@ public sealed class RigController : IRigController, IDisposable
         {
             if (writeRx)
                 wroteRx = WriteRx(settings, rxHz);
+            if (TryConsumeUrgentRigAction(duringDoppler: true))
+                writeTx = false;
             if (writeTx)
             {
                 wroteTx = WriteTx(settings, txHz);
@@ -2217,12 +2317,17 @@ public sealed class RigController : IRigController, IDisposable
 
     private void RestoreOperatorVfo()
     {
+        if (_dopplerPreempted)
+            return;
+
         var driver = RxDriver();
         if (driver is null)
             return;
 
         driver.SelectVfo(ReceiveVfo(), force: _interactive);
-        if (!_interactive)
+        // The second select is a settle for the operator's dial. During an FT4 slot step it
+        // only adds CI-V time on the same port CAT PTT has to use.
+        if (!_interactive || _ft4DirectDopplerStep)
             return;
 
         var delayMs = Math.Clamp(_cachedSettings.ReceiveCatDelayMs(), 50, 200);
@@ -2331,6 +2436,19 @@ public sealed class RigController : IRigController, IDisposable
     private DopplerLeadRangeRates ResolveRangeRatesForDoppler(RigTrackingContext context)
     {
         var site = _settingsService?.Current.GroundStation ?? new GroundStation();
+        if (_ft4DopplerInstantUtc is { } at && _propagator is not null)
+        {
+            try
+            {
+                var rate = _propagator.GetLookAngles(context.TrackState.NoradId, site, at).RangeRateKmPerSec;
+                return new DopplerLeadRangeRates(rate, rate, 0);
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, "FT4 Doppler step could not propagate range rate at {Utc:o}", at);
+            }
+        }
+
         return DopplerCatLead.ResolveRangeRates(
             _propagator,
             _cachedSettings,
@@ -2712,6 +2830,64 @@ public sealed class RigController : IRigController, IDisposable
     private IRigDriver? TxDriver() =>
         _cachedSettings.DualRadioEnabled ? _uplinkDriver : _driver;
 
+    /// <summary>
+    /// Send a CAT or handshake PTT that arrived while this thread was inside a Doppler write.
+    /// Returns true when something was sent. The caller should not start another CI-V command:
+    /// many rigs ignore tuning while keyed, and the extra commands delay the unkey.
+    /// </summary>
+    private bool TryConsumeUrgentRigAction(bool duringDoppler = false)
+    {
+        int kind;
+        int generation;
+        bool useRts;
+        bool assert;
+        lock (_urgentLock)
+        {
+            kind = _urgentKind;
+            if (kind == UrgentNone)
+                return false;
+            generation = _urgentGeneration;
+            useRts = _urgentHandshakeUseRts;
+            assert = _urgentHandshakeAssert;
+            _urgentKind = UrgentNone;
+        }
+
+        if (generation <= _appliedUrgentGeneration)
+            return false;
+
+        switch (kind)
+        {
+            case UrgentPttOn:
+                ApplyPttOnWorker(true);
+                break;
+            case UrgentPttOff:
+                ApplyPttOnWorker(false);
+                break;
+            case UrgentHandshake:
+                ApplyHandshakePttOnWorker(useRts, assert);
+                break;
+            default:
+                return false;
+        }
+
+        _appliedUrgentGeneration = generation;
+        if (duringDoppler)
+        {
+            _dopplerPreempted = true;
+            Log.Information("FT4 PTT went out during a Doppler write, so the rest of that write was skipped");
+        }
+
+        return true;
+    }
+
+    private void ApplyQueuedRigAction(RigCommand command)
+    {
+        if (command.Kind == RigCommandKind.SetHandshakePtt)
+            ApplyHandshakePttOnWorker(command.HandshakeUseRts, command.HandshakeAssert);
+        else
+            ApplyPttOnWorker(command.PttTransmit);
+    }
+
     private void ApplyPttOnWorker(bool transmit)
     {
         try
@@ -2910,6 +3086,8 @@ public sealed class RigController : IRigController, IDisposable
         public bool HandshakeUseRts { get; }
         public bool HandshakeAssert { get; }
         public bool Ft4HoldDoppler { get; }
+        public int Generation { get; set; }
+        public DateTime? DopplerAtUtc { get; set; }
         public double? RfPowerWatts { get; set; }
         public bool Succeeded { get; set; }
         public ManualResetEventSlim? Completed { get; set; }

@@ -54,6 +54,7 @@ public sealed class Ft4ModemService : IDisposable
     private DateTime _currentSlotStart = DateTime.MinValue;
     private bool _txThisSlot;
     private long _txKickedSlotTicks; // slot start of the last KickTransmit, set from the TX timer thread
+    private long _dopplerPreparedSlotTicks; // TX slot whose CAT Doppler write already finished
     private double _txKickedAudioHz; // TX audio Hz sent in that slot; set before _txKickedSlotTicks
     private DateTime _lastEchoCalibrationSlot = DateTime.MinValue;
     private bool _decodeQueuedThisSlot;
@@ -963,11 +964,13 @@ public sealed class Ft4ModemService : IDisposable
                         }
                     }
 
-                    // Audio first when the soft timer missed; Doppler can follow.
+                    // Audio first when the soft timer missed. CAT PTT is queued inside KickTransmit
+                    // so it is not stuck behind this slot's Doppler write.
                     if (!alreadyTx && !IsTuning)
                         KickTransmit(slotStart, ct);
                     SyncSlotGate(sessionRunning: true);
-                    _rig.ForceFt4DopplerStep();
+                    if (!CatTransmitOwnsTheRig(slotStart))
+                        _rig.ForceFt4DopplerStep();
                     RefreshClockFromGps();
 
                     if (previousSamples is not null && recordSlot)
@@ -1119,6 +1122,11 @@ public sealed class Ft4ModemService : IDisposable
         Interlocked.Exchange(ref _txKickedAudioHz, Math.Clamp(seq.TxAudioHz, 200, 3000));
         Interlocked.Exchange(ref _txKickedSlotTicks, slotStart.Ticks);
         _txThisSlot = true;
+
+        // Queue CAT PTT before playback and before the caller can enqueue Doppler.
+        // The 0.5 s silence at the start of the waveform is the lead-in.
+        if (CatPttSharesRig())
+            _ptt.KeyNow();
         _txCts?.Cancel();
         _txCts?.Dispose();
         _txCts = CancellationTokenSource.CreateLinkedTokenSource(loopCt);
@@ -1142,10 +1150,11 @@ public sealed class Ft4ModemService : IDisposable
             }
             catch (OperationCanceledException)
             {
-                // Halt Tx / stop.
+                _ptt.UnkeyNow();
             }
             catch (Exception ex)
             {
+                _ptt.UnkeyNow();
                 Log.Warning(ex, "FT4 transmit task failed");
                 Status = _l.Get(
                     "Ft4.Status.TxError",
@@ -1167,6 +1176,7 @@ public sealed class Ft4ModemService : IDisposable
         {
             if (playedEarly)
                 _audio.StopPlayback();
+            await _ptt.UnkeyAsync(CancellationToken.None).ConfigureAwait(false);
             return;
         }
 
@@ -1178,7 +1188,8 @@ public sealed class Ft4ModemService : IDisposable
         var keySeconds = leadInSeconds + Ft4SlotClock.Ft4SymbolBurstSeconds + 0.15;
         var keyedUntil = slotStart.AddSeconds(keySeconds);
 
-        // Without a prepared buffer, build before keying so CAT keying time does not add to encode time.
+        // Without a prepared buffer, build before the lead-in wait. CAT PTT is already queued
+        // at the slot boundary when that method shares the rig port.
         var ft4 = _settings.Current.Ft4;
         float[]? ready = null;
         var readyRate = 0;
@@ -1213,14 +1224,15 @@ public sealed class Ft4ModemService : IDisposable
                 if (!built)
                 {
                     ReportEncodeFailure(seq.CurrentTxMessage, encodeError);
+                    await _ptt.UnkeyAsync(ct).ConfigureAwait(false);
                     return;
                 }
             }
         }
 
-        await _ptt.KeyAsync(ct).ConfigureAwait(false);
         try
         {
+            await _ptt.KeyAsync(ct).ConfigureAwait(false);
             if (!playedEarly)
             {
                 if (ready is not null && _audio.TryPlayPrepared(ready, readyRate))
@@ -1315,6 +1327,65 @@ public sealed class Ft4ModemService : IDisposable
         _scheduledTxSlot = DateTime.MinValue;
     }
 
+    /// <summary>CAT and the CAT-port handshake line share the rig thread with Doppler writes.</summary>
+    private bool CatPttSharesRig()
+    {
+        var method = _settings.Current.Ft4.PttMethod;
+        return method is Ft4PttMethod.Cat or Ft4PttMethod.CatPortHandshake;
+    }
+
+    /// <summary>
+    /// True when this boundary is a CAT transmit slot, so a Doppler write must not take the rig port.
+    /// The write for that slot is started <see cref="Ft4SlotClock.PreTransmitCatLead"/> beforehand.
+    /// </summary>
+    private bool CatTransmitOwnsTheRig(DateTime slotStart)
+    {
+        if (!CatPttSharesRig())
+            return false;
+        if (Interlocked.Read(ref _dopplerPreparedSlotTicks) == slotStart.Ticks)
+            return true;
+        return Interlocked.Read(ref _txKickedSlotTicks) == slotStart.Ticks;
+    }
+
+    private void WaitAndKickTransmit(DateTime slot, CancellationToken ct, CancellationToken loopCt)
+    {
+        if (CatPttSharesRig())
+        {
+            var dopplerAt = slot - Ft4SlotClock.PreTransmitCatLead;
+            Ft4SlotWait.UntilUtc(dopplerAt, ct);
+            if (ct.IsCancellationRequested)
+                return;
+
+            var budget = slot - Ft4Clock.UtcNow - TimeSpan.FromMilliseconds(40);
+            if (budget > TimeSpan.FromMilliseconds(80))
+            {
+                var stepped = _rig.TryForceFt4DopplerStep(slot, budget);
+                if (ct.IsCancellationRequested)
+                    return;
+                if (stepped)
+                {
+                    Interlocked.Exchange(ref _dopplerPreparedSlotTicks, slot.Ticks);
+                    Log.Information(
+                        "FT4 CAT Doppler stepped {EarlyMs:0} ms before the TX slot",
+                        (slot - Ft4Clock.UtcNow).TotalMilliseconds);
+                }
+                else
+                {
+                    Log.Information(
+                        "FT4 CAT Doppler step was still running at the TX slot, so PTT goes first");
+                }
+            }
+        }
+
+        Ft4SlotWait.UntilUtc(slot, ct);
+        if (ct.IsCancellationRequested)
+            return;
+
+        KickTransmit(slot, loopCt);
+        if (!CatPttSharesRig())
+            _rig.ForceFt4DopplerStep();
+    }
+
     /// <summary>
     /// Soft-schedule KickTransmit onto a dedicated waiter so a slow capture loop cannot hold TX.
     /// </summary>
@@ -1352,11 +1423,7 @@ public sealed class Ft4ModemService : IDisposable
             {
                 try
                 {
-                    Ft4SlotWait.UntilUtc(slot, ct);
-                    if (ct.IsCancellationRequested)
-                        return;
-                    KickTransmit(slot, loopCt);
-                    _rig.ForceFt4DopplerStep();
+                    WaitAndKickTransmit(slot, ct, loopCt);
                 }
                 catch (OperationCanceledException)
                 {

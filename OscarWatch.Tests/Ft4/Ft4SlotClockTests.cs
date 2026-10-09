@@ -41,4 +41,13 @@ public sealed class Ft4SlotClockTests
         Assert.True(Ft4SlotClock.Ft4EarlyDecodeSeconds > Ft4SlotClock.Ft4SymbolBurstSeconds);
         Assert.True(Ft4SlotClock.Ft4EarlyDecodeSeconds < Ft4SlotClock.Ft4SlotSeconds);
     }
+
+    [Fact]
+    public void PreTransmitCatLead_starts_after_the_receive_burst()
+    {
+        var burstEndSeconds = 0.5 + Ft4SlotClock.Ft4SymbolBurstSeconds;
+        var leadSeconds = Ft4SlotClock.PreTransmitCatLead.TotalSeconds;
+        Assert.InRange(leadSeconds, 1.0, 2.2);
+        Assert.True(Ft4SlotClock.Ft4SlotSeconds - leadSeconds > burstEndSeconds + 0.1);
+    }
 }

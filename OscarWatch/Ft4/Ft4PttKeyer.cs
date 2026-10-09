@@ -29,26 +29,44 @@ public sealed class Ft4PttKeyer : IDisposable
 
     public Ft4PttMethod Method => _settings.Current.Ft4.PttMethod;
 
+    /// <summary>
+    /// Assert PTT without the lead-in wait. CAT and the CAT-port handshake line share the
+    /// rig thread with Doppler, so the command has to be queued at the slot boundary,
+    /// before that write, or the radio stays in receive for the start of the burst.
+    /// </summary>
+    public void KeyNow() => TryAssert();
+
     public async Task KeyAsync(CancellationToken cancellationToken = default)
     {
-        if (_keyed)
+        if (!TryAssert())
             return;
+
+        // VOX keys from the audio itself. The lead wait is for CAT and hardware lines,
+        // and TryAssert already returned false for VOX on a fresh key (see below).
+        var lead = Math.Clamp(_settings.Current.Ft4.PttLeadMs, 0, 2000);
+        if (lead > 0)
+            await Task.Delay(lead, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Returns false when PTT was already asserted, or when VOX needs no lead wait.</summary>
+    private bool TryAssert()
+    {
+        if (_keyed)
+            return false;
 
         var ft4 = _settings.Current.Ft4;
         switch (ft4.PttMethod)
         {
             case Ft4PttMethod.Vox:
                 _keyed = true;
-                return;
+                return false;
 
             case Ft4PttMethod.Cat:
                 _rig.SetPtt(true);
-                _keyed = true;
                 break;
 
             case Ft4PttMethod.CatPortHandshake:
                 _rig.SetHandshakePtt(ft4.PttLine == Ft4PttLine.Rts, assert: !ft4.PttInvert);
-                _keyed = true;
                 break;
 
             case Ft4PttMethod.SeparateComPort:
@@ -57,18 +75,15 @@ public sealed class Ft4PttKeyer : IDisposable
                     EnsureSeparatePort(ft4);
                     SetLine(_separatePort!, ft4.PttLine, assert: !ft4.PttInvert);
                 }
-                _keyed = true;
                 break;
 
             case Ft4PttMethod.Manual:
                 _manualPrompt?.Invoke("key");
-                _keyed = true;
                 break;
         }
 
-        var lead = Math.Clamp(ft4.PttLeadMs, 0, 2000);
-        if (lead > 0)
-            await Task.Delay(lead, cancellationToken).ConfigureAwait(false);
+        _keyed = true;
+        return true;
     }
 
     public async Task UnkeyAsync(CancellationToken cancellationToken = default)
