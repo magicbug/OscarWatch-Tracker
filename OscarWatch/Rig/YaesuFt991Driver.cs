@@ -48,6 +48,16 @@ public class YaesuFt991Driver : IRigDriver
     }
 
     public RigType RigType => _rigType;
+
+    public bool TryConfirmIdentity()
+    {
+        if (!_transport.IsOpen)
+            return false;
+
+        var reply = _transport.Transact("ID;", _catDelayMs);
+        return YaesuFt991CatCodec.TryParseIdentification(reply ?? "", out var id)
+            && YaesuFt991CatCodec.IsExpectedIdentification(_rigType, id);
+    }
     public bool IsConnected => _transport.IsOpen;
     public bool SupportsTracking => true;
     public bool SupportsVfoExchange => false;

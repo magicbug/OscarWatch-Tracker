@@ -81,4 +81,33 @@ public sealed class RigControllerConnectFailureTests
         Assert.Equal(RigStatusKind.SerialPortNotFound, status.StatusKind);
         Assert.Equal("/dev/ttyUSB3", status.StatusPort);
     }
+
+    [Fact]
+    public void Opened_port_that_is_not_the_selected_radio_does_not_send_cat()
+    {
+        var driver = new RecordingRigDriver { ConfirmIdentity = false };
+        var controller = new RigController(_ => driver);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.IcomIc9700,
+            Port = "COM30"
+        };
+
+        controller.PublishContext(settings, null);
+        controller.DrainCommandQueueForTests();
+
+        var status = controller.GetStatus();
+        Assert.Equal(RigStatusKind.IdentityMismatch, status.StatusKind);
+        Assert.Equal("COM30", status.StatusPort);
+        Assert.Equal("IC-9700", status.StatusDetail);
+        Assert.False(status.IsConnected);
+        Assert.Equal(0, driver.SetFrequencyCallCount);
+        Assert.Equal(0, driver.SetSatelliteModeCallCount);
+        Assert.Equal(1, driver.OpenCallCount);
+
+        controller.PublishContext(settings, null);
+        controller.DrainCommandQueueForTests();
+        Assert.Equal(1, driver.OpenCallCount);
+    }
 }

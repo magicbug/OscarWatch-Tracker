@@ -915,6 +915,9 @@
   <data name="Rig.NotConnectedPortDetail">
     <value>电台未连接 ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>已打开 {0}，但它没有以 {1} 的身份应答。</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>未找到串口 ({0})。请检查 USB 连接并刷新端口列表。</value>
   </data>

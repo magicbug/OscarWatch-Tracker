@@ -437,6 +437,11 @@
               <Grid ColumnDefinitions="*,Auto">
                   <StackPanel Grid.Column="0" Spacing="6">
                     <TextBlock Classes="live-panel-label" Text="{loc:Localize Key=Main.Rotator}" />
+                    <TextBlock Text="{Binding RotatorLinkStatusText}"
+                               FontSize="12"
+                               TextWrapping="Wrap"
+                               IsVisible="{Binding ShowRotatorLinkStatus}"
+                               Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
                     <Grid ColumnDefinitions="*,*">
                       <StackPanel Grid.Column="0" Spacing="2" HorizontalAlignment="Center">
                         <TextBlock Text="{Binding RotatorAzimuthText}"

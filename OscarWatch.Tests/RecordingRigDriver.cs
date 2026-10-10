@@ -26,9 +26,12 @@ internal sealed class RecordingRigDriver : IRigDriver
     public RigType RigType => RigType.Dummy;
     public bool IsConnected => true;
     public bool SupportsTracking => true;
+    public bool ConfirmIdentity { get; set; } = true;
+    public int OpenCallCount { get; private set; }
+    public bool TryConfirmIdentity() => ConfirmIdentity;
     public bool IsSatelliteModeActive { get; set; } = true;
 
-    public void Open() { }
+    public void Open() => OpenCallCount++;
 
     public long? ReadFrequencyHz(RigVfo vfo)
     {

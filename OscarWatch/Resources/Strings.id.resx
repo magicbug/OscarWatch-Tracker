@@ -925,6 +925,9 @@ Lanjutkan?</value>
   <data name="Rig.NotConnectedPortDetail">
     <value>Rig tidak terhubung ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>{0} terbuka, tetapi tidak menjawab sebagai {1}.</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>Port serial tidak ditemukan ({0}). Periksa kabel USB dan segarkan daftar port.</value>
   </data>

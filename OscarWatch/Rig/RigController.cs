@@ -127,6 +127,8 @@ public sealed class RigController : IRigController, IDisposable
     private int _kenwoodFaFbFailCount;
     private DateTime _suspendConnectUntilUtc = DateTime.MinValue;
     private string? _lastConnectError;
+    private string? _identityMismatchDevice;
+    private volatile bool _forceIdentityRecheck;
     private SerialPortConnectErrorKind _lastConnectErrorKind = SerialPortConnectErrorKind.None;
     private string? _lastConnectErrorPort;
     private string? _lastConnectEndpoint;
@@ -285,6 +287,12 @@ public sealed class RigController : IRigController, IDisposable
         }
 
         return command.Succeeded;
+    }
+
+    public void RequireIdentityRecheck()
+    {
+        _forceIdentityRecheck = true;
+        _suspendConnectUntilUtc = DateTime.MinValue;
     }
 
     public void Disconnect()
@@ -1395,6 +1403,19 @@ public sealed class RigController : IRigController, IDisposable
         var key = RigSettings.IsFlexNetworkRadio(settings.Type)
             ? $"{settings.Type}|{settings.NetworkHost}|{settings.NetworkPort}|{settings.FlexRadioSerial}|{settings.CatDelayMs}"
             : $"{settings.Type}|{settings.Port}|{settings.BaudRate}|{settings.CivAddress}";
+        if (_forceIdentityRecheck)
+        {
+            _forceIdentityRecheck = false;
+            if (_driver is not null && _connectedKey == key && _driver.IsConnected)
+            {
+                if (ConfirmDriver(_driver, settings.Port, endpointLabel: null, settings.Type))
+                    return true;
+
+                TearDownRig();
+                return false;
+            }
+        }
+
         if (_driver is not null && _connectedKey == key && _driver.IsConnected)
             return true;
 
@@ -1405,14 +1426,21 @@ public sealed class RigController : IRigController, IDisposable
             _driver.Open();
             _connectedKey = key;
             ConfigureFlexPassInitCancellation(_driver);
-            if (_driver.IsConnected)
+            if (ConfirmDriver(_driver, settings.Port, endpointLabel: null, settings.Type))
             {
                 Log.Information("Rig connected: type={RigType}, endpoint={Endpoint}", settings.Type, FormatSingleEndpoint(settings));
                 _lastConnectError = null;
                 _lastConnectErrorKind = SerialPortConnectErrorKind.None;
                 _lastConnectErrorPort = null;
                 _lastConnectEndpoint = null;
+                _identityMismatchDevice = null;
                 return true;
+            }
+
+            if (_identityMismatchDevice is not null)
+            {
+                TearDownRig();
+                return false;
             }
 
             var endpoint = FormatSingleEndpoint(settings);
@@ -1457,6 +1485,31 @@ public sealed class RigController : IRigController, IDisposable
             && _uplinkConnectedKey == upKey
             && _uplinkDriver.IsConnected;
 
+        if (_forceIdentityRecheck)
+        {
+            _forceIdentityRecheck = false;
+            if (downOk && upOk)
+            {
+                if (ConfirmDriver(
+                        _downlinkDriver!,
+                        settings.Downlink.Port,
+                        SerialPortConnectErrorHelper.EndpointDownlink,
+                        settings.Downlink.Type)
+                    && ConfirmDriver(
+                        _uplinkDriver!,
+                        settings.Uplink.Port,
+                        SerialPortConnectErrorHelper.EndpointUplink,
+                        settings.Uplink.Type))
+                {
+                    _identityMismatchDevice = null;
+                    return true;
+                }
+
+                TearDownRig();
+                return false;
+            }
+        }
+
         if (downOk && upOk)
             return true;
 
@@ -1475,13 +1528,21 @@ public sealed class RigController : IRigController, IDisposable
             _downlinkDriver = CreateEndpointDriver(settings.Downlink);
             _downlinkDriver.Open();
             _downlinkConnectedKey = downKey;
-            if (!_downlinkDriver.IsConnected)
-            {
-                RecordConnectFailure(
-                    SerialPortConnectErrorKind.Generic,
+            if (!ConfirmDriver(
+                    _downlinkDriver,
                     settings.Downlink.Port,
                     SerialPortConnectErrorHelper.EndpointDownlink,
-                    $"Opened {FormatEndpointLabel(settings.Downlink)} but the link is not active");
+                    settings.Downlink.Type))
+            {
+                if (_identityMismatchDevice is null)
+                {
+                    RecordConnectFailure(
+                        SerialPortConnectErrorKind.Generic,
+                        settings.Downlink.Port,
+                        SerialPortConnectErrorHelper.EndpointDownlink,
+                        $"Opened {FormatEndpointLabel(settings.Downlink)} but the link is not active");
+                }
+
                 TearDownRig();
                 return false;
             }
@@ -1489,13 +1550,21 @@ public sealed class RigController : IRigController, IDisposable
             _uplinkDriver = CreateEndpointDriver(settings.Uplink);
             _uplinkDriver.Open();
             _uplinkConnectedKey = upKey;
-            if (!_uplinkDriver.IsConnected)
-            {
-                RecordConnectFailure(
-                    SerialPortConnectErrorKind.Generic,
+            if (!ConfirmDriver(
+                    _uplinkDriver,
                     settings.Uplink.Port,
                     SerialPortConnectErrorHelper.EndpointUplink,
-                    $"Opened {FormatEndpointLabel(settings.Uplink)} but the link is not active");
+                    settings.Uplink.Type))
+            {
+                if (_identityMismatchDevice is null)
+                {
+                    RecordConnectFailure(
+                        SerialPortConnectErrorKind.Generic,
+                        settings.Uplink.Port,
+                        SerialPortConnectErrorHelper.EndpointUplink,
+                        $"Opened {FormatEndpointLabel(settings.Uplink)} but the link is not active");
+                }
+
                 TearDownRig();
                 return false;
             }
@@ -1504,6 +1573,7 @@ public sealed class RigController : IRigController, IDisposable
             _lastConnectErrorKind = SerialPortConnectErrorKind.None;
             _lastConnectErrorPort = null;
             _lastConnectEndpoint = null;
+            _identityMismatchDevice = null;
             return true;
         }
         catch (Exception ex)
@@ -1524,12 +1594,43 @@ public sealed class RigController : IRigController, IDisposable
         }
     }
 
+    private bool ConfirmDriver(IRigDriver driver, string? port, string? endpointLabel, RigType type)
+    {
+        bool confirmed;
+        try
+        {
+            confirmed = driver.IsConnected && driver.TryConfirmIdentity();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Rig identity check failed on {Port}", port);
+            confirmed = false;
+        }
+
+        if (confirmed)
+            return true;
+
+        if (!driver.IsConnected)
+            return false;
+
+        var name = DeviceIdentityNames.Radio(type);
+        Log.Warning("Rig on {Port} did not answer as {Radio}", port, name);
+        RecordConnectFailure(
+            SerialPortConnectErrorKind.Generic,
+            port,
+            endpointLabel,
+            $"Opened {port} but it did not answer as {name}.");
+        _identityMismatchDevice = name;
+        return false;
+    }
+
     private void RecordConnectFailure(
         SerialPortConnectErrorKind kind,
         string? port,
         string? endpointLabel,
         string? englishDetail = null)
     {
+        _identityMismatchDevice = null;
         _lastConnectErrorKind = kind;
         _lastConnectErrorPort = port;
         _lastConnectEndpoint = endpointLabel;
@@ -3008,6 +3109,9 @@ public sealed class RigController : IRigController, IDisposable
 
     private (RigStatusKind Kind, string? Port, string? Detail) DescribeConnectionFailure(RigSettings settings)
     {
+        if (_identityMismatchDevice is not null)
+            return (RigStatusKind.IdentityMismatch, _lastConnectErrorPort, _identityMismatchDevice);
+
         if (_lastConnectErrorKind == SerialPortConnectErrorKind.DualSamePort)
             return (RigStatusKind.DualRadioSamePort, _lastConnectErrorPort, null);
 

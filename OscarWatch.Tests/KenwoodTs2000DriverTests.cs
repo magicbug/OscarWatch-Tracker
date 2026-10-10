@@ -370,4 +370,20 @@ public sealed class KenwoodTs2000DriverTests
         Assert.Equal(KenwoodCatCodec.VfoSelectMemoryCode, transport.MainVfoSelect);
         Assert.Equal('0', transport.SubVfoSelect);
     }
+
+    [Fact]
+    public void Identity_accepts_ts2000_and_ts2000x_only()
+    {
+        var transport = new RecordingKenwoodCatTransport();
+        var driver = new KenwoodTs2000Driver(transport);
+        driver.Open();
+
+        Assert.True(driver.TryConfirmIdentity());
+
+        transport.IdentificationReply = "ID020;";
+        Assert.True(driver.TryConfirmIdentity());
+
+        transport.IdentificationReply = "ID000;";
+        Assert.False(driver.TryConfirmIdentity());
+    }
 }

@@ -925,6 +925,9 @@ LOS: {2}
   <data name="Rig.NotConnectedPortDetail">
     <value>Рация не подключена ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>Порт {0} открыт, но устройство не ответило как {1}.</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>Последовательный порт не найден ({0}). Проверьте USB-кабель и обновите список портов.</value>
   </data>

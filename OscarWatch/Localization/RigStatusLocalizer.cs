@@ -51,6 +51,11 @@ public static class RigStatusLocalizer
                 return string.IsNullOrWhiteSpace(status.StatusDetail)
                     ? localization.Get("Rig.FlexControlFailed")
                     : localization.Get("Rig.FlexControlFailedDetail", status.StatusDetail);
+            case RigStatusKind.IdentityMismatch:
+                return localization.Get(
+                    "Hardware.IdentityMismatch",
+                    status.StatusPort ?? "",
+                    status.StatusDetail ?? "");
             case RigStatusKind.NotConnected:
                 if (!string.IsNullOrWhiteSpace(status.StatusPort) && !string.IsNullOrWhiteSpace(status.StatusDetail))
                     return localization.Get("Rig.NotConnectedPortDetail", status.StatusPort, status.StatusDetail);

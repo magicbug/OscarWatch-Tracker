@@ -50,6 +50,19 @@ public class YaesuFt817Driver : IRigDriver
 
     public RigType RigType => _rigType;
     public bool IsConnected => _transport.IsOpen;
+
+    public bool TryConfirmIdentity()
+    {
+        if (!_transport.IsOpen)
+            return false;
+
+        var response = _transport.QueryFrame(YaesuFt817CatCodec.PollFreqMode, _catDelayMs);
+        if (response is null || response.Length < 5)
+            return false;
+
+        var hz = YaesuFt817CatCodec.DecodeFrequency10Hz(response);
+        return hz is >= 100_000 and <= 470_000_000;
+    }
     public bool SupportsTracking => true;
     public bool SupportsVfoExchange => false;
 

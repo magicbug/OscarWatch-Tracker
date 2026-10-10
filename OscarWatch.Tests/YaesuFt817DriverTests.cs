@@ -165,4 +165,21 @@ public sealed class YaesuFt817DriverTests
             transport.SentFrames,
             f => f.SequenceEqual(YaesuFt817CatCodec.BuildCtcssOnCommand(encoderOnly: true)));
     }
+
+    [Fact]
+    public void Identity_requires_a_decoded_amateur_frequency()
+    {
+        var transport = new RecordingYaesuCatTransport();
+        var driver = new YaesuFt817Driver(RigType.YaesuFt817, transport);
+        driver.Open();
+
+        var frame = new byte[5];
+        YaesuFt817CatCodec.EncodeFrequency10Hz(145_900_000, frame);
+        frame[4] = 0x01;
+        transport.NextQueryResponse = frame;
+        Assert.True(driver.TryConfirmIdentity());
+
+        transport.NextQueryResponse = new byte[5];
+        Assert.False(driver.TryConfirmIdentity());
+    }
 }

@@ -209,4 +209,27 @@ public sealed class IcomCivDriverTests
 
         Assert.Equal(["060501"], transport.SentCommandBodies);
     }
+
+    [Fact]
+    public void Ic9700_identity_accepts_model_byte_from_configured_address()
+    {
+        var transport = new RecordingIcomCivTransport();
+        transport.CommandResponses.Enqueue([0xFE, 0xFE, 0x00, 0x60, 0x19, 0x00, 0xA2, 0xFD]);
+        var driver = new IcomIc9700Driver(transport);
+        driver.Open();
+
+        Assert.True(driver.TryConfirmIdentity());
+        Assert.Equal("1900", transport.SentCommandBodies[^1]);
+    }
+
+    [Fact]
+    public void Ic9700_identity_rejects_ack_without_a_model_byte()
+    {
+        var transport = new RecordingIcomCivTransport();
+        transport.CommandResponses.Enqueue([0xFE, 0xFE, 0x60, 0x00, 0xFB, 0xFD]);
+        var driver = new IcomIc9700Driver(transport);
+        driver.Open();
+
+        Assert.False(driver.TryConfirmIdentity());
+    }
 }

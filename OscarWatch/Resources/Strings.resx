@@ -921,6 +921,9 @@ Continue?</value>
   <data name="Rig.NotConnectedPortDetail">
     <value>Rig not connected ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>Opened {0}, but it did not answer as {1}.</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>Serial port not found ({0}). Check the USB cable and refresh the port list.</value>
   </data>

@@ -22,6 +22,12 @@ public sealed class UrcTcpRotator : IRotatorDriver
 
     public void Open() => _client.Open();
 
+    public bool TryConfirmLink()
+    {
+        var (az, el) = GetPosition();
+        return az is not null || el is not null;
+    }
+
     public void SetPosition(double azimuthDeg, double elevationDeg, RotatorSettings settings)
     {
         var az = Math.Clamp(azimuthDeg, 0, settings.MaxAzimuthDeg);

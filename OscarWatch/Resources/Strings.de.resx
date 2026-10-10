@@ -925,6 +925,9 @@ Fortfahren?</value>
   <data name="Rig.NotConnectedPortDetail">
     <value>Funkgerät nicht verbunden ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>{0} wurde geöffnet, hat aber nicht als {1} geantwortet.</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>Serieller Port nicht gefunden ({0}). USB-Kabel prüfen und Portliste aktualisieren.</value>
   </data>

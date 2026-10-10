@@ -6,6 +6,14 @@ public interface IRigDriver : IDisposable
 {
     bool IsConnected { get; }
     RigType RigType { get; }
+
+    /// <summary>
+    /// One read-only check that this open link is the selected radio.
+    /// False means close the port and do not send control commands.
+    /// Drivers that already prove the link in <see cref="Open"/> keep the default.
+    /// </summary>
+    bool TryConfirmIdentity() => true;
+
     void Open();
     /// <summary>Read frequency for a specific VFO (selects that VFO first on Icom).</summary>
     long? ReadFrequencyHz(RigVfo vfo);

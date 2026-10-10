@@ -19,4 +19,6 @@ public enum RigStatusKind
     FlexControlFailed,
     /// <summary>TS-2000 cross-band tracking on FA/FB because SA; did not confirm SATL.</summary>
     Ts2000SatlUnconfirmed,
+    /// <summary>The COM port opened, but the radio did not answer as the selected model.</summary>
+    IdentityMismatch,
 }

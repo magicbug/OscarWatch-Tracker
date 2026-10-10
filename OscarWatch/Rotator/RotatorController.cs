@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using OscarWatch.Core.Hardware;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Orbit;
 using OscarWatch.Core.Rotator;
@@ -67,6 +68,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
     private RotatorSettings _cachedSettings = new();
     private SatelliteTrackState? _cachedTarget;
     private RotatorConnectionKind _connectionKind = RotatorConnectionKind.Disconnected;
+    private DateTime _identityRetryAfterUtc = DateTime.MinValue;
+    private string? _identityFailedEndpoint;
     private string? _connectionDetail;
     private RotatorPositionStatus _positionStatus = new(false, null, null);
 
@@ -569,9 +572,14 @@ public sealed class RotatorController : IRotatorController, IDisposable
     {
         _cachedSettings = settings;
         _standbyActive = active;
+        _identityRetryAfterUtc = DateTime.MinValue;
+        _identityFailedEndpoint = null;
 
         if (!active)
         {
+            if (_rotator is not null && !ConfirmRotatorLink(settings))
+                return;
+
             _lastTargetNoradId = null;
             _lastAzimuth = null;
             _lastElevation = null;
@@ -589,6 +597,9 @@ public sealed class RotatorController : IRotatorController, IDisposable
         _standbyManualActive = false;
 
         if (!settings.Enabled || !settings.HasConfiguredEndpoint)
+            return;
+
+        if (_rotator is not null && !ConfirmRotatorLink(settings))
             return;
 
         if (!EnsureConnected(settings))
@@ -817,13 +828,20 @@ public sealed class RotatorController : IRotatorController, IDisposable
             && ConnectionIdentityMatches(settings))
             return true;
 
+        var endpoint = FormatEndpoint(settings);
+        if (DateTime.UtcNow < _identityRetryAfterUtc
+            && string.Equals(_identityFailedEndpoint, endpoint, StringComparison.OrdinalIgnoreCase))
+            return false;
+
         TearDownRotator();
 
-        var endpoint = FormatEndpoint(settings);
         try
         {
             _rotator = _driverFactory?.Invoke(settings) ?? RotatorDriverFactory.Create(settings);
             _rotator.Open();
+            if (!ConfirmRotatorLink(settings))
+                return false;
+
             _connectedPort = settings.Port;
             _connectedElevationPort = settings.ElevationPort;
             _connectedBaudRate = settings.BaudRate;
@@ -831,6 +849,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
             _connectedNetworkPort = settings.NetworkPort;
             _connectedUsesNetworkEndpoint = settings.UsesNetworkEndpoint;
             _connectedType = settings.Type;
+            _identityRetryAfterUtc = DateTime.MinValue;
+            _identityFailedEndpoint = null;
             return true;
         }
         catch (Exception ex)
@@ -841,6 +861,36 @@ public sealed class RotatorController : IRotatorController, IDisposable
             TearDownRotator();
             return false;
         }
+    }
+
+    private bool ConfirmRotatorLink(RotatorSettings settings)
+    {
+        if (_rotator is null)
+            return false;
+
+        var endpoint = FormatEndpoint(settings);
+        bool confirmed;
+        try
+        {
+            confirmed = _rotator.TryConfirmLink();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Rotator identity check failed on {Endpoint}", endpoint);
+            confirmed = false;
+        }
+
+        if (confirmed)
+            return true;
+
+        var name = DeviceIdentityNames.Rotator(settings.Type);
+        Log.Warning("Rotator on {Endpoint} did not answer as {Rotator}", endpoint, name);
+        _connectionKind = RotatorConnectionKind.IdentityMismatch;
+        _connectionDetail = endpoint;
+        _identityFailedEndpoint = endpoint;
+        _identityRetryAfterUtc = DateTime.UtcNow.AddSeconds(3);
+        TearDownRotator();
+        return false;
     }
 
     private bool ConnectionIdentityMatches(RotatorSettings settings)

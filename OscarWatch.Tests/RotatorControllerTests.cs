@@ -873,6 +873,50 @@ public sealed class RotatorControllerTests
         Assert.Equal(10, rotator.LastAzimuthDeg);
     }
 
+    [Fact]
+    public void Update_does_not_move_when_the_port_is_not_the_rotator()
+    {
+        var rotator = new RecordingRotatorDriver { ConfirmLink = false };
+        using var controller = new RotatorController(_ => rotator);
+        var settings = new RotatorSettings
+        {
+            Enabled = true,
+            Port = "COM3",
+            Type = RotatorType.YaesuGs232,
+            TrackStartElevationDeg = 5
+        };
+
+        controller.UpdateSynchronously(settings, TrackTarget("25544", 45, 20));
+
+        Assert.Equal(0, rotator.SetPositionCallCount);
+        var status = controller.GetPositionStatus();
+        Assert.False(status.IsConnected);
+        Assert.Equal(RotatorConnectionKind.IdentityMismatch, status.ConnectionKind);
+        Assert.Equal("COM3", status.ConnectionDetail);
+    }
+
+    [Fact]
+    public void Standby_does_not_park_when_the_port_is_not_the_rotator()
+    {
+        var rotator = new RecordingRotatorDriver { ConfirmLink = false };
+        using var controller = new RotatorController(_ => rotator);
+        var settings = new RotatorSettings
+        {
+            Enabled = true,
+            Port = "COM3",
+            Type = RotatorType.YaesuGs232,
+            ParkAzimuthDeg = 180,
+            ParkElevationDeg = 0,
+            ParkAfterPass = true
+        };
+
+        controller.SetStandby(true, settings);
+        controller.DrainCommandQueueForTests();
+
+        Assert.Equal(0, rotator.SetPositionCallCount);
+        Assert.Equal(RotatorConnectionKind.IdentityMismatch, controller.GetPositionStatus().ConnectionKind);
+    }
+
     private static SatelliteTrackState TrackTarget(
         string noradId,
         double azimuthDeg,

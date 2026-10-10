@@ -54,6 +54,12 @@ public interface IRigController
     /// </summary>
     bool TrySetUplinkRfPowerWatts(double watts);
 
+    /// <summary>
+    /// The next connect must read the radio identity again, even if the port is already open.
+    /// Used when leaving standby, before CAT writes resume.
+    /// </summary>
+    void RequireIdentityRecheck();
+
     void Disconnect();
 
     /// <summary>Disconnect and block until the rig worker has torn down drivers and cleared tracking state.</summary>

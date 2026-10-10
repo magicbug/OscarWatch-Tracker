@@ -26,6 +26,9 @@ internal sealed class RecordingKenwoodCatTransport : IKenwoodCatTransport
     /// <summary>Optional per-command rejection hook for tests (return true to reject).</summary>
     public Func<string, bool>? ShouldRejectSet { get; set; }
 
+    /// <summary>Reply for <c>ID;</c>. 019 is a TS-2000; 020 is a TS-2000X.</summary>
+    public string IdentificationReply { get; set; } = "ID019;";
+
     public char MainVfoSelect { get; set; } = '0';
     public char SubVfoSelect { get; set; } = '0';
     public List<string> SentCommands { get; } = [];
@@ -80,6 +83,7 @@ internal sealed class RecordingKenwoodCatTransport : IKenwoodCatTransport
             "FA;" => KenwoodCatCodec.BuildSetFrequencyCommand('A', FaHz),
             "FB;" => KenwoodCatCodec.BuildSetFrequencyCommand('B', FbHz),
             "PC;" => $"PC{RfPowerWatts:D3};",
+            "ID;" => IdentificationReply,
             _ when TryRememberPowerSet(normalized) => normalized,
             _ => KenwoodCatCodec.IsReadCommand(normalized) ? null : normalized
         };

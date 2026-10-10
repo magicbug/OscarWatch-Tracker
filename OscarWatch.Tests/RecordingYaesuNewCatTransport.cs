@@ -49,6 +49,9 @@ internal sealed class RecordingYaesuNewCatTransport : OscarWatch.Rig.IYaesuNewCa
         if (cmd is "PC;")
             return $"PC{RfPowerWatts:D3};";
 
+        if (cmd is "ID;")
+            return "ID0570;";
+
         // Reads without a canned reply return null; sets must not use Transact in production.
         return null;
     }

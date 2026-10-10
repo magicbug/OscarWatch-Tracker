@@ -7,6 +7,12 @@ namespace OscarWatch.Rig;
 public abstract class IcomCivDriverBase : IRigDriver
 {
     private static readonly ILogger Log = Serilog.Log.ForContext<IcomCivDriverBase>();
+
+    /// <summary>
+    /// Model byte for the identity probe in flight. Test transports read this so a stand-in
+    /// radio can answer as the driver under test. Production serial I/O ignores it.
+    /// </summary>
+    internal static readonly AsyncLocal<byte> ExpectedIdentityModel = new();
     private IIcomCivTransport? _transport;
     private readonly IIcomCivTransport? _injectedTransport;
     private readonly int _catDelayMs;
@@ -55,6 +61,35 @@ public abstract class IcomCivDriverBase : IRigDriver
 
     public bool IsConnected => _transport?.IsOpen == true;
     public abstract bool SupportsTracking { get; }
+
+    public bool TryConfirmIdentity()
+    {
+        if (_transport is null || !IsConnected)
+            return false;
+        if (!IcomCivModelIds.TryGet(RigType, out var expected))
+            return false;
+
+        ExpectedIdentityModel.Value = expected;
+        var response = _transport.WriteCommand([0x19, 0x00], _catDelayMs);
+        if (!IcomCivCodec.TryDecodeTransceiverId(response, CivAddress, out var modelId))
+        {
+            Log.Warning("CI-V identity read on {Port} did not return a transceiver ID", Port);
+            return false;
+        }
+
+        if (modelId != expected)
+        {
+            Log.Warning(
+                "CI-V identity on {Port} was {Actual:X2}, expected {Expected:X2} for {RigType}",
+                Port,
+                modelId,
+                expected,
+                RigType);
+            return false;
+        }
+
+        return true;
+    }
 
     public void Open()
     {

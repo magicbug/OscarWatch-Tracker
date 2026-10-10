@@ -55,14 +55,12 @@ internal sealed class IcomSerialTransport : IIcomCivTransport
             Thread.Sleep(delayMs);
             return ReadResponse(delayMs);
         }
-        catch (TimeoutException ex)
-        {
-            NoteWriteTimeout(ex);
-            return [];
-        }
         catch (Exception ex)
         {
-            Log.Warning(ex, "CI-V write failed on {PortName}", _port.PortName);
+            if (ex is TimeoutException or IOException)
+                NoteWriteFailure(ex);
+            else
+                Log.Warning(ex, "CI-V write failed on {PortName}", _port.PortName);
             return [];
         }
         finally
@@ -71,18 +69,18 @@ internal sealed class IcomSerialTransport : IIcomCivTransport
         }
     }
 
-    private void NoteWriteTimeout(TimeoutException ex)
+    private void NoteWriteFailure(Exception ex)
     {
         _writeTimeoutStreak++;
         if (_writeTimeoutStreak < 3)
         {
-            Log.Warning(ex, "CI-V write timed out on {PortName} ({Streak}/3)", _port.PortName, _writeTimeoutStreak);
+            Log.Warning(ex, "CI-V write failed on {PortName} ({Streak}/3)", _port.PortName, _writeTimeoutStreak);
             return;
         }
 
         Log.Warning(
             ex,
-            "CI-V write timed out on {PortName} — closing port so OscarWatch can reconnect (check CI-V cable, baud, and that no other app uses this COM port)",
+            "CI-V write failed on {PortName}. Closing the port so OscarWatch can reconnect. Check the CI-V cable, baud, and that no other app uses this COM port.",
             _port.PortName);
         ClosePort();
     }

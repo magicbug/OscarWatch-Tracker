@@ -45,6 +45,10 @@ public static class RigStatusText
                 return string.IsNullOrWhiteSpace(status.StatusDetail)
                     ? "FlexRadio satellite setup failed"
                     : $"FlexRadio satellite setup failed: {status.StatusDetail}";
+            case RigStatusKind.IdentityMismatch:
+                return string.IsNullOrWhiteSpace(status.StatusPort)
+                    ? $"Opened the radio port, but it did not answer as {status.StatusDetail}."
+                    : $"Opened {status.StatusPort}, but it did not answer as {status.StatusDetail}.";
             case RigStatusKind.NotConnected:
                 var baseMessage = string.IsNullOrWhiteSpace(status.StatusPort)
                     ? "Rig not connected"

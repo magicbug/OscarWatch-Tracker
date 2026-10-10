@@ -13,6 +13,10 @@ public static class RotatorStatusText
                 return "No COM port selected";
             case RotatorConnectionKind.Connected:
                 return "Connected";
+            case RotatorConnectionKind.IdentityMismatch:
+                return string.IsNullOrWhiteSpace(status.ConnectionDetail)
+                    ? "Opened the rotator port, but it did not answer as the selected rotator."
+                    : $"Opened {status.ConnectionDetail}, but it did not answer as the selected rotator.";
             case RotatorConnectionKind.ConnectFailed:
                 return string.IsNullOrWhiteSpace(status.ConnectionDetail)
                     ? "Rotator not connected"

@@ -24,6 +24,10 @@ internal sealed class RecordingRotatorDriver : IRotatorDriver
     public int? ForcedAzimuth { get; set; }
     public int? ForcedElevation { get; set; }
 
+    public bool ConfirmLink { get; set; } = true;
+
+    public bool TryConfirmLink() => ConfirmLink;
+
     public void Open() => OpenCallCount++;
 
     public void SetPosition(double azimuthDeg, double elevationDeg, RotatorSettings settings)

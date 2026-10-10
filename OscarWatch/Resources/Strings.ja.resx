@@ -855,6 +855,9 @@
   <data name="Rig.NotConnectedPortDetail">
     <value>無線機未接続 ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>{0} を開きましたが、{1} として応答しませんでした。</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>シリアルポートが見つかりません ({0})。USBケーブルを確認し、ポート一覧を更新してください。</value>
   </data>

@@ -26,6 +26,12 @@ public sealed class SaebrtRotator : IRotatorDriver
 
     public void Open() => _port.Open();
 
+    /// <summary>
+    /// SAEBRTrack treats a position query as a goto to 0,0. There is no safe read,
+    /// so the link cannot be proved before the first move command.
+    /// </summary>
+    public bool TryConfirmLink() => true;
+
     public void SetPosition(double azimuthDeg, double elevationDeg, RotatorSettings settings)
     {
         var az = Math.Clamp(azimuthDeg, 0, settings.MaxAzimuthDeg);

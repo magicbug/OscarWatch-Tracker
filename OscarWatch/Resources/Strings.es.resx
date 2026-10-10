@@ -915,6 +915,9 @@
   <data name="Rig.NotConnectedPortDetail">
     <value>Radio no conectada ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>Se abrió {0}, pero no respondió como {1}.</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>Puerto serie no encontrado ({0}). Comprueba el cable USB y actualiza la lista de puertos.</value>
   </data>

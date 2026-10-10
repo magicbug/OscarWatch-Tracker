@@ -29,6 +29,12 @@ public sealed class SpidRotator : IRotatorDriver
         _expectSetPositionResponse = expectSetPositionResponse;
     }
 
+    public bool TryConfirmLink()
+    {
+        var (az, el) = GetPosition();
+        return az is not null || el is not null;
+    }
+
     public void Open()
     {
         _port.Open();

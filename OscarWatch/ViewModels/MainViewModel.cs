@@ -128,6 +128,12 @@ public partial class MainViewModel : ViewModelBase
     private string _rotatorElevationText = "—";
 
     [ObservableProperty]
+    private string _rotatorLinkStatusText = "";
+
+    [ObservableProperty]
+    private bool _showRotatorLinkStatus;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ParkRotatorCommand))]
     [NotifyPropertyChangedFor(nameof(RotatorParkButtonText))]
     private bool _isRotatorParked;
@@ -1417,6 +1423,14 @@ public partial class MainViewModel : ViewModelBase
         var status = _rotator.GetPositionStatus();
         RotatorAzimuthText = FormatRotatorAzimuthText(status);
         RotatorElevationText = FormatRotatorElevationText(status);
+        var rotatorIdentityMismatch = status.ConnectionKind == RotatorConnectionKind.IdentityMismatch;
+        ShowRotatorLinkStatus = rotatorIdentityMismatch;
+        RotatorLinkStatusText = rotatorIdentityMismatch
+            ? _l.Get(
+                "Hardware.IdentityMismatch",
+                status.ConnectionDetail ?? "",
+                DeviceIdentityNames.Rotator(_settings.Current.Rotator.Type))
+            : "";
         IsRotatorParked = status.IsParked;
         CanParkRotator = status.IsConnected;
         CanStopRotator = status.IsConnected;
@@ -1550,6 +1564,7 @@ public partial class MainViewModel : ViewModelBase
             var restorePaused = _rigCatPausedBeforeStandby ?? false;
             _rigCatPausedBeforeStandby = null;
             RigCatPaused = restorePaused;
+            _rig.RequireIdentityRecheck();
             _rotator.SetStandby(false, _settings.Current.Rotator);
             RefreshRigFromOverlay(reinitializePass: true);
         }

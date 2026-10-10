@@ -194,4 +194,17 @@ public sealed class YaesuFt991DriverTests
         Assert.True(driver.TryReadRfPowerWatts(out var watts));
         Assert.Equal(20.0, watts);
     }
+
+    [Fact]
+    public void Identity_accepts_0570_and_rejects_garbage()
+    {
+        var transport = new RecordingYaesuNewCatTransport();
+        var driver = new YaesuFt991Driver(RigType.YaesuFt991, transport);
+        driver.Open();
+
+        Assert.True(driver.TryConfirmIdentity());
+
+        transport.Responses.Enqueue("?;");
+        Assert.False(driver.TryConfirmIdentity());
+    }
 }

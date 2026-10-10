@@ -9,4 +9,6 @@ public enum RotatorConnectionKind
     Disconnected,
     Connected,
     ConnectFailed,
+    /// <summary>The port opened, but a position read did not answer as this rotator.</summary>
+    IdentityMismatch,
 }

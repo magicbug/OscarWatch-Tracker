@@ -73,6 +73,33 @@ public static class KenwoodCatCodec
         };
     }
 
+    /// <summary>TS-2000 <c>ID;</c> reply is <c>ID019;</c>. 020 is the TS-2000X variant.</summary>
+    public static bool TryParseIdentification(ReadOnlySpan<char> response, out string id) =>
+        TryParseFixedIdentification(response, digitCount: 3, out id);
+
+    public static bool TryParseFixedIdentification(ReadOnlySpan<char> response, int digitCount, out string id)
+    {
+        id = "";
+        var text = response.Trim();
+        if (text.Length < 2 + digitCount)
+            return false;
+        if (text.Length < 2 || (text[0] != 'I' && text[0] != 'i') || (text[1] != 'D' && text[1] != 'd'))
+            return false;
+
+        var digits = text[2..].TrimEnd(';').Trim();
+        if (digits.Length != digitCount)
+            return false;
+
+        foreach (var c in digits)
+        {
+            if (c is < '0' or > '9')
+                return false;
+        }
+
+        id = digits.ToString();
+        return true;
+    }
+
     public static bool IsReadCommand(string command)
     {
         var body = command.Trim().TrimEnd(';');

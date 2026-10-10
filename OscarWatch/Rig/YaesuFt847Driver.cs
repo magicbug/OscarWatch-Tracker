@@ -34,6 +34,20 @@ public sealed class YaesuFt847Driver : IRigDriver
 
     public RigType RigType => RigType.YaesuFt847;
     public bool IsConnected => _transport.IsOpen;
+
+    public bool TryConfirmIdentity()
+    {
+        if (!_transport.IsOpen)
+            return false;
+
+        // CAT ON is sent by Open. This poll is the proof something answered as an FT-847.
+        var response = _transport.QueryFrame(YaesuFt847CatCodec.PollMainFreqMode, _catDelayMs);
+        if (response is null || response.Length < 5)
+            return false;
+
+        var hz = YaesuFt847CatCodec.DecodeFrequency10Hz(response);
+        return hz is >= 100_000 and <= 470_000_000;
+    }
     public bool SupportsTracking => true;
     public bool SupportsVfoExchange => false;
 

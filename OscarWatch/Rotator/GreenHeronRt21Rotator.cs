@@ -29,6 +29,12 @@ public sealed class GreenHeronRt21Rotator : IRotatorDriver
         _elevation = elevationTransport;
     }
 
+    public bool TryConfirmLink()
+    {
+        var (az, el) = GetPosition();
+        return az is not null && el is not null;
+    }
+
     public void Open()
     {
         _azimuth.Open();

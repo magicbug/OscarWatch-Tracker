@@ -36,6 +36,7 @@ internal sealed class RecordingIcomCivTransport : IIcomCivTransport
             0x07 => [0xFE, 0xFE, 0x60, 0x00, 0xFB, 0xFD],
             0x14 when body.Length >= 4 && body[1] == 0x0A => HandleWriteRfPower(body),
             0x14 when body.Length >= 2 && body[1] == 0x0A => BuildRfPowerResponse(RfPowerLevel),
+            0x19 when body.Length >= 2 && body[1] == 0x00 => BuildIdentityResponse(),
             _ => [0xFE, 0xFE, 0x60, 0x00, 0xFB, 0xFD]
         };
     }
@@ -81,6 +82,13 @@ internal sealed class RecordingIcomCivTransport : IIcomCivTransport
         body.Length >= 6
             ? [0xFE, 0xFE, 0x60, 0x00, 0x00, body[1], body[2], body[3], body[4], body[5], 0xFB, 0xFD]
             : [0xFE, 0xFE, 0x60, 0x00, 0xFB, 0xFD];
+
+    private static byte[] BuildIdentityResponse()
+    {
+        // Injected CI-V drivers use from-address 0x60. The model byte is whatever the driver just asked for.
+        var model = IcomCivDriverBase.ExpectedIdentityModel.Value;
+        return [0xFE, 0xFE, 0x00, 0x60, 0x19, 0x00, model, 0xFD];
+    }
 
     private static byte[] BuildReadResponse(long hz)
     {

@@ -925,6 +925,9 @@ LOS: {2}
   <data name="Rig.NotConnectedPortDetail">
     <value>ยังไม่ได้เชื่อมต่อวิทยุ ({0}): {1}</value>
   </data>
+  <data name="Hardware.IdentityMismatch">
+    <value>เปิด {0} แล้ว แต่ไม่ได้ตอบกลับเป็น {1}</value>
+  </data>
   <data name="Rig.SerialPortNotFound">
     <value>ไม่พบพอร์ตอนุกรม ({0}) ตรวจสอบสาย USB และรีเฟรชรายการพอร์ต</value>
   </data>
