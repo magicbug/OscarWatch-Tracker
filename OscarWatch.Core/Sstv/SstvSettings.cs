@@ -38,6 +38,15 @@ public sealed class SstvSettings
     /// <summary>Look for a picture from its sync pulses when the VIS header was lost. Default on.</summary>
     public bool DetectWithoutVis { get; set; } = true;
 
+    /// <summary>
+    /// When true, SSTV starts listening when the focused satellite rises above
+    /// <see cref="AutoStartElevationDeg"/>, and stops when it sets. Default off.
+    /// </summary>
+    public bool AutoStartEnabled { get; set; }
+
+    /// <summary>Elevation the focused satellite must reach before an automatic start. Default 5 degrees.</summary>
+    public double AutoStartElevationDeg { get; set; } = 5;
+
     public int? WindowWidth { get; set; }
     public int? WindowHeight { get; set; }
 

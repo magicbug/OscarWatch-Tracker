@@ -2340,6 +2340,18 @@
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>ヘッダーを受信できなかった場合 (パス開始時の弱い信号)、規則的な同期パルスから画像とモードを検出します。</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>自動開始</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>選択中の衛星が昇ったら開始</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>メインウィンドウで選択中の衛星が下の仰角を超えると受信を開始し、沈むと停止します。この画面を開いているときだけ動作します。ウィンドウを閉じても、自動保存がオンであればピクチャは保存されます。</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>開始する仰角（度）</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>画像を自動保存</value>
   </data>

@@ -22,6 +22,7 @@ public class YaesuFt991Driver : IRigDriver
     private long _lastSubHz;
     private long _lastVfoAHz;
     private long _lastVfoBHz;
+    private bool _outOfRangeWarned;
 
     public YaesuFt991Driver(
         RigType rigType,
@@ -112,6 +113,14 @@ public class YaesuFt991Driver : IRigDriver
 
     public bool SetFrequencyHz(long hz)
     {
+        // Reject before caching or sending so a bad computed value never becomes the "last" frequency.
+        if (hz < YaesuFt991CatCodec.MinFrequencyHz || hz > YaesuFt991CatCodec.MaxFrequencyHz)
+        {
+            WarnOutOfRangeOnce(hz);
+            return false;
+        }
+
+        _outOfRangeWarned = false;
         StoreFrequencyHz(_currentVfo, hz);
         if (!_transport.IsOpen)
             return true;
@@ -133,6 +142,27 @@ public class YaesuFt991Driver : IRigDriver
             Log.Warning(ex, "{RigType} frequency {Hz} out of CAT range", _rigType, hz);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Tracking retries every tick, so a persistent bad value would otherwise log on every write.
+    /// The first rejection in a run is logged at warning level, and repeats drop to debug.
+    /// </summary>
+    private void WarnOutOfRangeOnce(long hz)
+    {
+        if (_outOfRangeWarned)
+        {
+            Log.Debug("{RigType} frequency {Hz} Hz still outside CAT range; not sent", _rigType, hz);
+            return;
+        }
+
+        _outOfRangeWarned = true;
+        Log.Warning(
+            "{RigType} frequency {Hz} Hz is outside CAT range {MinHz}-{MaxHz} Hz; not sent",
+            _rigType,
+            hz,
+            YaesuFt991CatCodec.MinFrequencyHz,
+            YaesuFt991CatCodec.MaxFrequencyHz);
     }
 
     public void SelectVfo(RigVfo vfo, bool force = false)

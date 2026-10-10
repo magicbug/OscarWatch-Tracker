@@ -661,6 +661,18 @@ LOS: {2}
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>เมื่อส่วนหัวหาย (สัญญาณอ่อนตอนเริ่มผ่าน) ให้จับภาพและโหมดจากพัลส์ซิงค์ที่สม่ำเสมอ</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>เริ่มอัตโนมัติ</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>เริ่มเมื่อดาวเทียมที่เลือกขึ้นเหนือขอบฟ้า</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>เริ่มรับสัญญาณเมื่อดาวเทียมที่เลือกในหน้าต่างหลักขึ้นสูงเกินมุมเงยด้านล่าง และหยุดเมื่อดาวเทียมตกลับขอบฟ้า ทำงานเฉพาะขณะที่หน้าต่างนี้เปิดอยู่ หากเปิดการบันทึกอัตโนมัติไว้ ภาพจะถูกเก็บไว้แม้ปิดหน้าต่าง</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>เริ่มเมื่อสูงกว่า (องศา)</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>บันทึกภาพอัตโนมัติ</value>
   </data>

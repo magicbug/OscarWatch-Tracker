@@ -661,6 +661,18 @@ LOS: {2}
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>Если заголовок потерян (слабый сигнал в начале пролёта), распознать изображение и режим по регулярным синхроимпульсам.</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>Автоматический запуск</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>Запускать, когда выбранный спутник восходит</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>Начинает приём, когда спутник, выбранный в главном окне, поднимается выше указанной ниже высоты, и останавливает приём, когда он заходит. Работает только при открытом окне. Автосохранение сохраняет снимки, даже если окно закрыто.</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>Запуск выше (градусы)</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>Сохранять автоматически</value>
   </data>

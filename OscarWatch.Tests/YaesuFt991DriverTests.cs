@@ -31,6 +31,49 @@ public sealed class YaesuFt991DriverTests
     }
 
     [Fact]
+    public void SetFrequencyHz_negative_frequency_is_rejected_without_sending()
+    {
+        var transport = new RecordingYaesuNewCatTransport();
+        var driver = new YaesuFt991Driver(RigType.YaesuFt991, transport);
+        driver.Open();
+        transport.SentCommands.Clear();
+
+        driver.SelectVfo(RigVfo.Main);
+        Assert.False(driver.SetFrequencyHz(-559_806_392));
+
+        Assert.DoesNotContain(transport.SentCommands, c => c.StartsWith("FA", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void SetFrequencyHz_above_cat_limit_is_rejected_without_sending()
+    {
+        var transport = new RecordingYaesuNewCatTransport();
+        var driver = new YaesuFt991Driver(RigType.YaesuFt991, transport);
+        driver.Open();
+        transport.SentCommands.Clear();
+
+        driver.SelectVfo(RigVfo.Main);
+        Assert.False(driver.SetFrequencyHz(YaesuFt991CatCodec.MaxFrequencyHz + 1));
+
+        Assert.DoesNotContain(transport.SentCommands, c => c.StartsWith("FA", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void SetFrequencyHz_valid_write_after_rejection_is_sent()
+    {
+        var transport = new RecordingYaesuNewCatTransport();
+        var driver = new YaesuFt991Driver(RigType.YaesuFt991, transport);
+        driver.Open();
+
+        driver.SelectVfo(RigVfo.Main);
+        Assert.False(driver.SetFrequencyHz(-1));
+        transport.SentCommands.Clear();
+
+        Assert.True(driver.SetFrequencyHz(145_960_000));
+        Assert.Contains("FA145960000;", transport.SentCommands);
+    }
+
+    [Fact]
     public void SetMode_fm_locks_dial()
     {
         var transport = new RecordingYaesuNewCatTransport();

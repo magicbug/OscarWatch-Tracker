@@ -36,6 +36,9 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     private string? _fileName;
     private int _filePictures;
     private string? _lastError;
+    private readonly SstvAutoStartCoordinator _autoStart = new();
+    private bool _startedByAuto;
+    private DateTime _lastAutoStartCheckUtc = DateTime.MinValue;
 
     public SstvViewModel(
         ISettingsService settings,
@@ -60,6 +63,8 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         _detectWithoutVis = s.DetectWithoutVis;
         _autoSavePictures = s.AutoSavePictures;
         _saveSessionAudio = s.SaveSessionAudio;
+        _autoStartEnabled = s.AutoStartEnabled;
+        _autoStartElevationDeg = s.AutoStartElevationDeg;
 
         ModeOptions.Add(new SstvModeOption(null, _l.Get("Sstv.Mode.Auto")));
         foreach (var mode in SstvModeTable.All)
@@ -113,6 +118,13 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private bool _saveSessionAudio;
+
+    /// <summary>Start listening when the focused satellite rises. Only runs while this window is open.</summary>
+    [ObservableProperty]
+    private bool _autoStartEnabled;
+
+    [ObservableProperty]
+    private double _autoStartElevationDeg;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanStart), nameof(CanDecodeRecording))]
@@ -204,7 +216,13 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         }
     }
 
-    public void OnWindowOpened() => _uiTimer.Start();
+    public void OnWindowOpened()
+    {
+        // Opening the window mid-pass should listen straight away if the satellite is already up.
+        _autoStart.ResetTracking();
+        _lastAutoStartCheckUtc = DateTime.MinValue;
+        _uiTimer.Start();
+    }
 
     public void OnWindowClosed()
     {
@@ -217,7 +235,9 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     private bool CanStartLive() => CanStart;
 
     [RelayCommand(CanExecute = nameof(CanStartLive))]
-    private void Start()
+    private void Start() => StartSession(automatic: false);
+
+    private void StartSession(bool automatic)
     {
         if (!_receiver.Audio.IsAvailable)
         {
@@ -231,6 +251,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
             SelectedGalleryItem = null;
             _receiver.StartLive(_settings.Current.Sstv, SaveSessionAudio);
             IsRunning = true;
+            _startedByAuto = automatic;
             StatusText = ListeningText();
         }
         catch (Exception ex)
@@ -238,6 +259,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
             Log.Warning(ex, "SSTV start failed");
             StatusText = _l.Get("Sstv.Status.Error", ex.Message);
             IsRunning = false;
+            _startedByAuto = false;
         }
     }
 
@@ -406,6 +428,20 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
     }
 
+    partial void OnAutoStartEnabledChanged(bool value)
+    {
+        _settings.Current.Sstv.AutoStartEnabled = value;
+        _settings.RequestSave();
+    }
+
+    partial void OnAutoStartElevationDegChanged(double value)
+    {
+        if (!double.IsFinite(value))
+            return;
+        _settings.Current.Sstv.AutoStartElevationDeg = Math.Clamp(value, 0, 30);
+        _settings.RequestSave();
+    }
+
     partial void OnSelectedGalleryItemChanged(SstvGalleryItem? value)
     {
         if (value is null)
@@ -429,6 +465,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     {
         _receiver.Stop();
         IsRunning = false;
+        _startedByAuto = false;
         IsDecodingFile = false;
         InputLevelPercent = 0;
         StatusText = _lastError ?? _l.Get("Sstv.Status.Idle");
@@ -449,6 +486,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     private void RefreshUiTick()
     {
         UpdateDoppler();
+        ProcessAutoStartTick();
 
         if (!IsRunning)
             return;
@@ -488,6 +526,45 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         var preview = _receiver.TryGetPreview(ref _previewVersion);
         if (preview is not null)
             UpdateLiveBitmap(preview);
+    }
+
+    /// <summary>
+    /// Automatic start and stop for the focused satellite. Runs from the window's UI timer, so it
+    /// only operates while the SSTV window is open. Checked at most once a second, because the
+    /// coordinator counts consecutive samples.
+    /// </summary>
+    private void ProcessAutoStartTick()
+    {
+        var now = DateTime.UtcNow;
+        if (now - _lastAutoStartCheckUtc < TimeSpan.FromSeconds(1))
+            return;
+        _lastAutoStartCheckUtc = now;
+
+        var snapshot = _tracker.GetCurrent();
+        double? elevation = snapshot.IsAvailable ? snapshot.ElevationDeg : null;
+        var startElevation = double.IsFinite(AutoStartElevationDeg)
+            ? Math.Clamp(AutoStartElevationDeg, 0, 30)
+            : 5;
+
+        var action = _autoStart.Process(new SstvAutoStartInput(
+            Enabled: AutoStartEnabled,
+            FocusedNoradId: _tracker.FocusedNoradId,
+            ElevationDeg: elevation,
+            StartElevationDeg: startElevation,
+            ReceiverRunning: IsRunning,
+            ReceiverAutoStarted: _startedByAuto));
+
+        switch (action)
+        {
+            case SstvAutoStartAction.Start when CanStart:
+                Log.Information("SSTV auto-start: focused satellite above {StartElevationDeg} deg", startElevation);
+                StartSession(automatic: true);
+                break;
+            case SstvAutoStartAction.Stop:
+                Log.Information("SSTV auto-stop: focused satellite set");
+                StopReceiver();
+                break;
+        }
     }
 
     private void UpdateDoppler()

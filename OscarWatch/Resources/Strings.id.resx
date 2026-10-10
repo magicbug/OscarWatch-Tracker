@@ -661,6 +661,18 @@ Lanjutkan?</value>
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>Jika header hilang (sinyal lemah di awal lintasan), kenali gambar dan modenya dari pulsa sinkron yang teratur.</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>Mulai otomatis</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>Mulai saat satelit yang dipilih terbit</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>Mulai mendengarkan saat satelit yang dipilih di jendela utama naik di atas elevasi di bawah, dan berhenti saat satelit terbenam. Hanya berfungsi saat jendela ini terbuka. Simpan otomatis menjaga gambar jika Anda menutup jendela.</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>Mulai di atas (derajat)</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>Simpan gambar otomatis</value>
   </data>

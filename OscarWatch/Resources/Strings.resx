@@ -657,6 +657,18 @@ Continue?</value>
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>When the header was lost (weak signal at the start of a pass), pick up the picture and its mode from its regular sync pulses.</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>Automatic start</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>Start when the focused satellite rises</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>Starts listening when the satellite selected in the main window climbs above the elevation below, and stops when it sets. Only works while this window is open. Auto-save keeps the pictures if you close the window.</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>Start above (degrees)</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>Save pictures automatically</value>
   </data>

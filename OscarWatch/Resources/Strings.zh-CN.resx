@@ -1008,6 +1008,18 @@
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>如果丢失了头部（过境开始时信号弱），根据规律的同步脉冲识别图像及其模式。</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>自动开始</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>选定卫星升起时开始</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>当主窗口中选定的卫星升到下方仰角以上时开始接收，卫星落下时停止。仅在此窗口打开时工作。开启自动保存后，关闭窗口也会保留图片。</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>开始仰角（度）以上</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>自动保存图像</value>
   </data>

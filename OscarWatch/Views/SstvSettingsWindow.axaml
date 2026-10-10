@@ -59,6 +59,20 @@
         </Grid>
 
         <Separator Classes="sstv-rule" />
+        <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.AutoStart}" />
+        <CheckBox Content="{loc:Localize Key=Sstv.AutoStart}" IsChecked="{Binding AutoStartEnabled}" />
+        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AutoStart.Tip}" />
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="28,0,0,0">
+          <TextBlock Text="{loc:Localize Key=Sstv.AutoStart.Elevation}" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding AutoStartElevationDeg}"
+                         IsEnabled="{Binding AutoStartEnabled}"
+                         Minimum="0" Maximum="30" Increment="1"
+                         FormatString="0"
+                         Width="140"
+                         AutomationProperties.Name="{loc:Localize Key=Sstv.AutoStart.Elevation}" />
+        </StackPanel>
+
+        <Separator Classes="sstv-rule" />
         <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.Decoding}" />
         <CheckBox Content="{loc:Localize Key=Sstv.AutoSlant}" IsChecked="{Binding AutoSlant}" />
         <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AutoSlant.Tip}" />

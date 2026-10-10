@@ -1008,6 +1008,18 @@ Continuar?</value>
   <data name="Sstv.DetectWithoutVis.Tip">
     <value>Se o cabeçalho foi perdido (sinal fraco no início da passagem), detecta a imagem e o modo pelos pulsos de sincronismo regulares.</value>
   </data>
+  <data name="Sstv.Settings.AutoStart">
+    <value>Início automático</value>
+  </data>
+  <data name="Sstv.AutoStart">
+    <value>Iniciar quando o satélite selecionado nascer</value>
+  </data>
+  <data name="Sstv.AutoStart.Tip">
+    <value>Começa a ouvir quando o satélite selecionado na janela principal sobe acima da elevação abaixo, e para quando ele se põe. Só funciona com esta janela aberta. O salvamento automático mantém as imagens se você fechar a janela.</value>
+  </data>
+  <data name="Sstv.AutoStart.Elevation">
+    <value>Iniciar acima de (graus)</value>
+  </data>
   <data name="Sstv.AutoSave">
     <value>Salvar imagens automaticamente</value>
   </data>

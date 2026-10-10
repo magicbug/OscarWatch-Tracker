@@ -963,6 +963,15 @@ public sealed class RigController : IRigController, IDisposable
     private bool HasNeutralPassbandTrim() =>
         Math.Abs(_passbandDownlinkAdjustKHz) < 0.0001 && Math.Abs(_passbandUplinkAdjustKHz) < 0.0001;
 
+    /// <summary>
+    /// Largest manual passband trim (per leg) that knob tuning can add. Larger values mean the
+    /// dial reading is not a real tune, and the trim would push the CAT frequency out of range.
+    /// </summary>
+    internal const double PassbandTrimLimitKHz = 100.0;
+
+    internal static double ClampPassbandTrimKHz(double trimKHz) =>
+        Math.Clamp(trimKHz, -PassbandTrimLimitKHz, PassbandTrimLimitKHz);
+
     private void ProcessAutomaticDoppler(RigSettings settings, RigTrackingContext context)
     {
         if (WriteDopplerFrequencies(settings, context))
@@ -1042,6 +1051,9 @@ public sealed class RigController : IRigController, IDisposable
             newDown = _passbandDownlinkAdjustKHz + deltaKhz;
             newUp = _passbandUplinkAdjustKHz + deltaKhz;
         }
+
+        newDown = ClampPassbandTrimKHz(newDown);
+        newUp = ClampPassbandTrimKHz(newUp);
 
         if (NearlyEqual(newDown, _passbandDownlinkAdjustKHz) && NearlyEqual(newUp, _passbandUplinkAdjustKHz))
             return;
