@@ -891,5 +891,51 @@
         "doppler": "NOR"
       }
     ]
+  },
+  {
+    "name": "JAMX01",
+    "norad_id": "100465",
+    "modes": [
+      {
+        "type": "FM Digipeater",
+        "downlink": 435175,
+        "uplink": 145950,
+        "downlink_mode": "FM",
+        "uplink_mode": "FM",
+        "doppler": "NOR"
+      },
+      {
+        "type": "SSTV",
+        "downlink": 435175,
+        "uplink": 0,
+        "downlink_mode": "FM",
+        "uplink_mode": "FM",
+        "doppler": "NOR"
+      },
+      {
+        "type": "CW",
+        "downlink": 435175,
+        "uplink": 0,
+        "downlink_mode": "CW",
+        "uplink_mode": "CW",
+        "doppler": "NOR"
+      },
+      {
+        "type": "9k6 BPSK Beacon",
+        "downlink": 435075,
+        "uplink": 0,
+        "downlink_mode": "USB",
+        "uplink_mode": "USB",
+        "doppler": "NOR"
+      },
+      {
+        "type": "9k6 BPSK Telemetry",
+        "downlink": 435500,
+        "uplink": 0,
+        "downlink_mode": "USB",
+        "uplink_mode": "USB",
+        "doppler": "NOR"
+      }
+    ]
   }
 ]
