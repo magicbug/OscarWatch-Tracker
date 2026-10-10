@@ -4336,6 +4336,9 @@ LOS: {2}
   <data name="Ft4.Status.NeedStation">
     <value>Укажите позывной и грид в Настройки, Станция.</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>Входная звуковая карта FT4 недоступна. Откройте настройки FT4, нажмите «Обновить» и снова выберите вход.</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>Ответ {0}</value>
   </data>

@@ -4336,6 +4336,9 @@ LOS: {2}
   <data name="Ft4.Status.NeedStation">
     <value>ตั้งค่าสัญญาณเรียกและกริดใน การตั้งค่า, สถานี</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>ซาวด์การ์ดขาเข้า FT4 ไม่พร้อมใช้งาน เปิดการตั้งค่า FT4 แล้วคลิกรีเฟรช จากนั้นเลือกอินพุตอีกครั้ง</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>กำลังตอบ {0}</value>
   </data>

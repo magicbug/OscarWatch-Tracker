@@ -4332,6 +4332,9 @@
   <data name="Ft4.Status.NeedStation">
     <value>設定の「局」でコールサインとグリッドを設定してください。</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>FT4の入力サウンドカードは利用できません。FT4設定を開き、「更新」をクリックして、入力を選び直してください。</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>{0} に応答中</value>
   </data>

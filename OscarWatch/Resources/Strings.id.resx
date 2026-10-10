@@ -4336,6 +4336,9 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Status.NeedStation">
     <value>Atur tanda panggilan dan grid di Pengaturan, Stasiun.</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>Kartu suara masuk FT4 tidak tersedia. Buka pengaturan FT4, klik Segarkan, lalu pilih masukan lagi.</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>Menjawab {0}</value>
   </data>

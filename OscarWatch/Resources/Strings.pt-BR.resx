@@ -4332,6 +4332,9 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.Status.NeedStation">
     <value>Defina seu indicativo e grid em Definições, Estação.</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>A placa de som de entrada do FT4 não está disponível. Abra as definições do FT4, clique em Atualizar e escolha a entrada novamente.</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>Respondendo a {0}</value>
   </data>

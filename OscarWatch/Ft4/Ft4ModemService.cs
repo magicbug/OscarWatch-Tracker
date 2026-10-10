@@ -233,7 +233,7 @@ public sealed class Ft4ModemService : IDisposable
         catch (Exception ex)
         {
             Log.Warning(ex, "FT4 capture restart failed");
-            Status = ex.Message;
+            Status = _l.Get("Ft4.Status.InputUnavailable");
             Changed?.Invoke();
         }
     }
@@ -305,9 +305,32 @@ public sealed class Ft4ModemService : IDisposable
         // PortAudio so the modem loop is not starved waiting on a contended input stream.
         StopPassRecordingForModem();
 
-        _audio.StartCapture(
-            _settings.Current.Ft4.InputDeviceId,
-            _settings.Current.Ft4.InputDeviceDisplayName);
+        // A missing input (radio USB audio powered off) must not escape onto the UI thread.
+        // That unhandled exception closes OscarWatch.
+        try
+        {
+            _audio.StartCapture(
+                _settings.Current.Ft4.InputDeviceId,
+                _settings.Current.Ft4.InputDeviceDisplayName);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "FT4 capture open failed");
+            try
+            {
+                _audio.StopCapture();
+            }
+            catch (Exception stopEx)
+            {
+                Log.Debug(stopEx, "FT4 capture cleanup after a failed open");
+            }
+
+            _sequencer = null;
+            Status = _l.Get("Ft4.Status.InputUnavailable");
+            Changed?.Invoke();
+            return;
+        }
+
         _audio.StartOutput(
             _settings.Current.Ft4.OutputDeviceId,
             _settings.Current.Ft4.OutputDeviceDisplayName);

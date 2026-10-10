@@ -4336,6 +4336,9 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Status.NeedStation">
     <value>Rufzeichen und Grid unter Einstellungen, Station festlegen.</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>Die FT4-Eingangssoundkarte ist nicht verfügbar. Öffnen Sie die FT4-Einstellungen, klicken Sie auf Aktualisieren und wählen Sie den Eingang erneut.</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>Antworte auf {0}</value>
   </data>

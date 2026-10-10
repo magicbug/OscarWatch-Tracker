@@ -4332,6 +4332,9 @@
   <data name="Ft4.Status.NeedStation">
     <value>请在设置、电台中设置呼号和网格。</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>FT4 输入声卡不可用。请打开 FT4 设置，点击刷新，然后重新选择输入。</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>正在应答 {0}</value>
   </data>

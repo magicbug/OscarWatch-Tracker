@@ -4332,6 +4332,9 @@ Está utilizando la versión {0}.
   <data name="Ft4.Status.NeedStation">
     <value>Configure su indicativo y cuadrícula en Ajustes, Estación.</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>La tarjeta de sonido de entrada de FT4 no está disponible. Abra los ajustes de FT4, pulse Actualizar y vuelva a elegir la entrada.</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>Respondiendo a {0}</value>
   </data>

@@ -30,6 +30,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     private bool _disposed;
     private bool _loadingDevices;
     private bool _loadingEchoCalibration;
+    private bool _windowOpen;
     private IReadOnlySet<string> _workedCalls = new HashSet<string>(StringComparer.Ordinal);
     private IReadOnlySet<string> _workedGridFields = new HashSet<string>(StringComparer.Ordinal);
     private readonly HashSet<string> _finishedPartners = new(StringComparer.Ordinal);
@@ -753,7 +754,10 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.Current.Ft4.InputDeviceId = value.Id;
         _settings.Current.Ft4.InputDeviceDisplayName = value.DisplayName;
         _settings.RequestSave();
-        _modem.RestartCaptureFromSettings();
+        if (_modem.IsRunning)
+            _modem.RestartCaptureFromSettings();
+        else if (_windowOpen)
+            StartSession();
     }
 
     partial void OnSelectedOutputDeviceChanged(Ft4AudioDeviceOption? value)
@@ -775,18 +779,30 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     public Task OnWindowOpenedAsync()
     {
-        RefreshAudioDevices();
-        RefreshPttPorts();
+        _windowOpen = true;
         _uiTimer.Start();
-        RefreshUiTick();
-        _modem.SetWindowOpen(true);
-        if (!_modem.IsRunning)
-            StartSession();
+        try
+        {
+            RefreshAudioDevices();
+            RefreshPttPorts();
+            RefreshUiTick();
+            _modem.SetWindowOpen(true);
+            if (!_modem.IsRunning)
+                StartSession();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "FT4 window open failed");
+            StatusLine = _l.Get("Ft4.Status.InputUnavailable");
+            WaterfallStatusText = _l.Get("Ft4.Waterfall.Unavailable");
+        }
+
         return Task.CompletedTask;
     }
 
     public Task OnWindowClosedAsync()
     {
+        _windowOpen = false;
         _uiTimer.Stop();
         _modem.SetWindowOpen(false);
         return Task.CompletedTask;
@@ -808,7 +824,29 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        _modem.Start();
+        try
+        {
+            _modem.Start();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "FT4 session start failed");
+            StatusLine = _l.Get("Ft4.Status.InputUnavailable");
+            WaterfallStatusText = _l.Get("Ft4.Waterfall.Unavailable");
+            TuneCommand.NotifyCanExecuteChanged();
+            return;
+        }
+
+        if (!_modem.IsRunning)
+        {
+            StatusLine = string.IsNullOrWhiteSpace(_modem.Status)
+                ? _l.Get("Ft4.Status.InputUnavailable")
+                : _modem.Status;
+            WaterfallStatusText = _l.Get("Ft4.Waterfall.Unavailable");
+            TuneCommand.NotifyCanExecuteChanged();
+            return;
+        }
+
         StatusLine = string.IsNullOrWhiteSpace(_modem.Status)
             ? _l.Get("Ft4.Status.Ready")
             : _modem.Status;

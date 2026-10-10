@@ -4332,6 +4332,9 @@ Latest: {1} ({2})</value>
   <data name="Ft4.Status.NeedStation">
     <value>Set your callsign and grid under Settings, Station.</value>
   </data>
+  <data name="Ft4.Status.InputUnavailable">
+    <value>The FT4 input soundcard is not available. Open FT4 settings, click Refresh, and choose the input again.</value>
+  </data>
   <data name="Ft4.Status.Answering">
     <value>Answering {0}</value>
   </data>
