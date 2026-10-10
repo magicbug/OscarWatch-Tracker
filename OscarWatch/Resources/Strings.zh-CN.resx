@@ -2277,6 +2277,21 @@
   <data name="Settings.Radio.CivHint">
     <value>IC-9700 默认 A2，IC-910 默认 7C（十六进制）。如电台 CI-V 菜单中已更改，请使用对应地址（如 60）。</value>
   </data>
+  <data name="Settings.Radio.Ic910PowerClass">
+    <value>IC-910 型号</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.H">
+    <value>IC-910H（144 MHz 100 W，430 MHz 75 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.D">
+    <value>IC-910D（144 与 430 MHz 均为 50 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.Base">
+    <value>IC-910（144 与 430 MHz 均为 20 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClassHint">
+    <value>CI-V 无法区分这些型号。请按电台上的 144 MHz 额定功率选择。已保存的 IC-910 保持 H 的功率。改装为 100 W / 75 W 的电台请选 IC-910H。</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847：在电台菜单 #37 中设置 CAT 波特率（通常为 57600）。使用带电平转换器的 CAT/LINEAR 接口（如 CT-62）。</value>
   </data>

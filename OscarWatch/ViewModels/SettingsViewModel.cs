@@ -408,6 +408,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private RigTypeOption? _selectedRigTypeChoice;
 
     [ObservableProperty]
+    private Ic910PowerClassOption? _selectedIc910PowerClassChoice;
+
+    [ObservableProperty]
     private RigTypeOption? _selectedDownlinkRigTypeChoice;
 
     [ObservableProperty]
@@ -649,6 +652,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public IReadOnlyList<RigTypeOption> RigTypeChoices { get; }
 
+    public IReadOnlyList<Ic910PowerClassOption> Ic910PowerClassChoices { get; }
+
     public IReadOnlyList<RigTypeOption> RigDualTypeChoices { get; }
 
     public IReadOnlyList<RigTypeOption> RigDualDownlinkTypeChoices { get; }
@@ -682,6 +687,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     public bool ShowRigCivAddress =>
         SelectedRigTypeChoice?.Value is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700
             or RigType.IcomIc821h;
+
+    public bool ShowIc910PowerClass =>
+        !DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.IcomIc910;
 
     public bool ShowRigFt847CatHint =>
         SelectedRigTypeChoice?.Value == RigType.YaesuFt847;
@@ -953,6 +961,12 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         [
             new(RigRegion.EU, "EU"),
             new(RigRegion.USA, "USA")
+        ];
+        Ic910PowerClassChoices =
+        [
+            new(Ic910PowerClass.H, _l.Get("Settings.Radio.Ic910PowerClass.H")),
+            new(Ic910PowerClass.D, _l.Get("Settings.Radio.Ic910PowerClass.D")),
+            new(Ic910PowerClass.Base, _l.Get("Settings.Radio.Ic910PowerClass.Base"))
         ];
         FlexAntennaPortChoices = BuildFlexAntennaPortChoices();
         GpsConnectionChoices =
@@ -1287,6 +1301,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
                 CivAddress = UplinkCivAddress.Trim()
             },
             Type = SelectedRigTypeChoice?.Value ?? RigType.None,
+            Ic910PowerClass = SelectedIc910PowerClassChoice?.Value ?? Ic910PowerClass.H,
             Port = SelectedRigComPort ?? "",
             BaudRate = RigBaudRate,
             CivAddress = RigCivAddress.Trim(),
@@ -1509,6 +1524,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             DualRadioEnabled = rig.DualRadioEnabled;
             SelectedRigTypeChoice = RigTypeChoices.FirstOrDefault(o => o.Value == rig.Type)
                 ?? RigTypeChoices[0];
+            SelectedIc910PowerClassChoice = Ic910PowerClassChoices.FirstOrDefault(o => o.Value == rig.Ic910PowerClass)
+                ?? Ic910PowerClassChoices[0];
             SelectedRigComPort = string.IsNullOrWhiteSpace(rig.Port) ? null : rig.Port;
             RigBaudRate = rig.BaudRate;
             RigCivAddress = rig.CivAddress;
@@ -2335,6 +2352,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     {
         OnPropertyChanged(nameof(ShowRigSingleConfig));
         OnPropertyChanged(nameof(ShowRigDualConfig));
+        OnPropertyChanged(nameof(ShowIc910PowerClass));
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
         OnPropertyChanged(nameof(ShowDownlinkCivAddress));
         OnPropertyChanged(nameof(ShowDownlinkSerialFields));
@@ -2387,6 +2405,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     partial void OnSelectedRigTypeChoiceChanged(RigTypeOption? value)
     {
         OnPropertyChanged(nameof(ShowRigCivAddress));
+        OnPropertyChanged(nameof(ShowIc910PowerClass));
         OnPropertyChanged(nameof(ShowRigSerialFields));
         OnPropertyChanged(nameof(ShowRigFlexFields));
         OnPropertyChanged(nameof(ShowRigFt847CatHint));
@@ -2930,6 +2949,8 @@ public sealed record RotatorAzimuthOption(RotatorAzimuthRange Value, string Labe
 public sealed record RotatorElevationOption(RotatorElevationRange Value, string Label);
 
 public sealed record RigTypeOption(RigType Value, string Label);
+
+public sealed record Ic910PowerClassOption(Ic910PowerClass Value, string Label);
 
 public sealed record FlexDiscoveredRadioOption(FlexDiscoveredRadio Radio, string Label);
 

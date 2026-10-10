@@ -2281,6 +2281,21 @@ LOS: {2}
   <data name="Settings.Radio.CivHint">
     <value>IC-9700 ค่าเริ่มต้น A2, IC-910 ค่าเริ่มต้น 7C (เลขฐานสิบหก) ใช้ 60 หากวิทยุตั้งไว้เช่นนั้นในเมนู CI-V</value>
   </data>
+  <data name="Settings.Radio.Ic910PowerClass">
+    <value>รุ่น IC-910</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.H">
+    <value>IC-910H (100 W ที่ 144 MHz, 75 W ที่ 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.D">
+    <value>IC-910D (50 W ที่ 144 และ 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.Base">
+    <value>IC-910 (20 W ที่ 144 และ 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClassHint">
+    <value>CI-V แยกกลุ่มนี้ไม่ออก เลือกกำลัง 144 MHz ตามที่ระบุบนวิทยุ IC-910 ที่บันทึกไว้แล้วยังคงกำลังแบบ H วิทยุที่ดัดแปลงเป็น 100 W / 75 W ให้เลือก IC-910H</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: ตั้งบอด CAT ในเมนูวิทยุ #37 (โดยทั่วไป 57600) ใช้แจ็ค CAT/LINEAR กับตัวแปลงระดับ (เช่น CT-62)</value>
   </data>

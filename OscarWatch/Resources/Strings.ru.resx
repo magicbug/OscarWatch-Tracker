@@ -2281,6 +2281,21 @@ LOS: {2}
   <data name="Settings.Radio.CivHint">
     <value>IC-9700 по умолчанию A2, IC-910 по умолчанию 7C (hex). Укажите 60, если так задано в меню CI-V рации.</value>
   </data>
+  <data name="Settings.Radio.Ic910PowerClass">
+    <value>Модель IC-910</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.H">
+    <value>IC-910H (100 Вт на 144 МГц, 75 Вт на 430 МГц)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.D">
+    <value>IC-910D (50 Вт на 144 и 430 МГц)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.Base">
+    <value>IC-910 (20 Вт на 144 и 430 МГц)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClassHint">
+    <value>CI-V не различает эти модели. Укажите мощность на 144 МГц по паспорту. Сохранённый IC-910 остаётся на мощностях H. Аппарат, доработанный до 100 Вт / 75 Вт, выбирайте как IC-910H.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: скорость CAT в меню рации №37 (обычно 57600). Разъём CAT/LINEAR с преобразователем уровня (напр. CT-62).</value>
   </data>

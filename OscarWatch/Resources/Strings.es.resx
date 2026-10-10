@@ -2277,6 +2277,21 @@
   <data name="Settings.Radio.CivHint">
     <value>IC-9700 predeterminado A2, IC-910 predeterminado 7C (hex). Usa 60 si tu radio está configurada así en el menú CI-V.</value>
   </data>
+  <data name="Settings.Radio.Ic910PowerClass">
+    <value>Modelo IC-910</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.H">
+    <value>IC-910H (100 W en 144 MHz, 75 W en 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.D">
+    <value>IC-910D (50 W en 144 y 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.Base">
+    <value>IC-910 (20 W en 144 y 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClassHint">
+    <value>El CI-V no distingue estos modelos. Elija la potencia de 144 MHz del equipo. Un IC-910 ya guardado sigue en las potencias H. Un equipo modificado a 100 W / 75 W usa IC-910H.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: configura la velocidad CAT en el menú n.º 37 de la radio (típicamente 57600). Usa la toma CAT/LINEAR con un convertidor de nivel (p. ej. CT-62).</value>
   </data>

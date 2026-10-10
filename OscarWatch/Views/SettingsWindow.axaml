@@ -372,6 +372,22 @@
                   </DataTemplate>
                 </ComboBox.ItemTemplate>
               </ComboBox>
+              <StackPanel Spacing="4" IsVisible="{Binding ShowIc910PowerClass}">
+                <TextBlock Text="{loc:Localize Key=Settings.Radio.Ic910PowerClass}" />
+                <ComboBox ItemsSource="{Binding Ic910PowerClassChoices}"
+                          SelectedItem="{Binding SelectedIc910PowerClassChoice, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:Ic910PowerClassOption">
+                      <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.Ic910PowerClassHint}" />
+              </StackPanel>
               <StackPanel Spacing="10" IsVisible="{Binding ShowRigSerialFields}">
                 <TextBlock Text="{loc:Localize Key=Settings.Radio.SerialPort}" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">

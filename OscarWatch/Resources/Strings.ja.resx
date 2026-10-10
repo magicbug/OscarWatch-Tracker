@@ -1416,6 +1416,21 @@
   <data name="Settings.Radio.CivHint">
     <value>IC-9700 既定 A2、IC-910 既定 7C (hex)。無線機のCI-Vメニューが60の場合は60を使用。</value>
   </data>
+  <data name="Settings.Radio.Ic910PowerClass">
+    <value>IC-910 モデル</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.H">
+    <value>IC-910H（144 MHz 100 W、430 MHz 75 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.D">
+    <value>IC-910D（144 / 430 MHz 50 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.Base">
+    <value>IC-910（144 / 430 MHz 20 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClassHint">
+    <value>CI-V では区別できません。無線機の 144 MHz 定格を選んでください。保存済みの IC-910 は H の定格のままです。100 W / 75 W に改造した機体は IC-910H を選びます。</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: 無線機メニュー#37でCATボーレートを設定（通常57600）。レベルコンバータ（例: CT-62）でCAT/LINEARジャックを使用。</value>
   </data>

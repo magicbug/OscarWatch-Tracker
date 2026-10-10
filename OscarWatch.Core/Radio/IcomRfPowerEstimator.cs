@@ -12,13 +12,18 @@ public static class IcomRfPowerEstimator
     /// Estimate set RF power in watts from a CI-V level and uplink frequency.
     /// Returns false when the band maximum is unknown for this radio/frequency.
     /// </summary>
-    public static bool TryEstimateWatts(RigType rigType, long frequencyHz, int level0To255, out double watts)
+    public static bool TryEstimateWatts(
+        RigType rigType,
+        long frequencyHz,
+        int level0To255,
+        out double watts,
+        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H)
     {
         watts = 0;
         if (level0To255 is < 0 or > 255)
             return false;
 
-        var max = MaxPowerWatts(rigType, frequencyHz);
+        var max = MaxPowerWatts(rigType, frequencyHz, ic910PowerClass);
         if (max is null or <= 0)
             return false;
 
@@ -30,13 +35,18 @@ public static class IcomRfPowerEstimator
     /// CI-V level (0–255) for a target wattage on this radio and frequency.
     /// Uses the floor so the set point does not land above the requested watts.
     /// </summary>
-    public static bool TryLevelForWatts(RigType rigType, long frequencyHz, double watts, out int level0To255)
+    public static bool TryLevelForWatts(
+        RigType rigType,
+        long frequencyHz,
+        double watts,
+        out int level0To255,
+        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H)
     {
         level0To255 = 0;
         if (watts < 0 || double.IsNaN(watts))
             return false;
 
-        var max = MaxPowerWatts(rigType, frequencyHz);
+        var max = MaxPowerWatts(rigType, frequencyHz, ic910PowerClass);
         if (max is null or <= 0)
             return false;
 
@@ -51,7 +61,10 @@ public static class IcomRfPowerEstimator
     }
 
     /// <summary>Catalogue maximum RF power (W) for the given radio and frequency band.</summary>
-    public static int? MaxPowerWatts(RigType rigType, long frequencyHz)
+    public static int? MaxPowerWatts(
+        RigType rigType,
+        long frequencyHz,
+        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H)
     {
         var band = ClassifyBand(frequencyHz);
         if (band == RfBand.Unknown)
@@ -74,12 +87,7 @@ public static class IcomRfPowerEstimator
                 RfBand.Shf23cm => 10,
                 _ => null
             },
-            RigType.IcomIc910 => band switch
-            {
-                RfBand.Vhf2m => 100,
-                RfBand.Uhf70cm => 75,
-                _ => null
-            },
+            RigType.IcomIc910 => Ic910MaxPowerWatts(ic910PowerClass, band),
             RigType.IcomIc705 => 10,
             RigType.IcomIc905 => band switch
             {
@@ -119,6 +127,33 @@ public static class IcomRfPowerEstimator
             _ => null
         };
     }
+
+    /// <summary>
+    /// IC-910 family maxima. 23 cm is the UX-910 option (10 W) on every variant.
+    /// </summary>
+    private static int? Ic910MaxPowerWatts(Ic910PowerClass powerClass, RfBand band) =>
+        powerClass switch
+        {
+            Ic910PowerClass.D => band switch
+            {
+                RfBand.Vhf2m or RfBand.Uhf70cm => 50,
+                RfBand.Shf23cm => 10,
+                _ => null
+            },
+            Ic910PowerClass.Base => band switch
+            {
+                RfBand.Vhf2m or RfBand.Uhf70cm => 20,
+                RfBand.Shf23cm => 10,
+                _ => null
+            },
+            _ => band switch
+            {
+                RfBand.Vhf2m => 100,
+                RfBand.Uhf70cm => 75,
+                RfBand.Shf23cm => 10,
+                _ => null
+            }
+        };
 
     private static RfBand ClassifyBand(long frequencyHz) => frequencyHz switch
     {

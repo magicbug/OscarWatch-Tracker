@@ -2277,6 +2277,21 @@ Continue?</value>
   <data name="Settings.Radio.CivHint">
     <value>IC-9700 default A2, IC-910 default 7C (hex). Use 60 if your radio is set that way in the CI-V menu.</value>
   </data>
+  <data name="Settings.Radio.Ic910PowerClass">
+    <value>IC-910 model</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.H">
+    <value>IC-910H (100 W on 144 MHz, 75 W on 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.D">
+    <value>IC-910D (50 W on 144 and 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClass.Base">
+    <value>IC-910 (20 W on 144 and 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic910PowerClassHint">
+    <value>CI-V cannot tell these apart. Choose the 144 MHz rating on the radio. A saved IC-910 stays on the H ratings. A set modified to 100 W / 75 W uses IC-910H.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: set CAT baud in radio menu #37 (typically 57600). Use the CAT/LINEAR jack with a level converter (e.g. CT-62).</value>
   </data>
