@@ -587,7 +587,8 @@
         "uplink": 145920,
         "downlink_mode": "FMN",
         "uplink_mode": "FMN",
-        "doppler": "NOR"
+        "doppler": "NOR",
+        "ctcss": 67.0
       },
       {
         "type": "SSTV",
