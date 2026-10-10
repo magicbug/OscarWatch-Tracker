@@ -24,6 +24,9 @@
     <None Update="Fixtures\radio_golden.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Fixtures\sstv_recordings_baseline.json" Condition="Exists('Fixtures\sstv_recordings_baseline.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="..\OscarWatch\Resources\Strings*.resx">
       <Link>Resources\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

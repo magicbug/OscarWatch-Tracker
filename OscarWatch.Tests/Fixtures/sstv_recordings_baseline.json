@@ -1,0 +1,185 @@
+{
+  "Loader": "SstvRecordingLoader (ffmpeg to the decoder rate for MP3)",
+  "Recordings": [
+    {
+      "File": "ISS - 12-10-2024 0731.mp3",
+      "Pictures": [
+        {
+          "Mode": "Pd120",
+          "FromVis": false,
+          "Complete": false,
+          "LockPercent": 100,
+          "OffsetHz": 0.92,
+          "ClockPpm": 2.27,
+          "StartSeconds": 79.17,
+          "EndSeconds": 113.24
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 93.55,
+          "OffsetHz": 0.62,
+          "ClockPpm": 26.14,
+          "StartSeconds": 236.53,
+          "EndSeconds": 362.64
+        }
+      ]
+    },
+    {
+      "File": "ISS - 12-10-2024 0906.mp3",
+      "Pictures": [
+        {
+          "Mode": "Pd120",
+          "FromVis": false,
+          "Complete": false,
+          "LockPercent": 100,
+          "OffsetHz": 1.72,
+          "ClockPpm": 1.46,
+          "StartSeconds": 92.73,
+          "EndSeconds": 132.39
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 99.19,
+          "OffsetHz": -0.21,
+          "ClockPpm": 28.06,
+          "StartSeconds": 255.65,
+          "EndSeconds": 381.76
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": false,
+          "Complete": false,
+          "LockPercent": 92.86,
+          "OffsetHz": -11.32,
+          "ClockPpm": 99.66,
+          "StartSeconds": 551.31,
+          "EndSeconds": 622.5
+        }
+      ]
+    },
+    {
+      "File": "ISS - 12-10-2024 1219.mp3",
+      "Pictures": [
+        {
+          "Mode": "Pd120",
+          "FromVis": false,
+          "Complete": false,
+          "LockPercent": 100,
+          "OffsetHz": 3.09,
+          "ClockPpm": -4.29,
+          "StartSeconds": 51.7,
+          "EndSeconds": 83.23
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 91.53,
+          "OffsetHz": 1.36,
+          "ClockPpm": 12.2,
+          "StartSeconds": 206.31,
+          "EndSeconds": 332.42
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 98.79,
+          "OffsetHz": 0.26,
+          "ClockPpm": 38.76,
+          "StartSeconds": 455.49,
+          "EndSeconds": 581.6
+        }
+      ]
+    },
+    {
+      "File": "ISS - 13-10-2024 0955.mp3",
+      "Pictures": [
+        {
+          "Mode": "Pd120",
+          "FromVis": false,
+          "Complete": false,
+          "LockPercent": 100,
+          "OffsetHz": 1.63,
+          "ClockPpm": -5.57,
+          "StartSeconds": 72.46,
+          "EndSeconds": 146.69
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 96.37,
+          "OffsetHz": 0.19,
+          "ClockPpm": 28.21,
+          "StartSeconds": 269.73,
+          "EndSeconds": 395.83
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 99.19,
+          "OffsetHz": 0.16,
+          "ClockPpm": 39.42,
+          "StartSeconds": 518.91,
+          "EndSeconds": 645.02
+        }
+      ]
+    },
+    {
+      "File": "ISS - 13-10-2024 1131.mp3",
+      "Pictures": [
+        {
+          "Mode": "Pd120",
+          "FromVis": false,
+          "Complete": true,
+          "LockPercent": 95.16,
+          "OffsetHz": 0.36,
+          "ClockPpm": 11.66,
+          "StartSeconds": 210.24,
+          "EndSeconds": 336.35
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 99.6,
+          "OffsetHz": 0.32,
+          "ClockPpm": 41.82,
+          "StartSeconds": 454.81,
+          "EndSeconds": 580.92
+        }
+      ]
+    },
+    {
+      "File": "ISS - 13-10-2024 1308.mp3",
+      "Pictures": [
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 99.6,
+          "OffsetHz": 0.4,
+          "ClockPpm": 6.56,
+          "StartSeconds": 137.06,
+          "EndSeconds": 263.16
+        },
+        {
+          "Mode": "Pd120",
+          "FromVis": true,
+          "Complete": true,
+          "LockPercent": 99.6,
+          "OffsetHz": 0.63,
+          "ClockPpm": 36.17,
+          "StartSeconds": 386.02,
+          "EndSeconds": 512.13
+        }
+      ]
+    }
+  ]
+}
