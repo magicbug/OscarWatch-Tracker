@@ -1431,6 +1431,21 @@
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V では区別できません。無線機の 144 MHz 定格を選んでください。保存済みの IC-910 は H の定格のままです。100 W / 75 W に改造した機体は IC-910H を選びます。</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>IC-9700 モデル</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700（144 MHz 100 W、430 MHz 75 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>日本 IC-9700（144 / 430 MHz 50 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>日本 IC-9700S（144 / 430 MHz 20 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V では区別できません。無線機の 144 MHz 定格を選んでください。保存済みの IC-9700 は 100 W / 75 W のままです。1200 MHz は 3 機種とも 10 W です。</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: 無線機メニュー#37でCATボーレートを設定（通常57600）。レベルコンバータ（例: CT-62）でCAT/LINEARジャックを使用。</value>
   </data>

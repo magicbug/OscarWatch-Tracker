@@ -2292,6 +2292,21 @@ Continue?</value>
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V cannot tell these apart. Choose the 144 MHz rating on the radio. A saved IC-910 stays on the H ratings. A set modified to 100 W / 75 W uses IC-910H.</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>IC-9700 model</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700 (100 W on 144 MHz, 75 W on 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>Japan IC-9700 (50 W on 144 and 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>Japan IC-9700S (20 W on 144 and 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V cannot tell these apart. Choose the 144 MHz rating on the radio. A saved IC-9700 stays on 100 W / 75 W. 1200 MHz is 10 W on all three.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: set CAT baud in radio menu #37 (typically 57600). Use the CAT/LINEAR jack with a level converter (e.g. CT-62).</value>
   </data>

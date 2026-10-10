@@ -17,13 +17,14 @@ public static class IcomRfPowerEstimator
         long frequencyHz,
         int level0To255,
         out double watts,
-        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H)
+        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H,
+        Ic9700PowerClass ic9700PowerClass = Ic9700PowerClass.Export)
     {
         watts = 0;
         if (level0To255 is < 0 or > 255)
             return false;
 
-        var max = MaxPowerWatts(rigType, frequencyHz, ic910PowerClass);
+        var max = MaxPowerWatts(rigType, frequencyHz, ic910PowerClass, ic9700PowerClass);
         if (max is null or <= 0)
             return false;
 
@@ -40,13 +41,14 @@ public static class IcomRfPowerEstimator
         long frequencyHz,
         double watts,
         out int level0To255,
-        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H)
+        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H,
+        Ic9700PowerClass ic9700PowerClass = Ic9700PowerClass.Export)
     {
         level0To255 = 0;
         if (watts < 0 || double.IsNaN(watts))
             return false;
 
-        var max = MaxPowerWatts(rigType, frequencyHz, ic910PowerClass);
+        var max = MaxPowerWatts(rigType, frequencyHz, ic910PowerClass, ic9700PowerClass);
         if (max is null or <= 0)
             return false;
 
@@ -64,7 +66,8 @@ public static class IcomRfPowerEstimator
     public static int? MaxPowerWatts(
         RigType rigType,
         long frequencyHz,
-        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H)
+        Ic910PowerClass ic910PowerClass = Ic910PowerClass.H,
+        Ic9700PowerClass ic9700PowerClass = Ic9700PowerClass.Export)
     {
         var band = ClassifyBand(frequencyHz);
         if (band == RfBand.Unknown)
@@ -72,13 +75,7 @@ public static class IcomRfPowerEstimator
 
         return rigType switch
         {
-            RigType.IcomIc9700 => band switch
-            {
-                RfBand.Vhf2m => 100,
-                RfBand.Uhf70cm => 75,
-                RfBand.Shf23cm => 10,
-                _ => null
-            },
+            RigType.IcomIc9700 => Ic9700MaxPowerWatts(ic9700PowerClass, band),
             RigType.IcomIc9100 => band switch
             {
                 RfBand.Hf or RfBand.SixMetres => 100,
@@ -127,6 +124,33 @@ public static class IcomRfPowerEstimator
             _ => null
         };
     }
+
+    /// <summary>
+    /// IC-9700 maxima. 1200 MHz is 10 W on the export set, the Japanese IC-9700, and the IC-9700S.
+    /// </summary>
+    private static int? Ic9700MaxPowerWatts(Ic9700PowerClass powerClass, RfBand band) =>
+        powerClass switch
+        {
+            Ic9700PowerClass.Japan => band switch
+            {
+                RfBand.Vhf2m or RfBand.Uhf70cm => 50,
+                RfBand.Shf23cm => 10,
+                _ => null
+            },
+            Ic9700PowerClass.JapanS => band switch
+            {
+                RfBand.Vhf2m or RfBand.Uhf70cm => 20,
+                RfBand.Shf23cm => 10,
+                _ => null
+            },
+            _ => band switch
+            {
+                RfBand.Vhf2m => 100,
+                RfBand.Uhf70cm => 75,
+                RfBand.Shf23cm => 10,
+                _ => null
+            }
+        };
 
     /// <summary>
     /// IC-910 family maxima. 23 cm is the UX-910 option (10 W) on every variant.

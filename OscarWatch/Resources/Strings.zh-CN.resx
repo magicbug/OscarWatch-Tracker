@@ -2292,6 +2292,21 @@
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V 无法区分这些型号。请按电台上的 144 MHz 额定功率选择。已保存的 IC-910 保持 H 的功率。改装为 100 W / 75 W 的电台请选 IC-910H。</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>IC-9700 型号</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700（144 MHz 100 W，430 MHz 75 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>日本 IC-9700（144 与 430 MHz 均为 50 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>日本 IC-9700S（144 与 430 MHz 均为 20 W）</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V 无法区分这些型号。请按电台上的 144 MHz 额定功率选择。已保存的 IC-9700 保持 100 W / 75 W。1200 MHz 在三种型号上都是 10 W。</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847：在电台菜单 #37 中设置 CAT 波特率（通常为 57600）。使用带电平转换器的 CAT/LINEAR 接口（如 CT-62）。</value>
   </data>

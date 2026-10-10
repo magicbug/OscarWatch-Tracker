@@ -2296,6 +2296,21 @@ LOS: {2}
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V แยกกลุ่มนี้ไม่ออก เลือกกำลัง 144 MHz ตามที่ระบุบนวิทยุ IC-910 ที่บันทึกไว้แล้วยังคงกำลังแบบ H วิทยุที่ดัดแปลงเป็น 100 W / 75 W ให้เลือก IC-910H</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>รุ่น IC-9700</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700 (100 W ที่ 144 MHz, 75 W ที่ 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>ญี่ปุ่น IC-9700 (50 W ที่ 144 และ 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>ญี่ปุ่น IC-9700S (20 W ที่ 144 และ 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V แยกกลุ่มนี้ไม่ออก เลือกกำลัง 144 MHz ตามที่ระบุบนวิทยุ IC-9700 ที่บันทึกไว้แล้วยังคง 100 W / 75 W 1200 MHz เป็น 10 W ทั้งสามรุ่น</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: ตั้งบอด CAT ในเมนูวิทยุ #37 (โดยทั่วไป 57600) ใช้แจ็ค CAT/LINEAR กับตัวแปลงระดับ (เช่น CT-62)</value>
   </data>

@@ -2296,6 +2296,21 @@ Fortfahren?</value>
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V kann diese Modelle nicht unterscheiden. Die 144-MHz-Leistung am Funkgerät wählen. Ein gespeichertes IC-910 bleibt bei den H-Leistungen. Ein auf 100 W / 75 W geändertes Gerät nutzt IC-910H.</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>IC-9700-Modell</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700 (100 W auf 144 MHz, 75 W auf 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>Japan IC-9700 (50 W auf 144 und 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>Japan IC-9700S (20 W auf 144 und 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V kann diese Modelle nicht unterscheiden. Die 144-MHz-Leistung am Funkgerät wählen. Ein gespeichertes IC-9700 bleibt bei 100 W / 75 W. 1200 MHz ist bei allen drei 10 W.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: CAT-Baud im Funkmenü Nr. 37 einstellen (typisch 57600). CAT/LINEAR-Buchse mit Pegelwandler verwenden (z. B. CT-62).</value>
   </data>

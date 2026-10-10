@@ -2296,6 +2296,21 @@ Lanjutkan?</value>
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V tidak dapat membedakan model ini. Pilih daya 144 MHz pada radio. IC-910 yang sudah tersimpan tetap pada daya H. Radio yang diubah ke 100 W / 75 W memakai IC-910H.</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>Model IC-9700</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700 (100 W pada 144 MHz, 75 W pada 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>Jepang IC-9700 (50 W pada 144 dan 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>Jepang IC-9700S (20 W pada 144 dan 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V tidak dapat membedakan model ini. Pilih daya 144 MHz pada radio. IC-9700 yang sudah tersimpan tetap pada 100 W / 75 W. 1200 MHz adalah 10 W pada ketiganya.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: setel baud CAT di menu radio #37 (lazim 57600). Pakai jack CAT/LINEAR dengan konverter level (mis. CT-62).</value>
   </data>

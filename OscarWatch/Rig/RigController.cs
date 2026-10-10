@@ -3038,7 +3038,12 @@ public sealed class RigController : IRigController, IDisposable
                 hz = (long)Math.Round(txKHz * 1000.0);
 
             if (!IcomRfPowerEstimator.TryEstimateWatts(
-                    driver.RigType, hz, level, out var watts, _cachedSettings.Ic910PowerClass))
+                    driver.RigType,
+                    hz,
+                    level,
+                    out var watts,
+                    _cachedSettings.Ic910PowerClass,
+                    _cachedSettings.Ic9700PowerClass))
                 return null;
 
             return watts;
@@ -3089,7 +3094,12 @@ public sealed class RigController : IRigController, IDisposable
                 hz = (long)Math.Round(txKHz * 1000.0);
 
             if (!IcomRfPowerEstimator.TryLevelForWatts(
-                    driver.RigType, hz, watts, out var level, _cachedSettings.Ic910PowerClass))
+                    driver.RigType,
+                    hz,
+                    watts,
+                    out var level,
+                    _cachedSettings.Ic910PowerClass,
+                    _cachedSettings.Ic9700PowerClass))
                 return false;
 
             if (!WithTransmitVfoSelected(driver, d => (d.TrySetRfPowerLevel(level), level), out _))

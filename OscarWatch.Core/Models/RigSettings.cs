@@ -65,6 +65,12 @@ public sealed class RigSettings
     /// </summary>
     public Ic910PowerClass Ic910PowerClass { get; set; } = Ic910PowerClass.H;
 
+    /// <summary>
+    /// Power class when <see cref="Type"/> is <see cref="RigType.IcomIc9700"/>.
+    /// Absent settings stay on <see cref="Ic9700PowerClass.Export"/>.
+    /// </summary>
+    public Ic9700PowerClass Ic9700PowerClass { get; set; } = Ic9700PowerClass.Export;
+
     public string Port { get; set; } = "";
 
     public int BaudRate { get; set; } = 19200;

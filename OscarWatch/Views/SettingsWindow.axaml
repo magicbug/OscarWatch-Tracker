@@ -388,6 +388,22 @@
                            TextWrapping="Wrap"
                            Text="{loc:Localize Key=Settings.Radio.Ic910PowerClassHint}" />
               </StackPanel>
+              <StackPanel Spacing="4" IsVisible="{Binding ShowIc9700PowerClass}">
+                <TextBlock Text="{loc:Localize Key=Settings.Radio.Ic9700PowerClass}" />
+                <ComboBox ItemsSource="{Binding Ic9700PowerClassChoices}"
+                          SelectedItem="{Binding SelectedIc9700PowerClassChoice, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:Ic9700PowerClassOption">
+                      <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.Ic9700PowerClassHint}" />
+              </StackPanel>
               <StackPanel Spacing="10" IsVisible="{Binding ShowRigSerialFields}">
                 <TextBlock Text="{loc:Localize Key=Settings.Radio.SerialPort}" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">

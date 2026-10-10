@@ -2296,6 +2296,21 @@ LOS: {2}
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>CI-V не различает эти модели. Укажите мощность на 144 МГц по паспорту. Сохранённый IC-910 остаётся на мощностях H. Аппарат, доработанный до 100 Вт / 75 Вт, выбирайте как IC-910H.</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>Модель IC-9700</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700 (100 Вт на 144 МГц, 75 Вт на 430 МГц)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>Япония IC-9700 (50 Вт на 144 и 430 МГц)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>Япония IC-9700S (20 Вт на 144 и 430 МГц)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>CI-V не различает эти модели. Укажите мощность на 144 МГц по паспорту. Сохранённый IC-9700 остаётся на 100 Вт / 75 Вт. На 1200 МГц у всех трёх 10 Вт.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: скорость CAT в меню рации №37 (обычно 57600). Разъём CAT/LINEAR с преобразователем уровня (напр. CT-62).</value>
   </data>

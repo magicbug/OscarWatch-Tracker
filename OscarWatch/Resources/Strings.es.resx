@@ -2292,6 +2292,21 @@
   <data name="Settings.Radio.Ic910PowerClassHint">
     <value>El CI-V no distingue estos modelos. Elija la potencia de 144 MHz del equipo. Un IC-910 ya guardado sigue en las potencias H. Un equipo modificado a 100 W / 75 W usa IC-910H.</value>
   </data>
+  <data name="Settings.Radio.Ic9700PowerClass">
+    <value>Modelo IC-9700</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Export">
+    <value>IC-9700 (100 W en 144 MHz, 75 W en 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.Japan">
+    <value>Japón IC-9700 (50 W en 144 y 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClass.JapanS">
+    <value>Japón IC-9700S (20 W en 144 y 430 MHz)</value>
+  </data>
+  <data name="Settings.Radio.Ic9700PowerClassHint">
+    <value>El CI-V no distingue estos modelos. Elija la potencia de 144 MHz del equipo. Un IC-9700 ya guardado sigue en 100 W / 75 W. 1200 MHz es 10 W en los tres.</value>
+  </data>
   <data name="Settings.Radio.Ft847Hint">
     <value>FT-847: configura la velocidad CAT en el menú n.º 37 de la radio (típicamente 57600). Usa la toma CAT/LINEAR con un convertidor de nivel (p. ej. CT-62).</value>
   </data>

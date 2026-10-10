@@ -131,4 +131,52 @@ public sealed class IcomRfPowerEstimatorTests
         Assert.Equal(20.0, watts, precision: 3);
         Assert.False(Ft4RfPowerLimit.ExceedsLimit(watts));
     }
+
+    [Theory]
+    [InlineData(Ic9700PowerClass.Export, 145_900_000, 100)]
+    [InlineData(Ic9700PowerClass.Export, 435_800_000, 75)]
+    [InlineData(Ic9700PowerClass.Japan, 145_900_000, 50)]
+    [InlineData(Ic9700PowerClass.Japan, 435_800_000, 50)]
+    [InlineData(Ic9700PowerClass.JapanS, 145_900_000, 20)]
+    [InlineData(Ic9700PowerClass.JapanS, 435_800_000, 20)]
+    [InlineData(Ic9700PowerClass.Export, 1_269_500_000, 10)]
+    [InlineData(Ic9700PowerClass.Japan, 1_269_500_000, 10)]
+    [InlineData(Ic9700PowerClass.JapanS, 1_269_500_000, 10)]
+    public void Ic9700_full_scale_follows_the_power_class(Ic9700PowerClass powerClass, long hz, int expectedWatts)
+    {
+        Assert.True(IcomRfPowerEstimator.TryEstimateWatts(
+            RigType.IcomIc9700, hz, 255, out var watts, ic9700PowerClass: powerClass));
+        Assert.Equal(expectedWatts, watts, precision: 3);
+    }
+
+    [Fact]
+    public void Ic9700_without_a_class_keeps_the_export_scale()
+    {
+        Assert.True(IcomRfPowerEstimator.TryEstimateWatts(
+            RigType.IcomIc9700, 145_900_000, 255, out var watts));
+        Assert.Equal(100.0, watts, precision: 3);
+    }
+
+    [Fact]
+    public void Ic9700_japan_2m_level_for_30w_stays_at_or_under_the_limit()
+    {
+        Assert.True(IcomRfPowerEstimator.TryLevelForWatts(
+            RigType.IcomIc9700, 145_900_000, Ft4RfPowerLimit.MaxWatts, out var level, ic9700PowerClass: Ic9700PowerClass.Japan));
+        Assert.Equal(153, level);
+        Assert.True(IcomRfPowerEstimator.TryEstimateWatts(
+            RigType.IcomIc9700, 145_900_000, level, out var watts, ic9700PowerClass: Ic9700PowerClass.Japan));
+        Assert.False(Ft4RfPowerLimit.ExceedsLimit(watts));
+    }
+
+    [Fact]
+    public void Ic9700s_70cm_30w_request_uses_full_scale()
+    {
+        Assert.True(IcomRfPowerEstimator.TryLevelForWatts(
+            RigType.IcomIc9700, 435_800_000, Ft4RfPowerLimit.MaxWatts, out var level, ic9700PowerClass: Ic9700PowerClass.JapanS));
+        Assert.Equal(255, level);
+        Assert.True(IcomRfPowerEstimator.TryEstimateWatts(
+            RigType.IcomIc9700, 435_800_000, level, out var watts, ic9700PowerClass: Ic9700PowerClass.JapanS));
+        Assert.Equal(20.0, watts, precision: 3);
+        Assert.False(Ft4RfPowerLimit.ExceedsLimit(watts));
+    }
 }
