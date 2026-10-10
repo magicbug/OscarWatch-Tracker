@@ -937,5 +937,19 @@
         "doppler": "NOR"
       }
     ]
+  },
+  {
+    "name": "BY70-4",
+    "norad_id": "100469",
+    "modes": [
+      {
+        "type": "9k6 BPSK Telemetry",
+        "downlink": 437443,
+        "uplink": 0,
+        "downlink_mode": "USB",
+        "uplink_mode": "USB",
+        "doppler": "NOR"
+      }
+    ]
   }
 ]
