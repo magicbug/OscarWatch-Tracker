@@ -8,7 +8,7 @@ public interface IRigDriver : IDisposable
     RigType RigType { get; }
 
     /// <summary>
-    /// One read-only check that this open link is the selected radio.
+    /// One read-only frequency check that this open link answered as a radio.
     /// False means close the port and do not send control commands.
     /// Drivers that already prove the link in <see cref="Open"/> keep the default.
     /// </summary>

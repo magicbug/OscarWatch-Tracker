@@ -89,9 +89,8 @@ public sealed class KenwoodTs2000Driver : IRigDriver
         if (!_transport.IsOpen)
             return false;
 
-        var reply = _transport.Transact("ID;", _catDelayMs);
-        // 019 is TS-2000. 020 is the TS-2000X, which uses the same SATL path.
-        return KenwoodCatCodec.TryParseIdentification(reply ?? "", out var id) && id is "019" or "020";
+        var reply = _transport.Transact(KenwoodCatCodec.BuildReadFrequencyCommand('A'), _catDelayMs);
+        return KenwoodCatCodec.TryParseFrequencyHz(reply ?? "", out var hz) && hz is >= 100_000 and <= 1_300_000_000;
     }
 
     public bool TryReadRfPowerWatts(out double watts)

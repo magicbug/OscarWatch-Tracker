@@ -196,7 +196,7 @@ public sealed class YaesuFt991DriverTests
     }
 
     [Fact]
-    public void Identity_accepts_0570_and_rejects_garbage()
+    public void Identity_accepts_a_frequency_read_and_rejects_garbage()
     {
         var transport = new RecordingYaesuNewCatTransport();
         var driver = new YaesuFt991Driver(RigType.YaesuFt991, transport);

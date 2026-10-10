@@ -41,13 +41,13 @@ public sealed class YaesuFtx1DriverTests
     }
 
     [Fact]
-    public void Identity_accepts_any_four_digit_id()
+    public void Identity_accepts_a_frequency_read()
     {
         var transport = new RecordingYaesuNewCatTransport();
-        transport.Responses.Enqueue("ID1234;");
         var driver = new YaesuFtx1Driver(transport);
         driver.Open();
 
         Assert.True(driver.TryConfirmIdentity());
+        Assert.Contains("FA;", transport.SentCommands);
     }
 }

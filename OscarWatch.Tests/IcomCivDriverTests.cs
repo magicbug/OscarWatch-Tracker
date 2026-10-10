@@ -211,23 +211,22 @@ public sealed class IcomCivDriverTests
     }
 
     [Fact]
-    public void Ic9700_identity_accepts_model_byte_from_configured_address()
+    public void Ic910_identity_accepts_a_frequency_read()
     {
-        var transport = new RecordingIcomCivTransport();
-        transport.CommandResponses.Enqueue([0xFE, 0xFE, 0x00, 0x60, 0x19, 0x00, 0xA2, 0xFD]);
-        var driver = new IcomIc9700Driver(transport);
+        var transport = new RecordingIcomCivTransport { MainHz = 145_990_000 };
+        var driver = new IcomIc910Driver(transport);
         driver.Open();
 
         Assert.True(driver.TryConfirmIdentity());
-        Assert.Equal("1900", transport.SentCommandBodies[^1]);
+        Assert.Equal("03", transport.SentCommandBodies[^1]);
     }
 
     [Fact]
-    public void Ic9700_identity_rejects_ack_without_a_model_byte()
+    public void Ic910_identity_rejects_ack_without_a_frequency()
     {
         var transport = new RecordingIcomCivTransport();
         transport.CommandResponses.Enqueue([0xFE, 0xFE, 0x60, 0x00, 0xFB, 0xFD]);
-        var driver = new IcomIc9700Driver(transport);
+        var driver = new IcomIc910Driver(transport);
         driver.Open();
 
         Assert.False(driver.TryConfirmIdentity());

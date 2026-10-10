@@ -54,9 +54,9 @@ public class YaesuFt991Driver : IRigDriver
         if (!_transport.IsOpen)
             return false;
 
-        var reply = _transport.Transact("ID;", _catDelayMs);
-        return YaesuFt991CatCodec.TryParseIdentification(reply ?? "", out var id)
-            && YaesuFt991CatCodec.IsExpectedIdentification(_rigType, id);
+        var reply = _transport.Transact(YaesuFt991CatCodec.BuildReadFrequencyCommand(vfoB: false), _catDelayMs);
+        return YaesuFt991CatCodec.TryParseFrequencyHz(reply ?? "", out var hz)
+            && hz is >= YaesuFt991CatCodec.MinFrequencyHz and <= YaesuFt991CatCodec.MaxFrequencyHz;
     }
     public bool IsConnected => _transport.IsOpen;
     public bool SupportsTracking => true;

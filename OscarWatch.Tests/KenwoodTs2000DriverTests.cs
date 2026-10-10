@@ -372,18 +372,13 @@ public sealed class KenwoodTs2000DriverTests
     }
 
     [Fact]
-    public void Identity_accepts_ts2000_and_ts2000x_only()
+    public void Identity_accepts_a_vfo_frequency_read()
     {
         var transport = new RecordingKenwoodCatTransport();
         var driver = new KenwoodTs2000Driver(transport);
         driver.Open();
 
         Assert.True(driver.TryConfirmIdentity());
-
-        transport.IdentificationReply = "ID020;";
-        Assert.True(driver.TryConfirmIdentity());
-
-        transport.IdentificationReply = "ID000;";
-        Assert.False(driver.TryConfirmIdentity());
+        Assert.Contains("FA;", transport.SentCommands);
     }
 }

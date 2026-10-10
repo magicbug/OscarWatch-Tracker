@@ -152,24 +152,6 @@ public class IcomCivCodecTests
         Assert.Equal("05000000680301", Convert.ToHexString(body).ToLowerInvariant());
     }
 
-    [Fact]
-    public void TryDecodeTransceiverId_reads_model_when_from_address_matches()
-    {
-        byte[] response = [0xFE, 0xFE, 0x00, 0xA2, 0x19, 0x00, 0xA2, 0xFD];
-        Assert.True(IcomCivCodec.TryDecodeTransceiverId(response, 0xA2, out var modelId));
-        Assert.Equal(0xA2, modelId);
-    }
-
-    [Fact]
-    public void TryDecodeTransceiverId_rejects_ack_and_wrong_from_address()
-    {
-        byte[] ack = [0xFE, 0xFE, 0xA2, 0x00, 0xFB, 0xFD];
-        Assert.False(IcomCivCodec.TryDecodeTransceiverId(ack, 0xA2, out _));
-
-        byte[] wrongFrom = [0xFE, 0xFE, 0x00, 0x60, 0x19, 0x00, 0xA2, 0xFD];
-        Assert.False(IcomCivCodec.TryDecodeTransceiverId(wrongFrom, 0xA2, out _));
-    }
-
     [Theory]
     [InlineData(0, 0x00, 0x00)]
     [InlineData(128, 0x01, 0x28)]

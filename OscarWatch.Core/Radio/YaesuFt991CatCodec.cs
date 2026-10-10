@@ -1,5 +1,3 @@
-using OscarWatch.Core.Models;
-
 namespace OscarWatch.Core.Radio;
 
 /// <summary>
@@ -20,19 +18,6 @@ public static class YaesuFt991CatCodec
         131.8, 136.5, 141.3, 146.2, 151.4, 156.7, 162.2, 167.9, 173.8, 179.9,
         186.2, 192.8, 203.5, 210.7, 218.1, 225.7, 233.6, 241.8, 250.3, 254.1
     ];
-
-    /// <summary>Newcat <c>ID;</c> reply is <c>IDnnnn;</c> (four digits).</summary>
-    public static bool TryParseIdentification(ReadOnlySpan<char> response, out string id) =>
-        KenwoodCatCodec.TryParseFixedIdentification(response, digitCount: 4, out id);
-
-    public static bool IsExpectedIdentification(RigType rigType, string id) => rigType switch
-    {
-        // FT-991 manuals quote 0570. Some FT-991A replies use 0670.
-        RigType.YaesuFt991 or RigType.YaesuFt991a => id is "0570" or "0670",
-        // FTX-1's ID code is not published here. Any four-digit ID still proves newcat.
-        RigType.YaesuFtx1 => id.Length == 4,
-        _ => false
-    };
 
     public static string BuildReadFrequencyCommand(bool vfoB) =>
         vfoB ? "FB;" : "FA;";

@@ -450,7 +450,6 @@ public class RigControllerTests
             SentCommands.Add(normalized);
             return normalized switch
             {
-                "ID;" => "ID019;",
                 "SA;" => _returnNull ? null : "SA0;",
                 "FA;" => "FA00435750000;",
                 _ => null

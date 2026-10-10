@@ -7,12 +7,6 @@ namespace OscarWatch.Rig;
 public abstract class IcomCivDriverBase : IRigDriver
 {
     private static readonly ILogger Log = Serilog.Log.ForContext<IcomCivDriverBase>();
-
-    /// <summary>
-    /// Model byte for the identity probe in flight. Test transports read this so a stand-in
-    /// radio can answer as the driver under test. Production serial I/O ignores it.
-    /// </summary>
-    internal static readonly AsyncLocal<byte> ExpectedIdentityModel = new();
     private IIcomCivTransport? _transport;
     private readonly IIcomCivTransport? _injectedTransport;
     private readonly int _catDelayMs;
@@ -66,29 +60,16 @@ public abstract class IcomCivDriverBase : IRigDriver
     {
         if (_transport is null || !IsConnected)
             return false;
-        if (!IcomCivModelIds.TryGet(RigType, out var expected))
-            return false;
 
-        ExpectedIdentityModel.Value = expected;
-        var response = _transport.WriteCommand([0x19, 0x00], _catDelayMs);
-        if (!IcomCivCodec.TryDecodeTransceiverId(response, CivAddress, out var modelId))
-        {
-            Log.Warning("CI-V identity read on {Port} did not return a transceiver ID", Port);
-            return false;
-        }
+        // Operating-frequency read (0x03). Do not send 0x19 (transceiver ID): on an IC-910
+        // that reply is addressed to CI-V 0x00, and the radio can treat it as a command.
+        var response = _transport.WriteCommand([0x03], _catDelayMs);
+        var hz = IcomCivCodec.DecodeFrequencyFromResponse(response);
+        if (hz is >= 100_000 and <= 10_500_000_000)
+            return true;
 
-        if (modelId != expected)
-        {
-            Log.Warning(
-                "CI-V identity on {Port} was {Actual:X2}, expected {Expected:X2} for {RigType}",
-                Port,
-                modelId,
-                expected,
-                RigType);
-            return false;
-        }
-
-        return true;
+        Log.Warning("CI-V frequency read on {Port} did not return a frequency", Port);
+        return false;
     }
 
     public void Open()

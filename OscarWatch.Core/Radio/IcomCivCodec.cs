@@ -152,46 +152,6 @@ public static class IcomCivCodec
             or >= 5_650_000_000 and <= 5_850_000_000
             or >= 10_000_000_000 and <= 10_500_000_000;
 
-    /// <summary>
-    /// CI-V transceiver ID (command 0x19 0x00). The model byte is fixed for the radio.
-    /// The from-address is the configured CI-V address.
-    /// </summary>
-    public static bool TryDecodeTransceiverId(ReadOnlySpan<byte> response, int expectedAddress, out byte modelId)
-    {
-        modelId = 0;
-        if (expectedAddress is < 0 or > 0xFF)
-            return false;
-
-        for (var end = response.Length - 1; end >= 7; end--)
-        {
-            if (response[end] != 0xFD)
-                continue;
-
-            var start = -1;
-            for (var i = end - 1; i >= 1; i--)
-            {
-                if (response[i] == 0xFE && response[i - 1] == 0xFE)
-                {
-                    start = i - 1;
-                    break;
-                }
-            }
-
-            if (start < 0 || end - start < 7)
-                continue;
-
-            if (response[start + 3] != (byte)expectedAddress)
-                continue;
-            if (response[start + 4] != 0x19 || response[start + 5] != 0x00)
-                continue;
-
-            modelId = response[start + 6];
-            return true;
-        }
-
-        return false;
-    }
-
     public static int ParseCivAddressHex(string? hex)
     {
         if (string.IsNullOrWhiteSpace(hex))
