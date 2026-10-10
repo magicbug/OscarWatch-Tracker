@@ -1,0 +1,214 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        xmlns:controls="using:OscarWatch.Controls"
+        x:Class="OscarWatch.Views.SstvWindow"
+        x:DataType="vm:SstvViewModel"
+        Title="{loc:Localize Key=Window.Sstv.Title}"
+        Width="1080" Height="760"
+        MinWidth="820" MinHeight="560"
+        WindowStartupLocation="CenterOwner">
+  <Window.Styles>
+    <Style Selector="Border.sstv-panel">
+      <Setter Property="Background" Value="{DynamicResource ThemeSubtlePanelBackgroundBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="10" />
+    </Style>
+    <Style Selector="TextBlock.sstv-label">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Opacity" Value="0.85" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.sstv-divider">
+      <Setter Property="Width" Value="1" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="Margin" Value="6,0,12,4" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+    </Style>
+    <Style Selector="TextBlock.sstv-mono">
+      <Setter Property="FontFamily" Value="Consolas,Courier New,monospace" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel Margin="10">
+    <!-- Toolbar -->
+    <Border DockPanel.Dock="Top" Classes="sstv-panel" Padding="8" Margin="0,0,0,8">
+      <DockPanel>
+        <Button DockPanel.Dock="Right"
+                Content="{loc:Localize Key=Sstv.OpenSettings}"
+                Click="OnSettingsClick"
+                ToolTip.Tip="{loc:Localize Key=Sstv.OpenSettings.Tip}"
+                VerticalAlignment="Top"
+                Margin="8,0,0,0" />
+        <WrapPanel Orientation="Horizontal">
+          <Button Content="{loc:Localize Key=Sstv.Start}"
+                  Command="{Binding StartCommand}"
+                  Classes="accent"
+                  MinWidth="80"
+                  Margin="0,0,6,4" />
+          <Button Content="{loc:Localize Key=Sstv.Stop}"
+                  Command="{Binding StopCommand}"
+                  MinWidth="80"
+                  Margin="0,0,6,4" />
+          <Border Classes="sstv-divider" />
+          <TextBlock Text="{loc:Localize Key=Sstv.Mode}" Classes="sstv-label" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding ModeOptions}"
+                    SelectedItem="{Binding SelectedModeOption}"
+                    MinWidth="150"
+                    AutomationProperties.Name="{loc:Localize Key=Sstv.Mode}"
+                    Margin="0,0,6,4" />
+          <Button Content="{loc:Localize Key=Sstv.ReSync}"
+                  Command="{Binding ReSyncCommand}"
+                  ToolTip.Tip="{loc:Localize Key=Sstv.ReSync.Tip}"
+                  Margin="0,0,6,4" />
+          <Button Content="{loc:Localize Key=Sstv.Skip}"
+                  Command="{Binding SkipPictureCommand}"
+                  ToolTip.Tip="{loc:Localize Key=Sstv.Skip.Tip}"
+                  Margin="0,0,6,4" />
+          <Border Classes="sstv-divider" />
+          <Button Content="{loc:Localize Key=Sstv.DecodeRecording}"
+                  Click="OnDecodeRecordingClick"
+                  IsEnabled="{Binding CanDecodeRecording}"
+                  ToolTip.Tip="{loc:Localize Key=Sstv.DecodeRecording.Tip}"
+                  Margin="0,0,6,4" />
+          <Button Content="{loc:Localize Key=Sstv.OpenFolder}"
+                  Command="{Binding OpenPictureFolderCommand}"
+                  ToolTip.Tip="{Binding PictureFolder}"
+                  Margin="0,0,6,4" />
+        </WrapPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- Status strip -->
+    <Border DockPanel.Dock="Bottom"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="0,1,0,0"
+            Padding="0,8,0,0"
+            Margin="0,8,0,0">
+      <StackPanel Spacing="6">
+        <Grid ColumnDefinitions="*,Auto,160" ColumnSpacing="10">
+          <TextBlock Grid.Column="0" Text="{Binding StatusText}" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1"
+                     Text="{loc:Localize Key=Sstv.Level}"
+                     Classes="sstv-label"
+                     IsVisible="{Binding ShowInputLevel}" />
+          <ProgressBar Grid.Column="2"
+                       Minimum="0" Maximum="100"
+                       Value="{Binding InputLevelPercent}"
+                       Height="10" MinHeight="10"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding ShowInputLevel}"
+                       AutomationProperties.Name="{loc:Localize Key=Sstv.Level}" />
+        </Grid>
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10"
+              IsVisible="{Binding LineText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+          <TextBlock Grid.Column="0" Text="{Binding LineText}" Classes="sstv-mono" MinWidth="120" />
+          <ProgressBar Grid.Column="1"
+                       Minimum="0" Maximum="100"
+                       Value="{Binding LineProgressPercent}"
+                       Height="10" MinHeight="10"
+                       VerticalAlignment="Center"
+                       AutomationProperties.Name="{loc:Localize Key=Sstv.Progress}" />
+        </Grid>
+        <WrapPanel Orientation="Horizontal">
+          <TextBlock Text="{Binding LockText}" Classes="sstv-mono" Margin="0,0,18,0"
+                     IsVisible="{Binding LockText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding TuningText}" Classes="sstv-mono" Margin="0,0,18,0"
+                     IsVisible="{Binding TuningText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding ClockText}" Classes="sstv-mono" Margin="0,0,18,0"
+                     IsVisible="{Binding ClockText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding DopplerText}" Classes="sstv-mono"
+                     IsVisible="{Binding DopplerText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </WrapPanel>
+      </StackPanel>
+    </Border>
+
+    <Grid ColumnDefinitions="*,320" ColumnSpacing="10">
+      <!-- Picture -->
+      <Border Grid.Column="0" Classes="sstv-panel">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top"
+                     Text="{Binding DisplayedCaption}"
+                     Classes="sstv-label"
+                     Margin="0,0,0,6" />
+          <Viewbox Stretch="Uniform" StretchDirection="Both">
+            <Image Source="{Binding DisplayedPicture}"
+                   RenderOptions.BitmapInterpolationMode="MediumQuality"
+                   AutomationProperties.Name="{loc:Localize Key=Sstv.Picture}" />
+          </Viewbox>
+        </DockPanel>
+      </Border>
+
+      <!-- Signal and received pictures -->
+      <Border Grid.Column="1" Classes="sstv-panel">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top"
+                     Text="{loc:Localize Key=Sstv.Signal}"
+                     FontWeight="SemiBold"
+                     Margin="0,0,0,6" />
+          <controls:SstvSpectrumControl DockPanel.Dock="Top"
+                                        Height="170"
+                                        Spectrum="{Binding Spectrum}"
+                                        ToolTip.Tip="{loc:Localize Key=Sstv.Signal.Tip}"
+                                        AutomationProperties.Name="{loc:Localize Key=Sstv.Signal}"
+                                        Margin="0,0,0,10" />
+          <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <Button DockPanel.Dock="Right"
+                    Click="OnOpenLibraryClick"
+                    Padding="6,4"
+                    ToolTip.Tip="{loc:Localize Key=Sstv.Library.OpenTip}"
+                    AutomationProperties.Name="{loc:Localize Key=Sstv.Library.OpenTip}">
+              <PathIcon Width="14" Height="14"
+                        Data="M0,0 H6 V6 H0 Z M8,0 H14 V6 H8 Z M0,8 H6 V14 H0 Z M8,8 H14 V14 H8 Z" />
+            </Button>
+            <TextBlock Text="{loc:Localize Key=Sstv.Gallery}"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+          </DockPanel>
+          <Grid DockPanel.Dock="Bottom"
+                ColumnDefinitions="*,*"
+                ColumnSpacing="6"
+                Margin="0,8,0,0">
+            <Button Grid.Column="0"
+                    Content="{Binding SaveButtonText}"
+                    Command="{Binding SaveSelectedPictureCommand}"
+                    ToolTip.Tip="{Binding SaveButtonTip}"
+                    ToolTip.ShowOnDisabled="True"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+            <Button Grid.Column="1"
+                    Content="{loc:Localize Key=Sstv.ShowLive}"
+                    Click="OnShowLiveClick"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+          </Grid>
+          <ListBox ItemsSource="{Binding Gallery}"
+                   SelectedItem="{Binding SelectedGalleryItem}"
+                   AutomationProperties.Name="{loc:Localize Key=Sstv.Gallery}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:SstvGalleryItem">
+                <StackPanel Spacing="4" Margin="0,2">
+                  <Image Source="{Binding Bitmap}"
+                         Height="150"
+                         Stretch="Uniform"
+                         HorizontalAlignment="Left"
+                         AutomationProperties.Name="{Binding Caption}" />
+                  <TextBlock Text="{Binding Caption}" FontSize="12" TextWrapping="Wrap" />
+                  <TextBlock Text="{loc:Localize Key=Sstv.Picture.AlreadySaved}"
+                             FontSize="12"
+                             Opacity="0.75"
+                             ToolTip.Tip="{Binding SavedPath}"
+                             IsVisible="{Binding SavedPath, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

@@ -95,6 +95,7 @@ public sealed class AppSettings
     public SatelliteLinkSettings SatelliteLink { get; set; } = new();
     public PassRecordingSettings PassRecording { get; set; } = new();
     public Ft4Settings Ft4 { get; set; } = new();
+    public OscarWatch.Core.Sstv.SstvSettings Sstv { get; set; } = new();
     public QsoLogbookSettings QsoLogbook { get; set; } = new();
     /// <summary>Transponder conflicts the user confirmed keeping locally instead of the published version.</summary>
     public List<TransponderConflictAcknowledgment> TransponderConflictAcknowledgments { get; set; } = [];

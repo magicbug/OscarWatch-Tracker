@@ -48,6 +48,7 @@
       <MenuItem Header="{loc:Localize Key=Menu.Tools}">
         <MenuItem Header="{loc:Localize Key=Menu.Tools.QsoLogbook}" Command="{Binding OpenQsoLogbookCommand}" />
         <MenuItem Header="{loc:Localize Key=Menu.Tools.Ft4}" Command="{Binding OpenFt4Command}" />
+        <MenuItem Header="{loc:Localize Key=Menu.Tools.Sstv}" Command="{Binding OpenSstvCommand}" />
       </MenuItem>
       <MenuItem Header="{loc:Localize Key=Menu.Window}">
         <MenuItem Header="{loc:Localize Key=Menu.Window.PassElevationTimeline}"

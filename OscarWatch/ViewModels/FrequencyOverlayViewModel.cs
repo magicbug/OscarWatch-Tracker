@@ -53,6 +53,12 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     [ObservableProperty]
     private string _radioReceiveText = "—";
 
+    /// <summary>Doppler-corrected receive dial frequency, or null when nothing is tracked.</summary>
+    public double? RadioReceiveKHz { get; private set; }
+
+    /// <summary>Downlink Doppler shift in kHz, or null when nothing is tracked.</summary>
+    public double? DownlinkDopplerKHz { get; private set; }
+
     [ObservableProperty]
     private string _satelliteTransmitText = "—";
 
@@ -833,6 +839,8 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         IsBeaconOnly = SelectedMode?.IsBeaconOnly == true;
         RadioTransmitText = IsBeaconOnly ? "—" : FrequencyDisplayFormat.FormatMHz(radioCorrected.RadioTransmitKHz);
         RadioReceiveText = FrequencyDisplayFormat.FormatMHz(radioCorrected.RadioReceiveKHz);
+        RadioReceiveKHz = radioCorrected.RadioReceiveKHz;
+        DownlinkDopplerKHz = snapshotCorrected.DopplerShiftKHz;
         SatelliteTransmitText = IsBeaconOnly ? "—" : FrequencyDisplayFormat.FormatMHz(snapshotCorrected.SatelliteTransmitKHz);
         SatelliteReceiveText = FrequencyDisplayFormat.FormatMHz(snapshotCorrected.SatelliteReceiveKHz);
         DopplerShiftText = FrequencyDisplayFormat.FormatDopplerKHz(snapshotCorrected.DopplerShiftKHz);
@@ -1258,6 +1266,8 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     {
         RadioTransmitText = "—";
         RadioReceiveText = "—";
+        RadioReceiveKHz = null;
+        DownlinkDopplerKHz = null;
         SatelliteTransmitText = "—";
         SatelliteReceiveText = "—";
         DopplerShiftText = "";

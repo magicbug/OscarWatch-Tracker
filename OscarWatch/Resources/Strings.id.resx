@@ -598,6 +598,276 @@ Lanjutkan?</value>
   <data name="Menu.Tools.Ft4">
     <value>_OscarWatch FT4</value>
   </data>
+  <data name="Menu.Tools.Sstv">
+    <value>_OscarWatch SSTV</value>
+  </data>
+  <data name="Window.Sstv.Title">
+    <value>OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Start">
+    <value>Mulai</value>
+  </data>
+  <data name="Sstv.Stop">
+    <value>Berhenti</value>
+  </data>
+  <data name="Sstv.Input">
+    <value>Masukan</value>
+  </data>
+  <data name="Sstv.Refresh">
+    <value>Segarkan</value>
+  </data>
+  <data name="Sstv.Mode">
+    <value>Mode</value>
+  </data>
+  <data name="Sstv.Mode.Auto">
+    <value>Otomatis (VIS)</value>
+  </data>
+  <data name="Sstv.ReSync">
+    <value>Sinkron ulang</value>
+  </data>
+  <data name="Sstv.ReSync.Tip">
+    <value>Gambar ulang dengan waktu baris yang diukur di seluruh gambar, sehingga kemiringan sisa dari awal hilang.</value>
+  </data>
+  <data name="Sstv.Skip">
+    <value>Lewati gambar</value>
+  </data>
+  <data name="Sstv.Skip.Tip">
+    <value>Buang gambar yang sedang diterima dan tunggu gambar berikutnya.</value>
+  </data>
+  <data name="Sstv.AutoSlant">
+    <value>Koreksi kemiringan otomatis</value>
+  </data>
+  <data name="Sstv.AutoSlant.Tip">
+    <value>Ukur periode baris dari pulsa sinkron agar kesalahan jam pengirim atau kartu suara tidak membuat gambar miring.</value>
+  </data>
+  <data name="Sstv.SlantTrim">
+    <value>Koreksi jam (ppm)</value>
+  </data>
+  <data name="Sstv.Afc">
+    <value>AFC</value>
+  </data>
+  <data name="Sstv.Afc.Tip">
+    <value>Ikuti frekuensi nada sinkron baris demi baris agar kesalahan tala dan pergeseran Doppler tidak mengubah warna.</value>
+  </data>
+  <data name="Sstv.CatFeedForward">
+    <value>Koreksi Doppler radio (SSB)</value>
+  </data>
+  <data name="Sstv.CatFeedForward.Tip">
+    <value>Pada SSB, hapus selisih audio di antara langkah Doppler kontrol radio. FM tidak memerlukan koreksi.</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis">
+    <value>Temukan gambar tanpa header VIS</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis.Tip">
+    <value>Jika header hilang (sinyal lemah di awal lintasan), kenali gambar dan modenya dari pulsa sinkron yang teratur.</value>
+  </data>
+  <data name="Sstv.AutoSave">
+    <value>Simpan gambar otomatis</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio">
+    <value>Simpan audio penerimaan</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio.Tip">
+    <value>Simpan audio penerimaan sebagai WAV (sekitar 1,4 MB per menit) di folder SSTV agar lintasan dapat didekode ulang nanti.</value>
+  </data>
+  <data name="Sstv.Progress">
+    <value>Kemajuan gambar</value>
+  </data>
+  <data name="Sstv.Level">
+    <value>Level masukan</value>
+  </data>
+  <data name="Sstv.Picture">
+    <value>Gambar SSTV</value>
+  </data>
+  <data name="Sstv.Gallery">
+    <value>Gambar diterima</value>
+  </data>
+  <data name="Sstv.SavePicture">
+    <value>Simpan gambar</value>
+  </data>
+  <data name="Sstv.Picture.AlreadySaved">
+    <value>Tersimpan</value>
+  </data>
+  <data name="Sstv.SavePicture.SelectTip">
+    <value>Pilih gambar yang diterima untuk menyimpannya.</value>
+  </data>
+  <data name="Sstv.Signal">
+    <value>Sinyal</value>
+  </data>
+  <data name="Sstv.Signal.Tip">
+    <value>Spektrum dan waterfall audio penerimaan. Penanda menunjukkan sinkron (1200 Hz), hitam (1500 Hz), leader VIS (1900 Hz), dan putih (2300 Hz). Gambar yang baik menampilkan garis stabil di 1200 Hz dengan aktivitas antara 1500 dan 2300 Hz.</value>
+  </data>
+  <data name="Window.SstvSettings.Title">
+    <value>Pengaturan OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.OpenSettings">
+    <value>Pengaturan</value>
+  </data>
+  <data name="Sstv.OpenSettings.Tip">
+    <value>Input audio, dekode, dan opsi penyimpanan.</value>
+  </data>
+  <data name="Sstv.Settings.Audio">
+    <value>Audio</value>
+  </data>
+  <data name="Sstv.Settings.Decoding">
+    <value>Dekode</value>
+  </data>
+  <data name="Sstv.Settings.Saving">
+    <value>Penyimpanan</value>
+  </data>
+  <data name="Window.SstvLibrary.Title">
+    <value>Pustaka gambar OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Library.OpenTip">
+    <value>Buka pustaka gambar: semua gambar tersimpan, menurut tanggal</value>
+  </data>
+  <data name="Sstv.Library.Period">
+    <value>Periode</value>
+  </data>
+  <data name="Sstv.Library.Period.All">
+    <value>Semua gambar</value>
+  </data>
+  <data name="Sstv.Library.Period.Today">
+    <value>Hari ini</value>
+  </data>
+  <data name="Sstv.Library.Period.Week">
+    <value>7 hari terakhir</value>
+  </data>
+  <data name="Sstv.Library.Period.Month">
+    <value>30 hari terakhir</value>
+  </data>
+  <data name="Sstv.Library.Period.Custom">
+    <value>Pilih tanggal</value>
+  </data>
+  <data name="Sstv.Library.From">
+    <value>Dari</value>
+  </data>
+  <data name="Sstv.Library.To">
+    <value>Sampai</value>
+  </data>
+  <data name="Sstv.Library.Satellite">
+    <value>Satelit</value>
+  </data>
+  <data name="Sstv.Library.AnySatellite">
+    <value>Semua satelit</value>
+  </data>
+  <data name="Sstv.Library.AnyMode">
+    <value>Semua mode</value>
+  </data>
+  <data name="Sstv.Library.Empty">
+    <value>Tidak ada gambar tersimpan yang cocok dengan filter ini.</value>
+  </data>
+  <data name="Sstv.Library.SelectHint">
+    <value>Pilih gambar untuk melihatnya di sini. Klik dua kali untuk membukanya.</value>
+  </data>
+  <data name="Sstv.Library.Received">
+    <value>Diterima</value>
+  </data>
+  <data name="Sstv.Library.File">
+    <value>Berkas</value>
+  </data>
+  <data name="Sstv.Library.Open">
+    <value>Buka</value>
+  </data>
+  <data name="Sstv.Library.ShowInFolder">
+    <value>Tampilkan di folder</value>
+  </data>
+  <data name="Sstv.Library.Delete">
+    <value>Hapus</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm.Title">
+    <value>Hapus gambar</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm">
+    <value>Hapus {0}? Tindakan ini tidak dapat dibatalkan.</value>
+  </data>
+  <data name="Sstv.Library.Count">
+    <value>{0} gambar</value>
+  </data>
+  <data name="Sstv.Library.CountOne">
+    <value>1 gambar</value>
+  </data>
+  <data name="Sstv.Library.Summary">
+    <value>Menampilkan {0} dari {1} gambar tersimpan</value>
+  </data>
+  <data name="Sstv.ShowLive">
+    <value>Tampilkan gambar langsung</value>
+  </data>
+  <data name="Sstv.DecodeRecording">
+    <value>Dekode rekaman</value>
+  </data>
+  <data name="Sstv.DecodeRecording.Tip">
+    <value>Dekode rekaman WAV atau MP3 dari sebuah lintasan. Format selain WAV memerlukan ffmpeg di PATH.</value>
+  </data>
+  <data name="Sstv.OpenFolder">
+    <value>Buka folder SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Title">
+    <value>Pilih rekaman SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Audio">
+    <value>Rekaman audio</value>
+  </data>
+  <data name="Sstv.Status.Idle">
+    <value>Berhenti. Tekan Mulai untuk mendengarkan gambar.</value>
+  </data>
+  <data name="Sstv.Status.NoAudio">
+    <value>Tidak ada masukan audio (PortAudio gagal dimulai).</value>
+  </data>
+  <data name="Sstv.Status.Error">
+    <value>SSTV berhenti: {0}</value>
+  </data>
+  <data name="Sstv.Status.Listening">
+    <value>Menunggu gambar</value>
+  </data>
+  <data name="Sstv.Status.ListeningSat">
+    <value>Menunggu gambar dari {0}</value>
+  </data>
+  <data name="Sstv.Status.FromVis">
+    <value>VIS</value>
+  </data>
+  <data name="Sstv.Status.FromSync">
+    <value>ditemukan dari sinkron</value>
+  </data>
+  <data name="Sstv.Status.Receiving">
+    <value>Menerima {0} ({1})</value>
+  </data>
+  <data name="Sstv.Status.LoadingFile">
+    <value>Memuat {0}</value>
+  </data>
+  <data name="Sstv.Status.DecodingFile">
+    <value>Mendekode {0}: {1:0}%</value>
+  </data>
+  <data name="Sstv.Status.FileDone">
+    <value>Selesai mendekode {0}: {1} gambar</value>
+  </data>
+  <data name="Sstv.Line">
+    <value>Baris {0} dari {1}</value>
+  </data>
+  <data name="Sstv.Lock">
+    <value>Kunci sinkron {0:0}%</value>
+  </data>
+  <data name="Sstv.Offset">
+    <value>Tala {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Clock">
+    <value>Jam {0:+0;-0;0} ppm</value>
+  </data>
+  <data name="Sstv.Doppler">
+    <value>Doppler downlink {0}</value>
+  </data>
+  <data name="Sstv.FeedForward">
+    <value>koreksi radio {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Picture.Saved">
+    <value>Disimpan ke {0}</value>
+  </data>
+  <data name="Sstv.Picture.Partial">
+    <value>sebagian</value>
+  </data>
+  <data name="Sstv.Gallery.Item">
+    <value>{0} pukul {1} UTC, kunci sinkron {2:0}%</value>
+  </data>
   <data name="Menu.Satellites">
     <value>_Satelit</value>
   </data>

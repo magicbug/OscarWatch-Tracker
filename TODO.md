@@ -16,7 +16,7 @@ See [building radio drivers](documents/building-radio-drivers.md) for adding rig
 ## Larger projects (lower priority)
 
 - [x] In-app satellite FT4 modem (Tools → FT4): duplex decode/TX via ft8_lib, PTT methods, auto-sequence, logbook save
-- [ ] Native SSTV decoder for common sat modes with sync, etc.
+- [x] Native SSTV receive (Tools → OscarWatch SSTV): Robot, Scottie, Martin, Wraase SC2-180 and PD modes, auto mode, slant correction, AFC, decode recordings
 - [ ] Built-in packet interface
 
 ---

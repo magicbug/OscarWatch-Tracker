@@ -2277,6 +2277,276 @@
   <data name="Menu.Tools.Ft4">
     <value>_OscarWatch FT4</value>
   </data>
+  <data name="Menu.Tools.Sstv">
+    <value>_OscarWatch SSTV</value>
+  </data>
+  <data name="Window.Sstv.Title">
+    <value>OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Start">
+    <value>開始</value>
+  </data>
+  <data name="Sstv.Stop">
+    <value>停止</value>
+  </data>
+  <data name="Sstv.Input">
+    <value>入力</value>
+  </data>
+  <data name="Sstv.Refresh">
+    <value>更新</value>
+  </data>
+  <data name="Sstv.Mode">
+    <value>モード</value>
+  </data>
+  <data name="Sstv.Mode.Auto">
+    <value>自動 (VIS)</value>
+  </data>
+  <data name="Sstv.ReSync">
+    <value>再同期</value>
+  </data>
+  <data name="Sstv.ReSync.Tip">
+    <value>画像全体で測定したライン周期で再描画し、開始時の傾きを取り除きます。</value>
+  </data>
+  <data name="Sstv.Skip">
+    <value>画像をスキップ</value>
+  </data>
+  <data name="Sstv.Skip.Tip">
+    <value>受信中の画像を破棄して次の画像を待ちます。</value>
+  </data>
+  <data name="Sstv.AutoSlant">
+    <value>自動傾き補正</value>
+  </data>
+  <data name="Sstv.AutoSlant.Tip">
+    <value>同期パルスからライン周期を測定し、送信側やサウンドカードのクロック誤差で画像が傾かないようにします。</value>
+  </data>
+  <data name="Sstv.SlantTrim">
+    <value>クロック補正 (ppm)</value>
+  </data>
+  <data name="Sstv.Afc">
+    <value>AFC</value>
+  </data>
+  <data name="Sstv.Afc.Tip">
+    <value>同期トーンの周波数をラインごとに追従し、同調誤差やドップラードリフトで色がずれないようにします。</value>
+  </data>
+  <data name="Sstv.CatFeedForward">
+    <value>無線機ドップラー補正 (SSB)</value>
+  </data>
+  <data name="Sstv.CatFeedForward.Tip">
+    <value>SSB では無線機制御のドップラーステップ間に残る音声オフセットを除去します。FM では不要です。</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis">
+    <value>VIS ヘッダーなしで画像を検出</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis.Tip">
+    <value>ヘッダーを受信できなかった場合 (パス開始時の弱い信号)、規則的な同期パルスから画像とモードを検出します。</value>
+  </data>
+  <data name="Sstv.AutoSave">
+    <value>画像を自動保存</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio">
+    <value>受信音声を保存</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio.Tip">
+    <value>受信音声を WAV ファイル (1 分あたり約 1.4 MB) として SSTV フォルダーに保存し、後で再デコードできるようにします。</value>
+  </data>
+  <data name="Sstv.Progress">
+    <value>画像の進行状況</value>
+  </data>
+  <data name="Sstv.Level">
+    <value>入力レベル</value>
+  </data>
+  <data name="Sstv.Picture">
+    <value>SSTV 画像</value>
+  </data>
+  <data name="Sstv.Gallery">
+    <value>受信した画像</value>
+  </data>
+  <data name="Sstv.SavePicture">
+    <value>画像を保存</value>
+  </data>
+  <data name="Sstv.Picture.AlreadySaved">
+    <value>保存済み</value>
+  </data>
+  <data name="Sstv.SavePicture.SelectTip">
+    <value>保存するには受信した画像を選択してください。</value>
+  </data>
+  <data name="Sstv.Signal">
+    <value>信号</value>
+  </data>
+  <data name="Sstv.Signal.Tip">
+    <value>受信音声のスペクトラムとウォーターフォール。マーカーは同期 (1200 Hz)、黒 (1500 Hz)、VIS リーダー (1900 Hz)、白 (2300 Hz) を示します。良好な画像では 1200 Hz に安定した線が見え、1500～2300 Hz の間に信号があります。</value>
+  </data>
+  <data name="Window.SstvSettings.Title">
+    <value>OscarWatch SSTV 設定</value>
+  </data>
+  <data name="Sstv.OpenSettings">
+    <value>設定</value>
+  </data>
+  <data name="Sstv.OpenSettings.Tip">
+    <value>音声入力、デコード、保存のオプション。</value>
+  </data>
+  <data name="Sstv.Settings.Audio">
+    <value>音声</value>
+  </data>
+  <data name="Sstv.Settings.Decoding">
+    <value>デコード</value>
+  </data>
+  <data name="Sstv.Settings.Saving">
+    <value>保存</value>
+  </data>
+  <data name="Window.SstvLibrary.Title">
+    <value>OscarWatch SSTV 画像ライブラリ</value>
+  </data>
+  <data name="Sstv.Library.OpenTip">
+    <value>画像ライブラリを開く: 保存したすべての画像を日付別に表示</value>
+  </data>
+  <data name="Sstv.Library.Period">
+    <value>期間</value>
+  </data>
+  <data name="Sstv.Library.Period.All">
+    <value>すべての画像</value>
+  </data>
+  <data name="Sstv.Library.Period.Today">
+    <value>今日</value>
+  </data>
+  <data name="Sstv.Library.Period.Week">
+    <value>過去 7 日間</value>
+  </data>
+  <data name="Sstv.Library.Period.Month">
+    <value>過去 30 日間</value>
+  </data>
+  <data name="Sstv.Library.Period.Custom">
+    <value>日付を指定</value>
+  </data>
+  <data name="Sstv.Library.From">
+    <value>開始</value>
+  </data>
+  <data name="Sstv.Library.To">
+    <value>終了</value>
+  </data>
+  <data name="Sstv.Library.Satellite">
+    <value>衛星</value>
+  </data>
+  <data name="Sstv.Library.AnySatellite">
+    <value>すべての衛星</value>
+  </data>
+  <data name="Sstv.Library.AnyMode">
+    <value>すべてのモード</value>
+  </data>
+  <data name="Sstv.Library.Empty">
+    <value>条件に一致する保存画像はありません。</value>
+  </data>
+  <data name="Sstv.Library.SelectHint">
+    <value>画像を選択するとここに表示されます。ダブルクリックで開きます。</value>
+  </data>
+  <data name="Sstv.Library.Received">
+    <value>受信日時</value>
+  </data>
+  <data name="Sstv.Library.File">
+    <value>ファイル</value>
+  </data>
+  <data name="Sstv.Library.Open">
+    <value>開く</value>
+  </data>
+  <data name="Sstv.Library.ShowInFolder">
+    <value>フォルダーに表示</value>
+  </data>
+  <data name="Sstv.Library.Delete">
+    <value>削除</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm.Title">
+    <value>画像を削除</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm">
+    <value>{0} を削除しますか？元に戻せません。</value>
+  </data>
+  <data name="Sstv.Library.Count">
+    <value>{0} 枚</value>
+  </data>
+  <data name="Sstv.Library.CountOne">
+    <value>1 枚</value>
+  </data>
+  <data name="Sstv.Library.Summary">
+    <value>保存画像 {1} 枚中 {0} 枚を表示</value>
+  </data>
+  <data name="Sstv.ShowLive">
+    <value>受信中の画像を表示</value>
+  </data>
+  <data name="Sstv.DecodeRecording">
+    <value>録音をデコード</value>
+  </data>
+  <data name="Sstv.DecodeRecording.Tip">
+    <value>パスの WAV または MP3 録音をデコードします。WAV 以外の形式には PATH 上の ffmpeg が必要です。</value>
+  </data>
+  <data name="Sstv.OpenFolder">
+    <value>SSTV フォルダーを開く</value>
+  </data>
+  <data name="Sstv.Picker.Title">
+    <value>SSTV 録音を選択</value>
+  </data>
+  <data name="Sstv.Picker.Audio">
+    <value>音声録音</value>
+  </data>
+  <data name="Sstv.Status.Idle">
+    <value>停止中。開始を押すと画像の受信を待ちます。</value>
+  </data>
+  <data name="Sstv.Status.NoAudio">
+    <value>音声入力を使用できません (PortAudio を開始できませんでした)。</value>
+  </data>
+  <data name="Sstv.Status.Error">
+    <value>SSTV が停止しました: {0}</value>
+  </data>
+  <data name="Sstv.Status.Listening">
+    <value>画像を待機中</value>
+  </data>
+  <data name="Sstv.Status.ListeningSat">
+    <value>{0} からの画像を待機中</value>
+  </data>
+  <data name="Sstv.Status.FromVis">
+    <value>VIS</value>
+  </data>
+  <data name="Sstv.Status.FromSync">
+    <value>同期から検出</value>
+  </data>
+  <data name="Sstv.Status.Receiving">
+    <value>{0} を受信中 ({1})</value>
+  </data>
+  <data name="Sstv.Status.LoadingFile">
+    <value>{0} を読み込み中</value>
+  </data>
+  <data name="Sstv.Status.DecodingFile">
+    <value>{0} をデコード中: {1:0}%</value>
+  </data>
+  <data name="Sstv.Status.FileDone">
+    <value>{0} のデコード完了: {1} 枚</value>
+  </data>
+  <data name="Sstv.Line">
+    <value>ライン {0}/{1}</value>
+  </data>
+  <data name="Sstv.Lock">
+    <value>同期ロック {0:0}%</value>
+  </data>
+  <data name="Sstv.Offset">
+    <value>同調 {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Clock">
+    <value>クロック {0:+0;-0;0} ppm</value>
+  </data>
+  <data name="Sstv.Doppler">
+    <value>ダウンリンクドップラー {0}</value>
+  </data>
+  <data name="Sstv.FeedForward">
+    <value>無線機補正 {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Picture.Saved">
+    <value>{0} に保存しました</value>
+  </data>
+  <data name="Sstv.Picture.Partial">
+    <value>一部</value>
+  </data>
+  <data name="Sstv.Gallery.Item">
+    <value>{0} {1} UTC、同期ロック {2:0}%</value>
+  </data>
   <data name="Window.Logbook.Title">
     <value>OscarWatchログブック</value>
   </data>

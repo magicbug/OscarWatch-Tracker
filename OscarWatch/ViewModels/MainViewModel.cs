@@ -2517,6 +2517,28 @@ public partial class MainViewModel : ViewModelBase
         window.Show(App.MainWindow);
     }
 
+    private static SstvWindow? _openSstvWindow;
+
+    [RelayCommand]
+    private void OpenSstv()
+    {
+        _trackerSnapshot.FocusedNoradId = FocusedNoradId;
+        if (_openSstvWindow is { IsVisible: true })
+        {
+            _openSstvWindow.Activate();
+            return;
+        }
+
+        var vm = App.Services.GetRequiredService<SstvViewModel>();
+        var window = new SstvWindow { DataContext = vm };
+        window.Closed += (_, _) => _openSstvWindow = null;
+        _openSstvWindow = window;
+        if (App.MainWindow is null)
+            return;
+
+        window.Show(App.MainWindow);
+    }
+
     private bool CanOpenFt4() =>
         Ft4SatelliteEligibility.IsAllowed(
             Frequencies.SatelliteName,

@@ -26,6 +26,7 @@
           <li><a href="radio-rotator.html">Radio &amp; rotator</a></li>
           <li><a href="qso-logbook.html">Logbook</a></li>
           <li><a href="ft4.html">OscarWatch FT4</a></li>
+          <li><a href="sstv.html">OscarWatch SSTV</a></li>
           <li><a href="settings.html">Settings</a></li>
           <li><a href="keyboard-shortcuts.html">Shortcuts</a></li>
           <li><a href="troubleshooting.html">Problems?</a></li>
@@ -57,6 +58,7 @@
         <li>Can read an optional <strong>NMEA GPS</strong> for station position (and optional UTC for tracking) while roving</li>
         <li>Can log satellite QSOs locally with <strong>Tools → OscarWatch Logbook</strong> and export ADIF</li>
         <li>Can open an in-app <strong>OscarWatch FT4</strong> modem window for duplex satellite digital work</li>
+        <li>Can receive SSTV pictures from space (for example ISS ARISS events) with <strong>Tools → OscarWatch SSTV</strong></li>
         <li>Can broadcast focused satellite data to logging applications via <strong>Satellite link</strong> (WebSocket)</li>
       </ul>
 
@@ -90,6 +92,7 @@
           <tr><td><a href="radio-rotator.html">Radio &amp; rotator</a> (<a href="radio-icom.html">ICOM</a>, <a href="radio-yaesu.html">Yaesu</a>, <a href="radio-kenwood.html">Kenwood</a>, <a href="radio-flex.html">FlexRadio</a>, <a href="radio-sdr-dual.html">SDR dual</a>, <a href="radio-offsets.html">offsets</a>, <a href="radio-doppler-tuning.html">Doppler</a>, <a href="linux-serial.html">Linux serial</a>, <a href="rotators.html">rotators</a>)</td><td>You connect a rig or rotator</td></tr>
           <tr><td><a href="qso-logbook.html">OscarWatch Logbook</a></td><td>You want fast satellite logging during a pass and ADIF export</td></tr>
           <tr><td><a href="ft4.html">OscarWatch FT4</a></td><td>You want the in-app FT4 modem window for duplex satellite digital work</td></tr>
+          <tr><td><a href="sstv.html">OscarWatch SSTV</a></td><td>You want to receive SSTV pictures from the ISS or other satellites</td></tr>
           <tr><td><a href="settings.html">Settings</a></td><td>You configure voice, recording, Cloudlog, appearance, etc.</td></tr>
           <tr><td><a href="satellite-link.html">Satellite link</a></td><td>You connect a logging app to OscarWatch over WebSocket</td></tr>
           <tr><td><a href="keyboard-shortcuts.html">Keyboard shortcuts</a></td><td>You want keys for frequency offsets (RX/TX), Voice/CW, and satellite selection</td></tr>
@@ -104,7 +107,8 @@
       <p>
         That folder holds settings, TLE cache, your edited transponder database, pass recordings, and log files.
         Main app logs under <code>logs\</code> and optional Doppler CSV logs under <code>doppler-logs\</code> are
-        kept for <strong>14 days</strong>. Pass recordings under <code>recordings\</code> are not auto-deleted.
+        kept for <strong>14 days</strong>. Pass recordings under <code>recordings\</code> and SSTV pictures and audio under
+        <code>sstv\</code> are not auto-deleted.
         Use <strong>Help → Open logs folder</strong> or <strong>Help → Open recordings folder</strong> in the app
         when support asks for a file or you want to tidy storage.
       </p>

@@ -598,6 +598,276 @@ LOS: {2}
   <data name="Menu.Tools.Ft4">
     <value>_OscarWatch FT4</value>
   </data>
+  <data name="Menu.Tools.Sstv">
+    <value>_OscarWatch SSTV</value>
+  </data>
+  <data name="Window.Sstv.Title">
+    <value>OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Start">
+    <value>เริ่ม</value>
+  </data>
+  <data name="Sstv.Stop">
+    <value>หยุด</value>
+  </data>
+  <data name="Sstv.Input">
+    <value>อินพุต</value>
+  </data>
+  <data name="Sstv.Refresh">
+    <value>รีเฟรช</value>
+  </data>
+  <data name="Sstv.Mode">
+    <value>โหมด</value>
+  </data>
+  <data name="Sstv.Mode.Auto">
+    <value>อัตโนมัติ (VIS)</value>
+  </data>
+  <data name="Sstv.ReSync">
+    <value>ซิงค์ใหม่</value>
+  </data>
+  <data name="Sstv.ReSync.Tip">
+    <value>วาดภาพใหม่โดยใช้จังหวะเส้นที่วัดจากทั้งภาพ เพื่อลบความเอียงที่เหลือจากช่วงเริ่มต้น</value>
+  </data>
+  <data name="Sstv.Skip">
+    <value>ข้ามภาพ</value>
+  </data>
+  <data name="Sstv.Skip.Tip">
+    <value>ทิ้งภาพที่กำลังรับและรอภาพถัดไป</value>
+  </data>
+  <data name="Sstv.AutoSlant">
+    <value>แก้ความเอียงอัตโนมัติ</value>
+  </data>
+  <data name="Sstv.AutoSlant.Tip">
+    <value>วัดคาบเส้นจากพัลส์ซิงค์ เพื่อไม่ให้ความคลาดเคลื่อนของนาฬิกาทำให้ภาพเอียง</value>
+  </data>
+  <data name="Sstv.SlantTrim">
+    <value>ปรับนาฬิกา (ppm)</value>
+  </data>
+  <data name="Sstv.Afc">
+    <value>AFC</value>
+  </data>
+  <data name="Sstv.Afc.Tip">
+    <value>ติดตามความถี่โทนซิงค์ทีละเส้น เพื่อไม่ให้ความคลาดเคลื่อนการจูนและดอปเปลอร์ทำให้สีเพี้ยน</value>
+  </data>
+  <data name="Sstv.CatFeedForward">
+    <value>แก้ดอปเปลอร์จากวิทยุ (SSB)</value>
+  </data>
+  <data name="Sstv.CatFeedForward.Tip">
+    <value>สำหรับ SSB ลบออฟเซ็ตเสียงที่เหลือระหว่างขั้นดอปเปลอร์ของการควบคุมวิทยุ FM ไม่ต้องแก้</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis">
+    <value>ค้นหาภาพที่ไม่มีส่วนหัว VIS</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis.Tip">
+    <value>เมื่อส่วนหัวหาย (สัญญาณอ่อนตอนเริ่มผ่าน) ให้จับภาพและโหมดจากพัลส์ซิงค์ที่สม่ำเสมอ</value>
+  </data>
+  <data name="Sstv.AutoSave">
+    <value>บันทึกภาพอัตโนมัติ</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio">
+    <value>บันทึกเสียงที่รับ</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio.Tip">
+    <value>เก็บเสียงที่รับเป็นไฟล์ WAV (ประมาณ 1.4 MB ต่อนาที) ในโฟลเดอร์ SSTV เพื่อถอดรหัสซ้ำภายหลัง</value>
+  </data>
+  <data name="Sstv.Progress">
+    <value>ความคืบหน้าภาพ</value>
+  </data>
+  <data name="Sstv.Level">
+    <value>ระดับอินพุต</value>
+  </data>
+  <data name="Sstv.Picture">
+    <value>ภาพ SSTV</value>
+  </data>
+  <data name="Sstv.Gallery">
+    <value>ภาพที่รับได้</value>
+  </data>
+  <data name="Sstv.SavePicture">
+    <value>บันทึกภาพ</value>
+  </data>
+  <data name="Sstv.Picture.AlreadySaved">
+    <value>บันทึกแล้ว</value>
+  </data>
+  <data name="Sstv.SavePicture.SelectTip">
+    <value>เลือกภาพที่รับได้เพื่อบันทึก</value>
+  </data>
+  <data name="Sstv.Signal">
+    <value>สัญญาณ</value>
+  </data>
+  <data name="Sstv.Signal.Tip">
+    <value>สเปกตรัมและวอเตอร์ฟอลของเสียงที่รับ เครื่องหมายแสดงซิงก์ (1200 Hz) สีดำ (1500 Hz) ส่วนนำ VIS (1900 Hz) และสีขาว (2300 Hz) ภาพที่ดีจะมีเส้นคงที่ที่ 1200 Hz และมีสัญญาณระหว่าง 1500 ถึง 2300 Hz</value>
+  </data>
+  <data name="Window.SstvSettings.Title">
+    <value>การตั้งค่า OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.OpenSettings">
+    <value>การตั้งค่า</value>
+  </data>
+  <data name="Sstv.OpenSettings.Tip">
+    <value>อินพุตเสียง การถอดรหัส และตัวเลือกการบันทึก</value>
+  </data>
+  <data name="Sstv.Settings.Audio">
+    <value>เสียง</value>
+  </data>
+  <data name="Sstv.Settings.Decoding">
+    <value>การถอดรหัส</value>
+  </data>
+  <data name="Sstv.Settings.Saving">
+    <value>การบันทึก</value>
+  </data>
+  <data name="Window.SstvLibrary.Title">
+    <value>คลังภาพ OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Library.OpenTip">
+    <value>เปิดคลังภาพ: ภาพที่บันทึกไว้ทั้งหมด เรียงตามวันที่</value>
+  </data>
+  <data name="Sstv.Library.Period">
+    <value>ช่วงเวลา</value>
+  </data>
+  <data name="Sstv.Library.Period.All">
+    <value>ภาพทั้งหมด</value>
+  </data>
+  <data name="Sstv.Library.Period.Today">
+    <value>วันนี้</value>
+  </data>
+  <data name="Sstv.Library.Period.Week">
+    <value>7 วันที่ผ่านมา</value>
+  </data>
+  <data name="Sstv.Library.Period.Month">
+    <value>30 วันที่ผ่านมา</value>
+  </data>
+  <data name="Sstv.Library.Period.Custom">
+    <value>เลือกวันที่</value>
+  </data>
+  <data name="Sstv.Library.From">
+    <value>ตั้งแต่</value>
+  </data>
+  <data name="Sstv.Library.To">
+    <value>ถึง</value>
+  </data>
+  <data name="Sstv.Library.Satellite">
+    <value>ดาวเทียม</value>
+  </data>
+  <data name="Sstv.Library.AnySatellite">
+    <value>ดาวเทียมทั้งหมด</value>
+  </data>
+  <data name="Sstv.Library.AnyMode">
+    <value>ทุกโหมด</value>
+  </data>
+  <data name="Sstv.Library.Empty">
+    <value>ไม่มีภาพที่บันทึกไว้ตรงกับตัวกรองนี้</value>
+  </data>
+  <data name="Sstv.Library.SelectHint">
+    <value>เลือกภาพเพื่อดูที่นี่ ดับเบิลคลิกเพื่อเปิด</value>
+  </data>
+  <data name="Sstv.Library.Received">
+    <value>รับเมื่อ</value>
+  </data>
+  <data name="Sstv.Library.File">
+    <value>ไฟล์</value>
+  </data>
+  <data name="Sstv.Library.Open">
+    <value>เปิด</value>
+  </data>
+  <data name="Sstv.Library.ShowInFolder">
+    <value>แสดงในโฟลเดอร์</value>
+  </data>
+  <data name="Sstv.Library.Delete">
+    <value>ลบ</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm.Title">
+    <value>ลบภาพ</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm">
+    <value>ลบ {0} หรือไม่ การกระทำนี้ย้อนกลับไม่ได้</value>
+  </data>
+  <data name="Sstv.Library.Count">
+    <value>{0} ภาพ</value>
+  </data>
+  <data name="Sstv.Library.CountOne">
+    <value>1 ภาพ</value>
+  </data>
+  <data name="Sstv.Library.Summary">
+    <value>แสดง {0} จาก {1} ภาพที่บันทึกไว้</value>
+  </data>
+  <data name="Sstv.ShowLive">
+    <value>แสดงภาพสด</value>
+  </data>
+  <data name="Sstv.DecodeRecording">
+    <value>ถอดรหัสไฟล์บันทึก</value>
+  </data>
+  <data name="Sstv.DecodeRecording.Tip">
+    <value>ถอดรหัสไฟล์บันทึก WAV หรือ MP3 ของการผ่าน รูปแบบอื่นนอกจาก WAV ต้องมี ffmpeg บน PATH</value>
+  </data>
+  <data name="Sstv.OpenFolder">
+    <value>เปิดโฟลเดอร์ SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Title">
+    <value>เลือกไฟล์บันทึก SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Audio">
+    <value>ไฟล์บันทึกเสียง</value>
+  </data>
+  <data name="Sstv.Status.Idle">
+    <value>หยุดอยู่ กดเริ่มเพื่อรอรับภาพ</value>
+  </data>
+  <data name="Sstv.Status.NoAudio">
+    <value>ไม่มีอินพุตเสียง (PortAudio เริ่มไม่ได้)</value>
+  </data>
+  <data name="Sstv.Status.Error">
+    <value>SSTV หยุด: {0}</value>
+  </data>
+  <data name="Sstv.Status.Listening">
+    <value>กำลังรอภาพ</value>
+  </data>
+  <data name="Sstv.Status.ListeningSat">
+    <value>กำลังรอภาพจาก {0}</value>
+  </data>
+  <data name="Sstv.Status.FromVis">
+    <value>VIS</value>
+  </data>
+  <data name="Sstv.Status.FromSync">
+    <value>พบจากซิงค์</value>
+  </data>
+  <data name="Sstv.Status.Receiving">
+    <value>กำลังรับ {0} ({1})</value>
+  </data>
+  <data name="Sstv.Status.LoadingFile">
+    <value>กำลังโหลด {0}</value>
+  </data>
+  <data name="Sstv.Status.DecodingFile">
+    <value>กำลังถอดรหัส {0}: {1:0}%</value>
+  </data>
+  <data name="Sstv.Status.FileDone">
+    <value>ถอดรหัส {0} เสร็จ: {1} ภาพ</value>
+  </data>
+  <data name="Sstv.Line">
+    <value>เส้น {0} จาก {1}</value>
+  </data>
+  <data name="Sstv.Lock">
+    <value>ล็อกซิงค์ {0:0}%</value>
+  </data>
+  <data name="Sstv.Offset">
+    <value>การจูน {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Clock">
+    <value>นาฬิกา {0:+0;-0;0} ppm</value>
+  </data>
+  <data name="Sstv.Doppler">
+    <value>ดอปเปลอร์ดาวน์ลิงก์ {0}</value>
+  </data>
+  <data name="Sstv.FeedForward">
+    <value>การแก้จากวิทยุ {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Picture.Saved">
+    <value>บันทึกไปที่ {0}</value>
+  </data>
+  <data name="Sstv.Picture.Partial">
+    <value>บางส่วน</value>
+  </data>
+  <data name="Sstv.Gallery.Item">
+    <value>{0} เวลา {1} UTC ล็อกซิงค์ {2:0}%</value>
+  </data>
   <data name="Menu.Satellites">
     <value>ดาวเทียม(_S)</value>
   </data>

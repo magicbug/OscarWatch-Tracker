@@ -1,0 +1,184 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        x:Class="OscarWatch.Views.SstvLibraryWindow"
+        x:DataType="vm:SstvLibraryViewModel"
+        Title="{loc:Localize Key=Window.SstvLibrary.Title}"
+        Width="1100" Height="760"
+        MinWidth="760" MinHeight="480"
+        WindowStartupLocation="CenterOwner">
+  <Window.Styles>
+    <Style Selector="Border.lib-panel">
+      <Setter Property="Background" Value="{DynamicResource ThemeSubtlePanelBackgroundBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="10" />
+    </Style>
+    <Style Selector="TextBlock.lib-label">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Opacity" Value="0.85" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.lib-thumb">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Padding" Value="4" />
+      <Setter Property="Margin" Value="0,0,8,8" />
+      <Setter Property="Width" Value="236" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+    <Style Selector="Button.lib-thumb.selected">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorBrush}" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel Margin="10">
+    <!-- Filters -->
+    <Border DockPanel.Dock="Top" Classes="lib-panel" Padding="8" Margin="0,0,0,8">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="6" VerticalAlignment="Top">
+          <Button Content="{loc:Localize Key=Sstv.Refresh}" Command="{Binding ReloadCommand}" />
+          <Button Content="{loc:Localize Key=Sstv.OpenFolder}"
+                  Command="{Binding OpenFolderCommand}"
+                  ToolTip.Tip="{Binding Folder}" />
+        </StackPanel>
+        <WrapPanel Orientation="Horizontal">
+          <TextBlock Text="{loc:Localize Key=Sstv.Library.Period}" Classes="lib-label" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding PeriodOptions}"
+                    SelectedItem="{Binding SelectedPeriod}"
+                    MinWidth="150"
+                    AutomationProperties.Name="{loc:Localize Key=Sstv.Library.Period}"
+                    Margin="0,0,10,4" />
+          <StackPanel Orientation="Horizontal" IsVisible="{Binding IsCustomPeriod}" Margin="0,0,10,4">
+            <TextBlock Text="{loc:Localize Key=Sstv.Library.From}" Classes="lib-label" Margin="0,0,6,0" />
+            <CalendarDatePicker SelectedDate="{Binding FromDate}"
+                                SelectedDateFormat="Short"
+                                AutomationProperties.Name="{loc:Localize Key=Sstv.Library.From}"
+                                Margin="0,0,10,0" />
+            <TextBlock Text="{loc:Localize Key=Sstv.Library.To}" Classes="lib-label" Margin="0,0,6,0" />
+            <CalendarDatePicker SelectedDate="{Binding ToDate}"
+                                SelectedDateFormat="Short"
+                                AutomationProperties.Name="{loc:Localize Key=Sstv.Library.To}" />
+          </StackPanel>
+          <TextBlock Text="{loc:Localize Key=Sstv.Library.Satellite}" Classes="lib-label" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding SatelliteOptions}"
+                    SelectedItem="{Binding SelectedSatellite}"
+                    MinWidth="160" MaxWidth="280"
+                    AutomationProperties.Name="{loc:Localize Key=Sstv.Library.Satellite}"
+                    Margin="0,0,10,4" />
+          <TextBlock Text="{loc:Localize Key=Sstv.Mode}" Classes="lib-label" Margin="0,0,6,4" />
+          <ComboBox ItemsSource="{Binding ModeOptions}"
+                    SelectedItem="{Binding SelectedMode}"
+                    MinWidth="130"
+                    AutomationProperties.Name="{loc:Localize Key=Sstv.Mode}"
+                    Margin="0,0,10,4" />
+        </WrapPanel>
+      </DockPanel>
+    </Border>
+
+    <TextBlock DockPanel.Dock="Bottom" Text="{Binding SummaryText}" Classes="lib-label" Margin="2,8,0,0" />
+
+    <Grid ColumnDefinitions="*,380" ColumnSpacing="10">
+      <!-- Pictures by day -->
+      <Border Grid.Column="0" Classes="lib-panel">
+        <Panel>
+          <TextBlock Text="{loc:Localize Key=Sstv.Library.Empty}"
+                     IsVisible="{Binding IsEmpty}"
+                     Classes="lib-label"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Days}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SstvLibraryDay">
+                  <StackPanel Margin="0,0,0,12">
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,6">
+                      <TextBlock Text="{Binding Header}" FontWeight="SemiBold" FontSize="14" />
+                      <TextBlock Text="{Binding CountText}" Classes="lib-label" />
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Items}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SstvLibraryItem">
+                          <Button Classes="lib-thumb"
+                                  Classes.selected="{Binding IsSelected}"
+                                  Command="{Binding $parent[Window].((vm:SstvLibraryViewModel)DataContext).SelectCommand}"
+                                  CommandParameter="{Binding}"
+                                  DoubleTapped="OnThumbnailDoubleTapped"
+                                  AutomationProperties.Name="{Binding Caption}">
+                            <StackPanel Spacing="3">
+                              <Panel Height="170" Background="#14000000">
+                                <Image Source="{Binding Thumbnail}" Stretch="Uniform" />
+                              </Panel>
+                              <TextBlock Text="{Binding Caption}" FontSize="12" />
+                              <TextBlock Text="{Binding Satellite}"
+                                         FontSize="11"
+                                         Opacity="0.75"
+                                         TextTrimming="CharacterEllipsis"
+                                         IsVisible="{Binding HasSatellite}" />
+                            </StackPanel>
+                          </Button>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Panel>
+      </Border>
+
+      <!-- Selected picture -->
+      <Border Grid.Column="1" Classes="lib-panel">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,10,0,0" IsVisible="{Binding HasSelection}">
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="4">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Localize Key=Sstv.Library.Received}" Classes="lib-label" />
+              <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ReceivedText}" TextWrapping="Wrap" />
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Localize Key=Sstv.Mode}" Classes="lib-label" />
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ModeText}" />
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Localize Key=Sstv.Library.Satellite}" Classes="lib-label" />
+              <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SatelliteText}" TextWrapping="Wrap" />
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Localize Key=Sstv.Library.File}" Classes="lib-label" />
+              <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding FileText}" TextWrapping="Wrap" />
+            </Grid>
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+              <Button Grid.Column="0"
+                      Content="{loc:Localize Key=Sstv.Library.Open}"
+                      Command="{Binding OpenSelectedCommand}"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <Button Grid.Column="1"
+                      Content="{loc:Localize Key=Sstv.Library.ShowInFolder}"
+                      Command="{Binding ShowSelectedInFolderCommand}"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <Button Grid.Column="2"
+                      Content="{loc:Localize Key=Sstv.Library.Delete}"
+                      Click="OnDeleteClick"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+            </Grid>
+          </StackPanel>
+          <Panel>
+            <TextBlock Text="{loc:Localize Key=Sstv.Library.SelectHint}"
+                       IsVisible="{Binding !HasSelection}"
+                       Classes="lib-label"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+            <Image Source="{Binding PreviewBitmap}"
+                   Stretch="Uniform"
+                   RenderOptions.BitmapInterpolationMode="MediumQuality"
+                   AutomationProperties.Name="{loc:Localize Key=Sstv.Picture}" />
+          </Panel>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

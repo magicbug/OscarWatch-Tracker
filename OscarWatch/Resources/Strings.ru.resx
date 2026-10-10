@@ -598,6 +598,276 @@ LOS: {2}
   <data name="Menu.Tools.Ft4">
     <value>_OscarWatch FT4</value>
   </data>
+  <data name="Menu.Tools.Sstv">
+    <value>_OscarWatch SSTV</value>
+  </data>
+  <data name="Window.Sstv.Title">
+    <value>OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Start">
+    <value>Старт</value>
+  </data>
+  <data name="Sstv.Stop">
+    <value>Стоп</value>
+  </data>
+  <data name="Sstv.Input">
+    <value>Вход</value>
+  </data>
+  <data name="Sstv.Refresh">
+    <value>Обновить</value>
+  </data>
+  <data name="Sstv.Mode">
+    <value>Режим</value>
+  </data>
+  <data name="Sstv.Mode.Auto">
+    <value>Авто (VIS)</value>
+  </data>
+  <data name="Sstv.ReSync">
+    <value>Пересинхр.</value>
+  </data>
+  <data name="Sstv.ReSync.Tip">
+    <value>Перерисовать изображение по периоду строк, измеренному по всему кадру. Убирает остаточный наклон.</value>
+  </data>
+  <data name="Sstv.Skip">
+    <value>Пропустить</value>
+  </data>
+  <data name="Sstv.Skip.Tip">
+    <value>Отбросить принимаемое изображение и ждать следующее.</value>
+  </data>
+  <data name="Sstv.AutoSlant">
+    <value>Автокоррекция наклона</value>
+  </data>
+  <data name="Sstv.AutoSlant.Tip">
+    <value>Измерять период строки по синхроимпульсам, чтобы ошибка часов не наклоняла изображение.</value>
+  </data>
+  <data name="Sstv.SlantTrim">
+    <value>Коррекция часов (ppm)</value>
+  </data>
+  <data name="Sstv.Afc">
+    <value>АПЧ</value>
+  </data>
+  <data name="Sstv.Afc.Tip">
+    <value>Отслеживать частоту синхротона по строкам, чтобы расстройка и доплеровский дрейф не искажали цвета.</value>
+  </data>
+  <data name="Sstv.CatFeedForward">
+    <value>Коррекция Доплера рации (SSB)</value>
+  </data>
+  <data name="Sstv.CatFeedForward.Tip">
+    <value>В SSB убирать звуковой сдвиг между шагами доплеровской подстройки. Для FM не нужно.</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis">
+    <value>Искать изображения без VIS</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis.Tip">
+    <value>Если заголовок потерян (слабый сигнал в начале пролёта), распознать изображение и режим по регулярным синхроимпульсам.</value>
+  </data>
+  <data name="Sstv.AutoSave">
+    <value>Сохранять автоматически</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio">
+    <value>Сохранять принятый звук</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio.Tip">
+    <value>Сохранять принятый звук в WAV (около 1,4 МБ в минуту) в папке SSTV для повторного декодирования.</value>
+  </data>
+  <data name="Sstv.Progress">
+    <value>Ход приёма</value>
+  </data>
+  <data name="Sstv.Level">
+    <value>Уровень входа</value>
+  </data>
+  <data name="Sstv.Picture">
+    <value>Изображение SSTV</value>
+  </data>
+  <data name="Sstv.Gallery">
+    <value>Принятые изображения</value>
+  </data>
+  <data name="Sstv.SavePicture">
+    <value>Сохранить</value>
+  </data>
+  <data name="Sstv.Picture.AlreadySaved">
+    <value>Сохранено</value>
+  </data>
+  <data name="Sstv.SavePicture.SelectTip">
+    <value>Выберите принятое изображение, чтобы сохранить его.</value>
+  </data>
+  <data name="Sstv.Signal">
+    <value>Сигнал</value>
+  </data>
+  <data name="Sstv.Signal.Tip">
+    <value>Спектр и водопад принимаемого звука. Метки показывают синхроимпульс (1200 Гц), чёрный (1500 Гц), преамбулу VIS (1900 Гц) и белый (2300 Гц). Хорошая картинка даёт устойчивую линию на 1200 Гц и сигнал между 1500 и 2300 Гц.</value>
+  </data>
+  <data name="Window.SstvSettings.Title">
+    <value>Настройки OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.OpenSettings">
+    <value>Настройки</value>
+  </data>
+  <data name="Sstv.OpenSettings.Tip">
+    <value>Аудиовход, декодирование и параметры сохранения.</value>
+  </data>
+  <data name="Sstv.Settings.Audio">
+    <value>Звук</value>
+  </data>
+  <data name="Sstv.Settings.Decoding">
+    <value>Декодирование</value>
+  </data>
+  <data name="Sstv.Settings.Saving">
+    <value>Сохранение</value>
+  </data>
+  <data name="Window.SstvLibrary.Title">
+    <value>Библиотека изображений OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Library.OpenTip">
+    <value>Открыть библиотеку: все сохранённые изображения по датам</value>
+  </data>
+  <data name="Sstv.Library.Period">
+    <value>Период</value>
+  </data>
+  <data name="Sstv.Library.Period.All">
+    <value>Все изображения</value>
+  </data>
+  <data name="Sstv.Library.Period.Today">
+    <value>Сегодня</value>
+  </data>
+  <data name="Sstv.Library.Period.Week">
+    <value>Последние 7 дней</value>
+  </data>
+  <data name="Sstv.Library.Period.Month">
+    <value>Последние 30 дней</value>
+  </data>
+  <data name="Sstv.Library.Period.Custom">
+    <value>Выбрать даты</value>
+  </data>
+  <data name="Sstv.Library.From">
+    <value>С</value>
+  </data>
+  <data name="Sstv.Library.To">
+    <value>По</value>
+  </data>
+  <data name="Sstv.Library.Satellite">
+    <value>Спутник</value>
+  </data>
+  <data name="Sstv.Library.AnySatellite">
+    <value>Все спутники</value>
+  </data>
+  <data name="Sstv.Library.AnyMode">
+    <value>Все режимы</value>
+  </data>
+  <data name="Sstv.Library.Empty">
+    <value>Нет сохранённых изображений, подходящих под фильтры.</value>
+  </data>
+  <data name="Sstv.Library.SelectHint">
+    <value>Выберите изображение, чтобы увидеть его здесь. Двойной щелчок открывает его.</value>
+  </data>
+  <data name="Sstv.Library.Received">
+    <value>Принято</value>
+  </data>
+  <data name="Sstv.Library.File">
+    <value>Файл</value>
+  </data>
+  <data name="Sstv.Library.Open">
+    <value>Открыть</value>
+  </data>
+  <data name="Sstv.Library.ShowInFolder">
+    <value>Показать в папке</value>
+  </data>
+  <data name="Sstv.Library.Delete">
+    <value>Удалить</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm.Title">
+    <value>Удалить изображение</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm">
+    <value>Удалить {0}? Это действие нельзя отменить.</value>
+  </data>
+  <data name="Sstv.Library.Count">
+    <value>Изображений: {0}</value>
+  </data>
+  <data name="Sstv.Library.CountOne">
+    <value>1 изображение</value>
+  </data>
+  <data name="Sstv.Library.Summary">
+    <value>Показано {0} из {1} сохранённых изображений</value>
+  </data>
+  <data name="Sstv.ShowLive">
+    <value>Показать текущее</value>
+  </data>
+  <data name="Sstv.DecodeRecording">
+    <value>Декодировать запись</value>
+  </data>
+  <data name="Sstv.DecodeRecording.Tip">
+    <value>Декодировать запись пролёта в WAV или MP3. Для форматов кроме WAV нужен ffmpeg в PATH.</value>
+  </data>
+  <data name="Sstv.OpenFolder">
+    <value>Открыть папку SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Title">
+    <value>Выберите запись SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Audio">
+    <value>Аудиозаписи</value>
+  </data>
+  <data name="Sstv.Status.Idle">
+    <value>Остановлено. Нажмите «Старт» для приёма.</value>
+  </data>
+  <data name="Sstv.Status.NoAudio">
+    <value>Нет аудиовхода (PortAudio не запустился).</value>
+  </data>
+  <data name="Sstv.Status.Error">
+    <value>SSTV остановлен: {0}</value>
+  </data>
+  <data name="Sstv.Status.Listening">
+    <value>Ожидание изображения</value>
+  </data>
+  <data name="Sstv.Status.ListeningSat">
+    <value>Ожидание изображения с {0}</value>
+  </data>
+  <data name="Sstv.Status.FromVis">
+    <value>VIS</value>
+  </data>
+  <data name="Sstv.Status.FromSync">
+    <value>найдено по синхро</value>
+  </data>
+  <data name="Sstv.Status.Receiving">
+    <value>Приём {0} ({1})</value>
+  </data>
+  <data name="Sstv.Status.LoadingFile">
+    <value>Загрузка {0}</value>
+  </data>
+  <data name="Sstv.Status.DecodingFile">
+    <value>Декодирование {0}: {1:0}%</value>
+  </data>
+  <data name="Sstv.Status.FileDone">
+    <value>{0} декодирован: изображений {1}</value>
+  </data>
+  <data name="Sstv.Line">
+    <value>Строка {0} из {1}</value>
+  </data>
+  <data name="Sstv.Lock">
+    <value>Синхро {0:0}%</value>
+  </data>
+  <data name="Sstv.Offset">
+    <value>Расстройка {0:+0;-0;0} Гц</value>
+  </data>
+  <data name="Sstv.Clock">
+    <value>Часы {0:+0;-0;0} ppm</value>
+  </data>
+  <data name="Sstv.Doppler">
+    <value>Доплер нисх. {0}</value>
+  </data>
+  <data name="Sstv.FeedForward">
+    <value>коррекция рации {0:+0;-0;0} Гц</value>
+  </data>
+  <data name="Sstv.Picture.Saved">
+    <value>Сохранено: {0}</value>
+  </data>
+  <data name="Sstv.Picture.Partial">
+    <value>частично</value>
+  </data>
+  <data name="Sstv.Gallery.Item">
+    <value>{0} в {1} UTC, синхро {2:0}%</value>
+  </data>
   <data name="Menu.Satellites">
     <value>_Спутники</value>
   </data>

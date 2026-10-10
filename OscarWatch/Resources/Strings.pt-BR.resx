@@ -945,6 +945,276 @@ Continuar?</value>
   <data name="Menu.Tools.Ft4">
     <value>_OscarWatch FT4</value>
   </data>
+  <data name="Menu.Tools.Sstv">
+    <value>_OscarWatch SSTV</value>
+  </data>
+  <data name="Window.Sstv.Title">
+    <value>OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Start">
+    <value>Iniciar</value>
+  </data>
+  <data name="Sstv.Stop">
+    <value>Parar</value>
+  </data>
+  <data name="Sstv.Input">
+    <value>Entrada</value>
+  </data>
+  <data name="Sstv.Refresh">
+    <value>Atualizar</value>
+  </data>
+  <data name="Sstv.Mode">
+    <value>Modo</value>
+  </data>
+  <data name="Sstv.Mode.Auto">
+    <value>Automático (VIS)</value>
+  </data>
+  <data name="Sstv.ReSync">
+    <value>Ressincronizar</value>
+  </data>
+  <data name="Sstv.ReSync.Tip">
+    <value>Redesenha a imagem com o tempo de linha medido em toda ela, o que remove a inclinação restante do início.</value>
+  </data>
+  <data name="Sstv.Skip">
+    <value>Pular imagem</value>
+  </data>
+  <data name="Sstv.Skip.Tip">
+    <value>Descarta a imagem em recepção e aguarda a próxima.</value>
+  </data>
+  <data name="Sstv.AutoSlant">
+    <value>Correção automática de inclinação</value>
+  </data>
+  <data name="Sstv.AutoSlant.Tip">
+    <value>Mede o período de linha pelos pulsos de sincronismo para que erro de relógio não incline a imagem.</value>
+  </data>
+  <data name="Sstv.SlantTrim">
+    <value>Ajuste de relógio (ppm)</value>
+  </data>
+  <data name="Sstv.Afc">
+    <value>AFC</value>
+  </data>
+  <data name="Sstv.Afc.Tip">
+    <value>Acompanha a frequência do tom de sincronismo linha a linha para que erro de sintonia e deriva Doppler não alterem as cores.</value>
+  </data>
+  <data name="Sstv.CatFeedForward">
+    <value>Correção Doppler do rádio (SSB)</value>
+  </data>
+  <data name="Sstv.CatFeedForward.Tip">
+    <value>Em SSB, remove o deslocamento de áudio entre os passos Doppler do controle do rádio. FM não precisa.</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis">
+    <value>Detectar imagens sem cabeçalho VIS</value>
+  </data>
+  <data name="Sstv.DetectWithoutVis.Tip">
+    <value>Se o cabeçalho foi perdido (sinal fraco no início da passagem), detecta a imagem e o modo pelos pulsos de sincronismo regulares.</value>
+  </data>
+  <data name="Sstv.AutoSave">
+    <value>Salvar imagens automaticamente</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio">
+    <value>Salvar áudio recebido</value>
+  </data>
+  <data name="Sstv.SaveSessionAudio.Tip">
+    <value>Mantém o áudio recebido como WAV (cerca de 1,4 MB por minuto) na pasta SSTV para decodificar a passagem depois.</value>
+  </data>
+  <data name="Sstv.Progress">
+    <value>Progresso da imagem</value>
+  </data>
+  <data name="Sstv.Level">
+    <value>Nível de entrada</value>
+  </data>
+  <data name="Sstv.Picture">
+    <value>Imagem SSTV</value>
+  </data>
+  <data name="Sstv.Gallery">
+    <value>Imagens recebidas</value>
+  </data>
+  <data name="Sstv.SavePicture">
+    <value>Salvar imagem</value>
+  </data>
+  <data name="Sstv.Picture.AlreadySaved">
+    <value>Salva</value>
+  </data>
+  <data name="Sstv.SavePicture.SelectTip">
+    <value>Selecione uma imagem recebida para salvá-la.</value>
+  </data>
+  <data name="Sstv.Signal">
+    <value>Sinal</value>
+  </data>
+  <data name="Sstv.Signal.Tip">
+    <value>Espectro e cascata do áudio recebido. As marcas indicam sincronismo (1200 Hz), preto (1500 Hz), o preâmbulo VIS (1900 Hz) e branco (2300 Hz). Uma boa imagem mostra uma linha estável em 1200 Hz com atividade entre 1500 e 2300 Hz.</value>
+  </data>
+  <data name="Window.SstvSettings.Title">
+    <value>Configurações do OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.OpenSettings">
+    <value>Configurações</value>
+  </data>
+  <data name="Sstv.OpenSettings.Tip">
+    <value>Entrada de áudio, decodificação e opções de salvamento.</value>
+  </data>
+  <data name="Sstv.Settings.Audio">
+    <value>Áudio</value>
+  </data>
+  <data name="Sstv.Settings.Decoding">
+    <value>Decodificação</value>
+  </data>
+  <data name="Sstv.Settings.Saving">
+    <value>Salvamento</value>
+  </data>
+  <data name="Window.SstvLibrary.Title">
+    <value>Biblioteca de imagens do OscarWatch SSTV</value>
+  </data>
+  <data name="Sstv.Library.OpenTip">
+    <value>Abrir a biblioteca: todas as imagens salvas, por data</value>
+  </data>
+  <data name="Sstv.Library.Period">
+    <value>Período</value>
+  </data>
+  <data name="Sstv.Library.Period.All">
+    <value>Todas as imagens</value>
+  </data>
+  <data name="Sstv.Library.Period.Today">
+    <value>Hoje</value>
+  </data>
+  <data name="Sstv.Library.Period.Week">
+    <value>Últimos 7 dias</value>
+  </data>
+  <data name="Sstv.Library.Period.Month">
+    <value>Últimos 30 dias</value>
+  </data>
+  <data name="Sstv.Library.Period.Custom">
+    <value>Escolher datas</value>
+  </data>
+  <data name="Sstv.Library.From">
+    <value>De</value>
+  </data>
+  <data name="Sstv.Library.To">
+    <value>Até</value>
+  </data>
+  <data name="Sstv.Library.Satellite">
+    <value>Satélite</value>
+  </data>
+  <data name="Sstv.Library.AnySatellite">
+    <value>Todos os satélites</value>
+  </data>
+  <data name="Sstv.Library.AnyMode">
+    <value>Todos os modos</value>
+  </data>
+  <data name="Sstv.Library.Empty">
+    <value>Nenhuma imagem salva corresponde a estes filtros.</value>
+  </data>
+  <data name="Sstv.Library.SelectHint">
+    <value>Selecione uma imagem para vê-la aqui. Clique duas vezes para abri-la.</value>
+  </data>
+  <data name="Sstv.Library.Received">
+    <value>Recebida</value>
+  </data>
+  <data name="Sstv.Library.File">
+    <value>Arquivo</value>
+  </data>
+  <data name="Sstv.Library.Open">
+    <value>Abrir</value>
+  </data>
+  <data name="Sstv.Library.ShowInFolder">
+    <value>Mostrar na pasta</value>
+  </data>
+  <data name="Sstv.Library.Delete">
+    <value>Excluir</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm.Title">
+    <value>Excluir imagem</value>
+  </data>
+  <data name="Sstv.Library.DeleteConfirm">
+    <value>Excluir {0}? Isto não pode ser desfeito.</value>
+  </data>
+  <data name="Sstv.Library.Count">
+    <value>{0} imagens</value>
+  </data>
+  <data name="Sstv.Library.CountOne">
+    <value>1 imagem</value>
+  </data>
+  <data name="Sstv.Library.Summary">
+    <value>Mostrando {0} de {1} imagens salvas</value>
+  </data>
+  <data name="Sstv.ShowLive">
+    <value>Mostrar imagem ao vivo</value>
+  </data>
+  <data name="Sstv.DecodeRecording">
+    <value>Decodificar gravação</value>
+  </data>
+  <data name="Sstv.DecodeRecording.Tip">
+    <value>Decodifica uma gravação WAV ou MP3 de uma passagem. Formatos diferentes de WAV precisam do ffmpeg no PATH.</value>
+  </data>
+  <data name="Sstv.OpenFolder">
+    <value>Abrir pasta SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Title">
+    <value>Escolher uma gravação SSTV</value>
+  </data>
+  <data name="Sstv.Picker.Audio">
+    <value>Gravações de áudio</value>
+  </data>
+  <data name="Sstv.Status.Idle">
+    <value>Parado. Pressione Iniciar para ouvir imagens.</value>
+  </data>
+  <data name="Sstv.Status.NoAudio">
+    <value>Nenhuma entrada de áudio disponível (o PortAudio não pôde iniciar).</value>
+  </data>
+  <data name="Sstv.Status.Error">
+    <value>SSTV parado: {0}</value>
+  </data>
+  <data name="Sstv.Status.Listening">
+    <value>Aguardando uma imagem</value>
+  </data>
+  <data name="Sstv.Status.ListeningSat">
+    <value>Aguardando uma imagem de {0}</value>
+  </data>
+  <data name="Sstv.Status.FromVis">
+    <value>VIS</value>
+  </data>
+  <data name="Sstv.Status.FromSync">
+    <value>detectada pelo sincronismo</value>
+  </data>
+  <data name="Sstv.Status.Receiving">
+    <value>Recebendo {0} ({1})</value>
+  </data>
+  <data name="Sstv.Status.LoadingFile">
+    <value>Carregando {0}</value>
+  </data>
+  <data name="Sstv.Status.DecodingFile">
+    <value>Decodificando {0}: {1:0}%</value>
+  </data>
+  <data name="Sstv.Status.FileDone">
+    <value>{0} decodificado: {1} imagens</value>
+  </data>
+  <data name="Sstv.Line">
+    <value>Linha {0} de {1}</value>
+  </data>
+  <data name="Sstv.Lock">
+    <value>Sincronismo {0:0}%</value>
+  </data>
+  <data name="Sstv.Offset">
+    <value>Sintonia {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Clock">
+    <value>Relógio {0:+0;-0;0} ppm</value>
+  </data>
+  <data name="Sstv.Doppler">
+    <value>Doppler de descida {0}</value>
+  </data>
+  <data name="Sstv.FeedForward">
+    <value>correção do rádio {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Sstv.Picture.Saved">
+    <value>Salvo em {0}</value>
+  </data>
+  <data name="Sstv.Picture.Partial">
+    <value>parcial</value>
+  </data>
+  <data name="Sstv.Gallery.Item">
+    <value>{0} às {1} UTC, sincronismo {2:0}%</value>
+  </data>
   <data name="Window.Logbook.Title">
     <value>Livro OscarWatch</value>
   </data>

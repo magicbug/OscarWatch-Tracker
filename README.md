@@ -93,6 +93,7 @@ Plain-language help ships with the app: **Help → Operator guide** (also in the
 - **Cloudlog**: optional Radio API v2 uplink/downlink when tracking (Settings → Cloudlog)
 - **OscarWatch Logbook**: local satellite logging (**Tools → OscarWatch Logbook**): UTC timestamps, multiple logbooks, fast entry during a pass (satellite/mode/frequencies from tracking), grid-line multi-grid support, ADIF export ([help](help/qso-logbook.html))
 - **OscarWatch FT4**: in-app duplex FT4 (**Tools → OscarWatch FT4**) with waterfall, auto-sequence, PTT methods, slot-gated Doppler, echo calibration, and logbook save ([help](help/ft4.html))
+- **OscarWatch SSTV**: receive-only SSTV (**Tools → OscarWatch SSTV**) for Robot 36/72, Scottie S1/S2/DX, Martin M1/M2, Wraase SC2-180 and PD 50 to 290, with automatic mode pick, slant correction, AFC, SSB Doppler correction, signal spectrum and waterfall, PNG saving, a picture library filtered by date, satellite and mode, and decoding of recordings ([help](help/sstv.html))
 - **Appearance**: light, dark, or system theme (sky plot adapts; world map image stays light); 12- or 24-hour clock; optional greyline and footprint motion arrows on the map
 
 ## Supported hardware

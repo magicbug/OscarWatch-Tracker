@@ -117,6 +117,9 @@ public partial class App : Application
         services.AddTransient<LogbookSettingsViewModel>();
         services.AddSingleton<Ft4ModemService>();
         services.AddSingleton<Ft4ViewModel>();
+        services.AddSingleton<OscarWatch.Sstv.SstvAudioService>();
+        services.AddSingleton<OscarWatch.Sstv.SstvReceiverService>();
+        services.AddSingleton<SstvViewModel>();
 
         Services = services.BuildServiceProvider();
 

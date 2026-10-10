@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OscarWatch SSTV - OscarWatch Help</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <a href="index.html" class="brand-home" title="Home"><img src="oscarwatch-icon.png" alt="" class="brand-icon" width="56" height="56" /></a>
+        <div class="brand-text">
+          <h1>OscarWatch SSTV</h1>
+          <p class="tagline">Receive slow-scan television pictures from space</p>
+        </div>
+      </div>
+      <nav aria-label="Help topics">
+        <ul>
+          <li><a href="quick-start.html">Quick start</a></li>
+          <li><a href="map-and-sidebar.html">Map &amp; sidebar</a></li>
+          <li><a href="frequencies.html">Frequencies</a></li>
+          <li><a href="satellites.html">Satellites &amp; TLEs</a></li>
+          <li><a href="passes.html">Pass planning</a></li>
+          <li><a href="radio-rotator.html">Radio &amp; rotator</a></li>
+          <li><a href="qso-logbook.html">Logbook</a></li>
+          <li><a href="ft4.html">OscarWatch FT4</a></li>
+          <li><a href="sstv.html" aria-current="page">OscarWatch SSTV</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="keyboard-shortcuts.html">Shortcuts</a></li>
+          <li><a href="troubleshooting.html">Problems?</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <p class="lead">
+        <strong>Tools → OscarWatch SSTV</strong> decodes SSTV pictures sent from space, such as the
+        ARISS SSTV events from the ISS on 145.800 MHz FM. It is receive only: OscarWatch never transmits SSTV.
+      </p>
+
+      <h2>Modes</h2>
+      <p>OscarWatch decodes the modes used from space:</p>
+      <ul>
+        <li>Robot 36 and Robot 72</li>
+        <li>Scottie S1, S2 and DX</li>
+        <li>Martin M1 and M2</li>
+        <li>Wraase SC2-180</li>
+        <li>PD 50, 90, 120, 160, 180, 240 and 290 (the ISS usually sends PD 120 or PD 180)</li>
+      </ul>
+      <p>
+        The mode is picked automatically from the VIS header at the start of each picture.
+        If you need to, choose a mode in the <strong>Mode</strong> list to decode everything as that mode.
+      </p>
+
+      <h2>Getting started</h2>
+      <ol>
+        <li>Connect your receiver audio to the PC (soundcard line in, or the radio's USB audio).</li>
+        <li>Open <strong>Tools → OscarWatch SSTV</strong>, press <strong>Settings</strong> on the toolbar and choose the <strong>Input</strong> device.
+          The same dialogue holds the slant, AFC, Doppler and saving options.</li>
+        <li>Press <strong>Start</strong>. The status line says when it is listening and which satellite is in focus.</li>
+        <li>Pictures appear line by line as they arrive, and each finished picture is added to <strong>Received pictures</strong>.</li>
+      </ol>
+      <div class="tip">
+        <strong>Tip:</strong> Set the audio level so the <strong>Input level</strong> bar sits around half way on the
+        loudest part of a picture. Turn off any noise reduction or audio filtering in the radio, and open the squelch
+        (or set it low) so weak lines are not cut off.
+      </div>
+
+      <h2>Signal display</h2>
+      <p>
+        The <strong>Signal</strong> panel shows the receive audio as a spectrum (top) and a scrolling waterfall
+        (below), from 900 to 2600 Hz. Markers sit at 1200 Hz (sync), 1500 Hz (black), 1900 Hz (VIS leader, dashed)
+        and 2300 Hz (white). A picture being sent shows a steady stripe on the 1200 Hz marker with picture activity
+        between 1500 and 2300 Hz. If the stripe sits beside the marker, the audio is off tune; <strong>AFC</strong>
+        corrects small offsets.
+      </p>
+
+      <h2>Sync, slant and tuning</h2>
+      <ul>
+        <li>
+          <strong>Automatic slant correction</strong> measures the line timing from the sync pulses,
+          so clock error in the sender or your soundcard does not lean the picture.
+          With it off, set <strong>Clock trim (ppm)</strong> by hand.
+          <strong>Re-sync</strong> redraws the picture with the timing measured across all of it.
+        </li>
+        <li>
+          <strong>AFC</strong> follows the sync tone frequency line by line, so a tuning error or Doppler
+          drift does not shift the colours. The status strip shows the tuning offset and clock error it has measured.
+        </li>
+        <li>
+          <strong>Find pictures without a VIS header</strong> picks up a picture from its regular sync pulses
+          when the header was lost, for example when the satellite is still low at the start of a pass.
+          Such pictures are marked <em>found from sync</em>.
+        </li>
+        <li>
+          When the signal goes for about 8 seconds (the sender stops, or the pass ends), the picture is
+          closed and marked <em>partial</em>, so noise is not drawn into the rest of it.
+          <strong>Skip picture</strong> drops the current picture and listens for the next one.
+        </li>
+      </ul>
+
+      <h2>Doppler</h2>
+      <p>
+        On <strong>FM</strong> (the ISS and most SSTV from space) a small frequency error does not move the audio tones,
+        so no correction is needed beyond normal FM Doppler tuning. On <strong>SSB</strong>, rig control tunes in steps and
+        the audio moves between steps. With <strong>Rig Doppler correction (SSB)</strong> ticked and CAT tracking running,
+        OscarWatch removes that left-over offset from the audio before decoding. The status strip shows the downlink Doppler
+        and, on SSB, the correction being applied.
+      </p>
+
+      <h2>Where pictures are saved</h2>
+      <p>Pictures are saved as PNG files in:</p>
+      <p><code>%AppData%\OscarWatch\sstv\</code></p>
+      <p>
+        File names give the UTC time, the satellite in focus and the mode, for example
+        <code>20241012_073105Z_ISS_Pd120.png</code>. With <strong>Save pictures automatically</strong> off, select a picture in
+        the list and press <strong>Save picture</strong>. <strong>Open SSTV folder</strong> opens the folder.
+      </p>
+      <p>
+        With <strong>Save receive audio</strong> ticked, the receive audio is also kept as a WAV file in the same folder
+        (about 1.4 MB a minute), so you can decode a pass again later. These files are not deleted automatically.
+      </p>
+
+      <h2>Picture library</h2>
+      <p>
+        The grid button beside <strong>Received pictures</strong> opens the picture library, which shows every picture in the
+        SSTV folder grouped by day, newest first. Filter by period (today, the last 7 or 30 days, or your own dates),
+        satellite and mode. Select a picture to see it full size with its details, double-click to open it, or use
+        <strong>Show in folder</strong> and <strong>Delete</strong>. New pictures appear as they are saved.
+      </p>
+
+      <h2>Decoding a recording</h2>
+      <p>
+        <strong>Decode recording</strong> on the toolbar decodes a WAV or MP3 recording of a pass, including recordings made by
+        OscarWatch pass recording or other software. The file picker opens in the SSTV folder, where saved receive audio is kept.
+        A recording may hold several pictures; each one is added to the list.
+        Formats other than WAV need <a href="settings.html#ffmpeg">ffmpeg on PATH</a>.
+      </p>
+
+      <h2>Problems?</h2>
+      <ul>
+        <li><strong>Nothing decodes:</strong> check the input level moves during a picture, and that the right device is selected.</li>
+        <li><strong>Colours are wrong or striped:</strong> leave AFC on, and make sure the radio is not on a narrow data filter or audio processing.</li>
+        <li><strong>The picture leans:</strong> leave automatic slant correction on and press Re-sync after the picture.</li>
+        <li><strong>The picture starts half way down:</strong> the start was missed, so the decoder joined from the sync pulses. That is normal early in a pass.</li>
+      </ul>
+    </main>
+
+    <footer>OscarWatch: help for satellite operators</footer>
+  </div>
+</body>
+</html>
