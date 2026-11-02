@@ -3172,7 +3172,7 @@ Continue?</value>
     <value>Enable keyhole avoidance</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>When enabled, high-elevation passes where the rotator cannot keep up near zenith are analysed, and the rotator may pre-position in a flipped orientation to minimise signal loss. Pre-position slews azimuth at the track-start elevation (not below 0°). Only available when elevation range is 0–180°.</value>
+    <value>When enabled, high-elevation passes where the rotator cannot keep up near zenith are analysed, and the rotator may pre-position in a flipped orientation to minimise signal loss. A flipped pass keeps azimuth +180° and elevation at 180° minus the satellite elevation from AOS until the satellite drops below track-start. Pre-position uses that flipped elevation (180° minus the track-start elevation, not below 0°). Only available when elevation range is 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Slew rate (°/s)</value>
@@ -3190,7 +3190,7 @@ Continue?</value>
     <value>Start tracking at elevation (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>Default is -3° (below horizon). Range -90° to 90°. The rotator begins slewing when the tracked satellite rises above this elevation, and parks once it drops below (after a short confirm so a single glitch tick cannot interrupt the pass). Keyhole pre-position uses this elevation as its floor (not below 0°).</value>
+    <value>Default is -3° (below horizon). Range -90° to 90°. The rotator begins slewing when the tracked satellite rises above this elevation, and parks once it drops below (after a short confirm so a single glitch tick cannot interrupt the pass). Keyhole pre-position uses this elevation as its sky-angle floor (not below 0°) and commands 180° minus that floor.</value>
   </data>
   <data name="Settings.Rotator.MovementThreshold">
     <value>Movement threshold (°)</value>

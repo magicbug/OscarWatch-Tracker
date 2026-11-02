@@ -121,4 +121,33 @@ public sealed class RotatorAzimuthDisplayTests
             azimuthOffsetDeg: 0);
         Assert.Null(azimuth);
     }
+
+    [Fact]
+    public void ResolveSkyPlotRotatorBeam_unmirrors_flipped_position()
+    {
+        var beam = MainViewModel.ResolveSkyPlotRotatorBeam(
+            new RotatorPositionStatus(
+                true,
+                210,
+                170,
+                IsKeyholeAvoidanceActive: true,
+                CommandedAzimuthDeg: 210,
+                CompassAzimuthDeg: 210,
+                CommandedElevationDeg: 170),
+            azimuthOffsetDeg: 0);
+
+        Assert.Equal(30, beam.AzimuthDeg);
+        Assert.Equal(10, beam.ElevationDeg);
+    }
+
+    [Fact]
+    public void ResolveSkyPlotRotatorBeam_leaves_normal_tracking_unchanged()
+    {
+        var beam = MainViewModel.ResolveSkyPlotRotatorBeam(
+            new RotatorPositionStatus(true, 30, 10, CommandedAzimuthDeg: 30, CompassAzimuthDeg: 30),
+            azimuthOffsetDeg: 0);
+
+        Assert.Equal(30, beam.AzimuthDeg);
+        Assert.Equal(10, beam.ElevationDeg);
+    }
 }

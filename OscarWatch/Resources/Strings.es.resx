@@ -3172,7 +3172,7 @@
     <value>Habilitar evitación de keyhole</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Cuando está habilitado, los pases de elevación alta en los que el rotor no puede seguir el ritmo cerca del cenit se analizan, y el rotor puede preposicionarse en orientación invertida para minimizar la pérdida de señal. La preposición gira el acimut a la elevación de inicio de seguimiento (no por debajo de 0°). Solo disponible cuando el rango de elevación es 0–180°.</value>
+    <value>Cuando está habilitado, los pases de elevación alta en los que el rotor no puede seguir el ritmo cerca del cenit se analizan, y el rotor puede preposicionarse en orientación invertida para minimizar la pérdida de señal. Un pase invertido mantiene el acimut +180° y la elevación en 180° menos la elevación del satélite, desde el AOS hasta que el satélite baja del inicio de seguimiento. La preposición usa esa elevación invertida (180° menos la elevación de inicio de seguimiento, no por debajo de 0°). Solo disponible cuando el rango de elevación es 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Velocidad de giro (°/s)</value>
@@ -3190,7 +3190,7 @@
     <value>Empezar seguimiento a elevación (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>El predeterminado es -3° (por debajo del horizonte). Rango -90° a 90°. El rotor empieza a girar cuando el satélite seguido supera esta elevación, y se estaciona cuando baja de ella (tras una breve confirmación para que un solo fallo no interrumpa el pase). La preposición de keyhole usa esta elevación como suelo (no por debajo de 0°).</value>
+    <value>El predeterminado es -3° (por debajo del horizonte). Rango -90° a 90°. El rotor empieza a girar cuando el satélite seguido supera esta elevación, y se estaciona cuando baja de ella (tras una breve confirmación para que un solo fallo no interrumpa el pase). La preposición de keyhole usa esta elevación como suelo del ángulo en el cielo (no por debajo de 0°) y ordena 180° menos ese suelo.</value>
   </data>
   <data name="Settings.Rotator.MovementThreshold">
     <value>Umbral de movimiento (°)</value>

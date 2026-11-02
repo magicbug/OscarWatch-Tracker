@@ -1450,17 +1450,9 @@ public partial class MainViewModel : ViewModelBase
             return;
         }
 
-        var elevation = status.ElevationDeg ?? status.CommandedElevationDeg;
-        var azimuth = ResolveSkyPlotRotatorAzimuthDeg(status, _settings.Current.Rotator.AzimuthOffsetDeg);
-        if (elevation is null || azimuth is null)
-        {
-            SkyPlotRotatorAzimuthDeg = null;
-            SkyPlotRotatorElevationDeg = null;
-            return;
-        }
-
-        SkyPlotRotatorAzimuthDeg = azimuth.Value;
-        SkyPlotRotatorElevationDeg = Math.Max(0, elevation.Value);
+        var beam = ResolveSkyPlotRotatorBeam(status, _settings.Current.Rotator.AzimuthOffsetDeg);
+        SkyPlotRotatorAzimuthDeg = beam.AzimuthDeg;
+        SkyPlotRotatorElevationDeg = beam.ElevationDeg;
     }
 
     private void UpdateSkyPlotPassPath()
@@ -1511,6 +1503,28 @@ public partial class MainViewModel : ViewModelBase
             ?? (status.CommandedAzimuthDeg is { } commanded
                 ? (int)Math.Round(RotatorAzimuthPlanner.Normalize360(commanded - azimuthOffsetDeg))
                 : null);
+    }
+
+    /// <summary>
+    /// Sky-plot beam position. Flip mode commands azimuth + 180° and elevation 180° − sky
+    /// elevation, so the marker is converted back to the direction the antenna is looking.
+    /// </summary>
+    internal static (int? AzimuthDeg, int? ElevationDeg) ResolveSkyPlotRotatorBeam(
+        RotatorPositionStatus status,
+        double azimuthOffsetDeg)
+    {
+        var azimuth = ResolveSkyPlotRotatorAzimuthDeg(status, azimuthOffsetDeg);
+        double? elevation = status.ElevationDeg ?? status.CommandedElevationDeg;
+        if (azimuth is null || elevation is null)
+            return (null, null);
+
+        if (status.IsKeyholeAvoidanceActive || status.IsPrePositioning)
+        {
+            azimuth = (int)Math.Round(RotatorAzimuthPlanner.Normalize360(azimuth.Value + 180.0));
+            elevation = 180.0 - elevation.Value;
+        }
+
+        return (azimuth, (int)Math.Round(Math.Max(0, elevation.Value)));
     }
 
     internal static string FormatRotatorAzimuthText(RotatorPositionStatus status)

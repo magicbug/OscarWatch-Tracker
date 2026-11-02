@@ -3176,7 +3176,7 @@ Continuare?</value>
     <value>Abilita evitamento della zona critica</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Se abilitato, vengono analizzati i passaggi ad alta elevazione in cui il rotore non riesce a seguire il satellite vicino allo zenit; il rotore può preposizionarsi con orientamento invertito per ridurre al minimo la perdita di segnale. Il preposizionamento ruota l'azimut all'elevazione iniziale dell'inseguimento (mai sotto 0°). Disponibile solo con intervallo di elevazione 0–180°.</value>
+    <value>Se abilitato, vengono analizzati i passaggi ad alta elevazione in cui il rotore non riesce a seguire il satellite vicino allo zenit; il rotore può preposizionarsi con orientamento invertito per ridurre al minimo la perdita di segnale. Un passaggio invertito mantiene azimut +180° ed elevazione pari a 180° meno l'elevazione del satellite, dall'AOS finché il satellite non scende sotto l'elevazione iniziale. Il preposizionamento usa quella elevazione invertita (180° meno l'elevazione iniziale dell'inseguimento, mai sotto 0°). Disponibile solo con intervallo di elevazione 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Velocità di rotazione (°/s)</value>
@@ -3194,7 +3194,7 @@ Continuare?</value>
     <value>Inizia l'inseguimento all'elevazione (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>Il valore predefinito è −3° (sotto l'orizzonte). Intervallo: da −90° a 90°. Il rotore inizia a muoversi quando il satellite supera questa elevazione e va in posizione di parcheggio quando scende al di sotto (dopo una breve conferma, per evitare che un singolo errore interrompa il passaggio). Il preposizionamento per la zona critica usa questa elevazione come limite minimo, ma non scende sotto 0°.</value>
+    <value>Il valore predefinito è −3° (sotto l'orizzonte). Intervallo: da −90° a 90°. Il rotore inizia a muoversi quando il satellite supera questa elevazione e va in posizione di parcheggio quando scende al di sotto (dopo una breve conferma, per evitare che un singolo errore interrompa il passaggio). Il preposizionamento per la zona critica usa questa elevazione come limite minimo dell'angolo in cielo (non sotto 0°) e comanda 180° meno quel limite.</value>
   </data>
   <data name="Settings.Rotator.MovementThreshold">
     <value>Soglia di movimento (°)</value>

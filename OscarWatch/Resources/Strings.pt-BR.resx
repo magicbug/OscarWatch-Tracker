@@ -3172,7 +3172,7 @@ Continuar?</value>
     <value>Ativar evitar keyhole</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Quando ativado, passagens de alta elevação em que o rotor não acompanha perto do zênite são analisadas, e o rotor pode pré-posicionar-se numa orientação invertida para minimizar perda de sinal. O pré-posicionamento gira o azimute na elevação de início de rastreamento (não abaixo de 0°). Disponível apenas com faixa de elevação 0–180°.</value>
+    <value>Quando ativado, passagens de alta elevação em que o rotor não acompanha perto do zênite são analisadas, e o rotor pode pré-posicionar-se numa orientação invertida para minimizar perda de sinal. Uma passagem invertida mantém azimute +180° e elevação em 180° menos a elevação do satélite, do AOS até o satélite cair abaixo do início do rastreamento. O pré-posicionamento usa essa elevação invertida (180° menos a elevação de início de rastreamento, não abaixo de 0°). Disponível apenas com faixa de elevação 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Velocidade de rotação (°/s)</value>
@@ -3190,7 +3190,7 @@ Continuar?</value>
     <value>Iniciar rastreamento na elevação (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>O padrão é -3° (abaixo do horizonte). Faixa de -90° a 90°. O rotor começa a girar quando o satélite rastreado sobe acima desta elevação e estaciona quando cai abaixo (após uma confirmação curta para que uma única falha não interrompa o passe). O pré-posicionamento de keyhole usa esta elevação como piso (não abaixo de 0°).</value>
+    <value>O padrão é -3° (abaixo do horizonte). Faixa de -90° a 90°. O rotor começa a girar quando o satélite rastreado sobe acima desta elevação e estaciona quando cai abaixo (após uma confirmação curta para que uma única falha não interrompa o passe). O pré-posicionamento de keyhole usa esta elevação como piso do ângulo no céu (não abaixo de 0°) e comanda 180° menos esse piso.</value>
   </data>
   <data name="Settings.Rotator.MovementThreshold">
     <value>Limiar de movimento (°)</value>

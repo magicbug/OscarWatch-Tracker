@@ -9,8 +9,8 @@ namespace OscarWatch.Tests;
 
 /// <summary>
 /// Combined property-based and unit tests for RotatorController keyhole avoidance branches.
-/// Property 7 validates the feature gate; unit tests cover pre-positioning, flipped tracking,
-/// transitions, fallback, and normal-pass behaviour.
+/// Property 7 validates the feature gate; unit tests cover pre-positioning, whole-pass
+/// flipped tracking, fallback, and normal-pass behaviour.
 /// </summary>
 public sealed class RotatorControllerKeyholeTests
 {
@@ -166,7 +166,8 @@ public sealed class RotatorControllerKeyholeTests
     /// <summary>
     /// When a flipped plan is active and the current time is in the pre-position window
     /// (AOS − PrePositionLeadTime ≤ now &lt; AOS), the controller commands the rotator to
-    /// slew to the flipped start azimuth at the track-start elevation.
+    /// slew to the flipped start azimuth at the mirrored track-start elevation (180° minus
+    /// the sky floor).
     ///
     /// Requirements: 3.2
     /// </summary>
@@ -196,9 +197,9 @@ public sealed class RotatorControllerKeyholeTests
         // The controller should be pre-positioning
         Assert.True(controller.IsPrePositioning);
 
-        // Flipped start azimuth (210°) at track-start elevation (5° in EnabledSettings)
+        // Flipped start azimuth (210°) at mirrored track-start elevation (180 − 5)
         Assert.Equal(210, rotator.LastAzimuthDeg);
-        Assert.Equal(5, rotator.LastElevationDeg);
+        Assert.Equal(175, rotator.LastElevationDeg);
 
         var status = controller.GetPositionStatus();
         Assert.True(status.IsPrePositioning);
@@ -222,7 +223,7 @@ public sealed class RotatorControllerKeyholeTests
 
         Assert.True(controller.IsPrePositioning);
         Assert.Equal(210, rotator.LastAzimuthDeg);
-        Assert.Equal(25, rotator.LastElevationDeg);
+        Assert.Equal(155, rotator.LastElevationDeg);
     }
 
     [Fact]
@@ -243,8 +244,9 @@ public sealed class RotatorControllerKeyholeTests
 
         Assert.True(controller.IsPrePositioning);
         Assert.Equal(210, rotator.LastAzimuthDeg);
-        Assert.Equal(0, rotator.LastElevationDeg);
+        Assert.Equal(180, rotator.LastElevationDeg);
         Assert.Equal(0, RotatorController.KeyholePrePositionElevationDeg(settings));
+        Assert.Equal(180, RotatorController.FlippedElevationDeg(0, settings.MaxElevationDeg));
     }
 
     /// <summary>
@@ -316,22 +318,56 @@ public sealed class RotatorControllerKeyholeTests
         // Should be in flipped mode
         Assert.True(controller.IsKeyholeFlippedActive);
 
-        // Commanded azimuth should be (45 + 180) % 360 = 225
+        // Commanded azimuth should be (45 + 180) % 360 = 225, elevation 180 − 85
         Assert.Equal(225, rotator.LastAzimuthDeg);
-        Assert.Equal(85, rotator.LastElevationDeg);
+        Assert.Equal(95, rotator.LastElevationDeg);
 
         var status = controller.GetPositionStatus();
         Assert.True(status.IsKeyholeAvoidanceActive);
     }
 
     /// <summary>
-    /// When the satellite elevation drops below the keyhole threshold during a flipped pass,
-    /// the controller transitions back to normal compass azimuth tracking.
+    /// A FlippedStart plan tracks azimuth + 180° from AOS, while elevation is still
+    /// below the keyhole threshold. Waiting for the threshold swings the rotator
+    /// back to the unflipped heading and undoes the pre-position.
     ///
-    /// Requirements: 4.2
+    /// Issue 195.
     /// </summary>
     [Fact]
-    public void FlippedTracking_TransitionsToNormal_WhenElevationDropsBelowThreshold()
+    public void FlippedTracking_UsesFlippedAzimuth_FromAosBelowThreshold()
+    {
+        var rotator = new RecordingRotatorDriver();
+        var aosUtc = DateTime.UtcNow.AddMinutes(-1);
+        var pass = MakePass(88.0, 30.0, aosUtc);
+        var plan = FlippedPlan(flippedStartAz: 210.0);
+
+        var controller = new RotatorController(_ => rotator);
+        var settings = EnabledSettings(keyholeThreshold: 80.0);
+
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 2));
+        controller.SetActivePassSynchronously(pass);
+        controller.SetKeyholePlanForTests(plan);
+
+        // Above track-start (5°) and below the keyhole threshold (80°).
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 10));
+
+        Assert.True(controller.IsKeyholeFlippedActive);
+        Assert.False(controller.IsPrePositioning);
+        Assert.Equal(210, rotator.LastAzimuthDeg); // (30 + 180) % 360
+        Assert.Equal(170, rotator.LastElevationDeg); // 180 − 10
+
+        var status = controller.GetPositionStatus();
+        Assert.True(status.IsKeyholeAvoidanceActive);
+    }
+
+    /// <summary>
+    /// Once a flipped plan is active, dropping below the keyhole threshold on the
+    /// way down does not return to compass azimuth. The flip lasts the whole pass.
+    ///
+    /// Issue 195.
+    /// </summary>
+    [Fact]
+    public void FlippedTracking_StaysFlipped_WhenElevationDropsBelowThreshold()
     {
         var rotator = new RecordingRotatorDriver();
         var aosUtc = DateTime.UtcNow.AddMinutes(-5);
@@ -340,26 +376,54 @@ public sealed class RotatorControllerKeyholeTests
 
         var controller = new RotatorController(_ => rotator);
         var settings = EnabledSettings(keyholeThreshold: 80.0);
+        settings.SmartAzimuth450 = false;
 
-        // Initial update to connect
         controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 10));
-
-        // Set pass and inject plan
         controller.SetActivePassSynchronously(pass);
         controller.SetKeyholePlanForTests(plan);
 
-        // First: track at high elevation (above threshold) to enter flipped mode
         controller.UpdateSynchronously(settings, TrackTarget("99999", 45, 85));
         Assert.True(controller.IsKeyholeFlippedActive);
         Assert.Equal(225, rotator.LastAzimuthDeg); // flipped: (45+180)%360
+        Assert.Equal(95, rotator.LastElevationDeg); // 180 − 85
 
-        // Now: elevation drops below threshold — should transition to normal
         controller.UpdateSynchronously(settings, TrackTarget("99999", 200, 70));
-        Assert.False(controller.IsKeyholeFlippedActive);
-        Assert.Equal(200, rotator.LastAzimuthDeg); // normal compass azimuth
+        Assert.True(controller.IsKeyholeFlippedActive);
+        Assert.Equal(20, rotator.LastAzimuthDeg); // (200 + 180) % 360
+        Assert.Equal(110, rotator.LastElevationDeg); // 180 − 70
 
         var status = controller.GetPositionStatus();
-        Assert.False(status.IsKeyholeAvoidanceActive);
+        Assert.True(status.IsKeyholeAvoidanceActive);
+    }
+
+    /// <summary>
+    /// Flipped tracking ends when the satellite drops below track-start, not when
+    /// it drops below the keyhole threshold.
+    /// </summary>
+    [Fact]
+    public void FlippedTracking_Ends_WhenElevationDropsBelowTrackStart()
+    {
+        var rotator = new RecordingRotatorDriver();
+        var aosUtc = DateTime.UtcNow.AddMinutes(-5);
+        var pass = MakePass(88.0, 30.0, aosUtc);
+        var plan = FlippedPlan(flippedStartAz: 210.0);
+
+        var controller = new RotatorController(_ => rotator);
+        var settings = EnabledSettings(keyholeThreshold: 80.0);
+        settings.ParkAfterPass = false;
+
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 10));
+        controller.SetActivePassSynchronously(pass);
+        controller.SetKeyholePlanForTests(plan);
+
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 30, 10));
+        Assert.True(controller.IsKeyholeFlippedActive);
+        Assert.Equal(210, rotator.LastAzimuthDeg);
+
+        controller.UpdateSynchronously(settings, TrackTarget("99999", 40, 2));
+        Assert.False(controller.IsKeyholeFlippedActive);
+        Assert.False(controller.GetPositionStatus().IsKeyholeAvoidanceActive);
+        Assert.Equal(210, rotator.LastAzimuthDeg);
     }
 
     #endregion

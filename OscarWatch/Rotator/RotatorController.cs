@@ -416,7 +416,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         }
 
         // Keyhole pre-positioning: if we have a flipped plan and are in the pre-position window,
-        // slew to flipped start azimuth before normal tracking begins.
+        // slew to the flipped start azimuth before AOS. After AOS, flipped tracking continues.
         if (TryHandleKeyholePrePosition(settings, target))
             return;
 
@@ -430,27 +430,33 @@ public sealed class RotatorController : IRotatorController, IDisposable
                 var az = lookAngles.AzimuthDeg;
                 var ahead = target.AheadAzimuthDeg;
 
-                // Apply flipped tracking if plan is FlippedStart and we should be flipped
-                if (ShouldTrackFlipped(settings, lookAngles.ElevationDeg))
+                // FlippedStart keeps the mirrored command for the whole pass, including
+                // from AOS, so the pre-position slew is not undone below the keyhole threshold.
+                var el = lookAngles.ElevationDeg;
+                if (ShouldTrackFlipped())
                 {
                     az = RotatorAzimuthPlanner.Normalize360(az + 180.0);
+                    el = FlippedElevationDeg(el, settings.MaxElevationDeg);
                     ahead = null; // ahead azimuth not meaningful when flipped
                     _keyholeFlippedActive = true;
                     _isPrePositioning = false;
                 }
-                else if (_keyholeFlippedActive && lookAngles.ElevationDeg < settings.KeyholeThresholdDeg)
-                {
-                    // Dropped below threshold after being flipped — transition to normal
+                else
                     _keyholeFlippedActive = false;
-                }
 
-                TryTrack(settings, az, lookAngles.ElevationDeg, ahead);
+                TryTrack(settings, az, el, ahead);
             }
             else
+            {
+                _keyholeFlippedActive = false;
                 ConsiderParkAfterPass(settings);
+            }
         }
         else
+        {
+            _keyholeFlippedActive = false;
             ConsiderParkAfterPass(settings);
+        }
     }
 
     /// <summary>
@@ -740,8 +746,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
     /// <summary>
     /// Handles the keyhole pre-positioning branch. If a FlippedStart plan is active and the
     /// current time is within the pre-position window (AOS − PrePositionLeadTime to AOS),
-    /// commands the rotator to slew to the flipped start azimuth at the track-start elevation
-    /// (not below 0°).
+    /// commands the rotator to slew to the flipped start azimuth at the mirrored
+    /// track-start elevation (180° minus the sky floor, and the floor is not below 0°).
     /// Returns true if pre-positioning was handled (caller should return early), false otherwise.
     /// </summary>
     private bool TryHandleKeyholePrePosition(RotatorSettings settings, SatelliteTrackState? target)
@@ -786,40 +792,44 @@ public sealed class RotatorController : IRotatorController, IDisposable
             return false;
         }
 
-        // Slew azimuth at the rotator floor (track-start), never below the horizon.
+        // Slew to the flipped beam: azimuth + 180°, elevation mirrored about 90°
+        // so the antenna is already looking at the AOS azimuth.
         _isPrePositioning = true;
-        TryTrack(settings, _keyholePlan.FlippedStartAzimuthDeg.Value, KeyholePrePositionElevationDeg(settings), null);
+        var skyFloor = KeyholePrePositionElevationDeg(settings);
+        TryTrack(
+            settings,
+            _keyholePlan.FlippedStartAzimuthDeg.Value,
+            FlippedElevationDeg(skyFloor, settings.MaxElevationDeg),
+            null);
         return true;
     }
 
     /// <summary>
-    /// Elevation used when slewing to a flipped start azimuth before AOS.
+    /// Sky elevation used as the floor when pre-positioning before AOS.
     /// Follows <see cref="RotatorSettings.TrackStartElevationDeg"/>, clamped to 0° so a
     /// default below-horizon track-start still pre-positions on the horizon.
+    /// The rotator command is <see cref="FlippedElevationDeg"/> of this value.
     /// </summary>
     internal static double KeyholePrePositionElevationDeg(RotatorSettings settings) =>
         Math.Max(0, settings.TrackStartElevationDeg);
 
     /// <summary>
-    /// Determines whether the rotator should currently be tracking in flipped mode.
-    /// Returns true if the plan is FlippedStart and either:
-    ///   - The satellite elevation is at or above the keyhole threshold (entering flipped zone), or
-    ///   - We are already flipped and the satellite hasn't dropped below the threshold yet.
-    /// Once flipped tracking starts, it stays active until elevation drops below the threshold.
-    /// The descent below threshold naturally occurs after TCA (time of closest approach).
+    /// Rotator elevation for a flipped over-the-top command.
+    /// Sky elevation ε maps to 180° − ε, clamped to the rotator elevation range,
+    /// so azimuth + 180° still points at the satellite.
     /// </summary>
-    private bool ShouldTrackFlipped(RotatorSettings settings, double elevationDeg)
-    {
-        if (_keyholePlan?.Strategy != KeyholeStrategy.FlippedStart)
-            return false;
+    internal static double FlippedElevationDeg(double skyElevationDeg, double maxElevationDeg) =>
+        Math.Clamp(180.0 - skyElevationDeg, 0, maxElevationDeg);
 
-        // Already flipped: stay flipped until elevation drops below threshold
-        if (_keyholeFlippedActive)
-            return elevationDeg >= settings.KeyholeThresholdDeg;
-
-        // Not yet flipped: start flipping when elevation reaches the threshold
-        return elevationDeg >= settings.KeyholeThresholdDeg;
-    }
+    /// <summary>
+    /// True when the active plan is <see cref="KeyholeStrategy.FlippedStart"/>.
+    /// A flipped plan offsets azimuth by 180° for the whole pass, from AOS until the
+    /// satellite drops below track-start, matching the pre-position heading.
+    /// The keyhole threshold chooses which passes are planned as flipped. It does not
+    /// delay that offset until elevation reaches the threshold.
+    /// </summary>
+    private bool ShouldTrackFlipped() =>
+        _keyholePlan?.Strategy == KeyholeStrategy.FlippedStart;
 
     private bool EnsureConnected(RotatorSettings settings)
     {

@@ -3176,7 +3176,7 @@ Fortfahren?</value>
     <value>Keyhole-Vermeidung aktivieren</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Wenn aktiviert, werden Überflüge mit hoher Elevation, bei denen der Rotor nahe dem Zenit nicht mithalten kann, analysiert. Der Rotor kann in gekippter Orientierung vorpositioniert werden, um Signalverlust zu minimieren. Die Vorposition schwenkt den Azimut bei der Start-Elevation der Nachführung (nicht unter 0°). Nur verfügbar, wenn der Elevationsbereich 0–180° ist.</value>
+    <value>Wenn aktiviert, werden Überflüge mit hoher Elevation, bei denen der Rotor nahe dem Zenit nicht mithalten kann, analysiert. Der Rotor kann in gekippter Orientierung vorpositioniert werden, um Signalverlust zu minimieren. Ein gekippter Überflug hält Azimut +180° und Elevation 180° minus Satellitenelevation, von AOS bis unter die Start-Elevation. Die Vorposition nutzt diese gekippte Elevation (180° minus Start-Elevation der Nachführung, nicht unter 0°). Nur verfügbar, wenn der Elevationsbereich 0–180° ist.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Schwenkrate (°/s)</value>
@@ -3194,7 +3194,7 @@ Fortfahren?</value>
     <value>Nachführung starten bei Elevation (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>Standard ist −3° (unter dem Horizont). Bereich −90° bis 90°. Der Rotor beginnt zu schwenken, wenn der verfolgte Satellit über diese Elevation steigt, und parkt, sobald er darunter fällt (nach kurzer Bestätigung, damit ein einzelner Störwert den Überflug nicht unterbricht). Die Keyhole-Vorposition nutzt diese Elevation als Untergrenze (nicht unter 0°).</value>
+    <value>Standard ist −3° (unter dem Horizont). Bereich −90° bis 90°. Der Rotor beginnt zu schwenken, wenn der verfolgte Satellit über diese Elevation steigt, und parkt, sobald er darunter fällt (nach kurzer Bestätigung, damit ein einzelner Störwert den Überflug nicht unterbricht). Die Keyhole-Vorposition nutzt diese Elevation als Untergrenze des Himmelwinkels (nicht unter 0°) und fährt 180° minus dieser Untergrenze an.</value>
   </data>
   <data name="Settings.Rotator.MovementThreshold">
     <value>Bewegungsschwellwert (°)</value>

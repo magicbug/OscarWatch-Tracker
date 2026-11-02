@@ -3176,7 +3176,7 @@ Lanjutkan?</value>
     <value>Aktifkan penghindaran keyhole</value>
   </data>
   <data name="Settings.Rotator.KeyholeNote">
-    <value>Jika aktif, lintasan elevasi tinggi saat rotator tidak bisa mengikuti dekat zenit dianalisis, dan rotator bisa memposisikan awal dalam orientasi terbalik untuk meminimalkan kehilangan sinyal. Slew posisi awal memutar azimut pada elevasi mulai-lacak (tidak di bawah 0°). Hanya tersedia saat rentang elevasi 0–180°.</value>
+    <value>Jika aktif, lintasan elevasi tinggi saat rotator tidak bisa mengikuti dekat zenit dianalisis, dan rotator bisa memposisikan awal dalam orientasi terbalik untuk meminimalkan kehilangan sinyal. Lintasan terbalik menjaga azimut +180° dan elevasi 180° dikurangi elevasi satelit, dari AOS sampai satelit turun di bawah elevasi mulai-lacak. Posisi awal memakai elevasi terbalik itu (180° dikurangi elevasi mulai-lacak, tidak di bawah 0°). Hanya tersedia saat rentang elevasi 0–180°.</value>
   </data>
   <data name="Settings.Rotator.KeyholeSlewRate">
     <value>Laju slew (°/s)</value>
@@ -3194,7 +3194,7 @@ Lanjutkan?</value>
     <value>Mulai pelacakan pada elevasi (°)</value>
   </data>
   <data name="Settings.Rotator.TrackStartNote">
-    <value>Bawaan −3° (di bawah horizon). Rentang −90° sampai 90°. Rotator mulai slew saat satelit yang dilacak naik di atas elevasi ini, dan parkir setelah turun di bawahnya (setelah konfirmasi singkat agar satu glitch tidak memutus lintasan). Posisi awal keyhole memakai elevasi ini sebagai lantai (tidak di bawah 0°).</value>
+    <value>Bawaan −3° (di bawah horizon). Rentang −90° sampai 90°. Rotator mulai slew saat satelit yang dilacak naik di atas elevasi ini, dan parkir setelah turun di bawahnya (setelah konfirmasi singkat agar satu glitch tidak memutus lintasan). Posisi awal keyhole memakai elevasi ini sebagai lantai sudut langit (tidak di bawah 0°) dan memerintahkan 180° dikurangi lantai itu.</value>
   </data>
   <data name="Settings.Rotator.MovementThreshold">
     <value>Ambang gerakan (°)</value>
