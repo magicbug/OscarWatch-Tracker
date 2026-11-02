@@ -243,6 +243,10 @@ public sealed class RigControllerDualRadioTests
         Thread.Sleep(650);
 
         var txAfterInit = upRig.MainHz;
+        // Capture stays held until a loop sees the dial still on the CAT frequency. The rig
+        // thread is suspended for 500 ms of the wait above, so take that sample here.
+        for (var i = 0; i < 3; i++)
+            controller.RunTrackingLoopOnce();
         downRig.MainHz += 2_000;
         for (var i = 0; i < 10; i++)
             controller.RunTrackingLoopOnce();
@@ -367,6 +371,11 @@ public sealed class RigControllerDualRadioTests
             DopplerStrategy = DopplerStrategy.Full
         });
         Thread.Sleep(650);
+
+        // Capture stays held until a loop sees the dial still on the CAT frequency. The rig
+        // thread is suspended for 500 ms of the wait above, so take that sample here.
+        for (var i = 0; i < 3; i++)
+            controller.RunTrackingLoopOnce();
 
         downRig.MainHz += 2_000;
         for (var i = 0; i < 10; i++)
