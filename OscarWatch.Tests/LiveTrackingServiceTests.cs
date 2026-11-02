@@ -183,7 +183,7 @@ public sealed class LiveTrackingServiceTests
     }
 
     [Fact]
-    public async Task GetSnapshotWithUtc_pairs_the_states_with_the_time_they_were_propagated_for()
+    public void GetSnapshotWithUtc_pairs_the_states_with_the_time_they_were_propagated_for()
     {
         // Review finding: reading the states and the time separately could pair one tick's states with the next
         // tick's time. Each state here carries the time it was computed for, so a mismatch shows up.
@@ -198,11 +198,12 @@ public sealed class LiveTrackingServiceTests
             }
         ]);
         service.Start();
+        service.RefreshSnapshotSynchronously(); // so the reader has something to read from its first look
 
         var stop = false;
-        var mismatches = 0;
-        var reads = 0;
-        var reader = Task.Run(() =>
+        long mismatches = 0;
+        long reads = 0;
+        var reader = new Thread(() =>
         {
             while (!Volatile.Read(ref stop))
             {
@@ -210,23 +211,28 @@ public sealed class LiveTrackingServiceTests
                 if (states.Count == 0)
                     continue;
 
-                reads++;
+                Interlocked.Increment(ref reads);
                 if (states[0].NoradId != utc.Ticks.ToString())
-                    mismatches++;
+                    Interlocked.Increment(ref mismatches);
             }
-        });
+        }) { IsBackground = true };
+        reader.Start();
 
-        for (var i = 0; i < 400; i++)
+        // Keep publishing until the reader has really been running alongside: a busy machine may start it late,
+        // so this waits for it rather than assuming it overlaps. Bounded, so a stuck reader fails rather than hangs.
+        var deadline = DateTime.UtcNow.AddSeconds(20);
+        var refreshes = 0;
+        while ((refreshes < 400 || Interlocked.Read(ref reads) < 5_000) && DateTime.UtcNow < deadline)
         {
             service.RefreshSnapshotSynchronously();
-            service.MapTimeOffset = TimeSpan.FromSeconds(i); // a changing offset makes every tick's time distinct
+            service.MapTimeOffset = TimeSpan.FromSeconds(refreshes++); // a changing offset makes every tick's time distinct
         }
 
         Volatile.Write(ref stop, true);
-        await reader;
+        Assert.True(reader.Join(TimeSpan.FromSeconds(5)), "the reader did not stop");
 
-        Assert.True(reads > 0, "the reader never saw a snapshot");
-        Assert.Equal(0, mismatches);
+        Assert.True(Interlocked.Read(ref reads) >= 5_000, "the reader did not run alongside the refreshes");
+        Assert.Equal(0, Interlocked.Read(ref mismatches));
     }
 
     private static TrackingOrchestrator CreateMinimalOrchestrator()
