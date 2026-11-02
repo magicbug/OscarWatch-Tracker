@@ -19,6 +19,17 @@ public sealed class Ft4SlotGateTests
     {
         Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode("FT4")));
         Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode(" ft4 ")));
+        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode("FT4 Asia")));
+    }
+
+    [Fact]
+    public void IsFt4_transponder_includes_custom_type_prefix()
+    {
+        Assert.True(Ft4SlotGate.IsFt4Transponder(Mode("FT4 Asia")));
+        Assert.True(Ft4SlotGate.IsFt4Transponder(Mode("FT4-Asia")));
+        Assert.False(Ft4SlotGate.IsFt4Transponder(Mode("SSB Transponder")));
+        Assert.False(Ft4SlotGate.IsFt4Transponder(Mode("FT40")));
+        Assert.False(Ft4SlotGate.IsFt4Transponder(Mode("Asia FT4")));
     }
 
     [Fact]

@@ -11,8 +11,26 @@ public static class Ft4SlotGate
 {
     public const string TransponderType = "FT4";
 
-    public static bool IsFt4Transponder(SatelliteTransponderMode? mode) =>
-        mode is not null && mode.Type.Trim().Equals(TransponderType, StringComparison.OrdinalIgnoreCase);
+    /// <summary>
+    /// Catalogue FT4 rows, including a custom copy whose type starts with FT4
+    /// (for example "FT4 Asia"). "FT40" is not a match.
+    /// </summary>
+    public static bool IsFt4Transponder(SatelliteTransponderMode? mode)
+    {
+        if (mode is null)
+            return false;
+
+        var type = mode.Type.Trim();
+        if (type.Length == 0)
+            return false;
+
+        if (type.Equals(TransponderType, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return type.StartsWith(TransponderType, StringComparison.OrdinalIgnoreCase)
+            && type.Length > TransponderType.Length
+            && !char.IsLetterOrDigit(type[TransponderType.Length]);
+    }
 
     /// <summary>
     /// The dial only moves on the steps the running FT4 session sends each slot,

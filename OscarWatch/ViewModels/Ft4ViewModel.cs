@@ -156,7 +156,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<string> PttPortOptions { get; } = [];
 
-    public ObservableCollection<string> EchoCalibrationSatelliteOptions { get; } = [];
+    public ObservableCollection<EchoCalibrationListItem> EchoCalibrationEntries { get; } = [];
 
     /// <summary>Callsigns that are not answered automatically while calling CQ.</summary>
     public ObservableCollection<string> BlockedCallsigns { get; } = [];
@@ -197,8 +197,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         !string.IsNullOrWhiteSpace(DopplerUplinkText) && DopplerUplinkText != "-"
         || !string.IsNullOrWhiteSpace(DopplerDownlinkText) && DopplerDownlinkText != "-";
 
-    public bool HasEchoCalibrationSatellite =>
-        !string.IsNullOrWhiteSpace(SelectedEchoCalibrationSatellite);
+    public bool HasEchoCalibrationSatellite => SelectedEchoCalibrationEntry is not null;
 
     [ObservableProperty] private string _waterfallStatusText = "";
     [ObservableProperty] private bool _stationSetupMissing;
@@ -260,7 +259,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private string _cqTextColour = "";
     [ObservableProperty] private string _txTextColour = Ft4DecodeHighlight.DefaultTxTextColour;
     [ObservableProperty] private string? _qsoPartnerCall;
-    [ObservableProperty] private string? _selectedEchoCalibrationSatellite;
+    [ObservableProperty] private EchoCalibrationListItem? _selectedEchoCalibrationEntry;
     [ObservableProperty] private double _echoCalibrationHz;
     [ObservableProperty] private double _txAudioHz = 1500;
     [ObservableProperty] private double _rxAudioHz = 1500;
@@ -630,7 +629,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         }
     }
 
-    partial void OnSelectedEchoCalibrationSatelliteChanged(string? value)
+    partial void OnSelectedEchoCalibrationEntryChanged(EchoCalibrationListItem? value)
     {
         if (_loadingEchoCalibration)
             return;
@@ -644,8 +643,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         if (_loadingEchoCalibration)
             return;
 
-        var sat = SelectedEchoCalibrationSatellite?.Trim();
-        if (string.IsNullOrEmpty(sat))
+        if (SelectedEchoCalibrationEntry is null)
             return;
 
         var clamped = Math.Clamp(value, -20000, 20000);
@@ -655,7 +653,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        _settings.Current.Ft4.SetUplinkCalibrationKHz(sat, clamped / 1000.0);
+        ApplyEchoCalibrationKHzToEntry(SelectedEchoCalibrationEntry, clamped / 1000.0);
         _settings.RequestSave();
         ClearEchoCalibrationCommand.NotifyCanExecuteChanged();
         ClearAllEchoCalibrationsCommand.NotifyCanExecuteChanged();
@@ -1306,35 +1304,34 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         RefreshPttPorts();
     }
 
-    /// <summary>Reload echo calibration satellite list and trim for the FT4 settings dialogue.</summary>
+    /// <summary>Reload echo calibration rows and trim for the FT4 settings dialogue.</summary>
     public void RefreshEchoCalibration()
     {
         _loadingEchoCalibration = true;
         try
         {
-            var focused = ResolveFocusedSatelliteName();
-            var stored = _settings.Current.Ft4.UplinkCalibrationKHzBySatellite
+            var focusedKey = ResolveFocusedTransponderKey();
+            var keys = _settings.Current.Ft4.UplinkCalibrationKHzBySatellite
                 .Keys
                 .Where(k => !string.IsNullOrWhiteSpace(k))
                 .Select(k => k.Trim())
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .OrderBy(k => k, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            EchoCalibrationSatelliteOptions.Clear();
-            foreach (var name in stored)
-                EchoCalibrationSatelliteOptions.Add(name);
+            if (!string.IsNullOrEmpty(focusedKey)
+                && !keys.Contains(focusedKey, StringComparer.OrdinalIgnoreCase))
+                keys.Insert(0, focusedKey);
 
-            if (!string.IsNullOrEmpty(focused)
-                && !EchoCalibrationSatelliteOptions.Contains(focused, StringComparer.OrdinalIgnoreCase))
-                EchoCalibrationSatelliteOptions.Insert(0, focused);
+            EchoCalibrationEntries.Clear();
+            foreach (var key in keys.OrderBy(EchoCalibrationListItem.BuildLabel, StringComparer.OrdinalIgnoreCase))
+                EchoCalibrationEntries.Add(new EchoCalibrationListItem(key));
 
-            var preferred = focused;
-            if (string.IsNullOrEmpty(preferred) && EchoCalibrationSatelliteOptions.Count > 0)
-                preferred = EchoCalibrationSatelliteOptions[0];
+            var preferredKey = focusedKey;
+            if (string.IsNullOrEmpty(preferredKey) && EchoCalibrationEntries.Count > 0)
+                preferredKey = EchoCalibrationEntries[0].Key;
 
-            SelectedEchoCalibrationSatellite = EchoCalibrationSatelliteOptions
-                .FirstOrDefault(n => n.Equals(preferred, StringComparison.OrdinalIgnoreCase));
+            SelectedEchoCalibrationEntry = EchoCalibrationEntries
+                .FirstOrDefault(e => e.Key.Equals(preferredKey, StringComparison.OrdinalIgnoreCase));
             LoadEchoCalibrationHzForSelected();
         }
         finally
@@ -1350,18 +1347,18 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [RelayCommand(CanExecute = nameof(CanClearEchoCalibration))]
     private void ClearEchoCalibration()
     {
-        var sat = SelectedEchoCalibrationSatellite?.Trim();
-        if (string.IsNullOrEmpty(sat))
+        if (SelectedEchoCalibrationEntry is null)
             return;
 
-        _settings.Current.Ft4.SetUplinkCalibrationKHz(sat, 0);
+        var label = SelectedEchoCalibrationEntry.Label;
+        ApplyEchoCalibrationKHzToEntry(SelectedEchoCalibrationEntry, 0);
         _settings.RequestSave();
         RefreshEchoCalibration();
-        StatusLine = _l.Get("Ft4.Status.EchoCleared", sat);
+        StatusLine = _l.Get("Ft4.Status.EchoCleared", label);
     }
 
     private bool CanClearEchoCalibration() =>
-        !string.IsNullOrWhiteSpace(SelectedEchoCalibrationSatellite)
+        SelectedEchoCalibrationEntry is not null
         && Math.Abs(EchoCalibrationHz) > 0.01;
 
     [RelayCommand(CanExecute = nameof(CanClearAllEchoCalibrations))]
@@ -1382,15 +1379,41 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _loadingEchoCalibration = true;
         try
         {
-            var sat = SelectedEchoCalibrationSatellite?.Trim();
-            EchoCalibrationHz = string.IsNullOrEmpty(sat)
+            EchoCalibrationHz = SelectedEchoCalibrationEntry is null
                 ? 0
-                : _settings.Current.Ft4.GetUplinkCalibrationKHz(sat) * 1000.0;
+                : ReadEchoCalibrationKHz(SelectedEchoCalibrationEntry) * 1000.0;
         }
         finally
         {
             _loadingEchoCalibration = wasLoading;
         }
+    }
+
+    private string? ResolveFocusedTransponderKey()
+    {
+        var sat = ResolveFocusedSatelliteName();
+        var mode = _frequencyOverlay.SelectedMode;
+        if (sat is null || !Ft4SlotGate.IsFt4Transponder(mode))
+            return null;
+
+        var key = Ft4UplinkCalibration.FormatTransponderKey(sat, mode);
+        return key.Length > 0 ? key : null;
+    }
+
+    private double ReadEchoCalibrationKHz(EchoCalibrationListItem entry)
+    {
+        if (Ft4UplinkCalibration.TryParseTransponderKey(entry.Key, out var sat, out var mode))
+            return _settings.Current.Ft4.GetUplinkCalibrationKHz(sat, mode);
+
+        return _settings.Current.Ft4.GetUplinkCalibrationKHz(entry.Key);
+    }
+
+    private void ApplyEchoCalibrationKHzToEntry(EchoCalibrationListItem entry, double khz)
+    {
+        if (Ft4UplinkCalibration.TryParseTransponderKey(entry.Key, out var sat, out var mode))
+            _settings.Current.Ft4.SetUplinkCalibrationKHz(sat, khz, mode);
+        else
+            _settings.Current.Ft4.SetUplinkCalibrationKHz(entry.Key, khz);
     }
 
     private string? ResolveFocusedSatelliteName()
@@ -1525,7 +1548,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             SendReportCommand.NotifyCanExecuteChanged();
             Send73Command.NotifyCanExecuteChanged();
             // Auto echo calibration may have updated the stored trim.
-            if (SelectedEchoCalibrationSatellite is not null)
+            if (SelectedEchoCalibrationEntry is not null)
                 LoadEchoCalibrationHzForSelected();
             ClearEchoCalibrationCommand.NotifyCanExecuteChanged();
             ClearAllEchoCalibrationsCommand.NotifyCanExecuteChanged();
@@ -1756,4 +1779,21 @@ public sealed record PttLineOption(PttLine Value, string Label)
 public sealed record Ft4AudioDeviceOption(string Id, string DisplayName)
 {
     public override string ToString() => DisplayName;
+}
+
+public sealed class EchoCalibrationListItem
+{
+    public EchoCalibrationListItem(string key)
+    {
+        Key = key;
+        Label = BuildLabel(key);
+    }
+
+    public string Key { get; }
+
+    public string Label { get; }
+
+    public static string BuildLabel(string key) => Ft4UplinkCalibration.FormatDisplayLabel(key);
+
+    public override string ToString() => Label;
 }

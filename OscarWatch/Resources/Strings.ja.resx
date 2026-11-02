@@ -4618,10 +4618,10 @@
     <value>制御線</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>自分のアップリンクエコーが復号されると、OscarWatchはこの衛星ごとのトリムを自動調整します。ここで編集または消去できます。</value>
+    <value>自分のアップリンクエコーが復号されると、OscarWatchは使用中のFT4トランスポンダー（FT4 Asiaなどの複製を含む）のトリムを自動調整します。衛星全体の古いトリムは、そのトランスポンダー専用の値ができるまで使われます。ここで編集または消去できます。</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>衛星</value>
+    <value>トランスポンダー</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>アップリンクトリム (Hz)</value>

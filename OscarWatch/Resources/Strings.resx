@@ -4618,10 +4618,10 @@ Latest: {1} ({2})</value>
     <value>Control line</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>When your own uplink echo is decoded, OscarWatch adjusts this per-satellite uplink trim automatically. You can edit or clear it here.</value>
+    <value>When your own uplink echo is decoded, OscarWatch adjusts the uplink trim for the FT4 transponder you are using, including a custom copy such as FT4 Asia. An older trim saved for the whole satellite is still used until that transponder has its own. You can edit or clear it here.</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>Satellite</value>
+    <value>Transponder</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>Uplink trim (Hz)</value>

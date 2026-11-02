@@ -4622,10 +4622,10 @@ Ultima versione: {1} ({2})</value>
     <value>Riga di controllo</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>Quando viene decodificato il tuo eco di uplink, OscarWatch regola automaticamente questa correzione di uplink per ciascun satellite. Puoi modificarla o azzerarla qui.</value>
+    <value>Quando viene decodificato il tuo eco di uplink, OscarWatch regola la correzione di uplink del transponder FT4 in uso, anche una copia personalizzata come FT4 Asia. Una correzione precedente per l'intero satellite resta in uso finché quel transponder non ne ha una propria. Puoi modificarla o azzerarla qui.</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>Satellite</value>
+    <value>Transponder</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>Correzione uplink (Hz)</value>

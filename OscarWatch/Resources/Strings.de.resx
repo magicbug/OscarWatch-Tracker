@@ -4622,10 +4622,10 @@ Aktuell: {1} ({2})</value>
     <value>Steuerleitung</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>Wenn Ihr eigenes Uplink-Echo dekodiert wird, passt OscarWatch diesen satellitenbezogenen Trim automatisch an. Hier können Sie ihn bearbeiten oder löschen.</value>
+    <value>Wenn Ihr eigenes Uplink-Echo dekodiert wird, passt OscarWatch die Uplink-Korrektur für den verwendeten FT4-Transponder an, auch für eine eigene Kopie wie FT4 Asia. Eine ältere Korrektur für den ganzen Satelliten gilt weiter, bis dieser Transponder eine eigene hat. Hier können Sie sie bearbeiten oder löschen.</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>Satellit</value>
+    <value>Transponder</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>Uplink-Trim (Hz)</value>

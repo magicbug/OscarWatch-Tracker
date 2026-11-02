@@ -4622,10 +4622,10 @@ Terbaru: {1} ({2})</value>
     <value>Jalur kontrol</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>Saat gema uplink Anda sendiri didekode, OscarWatch menyesuaikan trim per satelit ini secara otomatis. Anda dapat mengedit atau menghapusnya di sini.</value>
+    <value>Saat gema uplink Anda sendiri didekode, OscarWatch menyesuaikan trim transponder FT4 yang sedang dipakai, termasuk salinan khusus seperti FT4 Asia. Trim lama untuk seluruh satelit tetap dipakai sampai transponder itu punya trim sendiri. Anda dapat mengedit atau menghapusnya di sini.</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>Satelit</value>
+    <value>Transponder</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>Trim uplink (Hz)</value>

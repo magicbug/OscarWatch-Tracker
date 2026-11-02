@@ -4622,10 +4622,10 @@ LOS: {2}
     <value>สายควบคุม</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>เมื่อถอดรหัสเสียงสะท้อนอัปลิงก์ของคุณ OscarWatch จะปรับค่า trim ตามดาวเทียมโดยอัตโนมัติ คุณสามารถแก้ไขหรือล้างได้ที่นี่</value>
+    <value>เมื่อถอดรหัสเสียงสะท้อนอัปลิงก์ของคุณ OscarWatch จะปรับค่าทริมของทรานสปอนเดอร์ FT4 ที่ใช้อยู่ รวมถึงสำเนาที่ตั้งเองเช่น FT4 Asia ค่าทริมเก่าของทั้งดวงจะยังใช้จนกว่าทรานสปอนเดอร์นั้นจะมีค่าของตัวเอง คุณสามารถแก้ไขหรือล้างได้ที่นี่</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>ดาวเทียม</value>
+    <value>ทรานสปอนเดอร์</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>ค่า trim อัปลิงก์ (Hz)</value>

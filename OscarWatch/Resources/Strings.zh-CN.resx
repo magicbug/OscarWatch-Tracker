@@ -4618,10 +4618,10 @@
     <value>控制线</value>
   </data>
   <data name="Ft4.EchoCalibration.Note">
-    <value>解码到您自己的上行回波时，OscarWatch 会自动调整此按卫星的微调。可在此编辑或清除。</value>
+    <value>解码到您自己的上行回波时，OscarWatch 会自动调整当前所用 FT4 转发器的微调（包括 FT4 Asia 这类自定义副本）。在该转发器有自己的微调之前，仍使用原先按整颗卫星保存的值。可在此编辑或清除。</value>
   </data>
   <data name="Ft4.EchoCalibration.Satellite">
-    <value>卫星</value>
+    <value>转发器</value>
   </data>
   <data name="Ft4.EchoCalibration.TrimHz">
     <value>上行微调 (Hz)</value>
