@@ -465,7 +465,8 @@ public sealed class RigController : IRigController, IDisposable
                     _cachedSettings = command.Settings;
                     _cachedCatPausedOverride = command.CatPausedOverride;
                     ApplyPublishState(_cachedSettings, command.Context, command.ReinitializePass, command.CatPausedOverride);
-                    if (command.ReinitializePass || _forceFrequencyApply)
+                    if ((!command.ReinitializePass && _forceFrequencyApply)
+                        || (command.ReinitializePass && _ft4SlotGatedDoppler))
                         RunLoopIteration(ignoreDopplerSuspend: true);
                     break;
 
@@ -707,7 +708,7 @@ public sealed class RigController : IRigController, IDisposable
         else if (resolved.SelectedCtcssHz is > 0)
             ApplyCtcss(settings, resolved, force: false);
 
-        if (passKeyChanged || reinitializePass)
+        if (_ft4SlotGatedDoppler && (passKeyChanged || reinitializePass))
             _forceFrequencyApply = true;
 
         NoteContextOffsetChange(resolved);
@@ -1290,7 +1291,7 @@ public sealed class RigController : IRigController, IDisposable
 
     private bool CanWriteInteractiveSub()
     {
-        if (_immediateOperatorOffsetApply)
+        if (_ft4SlotGatedDoppler && _immediateOperatorOffsetApply)
             return true;
 
         var cooldownMs = _vfoNotMoving && _receiveDialMatchesLastCatWrite
@@ -1399,17 +1400,12 @@ public sealed class RigController : IRigController, IDisposable
         var txDelta = _isBeaconOnly ? 0 : Math.Abs(txHz - _lastRigTxHz);
         var correctRx = strategy != DopplerStrategy.UplinkOnly;
         var correctTx = !_isBeaconOnly && strategy != DopplerStrategy.DownlinkOnly;
-        bool writeRx;
-        bool writeTx;
-        if (forceApply)
+        var writeRx = correctRx && (forceApply || rxDelta > thresholdHz || thresholdHz == 0);
+        var writeTx = correctTx && (forceApply || txDelta > thresholdHz || thresholdHz == 0);
+        if (forceApply && _ft4SlotGatedDoppler)
         {
             writeRx = strategy != DopplerStrategy.UplinkOnly;
             writeTx = !_isBeaconOnly;
-        }
-        else
-        {
-            writeRx = correctRx && (rxDelta > thresholdHz || thresholdHz == 0);
-            writeTx = correctTx && (txDelta > thresholdHz || thresholdHz == 0);
         }
 
         if (holdDownlinkCatWrites)
@@ -1433,8 +1429,7 @@ public sealed class RigController : IRigController, IDisposable
         if (writeTx && _interactive && !settings.DualRadioEnabled && !CanWriteInteractiveSub())
         {
             _forceFrequencyApply = true;
-            if (!_immediateOperatorOffsetApply)
-                writeTx = false;
+            writeTx = false;
         }
 
         if (!writeRx && !writeTx)
@@ -2545,13 +2540,23 @@ public sealed class RigController : IRigController, IDisposable
         _lastContextRxOffsetKHz = context.ReceiveOffsetKHz;
         _lastContextTxOffsetKHz = context.TransmitOffsetKHz;
         _forceFrequencyApply = true;
-        _immediateOperatorOffsetApply = true;
         _blockKnobCapture = true;
-        if (_lastRigRxHz > 0)
-            SeedDialHistoryStable(_lastRigRxHz);
+        _immediateOperatorOffsetApply = false;
+        if (_ft4SlotGatedDoppler)
+        {
+            _immediateOperatorOffsetApply = true;
+            if (_lastRigRxHz > 0)
+                SeedDialHistoryStable(_lastRigRxHz);
+            else
+                ClearDialHistory();
+            _vfoNotMoving = true;
+        }
         else
+        {
             ClearDialHistory();
-        _vfoNotMoving = true;
+            MarkProgrammaticFrequencySettle();
+        }
+
         LogDopplerEvent(
             _cachedSettings,
             context,
