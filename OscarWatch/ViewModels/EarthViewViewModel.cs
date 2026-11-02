@@ -101,7 +101,9 @@ public sealed partial class EarthViewViewModel : ViewModelBase, IDisposable
                 return;
             }
 
-            var state = _tracking.GetSnapshot()
+            // Read together, so the position and the time it was propagated for always belong to one tick.
+            var (states, snapshotUtc) = _tracking.GetSnapshotWithUtc();
+            var state = states
                 .FirstOrDefault(s => string.Equals(s.NoradId, norad, StringComparison.Ordinal));
             if (state is null)
             {
@@ -111,7 +113,6 @@ public sealed partial class EarthViewViewModel : ViewModelBase, IDisposable
 
             // The time the position was propagated for, which already includes the map offset and any GPS
             // time correction. Falls back to the clock only before the first snapshot has been published.
-            var snapshotUtc = _tracking.SnapshotUtc;
             var displayUtc = snapshotUtc > DateTime.MinValue ? snapshotUtc : _utcNow() + _tracking.MapTimeOffset;
             var settings = _settings.Current;
             var next = EarthViewFrameBuilder.Build(state, settings.GroundStation, settings.MinimumElevationDeg, displayUtc);

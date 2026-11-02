@@ -182,6 +182,53 @@ public sealed class LiveTrackingServiceTests
         service.Dispose();
     }
 
+    [Fact]
+    public async Task GetSnapshotWithUtc_pairs_the_states_with_the_time_they_were_propagated_for()
+    {
+        // Review finding: reading the states and the time separately could pair one tick's states with the next
+        // tick's time. Each state here carries the time it was computed for, so a mismatch shows up.
+        var orchestrator = CreateMinimalOrchestrator();
+        using var service = new LiveTrackingService(orchestrator, gps: null, utc =>
+        [
+            new SatelliteTrackState
+            {
+                Name = "TEST",
+                NoradId = utc.Ticks.ToString(),
+                Subpoint = new GeoCoordinate(0, 0, 400)
+            }
+        ]);
+        service.Start();
+
+        var stop = false;
+        var mismatches = 0;
+        var reads = 0;
+        var reader = Task.Run(() =>
+        {
+            while (!Volatile.Read(ref stop))
+            {
+                var (states, utc) = service.GetSnapshotWithUtc();
+                if (states.Count == 0)
+                    continue;
+
+                reads++;
+                if (states[0].NoradId != utc.Ticks.ToString())
+                    mismatches++;
+            }
+        });
+
+        for (var i = 0; i < 400; i++)
+        {
+            service.RefreshSnapshotSynchronously();
+            service.MapTimeOffset = TimeSpan.FromSeconds(i); // a changing offset makes every tick's time distinct
+        }
+
+        Volatile.Write(ref stop, true);
+        await reader;
+
+        Assert.True(reads > 0, "the reader never saw a snapshot");
+        Assert.Equal(0, mismatches);
+    }
+
     private static TrackingOrchestrator CreateMinimalOrchestrator()
     {
         var settings = new TestSettingsService();
