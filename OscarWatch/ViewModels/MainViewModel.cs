@@ -2481,6 +2481,7 @@ public partial class MainViewModel : ViewModelBase
 
     private static QsoLogbookWindow? _openLogbookWindow;
     private static Ft4Window? _openFt4Window;
+    private static EarthViewWindow? _openEarthViewWindow;
 
     [RelayCommand]
     private void OpenQsoLogbook()
@@ -2499,6 +2500,29 @@ public partial class MainViewModel : ViewModelBase
         if (App.MainWindow is null)
             return;
 
+        window.Show(App.MainWindow);
+    }
+
+    /// <summary>Opens the Earth View, or brings it to the front if it is already open.</summary>
+    [RelayCommand]
+    private void OpenEarthView()
+    {
+        if (_openEarthViewWindow is { IsVisible: true })
+        {
+            _openEarthViewWindow.Activate();
+            return;
+        }
+
+        if (App.MainWindow is null)
+            return;
+
+        var vm = new EarthViewViewModel(
+            App.Services.GetRequiredService<ISettingsService>(),
+            App.Services.GetRequiredService<ILiveTrackingService>(),
+            App.Services.GetRequiredService<ILocalizationService>());
+        var window = new EarthViewWindow { DataContext = vm };
+        window.Closed += (_, _) => _openEarthViewWindow = null;
+        _openEarthViewWindow = window;
         window.Show(App.MainWindow);
     }
 

@@ -1039,6 +1039,108 @@ LOS: {2}
   <data name="Menu.Window.PassElevationTimeline">
     <value>Шкала _угла места пролётов</value>
   </data>
+  <data name="Menu.Window.EarthView">
+    <value>_Вид Земли</value>
+  </data>
+  <data name="Window.EarthView.Title">
+    <value>Вид Земли</value>
+  </data>
+  <data name="EarthView.ZoomIn">
+    <value>Приблизить</value>
+  </data>
+  <data name="EarthView.ZoomOut">
+    <value>Отдалить</value>
+  </data>
+  <data name="EarthView.ResetView">
+    <value>Сбросить масштаб</value>
+  </data>
+  <data name="EarthView.Zoom.Tip">
+    <value>Меняйте масштаб колесом мыши или клавишами + и −, когда глобус в фокусе. Клавиша 0 снова показывает глобус целиком.</value>
+  </data>
+  <data name="EarthView.Label.Station">
+    <value>Станция</value>
+  </data>
+  <data name="EarthView.Empty.NoSatellite">
+    <value>Выберите спутник в главном окне, чтобы увидеть Землю с него.</value>
+  </data>
+  <data name="EarthView.Empty.NoPosition">
+    <value>Положение выбранного спутника пока недоступно.</value>
+  </data>
+  <data name="EarthView.Status.Time">
+    <value>{0} UTC</value>
+  </data>
+  <data name="EarthView.Section.Satellite">
+    <value>Спутник</value>
+  </data>
+  <data name="EarthView.Section.Station">
+    <value>Ваша станция</value>
+  </data>
+  <data name="EarthView.Section.Coverage">
+    <value>Покрытие</value>
+  </data>
+  <data name="EarthView.Label.Altitude">
+    <value>Высота</value>
+  </data>
+  <data name="EarthView.Label.Time">
+    <value>Время</value>
+  </data>
+  <data name="EarthView.Label.Lighting">
+    <value>Освещение</value>
+  </data>
+  <data name="EarthView.Label.Azimuth">
+    <value>Азимут</value>
+  </data>
+  <data name="EarthView.Label.Elevation">
+    <value>Угол места</value>
+  </data>
+  <data name="EarthView.Label.Range">
+    <value>Расстояние</value>
+  </data>
+  <data name="EarthView.Label.Footprint">
+    <value>Зона покрытия</value>
+  </data>
+  <data name="EarthView.Label.MinElevation">
+    <value>Минимальный угол места</value>
+  </data>
+  <data name="EarthView.Value.Kilometres">
+    <value>{0:F0} км</value>
+  </data>
+  <data name="EarthView.Value.Degrees">
+    <value>{0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.BelowHorizon">
+    <value>Вне зоны: спутник за горизонтом</value>
+  </data>
+  <data name="EarthView.Status.AboveHorizon">
+    <value>В зоне: спутник над горизонтом</value>
+  </data>
+  <data name="EarthView.Status.InsideMinElevation">
+    <value>Спутник выше {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.OutsideMinElevation">
+    <value>Спутник ниже {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.Sunlit">
+    <value>Освещён Солнцем</value>
+  </data>
+  <data name="EarthView.Status.Eclipse">
+    <value>В тени Земли</value>
+  </data>
+  <data name="EarthView.Accessible.Name">
+    <value>Вид Земли, {0}</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.Usable">
+    <value>{0}: {1:F0}° над горизонтом, азимут {2:F0}°, выше вашего минимального угла места {3:F0}°.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.AboveHorizon">
+    <value>{0}: {1:F0}° над горизонтом, азимут {2:F0}°, ниже вашего минимального угла места {3:F0}°.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.BelowHorizon">
+    <value>{0} за горизонтом.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.NoAngles">
+    <value>{0} над горизонтом.</value>
+  </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Шкала угла места пролётов</value>
   </data>

@@ -55,6 +55,7 @@
         <MenuItem Header="{loc:Localize Key=Menu.Window.PassElevationTimeline}"
                   ToggleType="CheckBox"
                   IsChecked="{Binding IsTimelineExpanded, Mode=TwoWay}" />
+        <MenuItem Header="{loc:Localize Key=Menu.Window.EarthView}" Command="{Binding OpenEarthViewCommand}" />
       </MenuItem>
       <MenuItem Header="{loc:Localize Key=Menu.Settings}" Command="{Binding OpenSettingsCommand}" />
       <MenuItem Header="{loc:Localize Key=Menu.Help}">

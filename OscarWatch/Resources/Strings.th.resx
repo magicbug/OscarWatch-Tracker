@@ -1039,6 +1039,108 @@ LOS: {2}
   <data name="Menu.Window.PassElevationTimeline">
     <value>ไทม์ไลน์มุมเงยของพาส(_E)</value>
   </data>
+  <data name="Menu.Window.EarthView">
+    <value>มุมมองโลก(_V)</value>
+  </data>
+  <data name="Window.EarthView.Title">
+    <value>มุมมองโลก</value>
+  </data>
+  <data name="EarthView.ZoomIn">
+    <value>ขยาย</value>
+  </data>
+  <data name="EarthView.ZoomOut">
+    <value>ย่อ</value>
+  </data>
+  <data name="EarthView.ResetView">
+    <value>รีเซ็ตการซูม</value>
+  </data>
+  <data name="EarthView.Zoom.Tip">
+    <value>ซูมด้วยล้อเมาส์ หรือกด + และ − ขณะที่โฟกัสอยู่ที่ลูกโลก กด 0 เพื่อแสดงลูกโลกทั้งใบอีกครั้ง</value>
+  </data>
+  <data name="EarthView.Label.Station">
+    <value>สถานี</value>
+  </data>
+  <data name="EarthView.Empty.NoSatellite">
+    <value>เลือกดาวเทียมในหน้าต่างหลักเพื่อดูโลกจากมุมมองของดาวเทียมดวงนั้น</value>
+  </data>
+  <data name="EarthView.Empty.NoPosition">
+    <value>ยังไม่มีตำแหน่งของดาวเทียมที่เลือก</value>
+  </data>
+  <data name="EarthView.Status.Time">
+    <value>{0} UTC</value>
+  </data>
+  <data name="EarthView.Section.Satellite">
+    <value>ดาวเทียม</value>
+  </data>
+  <data name="EarthView.Section.Station">
+    <value>สถานีของคุณ</value>
+  </data>
+  <data name="EarthView.Section.Coverage">
+    <value>พื้นที่ครอบคลุม</value>
+  </data>
+  <data name="EarthView.Label.Altitude">
+    <value>ความสูง</value>
+  </data>
+  <data name="EarthView.Label.Time">
+    <value>เวลา</value>
+  </data>
+  <data name="EarthView.Label.Lighting">
+    <value>แสงอาทิตย์</value>
+  </data>
+  <data name="EarthView.Label.Azimuth">
+    <value>มุมอะซิมัท</value>
+  </data>
+  <data name="EarthView.Label.Elevation">
+    <value>มุมเงย</value>
+  </data>
+  <data name="EarthView.Label.Range">
+    <value>ระยะ</value>
+  </data>
+  <data name="EarthView.Label.Footprint">
+    <value>รอยครอบคลุม</value>
+  </data>
+  <data name="EarthView.Label.MinElevation">
+    <value>มุมเงยต่ำสุด</value>
+  </data>
+  <data name="EarthView.Value.Kilometres">
+    <value>{0:F0} กม.</value>
+  </data>
+  <data name="EarthView.Value.Degrees">
+    <value>{0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.BelowHorizon">
+    <value>อยู่นอก: ดาวเทียมอยู่ต่ำกว่าขอบฟ้า</value>
+  </data>
+  <data name="EarthView.Status.AboveHorizon">
+    <value>อยู่ใน: ดาวเทียมอยู่เหนือขอบฟ้า</value>
+  </data>
+  <data name="EarthView.Status.InsideMinElevation">
+    <value>ดาวเทียมอยู่เหนือ {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.OutsideMinElevation">
+    <value>ดาวเทียมอยู่ต่ำกว่า {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.Sunlit">
+    <value>ได้รับแสงอาทิตย์</value>
+  </data>
+  <data name="EarthView.Status.Eclipse">
+    <value>อยู่ในเงาของโลก</value>
+  </data>
+  <data name="EarthView.Accessible.Name">
+    <value>มุมมองโลก {0}</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.Usable">
+    <value>{0} อยู่เหนือขอบฟ้า {1:F0} องศา ที่มุมอะซิมัท {2:F0} องศา เหนือมุมเงยต่ำสุดของคุณที่ {3:F0} องศา</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.AboveHorizon">
+    <value>{0} อยู่เหนือขอบฟ้า {1:F0} องศา ที่มุมอะซิมัท {2:F0} องศา ต่ำกว่ามุมเงยต่ำสุดของคุณที่ {3:F0} องศา</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.BelowHorizon">
+    <value>{0} อยู่ต่ำกว่าขอบฟ้า</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.NoAngles">
+    <value>{0} อยู่เหนือขอบฟ้า</value>
+  </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>ไทม์ไลน์มุมเงยของพาส</value>
   </data>

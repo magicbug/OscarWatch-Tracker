@@ -38,6 +38,7 @@ publish/
 
 # Native FT8/FT4 library build trees (shipped binaries live under OscarWatch/runtimes/)
 native/oscarwatch_ft8/build-*/
+native/oscarwatch_ft8/build/
 native/ft8_lib/.build/
 native/ft8_lib/libft8.a
 native/ft8_lib/decode_ft8
@@ -49,3 +50,6 @@ testdata/
 
 # Dave, G4DPZ Exclusions
 .kiro/
+# Agent workflow run records (reports, PR records) and the worktrees workflows create
+.agents/
+.worktrees/

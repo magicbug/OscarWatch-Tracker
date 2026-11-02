@@ -1035,6 +1035,108 @@ Continue?</value>
   <data name="Menu.Window.PassElevationTimeline">
     <value>Pass _elevation timeline</value>
   </data>
+  <data name="Menu.Window.EarthView">
+    <value>Earth _View</value>
+  </data>
+  <data name="Window.EarthView.Title">
+    <value>Earth View</value>
+  </data>
+  <data name="EarthView.ZoomIn">
+    <value>Zoom in</value>
+  </data>
+  <data name="EarthView.ZoomOut">
+    <value>Zoom out</value>
+  </data>
+  <data name="EarthView.ResetView">
+    <value>Reset zoom</value>
+  </data>
+  <data name="EarthView.Zoom.Tip">
+    <value>Zoom with the mouse wheel, or press + and − while the globe has focus. Press 0 to fit the whole globe again.</value>
+  </data>
+  <data name="EarthView.Label.Station">
+    <value>Station</value>
+  </data>
+  <data name="EarthView.Empty.NoSatellite">
+    <value>Select a satellite in the main window to see the Earth from it.</value>
+  </data>
+  <data name="EarthView.Empty.NoPosition">
+    <value>The position of the selected satellite is not available yet.</value>
+  </data>
+  <data name="EarthView.Status.Time">
+    <value>{0} UTC</value>
+  </data>
+  <data name="EarthView.Section.Satellite">
+    <value>Satellite</value>
+  </data>
+  <data name="EarthView.Section.Station">
+    <value>Your station</value>
+  </data>
+  <data name="EarthView.Section.Coverage">
+    <value>Coverage</value>
+  </data>
+  <data name="EarthView.Label.Altitude">
+    <value>Altitude</value>
+  </data>
+  <data name="EarthView.Label.Time">
+    <value>Time</value>
+  </data>
+  <data name="EarthView.Label.Lighting">
+    <value>Lighting</value>
+  </data>
+  <data name="EarthView.Label.Azimuth">
+    <value>Azimuth</value>
+  </data>
+  <data name="EarthView.Label.Elevation">
+    <value>Elevation</value>
+  </data>
+  <data name="EarthView.Label.Range">
+    <value>Range</value>
+  </data>
+  <data name="EarthView.Label.Footprint">
+    <value>Footprint</value>
+  </data>
+  <data name="EarthView.Label.MinElevation">
+    <value>Minimum elevation</value>
+  </data>
+  <data name="EarthView.Value.Kilometres">
+    <value>{0:F0} km</value>
+  </data>
+  <data name="EarthView.Value.Degrees">
+    <value>{0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.BelowHorizon">
+    <value>Outside: satellite below your horizon</value>
+  </data>
+  <data name="EarthView.Status.AboveHorizon">
+    <value>Inside: satellite above your horizon</value>
+  </data>
+  <data name="EarthView.Status.InsideMinElevation">
+    <value>Satellite above {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.OutsideMinElevation">
+    <value>Satellite below {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.Sunlit">
+    <value>In sunlight</value>
+  </data>
+  <data name="EarthView.Status.Eclipse">
+    <value>In the Earth's shadow</value>
+  </data>
+  <data name="EarthView.Accessible.Name">
+    <value>Earth View, {0}</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.Usable">
+    <value>{0} is {1:F0} degrees above your horizon at azimuth {2:F0} degrees, above your minimum elevation of {3:F0} degrees.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.AboveHorizon">
+    <value>{0} is {1:F0} degrees above your horizon at azimuth {2:F0} degrees, below your minimum elevation of {3:F0} degrees.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.BelowHorizon">
+    <value>{0} is below your horizon.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.NoAngles">
+    <value>{0} is above your horizon.</value>
+  </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Pass elevation timeline</value>
   </data>

@@ -1039,6 +1039,108 @@ Lanjutkan?</value>
   <data name="Menu.Window.PassElevationTimeline">
     <value>Timeline _elevasi lintasan</value>
   </data>
+  <data name="Menu.Window.EarthView">
+    <value>Tampilan _Bumi</value>
+  </data>
+  <data name="Window.EarthView.Title">
+    <value>Tampilan Bumi</value>
+  </data>
+  <data name="EarthView.ZoomIn">
+    <value>Perbesar</value>
+  </data>
+  <data name="EarthView.ZoomOut">
+    <value>Perkecil</value>
+  </data>
+  <data name="EarthView.ResetView">
+    <value>Setel ulang zoom</value>
+  </data>
+  <data name="EarthView.Zoom.Tip">
+    <value>Zoom dengan roda mouse, atau tekan + dan − saat globe sedang difokuskan. Tekan 0 untuk menyesuaikan seluruh globe lagi.</value>
+  </data>
+  <data name="EarthView.Label.Station">
+    <value>Stasiun</value>
+  </data>
+  <data name="EarthView.Empty.NoSatellite">
+    <value>Pilih satelit di jendela utama untuk melihat Bumi dari satelit tersebut.</value>
+  </data>
+  <data name="EarthView.Empty.NoPosition">
+    <value>Posisi satelit yang dipilih belum tersedia.</value>
+  </data>
+  <data name="EarthView.Status.Time">
+    <value>{0} UTC</value>
+  </data>
+  <data name="EarthView.Section.Satellite">
+    <value>Satelit</value>
+  </data>
+  <data name="EarthView.Section.Station">
+    <value>Stasiun Anda</value>
+  </data>
+  <data name="EarthView.Section.Coverage">
+    <value>Cakupan</value>
+  </data>
+  <data name="EarthView.Label.Altitude">
+    <value>Ketinggian</value>
+  </data>
+  <data name="EarthView.Label.Time">
+    <value>Waktu</value>
+  </data>
+  <data name="EarthView.Label.Lighting">
+    <value>Pencahayaan</value>
+  </data>
+  <data name="EarthView.Label.Azimuth">
+    <value>Azimut</value>
+  </data>
+  <data name="EarthView.Label.Elevation">
+    <value>Elevasi</value>
+  </data>
+  <data name="EarthView.Label.Range">
+    <value>Jarak</value>
+  </data>
+  <data name="EarthView.Label.Footprint">
+    <value>Footprint</value>
+  </data>
+  <data name="EarthView.Label.MinElevation">
+    <value>Elevasi minimum</value>
+  </data>
+  <data name="EarthView.Value.Kilometres">
+    <value>{0:F0} km</value>
+  </data>
+  <data name="EarthView.Value.Degrees">
+    <value>{0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.BelowHorizon">
+    <value>Di luar: satelit di bawah horizon</value>
+  </data>
+  <data name="EarthView.Status.AboveHorizon">
+    <value>Di dalam: satelit di atas horizon</value>
+  </data>
+  <data name="EarthView.Status.InsideMinElevation">
+    <value>Satelit di atas {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.OutsideMinElevation">
+    <value>Satelit di bawah {0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.Sunlit">
+    <value>Terkena sinar matahari</value>
+  </data>
+  <data name="EarthView.Status.Eclipse">
+    <value>Dalam bayangan Bumi</value>
+  </data>
+  <data name="EarthView.Accessible.Name">
+    <value>Tampilan Bumi, {0}</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.Usable">
+    <value>{0} berada {1:F0} derajat di atas horizon pada azimut {2:F0} derajat, di atas elevasi minimum Anda sebesar {3:F0} derajat.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.AboveHorizon">
+    <value>{0} berada {1:F0} derajat di atas horizon pada azimut {2:F0} derajat, di bawah elevasi minimum Anda sebesar {3:F0} derajat.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.BelowHorizon">
+    <value>{0} berada di bawah horizon.</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.NoAngles">
+    <value>{0} berada di atas horizon.</value>
+  </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Timeline elevasi lintasan</value>
   </data>

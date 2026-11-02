@@ -11,6 +11,11 @@ public sealed class SatelliteTrackState
     /// </summary>
     public int PaletteIndex { get; init; }
     public required GeoCoordinate Subpoint { get; init; }
+    /// <summary>
+    /// Satellite altitude above the Earth's surface (km), resolved from the propagator with a TLE fallback.
+    /// Zero when unknown (for example in states built without a propagator).
+    /// </summary>
+    public double AltitudeKm { get; init; }
     public LookAngles? LookAngles { get; init; }
     /// <summary>Compass azimuth ~1–2 s ahead (rotator east-side north-wrap lookahead).</summary>
     public double? AheadAzimuthDeg { get; init; }

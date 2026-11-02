@@ -597,6 +597,108 @@
   <data name="Menu.Window.PassElevationTimeline">
     <value>パス仰角タイムライン(_E)</value>
   </data>
+  <data name="Menu.Window.EarthView">
+    <value>地球ビュー(_V)</value>
+  </data>
+  <data name="Window.EarthView.Title">
+    <value>地球ビュー</value>
+  </data>
+  <data name="EarthView.ZoomIn">
+    <value>拡大</value>
+  </data>
+  <data name="EarthView.ZoomOut">
+    <value>縮小</value>
+  </data>
+  <data name="EarthView.ResetView">
+    <value>ズームをリセット</value>
+  </data>
+  <data name="EarthView.Zoom.Tip">
+    <value>マウスホイールで拡大縮小するか、地球儀にフォーカスがある状態で + と − を押します。0 を押すと地球全体が収まる表示に戻ります。</value>
+  </data>
+  <data name="EarthView.Label.Station">
+    <value>局</value>
+  </data>
+  <data name="EarthView.Empty.NoSatellite">
+    <value>メイン ウィンドウで衛星を選択すると、その衛星から見た地球が表示されます。</value>
+  </data>
+  <data name="EarthView.Empty.NoPosition">
+    <value>選択した衛星の位置はまだ利用できません。</value>
+  </data>
+  <data name="EarthView.Status.Time">
+    <value>{0} UTC</value>
+  </data>
+  <data name="EarthView.Section.Satellite">
+    <value>衛星</value>
+  </data>
+  <data name="EarthView.Section.Station">
+    <value>自局</value>
+  </data>
+  <data name="EarthView.Section.Coverage">
+    <value>カバレッジ</value>
+  </data>
+  <data name="EarthView.Label.Altitude">
+    <value>高度</value>
+  </data>
+  <data name="EarthView.Label.Time">
+    <value>時刻</value>
+  </data>
+  <data name="EarthView.Label.Lighting">
+    <value>日照</value>
+  </data>
+  <data name="EarthView.Label.Azimuth">
+    <value>方位角</value>
+  </data>
+  <data name="EarthView.Label.Elevation">
+    <value>仰角</value>
+  </data>
+  <data name="EarthView.Label.Range">
+    <value>距離</value>
+  </data>
+  <data name="EarthView.Label.Footprint">
+    <value>フットプリント</value>
+  </data>
+  <data name="EarthView.Label.MinElevation">
+    <value>最低仰角</value>
+  </data>
+  <data name="EarthView.Value.Kilometres">
+    <value>{0:F0} km</value>
+  </data>
+  <data name="EarthView.Value.Degrees">
+    <value>{0:F0}°</value>
+  </data>
+  <data name="EarthView.Status.BelowHorizon">
+    <value>外側: 衛星は地平線の下</value>
+  </data>
+  <data name="EarthView.Status.AboveHorizon">
+    <value>内側: 衛星は地平線の上</value>
+  </data>
+  <data name="EarthView.Status.InsideMinElevation">
+    <value>衛星は {0:F0}° より上</value>
+  </data>
+  <data name="EarthView.Status.OutsideMinElevation">
+    <value>衛星は {0:F0}° より下</value>
+  </data>
+  <data name="EarthView.Status.Sunlit">
+    <value>日照中</value>
+  </data>
+  <data name="EarthView.Status.Eclipse">
+    <value>地球の影の中</value>
+  </data>
+  <data name="EarthView.Accessible.Name">
+    <value>地球ビュー、{0}</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.Usable">
+    <value>{0} は地平線の上 {1:F0} 度、方位角 {2:F0} 度にあり、最低仰角 {3:F0} 度より上です。</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.AboveHorizon">
+    <value>{0} は地平線の上 {1:F0} 度、方位角 {2:F0} 度にあり、最低仰角 {3:F0} 度より下です。</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.BelowHorizon">
+    <value>{0} は地平線の下にあります。</value>
+  </data>
+  <data name="EarthView.Accessible.Summary.NoAngles">
+    <value>{0} は地平線の上にあります。</value>
+  </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>パス仰角タイムライン</value>
   </data>

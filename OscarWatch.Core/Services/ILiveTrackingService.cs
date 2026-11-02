@@ -19,6 +19,14 @@ public interface ILiveTrackingService : IDisposable
     /// <summary>Latest propagated states at map display time (UTC + <see cref="MapTimeOffset"/>). Do not mutate.</summary>
     IReadOnlyList<SatelliteTrackState> GetSnapshot();
 
+    /// <summary>
+    /// The latest states and the time they were propagated for, read together. Reading
+    /// <see cref="GetSnapshot"/> and <see cref="SnapshotUtc"/> separately can pair the states of one
+    /// tick with the time of the next. The default reads them one after the other; the real service
+    /// overrides it to read both under one lock.
+    /// </summary>
+    (IReadOnlyList<SatelliteTrackState> States, DateTime Utc) GetSnapshotWithUtc() => (GetSnapshot(), SnapshotUtc);
+
     /// <summary>UTC time of the last completed live-now snapshot.</summary>
     DateTime LiveNowSnapshotUtc { get; }
 

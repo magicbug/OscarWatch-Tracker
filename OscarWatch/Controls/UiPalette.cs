@@ -24,7 +24,13 @@ internal readonly record struct UiPalette(
     Color GreylineTerminatorStroke,
     Color MapGroundTrackStroke,
     Color MapGroundTrackOutline,
-    Color MapNextOrbitGroundTrackStroke);
+    Color MapNextOrbitGroundTrackStroke,
+    // Earth View. These have defaults only so that code and tests which build a palette by hand,
+    // and do not draw the Earth View, keep compiling. Both real palettes below set all of them.
+    Color GlobeBackground = default,
+    Color GlobeLimbStroke = default,
+    Color GlobeRingStroke = default,
+    Color GlobeSeaFallback = default);
 
 internal static class UiPaletteResolver
 {
@@ -48,7 +54,14 @@ internal static class UiPaletteResolver
         GreylineTerminatorStroke: Color.FromArgb(90, 180, 190, 210),
         MapGroundTrackStroke: Colors.White,
         MapGroundTrackOutline: Color.Parse("#1a2028"),
-        MapNextOrbitGroundTrackStroke: Color.FromArgb(138, 255, 255, 255));
+        MapNextOrbitGroundTrackStroke: Color.FromArgb(138, 255, 255, 255),
+        // Earth View. The limb and ring are bright lines drawn over MapGroundTrackOutline, as the
+        // ground track is, because the map texture is the same in both themes and ranges from dark
+        // ocean to bright ice. Either the line or its outline reaches 3:1 against every map pixel.
+        GlobeBackground: Color.Parse("#dbe3ec"),
+        GlobeLimbStroke: Colors.White,
+        GlobeRingStroke: Color.Parse("#F0E442"),
+        GlobeSeaFallback: Color.Parse("#4884A2"));
 
     private static readonly UiPalette Dark = new(
         SkyPlotBackground: Color.Parse("#1c2530"),
@@ -70,8 +83,14 @@ internal static class UiPaletteResolver
         GreylineTerminatorStroke: Color.FromArgb(80, 140, 155, 185),
         MapGroundTrackStroke: Colors.White,
         MapGroundTrackOutline: Color.Parse("#1a2028"),
-        MapNextOrbitGroundTrackStroke: Color.FromArgb(138, 255, 255, 255));
+        MapNextOrbitGroundTrackStroke: Color.FromArgb(138, 255, 255, 255),
+        GlobeBackground: Color.Parse("#0d1520"),
+        GlobeLimbStroke: Colors.White,
+        GlobeRingStroke: Color.Parse("#F0E442"),
+        GlobeSeaFallback: Color.Parse("#4884A2"));
 
-    public static UiPalette Current =>
-        Application.Current?.ActualThemeVariant == ThemeVariant.Dark ? Dark : Light;
+    public static UiPalette Current => For(Application.Current?.ActualThemeVariant);
+
+    /// <summary>The palette for a theme. Anything other than dark gets the light palette.</summary>
+    public static UiPalette For(ThemeVariant? variant) => variant == ThemeVariant.Dark ? Dark : Light;
 }

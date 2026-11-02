@@ -1,0 +1,71 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        xmlns:ctl="using:OscarWatch.Controls"
+        x:Class="OscarWatch.Views.EarthViewWindow"
+        x:DataType="vm:EarthViewViewModel"
+        Title="{loc:Localize Key=Window.EarthView.Title}"
+        Width="900" Height="640"
+        MinWidth="480" MinHeight="360"
+        WindowStartupLocation="CenterOwner">
+  <DockPanel Margin="8">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="0,0,0,8"
+                ToolTip.Tip="{loc:Localize Key=EarthView.Zoom.Tip}">
+      <Button x:Name="ZoomOutButton" Content="−" MinWidth="32" HorizontalContentAlignment="Center"
+              Click="OnZoomOutClick" IsEnabled="False"
+              ToolTip.Tip="{loc:Localize Key=EarthView.ZoomOut}"
+              AutomationProperties.Name="{loc:Localize Key=EarthView.ZoomOut}" />
+      <Button x:Name="ZoomInButton" Content="+" MinWidth="32" HorizontalContentAlignment="Center"
+              Click="OnZoomInClick"
+              ToolTip.Tip="{loc:Localize Key=EarthView.ZoomIn}"
+              AutomationProperties.Name="{loc:Localize Key=EarthView.ZoomIn}" />
+      <Button x:Name="ResetViewButton" Content="{loc:Localize Key=EarthView.ResetView}"
+              Click="OnResetViewClick" IsEnabled="False"
+              ToolTip.Tip="{loc:Localize Key=EarthView.Zoom.Tip}" />
+    </StackPanel>
+    <Border DockPanel.Dock="Right" Width="280" Margin="8,0,0,0" Padding="10" CornerRadius="4"
+            Background="{DynamicResource ThemeSubtlePanelBackgroundBrush}">
+      <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding StatusSections}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:EarthViewStatusSection">
+              <StackPanel Margin="0,0,0,14" Spacing="4">
+                <TextBlock Text="{Binding Heading}" FontSize="13" FontWeight="SemiBold"
+                           AutomationProperties.HeadingLevel="2"
+                           Foreground="{DynamicResource ThemeForegroundBrush}" />
+                <Border Height="1" Margin="0,0,0,2" Background="{DynamicResource ThemeForegroundBrush}" Opacity="0.25" />
+                <ItemsControl ItemsSource="{Binding Rows}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:EarthViewStatusRow">
+                      <Grid ColumnDefinitions="104,*" Margin="0,2">
+                        <TextBlock Grid.Column="0" Text="{Binding Label}" IsVisible="{Binding Label, Converter={x:Static ObjectConverters.IsNotNull}}" FontSize="13" TextWrapping="Wrap"
+                                   Opacity="0.75" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource ThemeForegroundBrush}" />
+                        <TextBlock Grid.Column="{Binding ValueColumn}" Grid.ColumnSpan="{Binding ValueColumnSpan}" Text="{Binding Value}" FontSize="13" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource ThemeForegroundBrush}" />
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Border>
+    <Grid>
+      <ctl:EarthViewControl x:Name="Globe"
+                            TabIndex="1"
+                            Frame="{Binding Frame}"
+                            AutomationProperties.Name="{Binding AccessibleName}"
+                            AutomationProperties.HelpText="{Binding AccessibleSummary}" />
+      <Border IsVisible="{Binding !HasSatellite}" IsHitTestVisible="False"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              Background="{DynamicResource ThemeSubtlePanelBackgroundBrush}" CornerRadius="4" Padding="12,8">
+        <TextBlock Text="{Binding EmptyMessage}" FontSize="13" TextWrapping="Wrap" MaxWidth="420"
+                   Foreground="{DynamicResource ThemeForegroundBrush}" />
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>

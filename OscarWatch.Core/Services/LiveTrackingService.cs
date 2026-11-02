@@ -72,6 +72,12 @@ public sealed class LiveTrackingService : ILiveTrackingService
             return _snapshot;
     }
 
+    public (IReadOnlyList<SatelliteTrackState> States, DateTime Utc) GetSnapshotWithUtc()
+    {
+        lock (_snapshotLock)
+            return (_snapshot, _snapshotUtc);
+    }
+
     public DateTime LiveNowSnapshotUtc
     {
         get { lock (_snapshotLock) return _liveNowSnapshotUtc; }
