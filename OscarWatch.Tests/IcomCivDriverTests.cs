@@ -8,7 +8,7 @@ public sealed class IcomCivDriverTests
     private static readonly byte[] CivNak = [0xFE, 0xFE, 0x60, 0x00, 0xFA, 0xFD];
 
     [Fact]
-    public void SetFrequencyHz_ack_updates_cached_read_when_live_read_fails()
+    public void SetFrequencyHz_ack_does_not_report_cached_frequency_when_live_read_fails()
     {
         var transport = new RecordingIcomCivTransport { MainHz = 435_750_000 };
         var driver = new IcomIc910Driver(transport);
@@ -19,6 +19,9 @@ public sealed class IcomCivDriverTests
         Assert.True(driver.SetFrequencyHz(435_751_000));
 
         transport.NextReadResponse = [];
+        Assert.Null(driver.ReadFrequencyHz(RigVfo.Main));
+
+        transport.NextReadResponse = null;
         Assert.Equal(435_751_000, driver.ReadFrequencyHz(RigVfo.Main));
     }
 
@@ -37,6 +40,8 @@ public sealed class IcomCivDriverTests
         Assert.False(driver.SetFrequencyHz(435_760_000));
 
         transport.NextReadResponse = [];
+        Assert.Null(driver.ReadFrequencyHz(RigVfo.Main));
+        transport.NextReadResponse = null;
         Assert.Equal(435_750_000, driver.ReadFrequencyHz(RigVfo.Main));
         Assert.Equal(2, transport.SetFrequencyCommandCount);
     }
@@ -56,6 +61,8 @@ public sealed class IcomCivDriverTests
         Assert.False(driver.SetFrequencyHz(435_760_000));
 
         transport.NextReadResponse = [];
+        Assert.Null(driver.ReadFrequencyHz(RigVfo.Main));
+        transport.NextReadResponse = null;
         Assert.Equal(435_750_000, driver.ReadFrequencyHz(RigVfo.Main));
         Assert.Equal(2, transport.SetFrequencyCommandCount);
     }
@@ -73,6 +80,8 @@ public sealed class IcomCivDriverTests
         Assert.Equal(2, transport.SetFrequencyCommandCount);
 
         transport.NextReadResponse = [];
+        Assert.Null(driver.ReadFrequencyHz(RigVfo.Main));
+        transport.NextReadResponse = null;
         Assert.Equal(435_760_000, driver.ReadFrequencyHz(RigVfo.Main));
     }
 

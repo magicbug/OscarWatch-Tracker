@@ -126,7 +126,10 @@ public abstract class IcomCivDriverBase : IRigDriver
             return value;
         }
 
-        return cached > 0 ? cached : null;
+        // The radio did not answer. The last commanded frequency is not the dial: reporting
+        // it made a busy IC-9700 look untouched, and the next Doppler write snapped the VFO
+        // back while the operator was still tuning.
+        return null;
     }
 
     public bool SetFrequencyHz(long hz)

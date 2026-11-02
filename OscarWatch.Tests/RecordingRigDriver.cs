@@ -8,6 +8,9 @@ internal sealed class RecordingRigDriver : IRigDriver
     public long MainHz { get; set; }
     public long SubHz { get; set; }
 
+    /// <summary>When set, Main/VfoA reads fail (simulates a CI-V poll with no frequency reply).</summary>
+    public bool SuppressMainReads { get; set; }
+
     /// <summary>When set, the next Main/VfoA read returns this value once (simulates CAT display lag).</summary>
     public long? NextStaleMainReadHz { get; set; }
 
@@ -37,6 +40,9 @@ internal sealed class RecordingRigDriver : IRigDriver
     {
         if (vfo is RigVfo.VfoA or RigVfo.Main)
         {
+            if (SuppressMainReads)
+                return null;
+
             if (ForcedMainReadHz is long forced)
                 return forced;
 

@@ -30,6 +30,12 @@ public sealed class RigController : IRigController, IDisposable
     private const int FmCompanionLegHz = 10;
     /// <summary>After a CAT frequency write, ignore dial stability briefly so reads settle.</summary>
     private const int PostCatWriteDialSettleMs = 350;
+
+    /// <summary>
+    /// Polled CI-V can still answer with the frequency from before the last write after the
+    /// short settle above. Keep that echo out of the tune history for this long.
+    /// </summary>
+    private const int PolledCatPostWriteEchoMs = 1_000;
     /// <summary>
     /// Flex SmartSDR can push a lagging slice frequency after our CAT write. Treat a dial that still
     /// shows the pre-write frequency as status lag, not a Main-dial passband hunt.
@@ -1249,6 +1255,16 @@ public sealed class RigController : IRigController, IDisposable
         _receiveDialMatchesLastCatWrite = _lastRigRxHz > 0
             && DialMatchesLastCatWrite(dialHz, AutomaticDialMatchToleranceHz());
 
+        // A polled read of the pre-write frequency is the radio catching up, not a spin back.
+        // Recording it settles the dial history on the old spot and the next write jumps the VFO.
+        if (!KnobTuneCapturePolicy.UsesImmediateStatusCapture(_cachedSettings.Type)
+            && IsStalePostWriteDialEcho(dialHz))
+        {
+            _vfoNotMoving = false;
+            _receiveDialMatchesLastCatWrite = false;
+            return;
+        }
+
         // SmartSDR pushes external slice tuning to our cache. Unlike serial CAT polling, a changed
         // Flex frequency is already an authoritative operator action, so capture it immediately
         // instead of waiting for the dial-settle timer while Doppler can pull the slice back.
@@ -1364,18 +1380,19 @@ public sealed class RigController : IRigController, IDisposable
         _lastRigRxHz <= 0 || Math.Abs(dialHz - _lastRigRxHz) >= KnobTuneThresholdHz();
 
     /// <summary>
-    /// True when Flex status still reports the RX frequency we just tuned away from (lagging status),
-    /// rather than a genuine operator Main-dial move to a new spot in the passband.
+    /// True when the dial read is still the RX frequency from before the last CAT write.
+    /// Flex status can lag for a couple of seconds. Polled CI-V usually catches up sooner,
+    /// but a late echo of that previous frequency is not a new tune.
     /// </summary>
     private bool IsStalePostWriteDialEcho(long dialHz)
     {
-        if (!KnobTuneCapturePolicy.UsesImmediateStatusCapture(_cachedSettings.Type))
-            return false;
-
         if (_rxHzBeforeLastCatWrite <= 0 || _lastRigRxHz <= 0 || _lastRxWriteUtc == DateTime.MinValue)
             return false;
 
-        if ((DateTime.UtcNow - _lastRxWriteUtc).TotalMilliseconds > FlexPostWriteStatusLagMs)
+        var lagMs = KnobTuneCapturePolicy.UsesImmediateStatusCapture(_cachedSettings.Type)
+            ? FlexPostWriteStatusLagMs
+            : PolledCatPostWriteEchoMs;
+        if ((DateTime.UtcNow - _lastRxWriteUtc).TotalMilliseconds > lagMs)
             return false;
 
         if (DialMatchesLastCatWrite(dialHz, KnobTuneThresholdHz()))

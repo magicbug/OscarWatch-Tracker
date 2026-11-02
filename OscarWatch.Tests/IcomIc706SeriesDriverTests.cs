@@ -62,6 +62,8 @@ public sealed class IcomIc706SeriesDriverTests
 
         Assert.True(driver.SetFrequencyHz(435_751_000));
         transport.NextReadResponse = [];
+        Assert.Null(driver.ReadFrequencyHz(RigVfo.Main));
+        transport.NextReadResponse = null;
         Assert.Equal(435_751_000, driver.ReadFrequencyHz(RigVfo.Main));
     }
 

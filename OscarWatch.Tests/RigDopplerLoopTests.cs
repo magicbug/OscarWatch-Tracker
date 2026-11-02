@@ -116,6 +116,119 @@ public class RigDopplerLoopTests
     }
 
     [Fact]
+    public void Interactive_doppler_holds_cat_when_receive_reads_fail_during_a_tune()
+    {
+        var rig = new RecordingRigDriver();
+        var controller = new RigController(_ => rig);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.IcomIc9700,
+            Port = "COM1",
+            DopplerThresholdLinearHz = 50,
+            CatDelayMs = 0,
+            InteractiveDialSettleMs = 200
+        };
+
+        var mode = new SatelliteTransponderMode
+        {
+            DownlinkKHz = 435_667,
+            UplinkKHz = 145_937.61,
+            DownlinkMode = "USB",
+            UplinkMode = "LSB",
+            Doppler = "REV"
+        };
+
+        var state = new SatelliteTrackState
+        {
+            Name = "RS-44",
+            NoradId = "44909",
+            Subpoint = new GeoCoordinate(0, 0),
+            LookAngles = new LookAngles(180, 20, 800, 0)
+        };
+
+        controller.Update(settings, new RigTrackingContext
+        {
+            TrackState = state,
+            Mode = mode,
+            DopplerStrategy = DopplerStrategy.DownlinkOnly,
+            Corrected = DopplerFrequencyCalculator.Compute(mode, 0, 0, 0, 0, 0, DopplerStrategy.DownlinkOnly)
+        });
+        Thread.Sleep(450);
+
+        var tunedHz = rig.MainHz + 4_000;
+        rig.MainHz = tunedHz;
+        rig.SuppressMainReads = true;
+        for (var i = 0; i < 10; i++)
+            controller.RunTrackingLoopOnce();
+
+        Assert.Equal(tunedHz, rig.MainHz);
+        var status = controller.GetStatus();
+        Assert.InRange(status.ManualReceiveAdjustKHz, -0.05, 0.05);
+    }
+
+    [Fact]
+    public void Interactive_doppler_does_not_adopt_pre_write_frequency_as_a_tune()
+    {
+        var rig = new RecordingRigDriver();
+        var controller = new RigController(_ => rig);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.IcomIc9700,
+            Port = "COM1",
+            DopplerThresholdLinearHz = 50,
+            CatDelayMs = 0,
+            InteractiveDialSettleMs = 200
+        };
+
+        var mode = new SatelliteTransponderMode
+        {
+            DownlinkKHz = 435_667,
+            UplinkKHz = 145_937.61,
+            DownlinkMode = "USB",
+            UplinkMode = "LSB",
+            Doppler = "REV"
+        };
+
+        RigTrackingContext Build(double rangeRateKmPerSec) => new()
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "RS-44",
+                NoradId = "44909",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 20, 800, rangeRateKmPerSec)
+            },
+            Mode = mode,
+            DopplerStrategy = DopplerStrategy.DownlinkOnly,
+            Corrected = DopplerFrequencyCalculator.Compute(
+                mode, rangeRateKmPerSec, 0, 0, 0, 0, DopplerStrategy.DownlinkOnly)
+        };
+
+        controller.Update(settings, Build(0));
+        Thread.Sleep(450);
+        var beforeStepHz = rig.MainHz;
+
+        controller.PublishContext(settings, Build(4.2), reinitializePass: false);
+        controller.RunTrackingLoopOnce();
+        var afterStepHz = rig.MainHz;
+        Assert.NotEqual(beforeStepHz, afterStepHz);
+
+        // Past the 350 ms post-write settle, still inside the echo window. The radio answers
+        // with the frequency from before that step.
+        Thread.Sleep(400);
+        rig.ForcedMainReadHz = beforeStepHz;
+        for (var i = 0; i < 8; i++)
+            controller.RunTrackingLoopOnce();
+
+        Assert.Equal(afterStepHz, rig.MainHz);
+        var status = controller.GetStatus();
+        Assert.InRange(status.ManualReceiveAdjustKHz, -0.05, 0.05);
+        Assert.InRange(status.ManualTransmitAdjustKHz, -0.05, 0.05);
+    }
+
+    [Fact]
     public void Interactive_doppler_still_tracks_during_post_write_settle_when_dial_matches_last_write()
     {
         var rig = new RecordingRigDriver();
