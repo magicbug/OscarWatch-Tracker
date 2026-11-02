@@ -30,6 +30,7 @@ Thank you to everyone who has donated to support OscarWatch development.
 | Bruce                    | VE7PTN         |
 | Lucky                    | VU2LBW         |
 | Chuck                    | W9GSS          |
+| Javier                   | EA1AAP         |
 
 
 If you donate and would like to be listed here, let Peter know your name and callsign.
