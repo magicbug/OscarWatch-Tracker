@@ -26,6 +26,13 @@ public static class Ft4SlotClock
 
     public const double Ft8SlotSeconds = 15.0;
 
+    /// <summary>
+    /// How far into a transmit period a click can still start that period.
+    /// WSJT-X does the same for about the first two seconds: the missing start
+    /// is left out, and the rest of the message stays on the period clock.
+    /// </summary>
+    public const double LateTransmitStartSeconds = 2.0;
+
     public static DateTime SlotStartUtc(DateTime utc, double slotSeconds)
     {
         var epoch = utc.Kind == DateTimeKind.Utc ? utc : utc.ToUniversalTime();
@@ -51,9 +58,9 @@ public static class Ft4SlotClock
     {
         var now = utc.ToUniversalTime();
         var start = SlotStartUtc(now, slotSeconds);
-        // If we are within the first 0.5 s of this slot, we can still use it; otherwise next matching.
+        // Within the late-start window this period can still go out. After that, wait for the next match.
         var into = (now - start).TotalSeconds;
-        var candidate = into < 0.5 ? start : start.AddSeconds(slotSeconds);
+        var candidate = into <= LateTransmitStartSeconds ? start : start.AddSeconds(slotSeconds);
         while (IsEvenSlot(candidate, slotSeconds) != preferEven)
             candidate = candidate.AddSeconds(slotSeconds);
         return candidate;
@@ -61,7 +68,8 @@ public static class Ft4SlotClock
 
     /// <summary>
     /// True when this period will be transmitted, or transmission for it has already started.
-    /// A matching period more than 0.5 s old is left as receive unless it was already kicked.
+    /// A matching period older than <see cref="LateTransmitStartSeconds"/> is left as receive
+    /// unless it was already kicked.
     /// </summary>
     public static bool IsLiveTransmitSlot(
         DateTime utc,
@@ -82,5 +90,26 @@ public static class Ft4SlotClock
             return true;
 
         return NextTransmitSlotStart(now, slotSeconds, preferEven) == start;
+    }
+
+    /// <summary>
+    /// Sample index where playback should begin so a late start stays aligned with the period.
+    /// Zero when the period has not started, or when the clock is still at the start.
+    /// </summary>
+    public static int PlaybackStartSample(DateTime slotStartUtc, DateTime utcNow, int sampleRate)
+    {
+        if (sampleRate <= 0)
+            return 0;
+
+        var slot = slotStartUtc.Kind == DateTimeKind.Utc ? slotStartUtc : slotStartUtc.ToUniversalTime();
+        var now = utcNow.Kind == DateTimeKind.Utc ? utcNow : utcNow.ToUniversalTime();
+        var into = (now - slot).TotalSeconds;
+        if (into <= 0)
+            return 0;
+
+        var sample = (long)(into * sampleRate);
+        if (sample >= int.MaxValue)
+            return int.MaxValue;
+        return (int)sample;
     }
 }

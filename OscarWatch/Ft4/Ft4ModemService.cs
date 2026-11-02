@@ -58,6 +58,10 @@ public sealed class Ft4ModemService : IDisposable
     private DateTime _currentSlotStart = DateTime.MinValue;
     private bool _txThisSlot;
     private long _txKickedSlotTicks; // slot start of the last KickTransmit, set from the TX timer thread
+    private string _txKickedMessage = "";
+    private int _txRetargetGeneration;
+    private int _retargetRunning;
+    private readonly object _retargetGate = new();
     private long _dopplerPreparedSlotTicks; // TX slot whose CAT Doppler write already finished
     private double _txKickedAudioHz; // TX audio Hz sent in that slot; set before _txKickedSlotTicks
     private DateTime _lastEchoCalibrationSlot = DateTime.MinValue;
@@ -630,7 +634,12 @@ public sealed class Ft4ModemService : IDisposable
         _txCts?.Cancel();
         ClearPrepared();
         Interlocked.Exchange(ref _preparedPlayed, 0);
-        _audio.StopPlayback();
+        lock (_retargetGate)
+        {
+            Interlocked.Increment(ref _txRetargetGeneration);
+            Volatile.Write(ref _txKickedMessage, "");
+            _audio.StopPlayback();
+        }
         _ = _ptt.UnkeyAsync();
         _txThisSlot = false;
         Status = _l.Get("Ft4.Status.TxHalted");
@@ -676,7 +685,12 @@ public sealed class Ft4ModemService : IDisposable
         ClearPrepared();
         Interlocked.Exchange(ref _preparedPlayed, 0);
         Interlocked.Exchange(ref _txRunning, 0);
-        _audio.StopPlayback();
+        lock (_retargetGate)
+        {
+            Interlocked.Increment(ref _txRetargetGeneration);
+            Volatile.Write(ref _txKickedMessage, "");
+            _audio.StopPlayback();
+        }
 
         Volatile.Write(ref _tuning, 1);
         Status = _l.Get("Ft4.Status.Tuning", FormatTuneHz());
@@ -1241,6 +1255,12 @@ public sealed class Ft4ModemService : IDisposable
 
         Interlocked.Exchange(ref _txKickedAudioHz, Math.Clamp(seq.TxAudioHz, 200, 3000));
         Interlocked.Exchange(ref _txKickedSlotTicks, slotStart.Ticks);
+        lock (_retargetGate)
+        {
+            Interlocked.Increment(ref _txRetargetGeneration);
+            Volatile.Write(ref _txKickedMessage, seq.CurrentTxMessage);
+        }
+
         _txThisSlot = true;
 
         // Queue CAT PTT before playback and before the caller can enqueue Doppler.
@@ -1255,7 +1275,7 @@ public sealed class Ft4ModemService : IDisposable
         // Start a ready buffer on this thread for every PTT method. Waiting for the TX task
         // (CAT lead, encode) was holding the tone; VOX also needs the tone as soon as the slot opens.
         if (TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
-            && _audio.TryPlayPrepared(ready, readyRate))
+            && TryPlayAligned(slotStart, ready, readyRate))
         {
             Interlocked.Exchange(ref _preparedPlayed, 1);
             var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
@@ -1355,7 +1375,7 @@ public sealed class Ft4ModemService : IDisposable
             await _ptt.KeyAsync(ct).ConfigureAwait(false);
             if (!playedEarly)
             {
-                if (ready is not null && _audio.TryPlayPrepared(ready, readyRate))
+                if (ready is not null && TryPlayAligned(slotStart, ready, readyRate))
                 {
                     var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
                     if (fromPrepared)
@@ -1377,7 +1397,8 @@ public sealed class Ft4ModemService : IDisposable
                         pcm12k!,
                         ft4.TxLevel,
                         ft4.OutputDeviceId,
-                        ft4.OutputDeviceDisplayName);
+                        ft4.OutputDeviceDisplayName,
+                        Ft4SlotClock.PlaybackStartSample(slotStart, Ft4Clock.UtcNow, 12000));
                     var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
                     Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot after building on the slot", intoMs);
                 }
@@ -1512,6 +1533,99 @@ public sealed class Ft4ModemService : IDisposable
     }
 
     /// <summary>
+    /// Start the burst at the sample that matches the clock, so a late click stays in step
+    /// with the period instead of playing the beginning late.
+    /// </summary>
+    private bool TryPlayAligned(DateTime slotStart, float[] devicePcm, int sampleRate)
+    {
+        var start = Ft4SlotClock.PlaybackStartSample(slotStart, Ft4Clock.UtcNow, sampleRate);
+        if (start >= devicePcm.Length)
+            return false;
+
+        return _audio.TryPlayPrepared(devicePcm, sampleRate, start);
+    }
+
+    /// <summary>
+    /// The operator changed the message during the first two seconds of a transmission
+    /// that is already on the air. Swap the audio in place. A later change waits for the next period.
+    /// </summary>
+    private void MaybeRetargetLiveTransmit(DateTime slot)
+    {
+        var seq = _sequencer;
+        if (seq is null || string.IsNullOrWhiteSpace(seq.CurrentTxMessage))
+            return;
+
+        var message = seq.CurrentTxMessage;
+        if (string.Equals(message, Volatile.Read(ref _txKickedMessage), StringComparison.Ordinal))
+            return;
+
+        if ((Ft4Clock.UtcNow - slot).TotalSeconds > Ft4SlotClock.LateTransmitStartSeconds)
+            return;
+
+        if (Interlocked.CompareExchange(ref _retargetRunning, 1, 0) != 0)
+            return;
+
+        var generation = Volatile.Read(ref _txRetargetGeneration);
+        var audioHz = (float)Math.Clamp(seq.TxAudioHz, 200, 3000);
+        var ft4 = _settings.Current.Ft4;
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                if (generation != Volatile.Read(ref _txRetargetGeneration) || Volatile.Read(ref _txRunning) != 1)
+                    return;
+
+                if (!TryBuildDevicePcm(
+                        slot,
+                        message,
+                        audioHz,
+                        ft4.TxLevel,
+                        ft4.OutputDeviceId,
+                        ft4.OutputDeviceDisplayName,
+                        out var pcm,
+                        out var rate,
+                        out _)
+                    || pcm is null)
+                    return;
+
+                var nowSeq = _sequencer;
+                if (nowSeq is null
+                    || !string.Equals(nowSeq.CurrentTxMessage, message, StringComparison.Ordinal)
+                    || Volatile.Read(ref _txRunning) != 1)
+                    return;
+
+                var into = Ft4Clock.UtcNow - slot;
+                if (into.TotalSeconds > Ft4SlotClock.LateTransmitStartSeconds)
+                    return;
+
+                lock (_retargetGate)
+                {
+                    if (generation != Volatile.Read(ref _txRetargetGeneration) || Volatile.Read(ref _txRunning) != 1)
+                        return;
+
+                    var start = Ft4SlotClock.PlaybackStartSample(slot, Ft4Clock.UtcNow, rate);
+                    if (start >= pcm.Length || !_audio.TryPlayPrepared(pcm, rate, start))
+                        return;
+
+                    Volatile.Write(ref _txKickedMessage, message);
+                }
+
+                Log.Information(
+                    "FT4 TX switched to the new message {IntoMs:0} ms into the slot",
+                    into.TotalMilliseconds);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "FT4 TX message change failed");
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _retargetRunning, 0);
+            }
+        });
+    }
+
+    /// <summary>
     /// Soft-schedule KickTransmit onto a dedicated waiter so a slow capture loop cannot hold TX.
     /// </summary>
     private void MaybeScheduleTransmit(DateTime utcNow, CancellationToken loopCt)
@@ -1531,7 +1645,10 @@ public sealed class Ft4ModemService : IDisposable
 
         var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, Ft4SlotClock.Ft4SlotSeconds, seq.PreferEvenSlot);
         if (next == _currentSlotStart && Volatile.Read(ref _txRunning) == 1)
+        {
+            MaybeRetargetLiveTransmit(next);
             return;
+        }
 
         if (_scheduledTxSlot == next && _txScheduleCts is { IsCancellationRequested: false })
             return;

@@ -284,7 +284,12 @@ public sealed class Ft4AudioService : IDisposable
     /// <summary>Linear output gain for the operator's TX level setting.</summary>
     public static float OutputGain(double level) => (float)Math.Clamp(level, 0.01, 1.0);
 
-    public void PlayPcm(float[] samples12k, double level, string? deviceId, string? deviceDisplayName = null)
+    public void PlayPcm(
+        float[] samples12k,
+        double level,
+        string? deviceId,
+        string? deviceDisplayName = null,
+        int startSample12k = 0)
     {
         lock (_gate)
         {
@@ -292,7 +297,14 @@ public sealed class Ft4AudioService : IDisposable
                 throw new InvalidOperationException("PortAudio is not available.");
 
             EnsureOutputUnlocked(deviceId, deviceDisplayName);
-            PublishPlayback(ScaleForOutput(samples12k, level), loop: false);
+            var scaled = ScaleForOutput(samples12k, level);
+            var start = startSample12k <= 0
+                ? 0
+                : (int)Math.Round(startSample12k * (_playbackSampleRate / 12000.0));
+            if (start >= scaled.Length)
+                return;
+
+            PublishPlayback(scaled, loop: false, start);
         }
     }
 
@@ -332,14 +344,19 @@ public sealed class Ft4AudioService : IDisposable
     }
 
     /// <summary>Start a buffer already at the output sample rate. Returns false if the stream is not at that rate.</summary>
-    public bool TryPlayPrepared(float[] devicePcm, int sampleRate)
+    public bool TryPlayPrepared(float[] devicePcm, int sampleRate, int startSample = 0)
     {
         lock (_gate)
         {
             if (_output is null || _playbackSampleRate != sampleRate || devicePcm.Length == 0)
                 return false;
 
-            PublishPlayback(devicePcm, loop: false);
+            if (startSample < 0)
+                startSample = 0;
+            if (startSample >= devicePcm.Length)
+                return false;
+
+            PublishPlayback(devicePcm, loop: false, startSample);
             return true;
         }
     }
@@ -353,7 +370,7 @@ public sealed class Ft4AudioService : IDisposable
         return scaled;
     }
 
-    private void PublishPlayback(float[] devicePcm, bool loop)
+    private void PublishPlayback(float[] devicePcm, bool loop, int startSample = 0)
     {
         var firstTone = devicePcm.Length;
         for (var i = 0; i < devicePcm.Length; i++)
@@ -365,10 +382,15 @@ public sealed class Ft4AudioService : IDisposable
             }
         }
 
+        if (startSample < 0)
+            startSample = 0;
+
         Volatile.Write(ref _playbackPeak, 0f);
         // The callback only advances Index, so swapping the reference is the handoff.
+        // A late start sets Index so the rest of the burst stays on the period clock.
         Volatile.Write(ref _tx, new TxBuffer(devicePcm)
         {
+            Index = loop ? 0 : startSample,
             FirstToneIndex = firstTone,
             PublishedTimestamp = Stopwatch.GetTimestamp(),
             Loop = loop

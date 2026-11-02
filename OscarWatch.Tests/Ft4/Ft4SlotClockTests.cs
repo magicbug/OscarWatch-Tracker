@@ -26,13 +26,45 @@ public sealed class Ft4SlotClockTests
     {
         var slot = new DateTime(2026, 9, 21, 12, 0, 0, DateTimeKind.Utc);
         var early = slot.AddSeconds(0.2);
-        var late = slot.AddSeconds(2);
+        var stillInWindow = slot.AddSeconds(1.5);
+        var late = slot.AddSeconds(2.5);
 
         Assert.True(Ft4SlotClock.IsLiveTransmitSlot(early, Ft4SlotClock.Ft4SlotSeconds, true, preferEven: true, null));
+        Assert.True(Ft4SlotClock.IsLiveTransmitSlot(stillInWindow, Ft4SlotClock.Ft4SlotSeconds, true, preferEven: true, null));
         Assert.False(Ft4SlotClock.IsLiveTransmitSlot(late, Ft4SlotClock.Ft4SlotSeconds, true, preferEven: true, null));
         Assert.True(Ft4SlotClock.IsLiveTransmitSlot(late, Ft4SlotClock.Ft4SlotSeconds, true, preferEven: true, slot));
         Assert.False(Ft4SlotClock.IsLiveTransmitSlot(late, Ft4SlotClock.Ft4SlotSeconds, false, preferEven: true, slot));
         Assert.False(Ft4SlotClock.IsLiveTransmitSlot(late, Ft4SlotClock.Ft4SlotSeconds, true, preferEven: false, slot));
+    }
+
+    [Fact]
+    public void NextTransmitSlotStart_uses_the_current_period_for_the_first_two_seconds()
+    {
+        var slot = new DateTime(2026, 9, 21, 12, 0, 0, DateTimeKind.Utc);
+        var nextSameParity = slot.AddSeconds(15);
+
+        Assert.Equal(slot, Ft4SlotClock.NextTransmitSlotStart(slot.AddSeconds(1.5), Ft4SlotClock.Ft4SlotSeconds, preferEven: true));
+        Assert.Equal(slot, Ft4SlotClock.NextTransmitSlotStart(slot.AddSeconds(2.0), Ft4SlotClock.Ft4SlotSeconds, preferEven: true));
+        Assert.Equal(nextSameParity, Ft4SlotClock.NextTransmitSlotStart(slot.AddSeconds(2.5), Ft4SlotClock.Ft4SlotSeconds, preferEven: true));
+    }
+
+    [Fact]
+    public void NextTransmitSlotStart_from_a_receive_period_is_the_following_period()
+    {
+        var theirSlot = new DateTime(2026, 9, 21, 12, 0, 0, DateTimeKind.Utc);
+        var ourSlot = theirSlot.AddSeconds(7.5);
+        var clicked = theirSlot.AddSeconds(6);
+
+        Assert.Equal(ourSlot, Ft4SlotClock.NextTransmitSlotStart(clicked, Ft4SlotClock.Ft4SlotSeconds, preferEven: false));
+    }
+
+    [Fact]
+    public void PlaybackStartSample_skips_audio_already_past()
+    {
+        var slot = new DateTime(2026, 9, 21, 12, 0, 0, DateTimeKind.Utc);
+        Assert.Equal(0, Ft4SlotClock.PlaybackStartSample(slot, slot.AddMilliseconds(-20), 48000));
+        Assert.Equal(0, Ft4SlotClock.PlaybackStartSample(slot, slot, 48000));
+        Assert.Equal(72000, Ft4SlotClock.PlaybackStartSample(slot, slot.AddSeconds(1.5), 48000));
     }
 
     [Fact]
