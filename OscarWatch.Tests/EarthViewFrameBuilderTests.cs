@@ -13,10 +13,12 @@ public sealed class EarthViewFrameBuilderTests
     private static SatelliteTrackState State(
         double lat = 0, double lon = 0, double altitudeKm = 800,
         LookAngles? look = null, bool sunlit = true,
-        IReadOnlyList<GeoCoordinate>? track = null) => new()
+        IReadOnlyList<GeoCoordinate>? track = null,
+        int paletteIndex = 0) => new()
     {
         Name = "TEST-1",
         NoradId = "99999",
+        PaletteIndex = paletteIndex,
         Subpoint = new GeoCoordinate(lat, lon, altitudeKm),
         AltitudeKm = altitudeKm,
         LookAngles = look,
@@ -213,6 +215,14 @@ public sealed class EarthViewFrameBuilderTests
         Assert.Same(track, frame.GroundTrack);
         Assert.Equal("99999", frame.NoradId);
         Assert.Equal("TEST-1", frame.SatelliteName);
+    }
+
+    [Fact]
+    public void Palette_index_follows_the_tracked_satellite()
+    {
+        var frame = EarthViewFrameBuilder.Build(State(paletteIndex: 4), Home(), 5, Utc)!;
+
+        Assert.Equal(4, frame.PaletteIndex);
     }
 
     [Fact]

@@ -556,7 +556,7 @@ public sealed class EarthViewControl : ThemeAwareControl
         DrawingContext context, UiPalette palette, EarthViewFrame frame, Point centre, double scale, Rect bounds)
     {
         PlotMarkerDrawing.DrawSatelliteMarker(
-            context, centre.X, centre.Y, PlotColors.ForIndex(0), isFocused: true, _renderCache);
+            context, centre.X, centre.Y, PlotColors.ForIndex(frame.PaletteIndex), isFocused: true, _renderCache);
         PlaceLabel(context, palette, frame.SatelliteName, centre, bounds);
 
         var basis = new GlobeBasis(frame.Camera);

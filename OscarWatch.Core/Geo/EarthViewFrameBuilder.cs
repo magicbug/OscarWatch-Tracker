@@ -55,7 +55,8 @@ public static class EarthViewFrameBuilder
             Subsolar: DayNightTerminator.GetSubsolarPoint(displayUtc),
             IsSunlit: state.IsSunlit,
             LookFromHome: state.LookAngles,
-            HomeSituation: situation);
+            HomeSituation: situation,
+            PaletteIndex: state.PaletteIndex);
     }
 
     /// <summary>

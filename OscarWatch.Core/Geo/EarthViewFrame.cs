@@ -26,6 +26,7 @@ public enum EarthViewSituation
 /// <param name="MinimumElevationRadiusDeg">Angular radius of the inner footprint ring. Zero when there is none.</param>
 /// <param name="Stations">Station markers. The first release lists the home station only.</param>
 /// <param name="LookFromHome">Azimuth, elevation and range from the home station, when available.</param>
+/// <param name="PaletteIndex">Colour slot shared with the map, sky plot and pass timeline. Zero is the first enabled satellite.</param>
 public sealed record EarthViewFrame(
     string NoradId,
     string SatelliteName,
@@ -38,7 +39,8 @@ public sealed record EarthViewFrame(
     GeoCoordinate Subsolar,
     bool IsSunlit,
     LookAngles? LookFromHome,
-    EarthViewSituation HomeSituation)
+    EarthViewSituation HomeSituation,
+    int PaletteIndex = 0)
 {
     /// <summary>The subpoint must move by more than this many degrees before the drawing changes.</summary>
     public const double PositionToleranceDeg = 0.005;
@@ -59,6 +61,7 @@ public sealed record EarthViewFrame(
             return true;
 
         return !string.Equals(NoradId, previous.NoradId, StringComparison.Ordinal)
+            || PaletteIndex != previous.PaletteIndex
             || !ReferenceEquals(GroundTrack, previous.GroundTrack)
             || Math.Abs(Camera.SubpointLatitudeDeg - previous.Camera.SubpointLatitudeDeg) > PositionToleranceDeg
             || Math.Abs(ShortestLongitudeDelta(Camera.SubpointLongitudeDeg, previous.Camera.SubpointLongitudeDeg)) > PositionToleranceDeg

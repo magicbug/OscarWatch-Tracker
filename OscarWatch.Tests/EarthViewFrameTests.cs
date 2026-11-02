@@ -40,6 +40,14 @@ public sealed class EarthViewFrameTests
     }
 
     [Fact]
+    public void A_different_palette_index_needs_drawing()
+    {
+        var frame = Frame();
+
+        Assert.True(frame.NeedsRedraw(frame with { PaletteIndex = 3 }));
+    }
+
+    [Fact]
     public void Changing_the_minimum_elevation_changes_the_spoken_summary()
     {
         // Review finding: on QO-100 the elevation does not move, so only the setting changes.
