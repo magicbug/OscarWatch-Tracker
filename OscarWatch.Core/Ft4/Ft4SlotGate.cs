@@ -4,8 +4,8 @@ namespace OscarWatch.Core.Ft4;
 
 /// <summary>
 /// When CAT Doppler is held between FT4 slot steps. FT4 is not a radio mode, so the
-/// trigger is the FT4 window being open or the FT4 transponder being selected.
-/// Anything else releases the hold so linear transponders track continuously.
+/// trigger is the selected transponder, including a custom copy such as FT4 Asia.
+/// An open FT4 window on another transponder does not hold the dial.
 /// </summary>
 public static class Ft4SlotGate
 {
@@ -34,8 +34,8 @@ public static class Ft4SlotGate
 
     /// <summary>
     /// The dial only moves on the steps the running FT4 session sends each slot,
-    /// so the hold needs a running session or the dial would freeze.
+    /// so the hold needs a running session on an FT4 transponder or the dial would freeze.
     /// </summary>
-    public static bool ShouldHold(bool sessionRunning, bool windowOpen, SatelliteTransponderMode? mode) =>
-        sessionRunning && (windowOpen || IsFt4Transponder(mode));
+    public static bool ShouldHold(bool sessionRunning, SatelliteTransponderMode? mode) =>
+        sessionRunning && IsFt4Transponder(mode);
 }

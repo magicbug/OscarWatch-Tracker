@@ -206,7 +206,6 @@ public sealed class Ft4ModemService : IDisposable
     private Ft4DecodedMessage? _pouncedDecode;
     private readonly object _slotGateLock = new();
     private volatile bool _slotGateHeld;
-    private volatile bool _windowOpen;
     private Task? _txTask;
     private Task? _tuneTask;
 
@@ -378,10 +377,10 @@ public sealed class Ft4ModemService : IDisposable
         Changed?.Invoke();
     }
 
-    /// <summary>Whether the FT4 window is on screen. The session stops when that window closes.</summary>
+    /// <summary>The FT4 window opened or closed. The session stops when that window closes.</summary>
     public void SetWindowOpen(bool open)
     {
-        _windowOpen = open;
+        Log.Information("FT4 window {State}", open ? "open" : "closed");
         SyncSlotGate(IsRunning);
     }
 
@@ -391,7 +390,7 @@ public sealed class Ft4ModemService : IDisposable
     /// </summary>
     private void SyncSlotGate(bool sessionRunning)
     {
-        var hold = Ft4SlotGate.ShouldHold(sessionRunning, _windowOpen, _frequencies.SelectedMode);
+        var hold = Ft4SlotGate.ShouldHold(sessionRunning, _frequencies.SelectedMode);
         lock (_slotGateLock)
         {
             if (hold == _slotGateHeld)
@@ -1068,7 +1067,8 @@ public sealed class Ft4ModemService : IDisposable
                     if (!alreadyTx && !IsTuning)
                         KickTransmit(slotStart, ct);
                     SyncSlotGate(sessionRunning: true);
-                    if (!CatTransmitOwnsTheRig(slotStart))
+                    if (!CatTransmitOwnsTheRig(slotStart)
+                        && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
                         _rig.ForceFt4DopplerStep();
                     RefreshClockFromGps();
 
@@ -1474,7 +1474,7 @@ public sealed class Ft4ModemService : IDisposable
 
     private void WaitAndKickTransmit(DateTime slot, CancellationToken ct, CancellationToken loopCt)
     {
-        if (CatPttSharesRig())
+        if (CatPttSharesRig() && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
         {
             var dopplerAt = slot - Ft4SlotClock.PreTransmitCatLead;
             Ft4SlotWait.UntilUtc(dopplerAt, ct);
@@ -1507,7 +1507,7 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         KickTransmit(slot, loopCt);
-        if (!CatPttSharesRig())
+        if (!CatPttSharesRig() && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
             _rig.ForceFt4DopplerStep();
     }
 
