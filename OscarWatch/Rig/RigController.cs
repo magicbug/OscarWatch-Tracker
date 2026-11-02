@@ -109,6 +109,11 @@ public sealed class RigController : IRigController, IDisposable
     private DopplerStrategy _lastContextDopplerStrategy = DopplerStrategy.Full;
     private bool _forceFrequencyApply;
     private bool _blockKnobCapture;
+    /// <summary>
+    /// After a pass or transponder change, ignore dial readback until it shows the frequency
+    /// just programmed. A lagging read of the previous row must not become passband trim.
+    /// </summary>
+    private bool _holdPassbandCaptureUntilDialMatches;
     /// <summary>FT4 modem holds CAT Doppler between explicit slot-boundary steps.</summary>
     private bool _ft4SlotGatedDoppler;
     private bool _ft4ForceDopplerStep;
@@ -769,6 +774,7 @@ public sealed class RigController : IRigController, IDisposable
         _passKey = newPassKey;
         _passbandDownlinkAdjustKHz = 0;
         _passbandUplinkAdjustKHz = 0;
+        _holdPassbandCaptureUntilDialMatches = false;
         _wasAboveHorizon = context.TrackState.LookAngles is null ? null : IsAboveHorizon(context);
         ClearDialHistory();
         _lastAppliedCtcssHz = null;
@@ -842,6 +848,7 @@ public sealed class RigController : IRigController, IDisposable
         _wasAboveHorizon = null;
         _passbandDownlinkAdjustKHz = 0;
         _passbandUplinkAdjustKHz = 0;
+        _holdPassbandCaptureUntilDialMatches = false;
         _lastRigRxHz = 0;
         _lastRigTxHz = 0;
         _rxHzBeforeLastCatWrite = 0;
@@ -1110,6 +1117,9 @@ public sealed class RigController : IRigController, IDisposable
             || context.TrackState.LookAngles is null)
             return;
 
+        if (_lastRigRxHz <= 0)
+            return;
+
         RxDriver()?.SelectVfo(ReceiveVfo(), force: true);
         if (!TryReadReceiveDialHz(out var dialHz))
             return;
@@ -1117,6 +1127,14 @@ public sealed class RigController : IRigController, IDisposable
         // Lagging SmartSDR status after an offset/Doppler write must not become passband trim.
         if (IsStalePostWriteDialEcho(dialHz))
             return;
+
+        if (_holdPassbandCaptureUntilDialMatches)
+        {
+            if (!DialMatchesLastCatWrite(dialHz, KnobTuneThresholdHz()))
+                return;
+
+            _holdPassbandCaptureUntilDialMatches = false;
+        }
 
         var (rxRangeRate, txRangeRate) = ResolveRangeRatesForDoppler(context);
         var baseline = DopplerFrequencyCalculator.Compute(
@@ -1377,7 +1395,10 @@ public sealed class RigController : IRigController, IDisposable
         var thresholdHz = ResolveWriteThresholdHz(settings, context);
         var strategy = context.DopplerStrategy;
         var catPaused = _cachedCatPausedOverride ?? settings.CatUpdatesPaused;
-        if (!forceApply && !ShouldWrite(thresholdHz, rxHz, txHz, strategy))
+        // Downlink-only leaves the uplink alone after the first successful program. If that
+        // write never landed (mode change while the radio rejected CI-V), keep trying.
+        var uplinkNeedsProgram = !_isBeaconOnly && txHz > 0 && _lastRigTxHz <= 0;
+        if (!forceApply && !uplinkNeedsProgram && !ShouldWrite(thresholdHz, rxHz, txHz, strategy))
             return false;
 
         // Kenwood FA/FB reject storms: honour failure backoff even when offset/force ignores loop settle.
@@ -1393,7 +1414,8 @@ public sealed class RigController : IRigController, IDisposable
         var correctRx = strategy != DopplerStrategy.UplinkOnly;
         var correctTx = !_isBeaconOnly && strategy != DopplerStrategy.DownlinkOnly;
         var writeRx = correctRx && (forceApply || rxDelta > thresholdHz || thresholdHz == 0);
-        var writeTx = correctTx && (forceApply || txDelta > thresholdHz || thresholdHz == 0);
+        var writeTx = uplinkNeedsProgram
+            || (correctTx && (forceApply || txDelta > thresholdHz || thresholdHz == 0));
 
         if (holdDownlinkCatWrites)
             writeRx = false;
@@ -1413,7 +1435,7 @@ public sealed class RigController : IRigController, IDisposable
             }
         }
 
-        if (writeTx && _interactive && !settings.DualRadioEnabled && !CanWriteInteractiveSub())
+        if (writeTx && _interactive && !settings.DualRadioEnabled && !uplinkNeedsProgram && !CanWriteInteractiveSub())
         {
             _forceFrequencyApply = true;
             writeTx = false;
@@ -2008,7 +2030,7 @@ public sealed class RigController : IRigController, IDisposable
 
         _lastPassDownlinkOnVhf = RigSatModeHelper.IsVhfCenterKHz(context.Mode.DownlinkKHz);
         _lastPassSatelliteKey = context.TrackState.Name;
-        MarkProgrammaticFrequencySettle();
+        ArmDialMatchBeforePassbandCapture();
         ExtendDopplerSuspendMs(500);
         RestoreOperatorVfo();
     }
@@ -2092,9 +2114,19 @@ public sealed class RigController : IRigController, IDisposable
 
         _lastPassDownlinkOnVhf = RigSatModeHelper.IsVhfCenterKHz(context.Mode.DownlinkKHz);
         _lastPassSatelliteKey = context.TrackState.Name;
-        MarkProgrammaticFrequencySettle();
+        ArmDialMatchBeforePassbandCapture();
         ExtendDopplerSuspendMs(500);
         RestoreOperatorVfo();
+    }
+
+    /// <summary>
+    /// Pass init has just programmed a new row. Hold passband capture until the dial
+    /// readback shows that frequency, so the previous transponder is not stored as a tune.
+    /// </summary>
+    private void ArmDialMatchBeforePassbandCapture()
+    {
+        _holdPassbandCaptureUntilDialMatches = true;
+        MarkProgrammaticFrequencySettle();
     }
 
     private void TryBandSwap(RigSettings settings, RigTrackingContext context)
