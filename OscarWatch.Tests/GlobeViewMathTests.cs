@@ -211,6 +211,43 @@ public sealed class GlobeViewMathTests
     }
 
     [Fact]
+    public void Near_a_pole_the_limb_crossing_follows_the_great_circle_not_a_straight_line_in_lat_and_lon()
+    {
+        // Review finding. From a camera at (70 N, 0) the pole is 20 degrees away and the 400 km horizon is
+        // 19.8 degrees, so the track (89 N, 0) to (87 N, 180) leaves the view just short of the pole. The
+        // real path runs up the 0/180 meridian, which is the vertical centre line of a north-up picture, so
+        // the crossing must have x = 0. Interpolating latitude and longitude separately bent it about
+        // 0.033 radians sideways, which is roughly 29 pixels on a 600 pixel globe.
+        var camera = new GlobeCamera(70.0, 0.0, 400.0);
+        var limb = GlobeProjection.LimbRadius(400);
+
+        var run = Assert.Single(GlobeViewMath.ProjectTrack(camera, [new(89, 0), new(87, 180)]));
+
+        Assert.Equal(2, run.Count);
+        var end = run[^1];
+        Assert.Equal(0.0, end.X, precision: 4);
+        Assert.Equal(limb, Math.Sqrt(end.X * end.X + end.Y * end.Y), precision: 6);
+    }
+
+    [Fact]
+    public void A_crossing_lies_on_the_short_arc_between_its_two_samples()
+    {
+        // The same idea away from the poles and across the antimeridian: the crossing is on the great circle
+        // through both samples, so its distance from each is the sum of the arcs.
+        var camera = new GlobeCamera(0.0, 179.0, 800.0);
+        var horizon = GlobeViewMath.FootprintRadiusDeg(800, 0);
+        var (inLat, inLon) = GlobeViewMath.Destination(0, 179, horizon * 0.8, 90);
+        var (outLat, outLon) = GlobeViewMath.Destination(0, 179, horizon * 1.3, 90);
+
+        var run = Assert.Single(GlobeViewMath.ProjectTrack(camera, [new(0, 179), new(inLat, inLon), new(outLat, outLon)]));
+
+        Assert.Equal(3, run.Count);
+        var limb = GlobeProjection.LimbRadius(800);
+        Assert.Equal(limb, Math.Sqrt(run[^1].X * run[^1].X + run[^1].Y * run[^1].Y), precision: 6);
+        Assert.Equal(0.0, run[^1].Y, precision: 6); // due east along the equator stays on the horizontal line
+    }
+
+    [Fact]
     public void A_nan_gap_is_not_bridged_to_the_limb()
     {
         var camera = new GlobeCamera(0.0, 0.0, 800.0);

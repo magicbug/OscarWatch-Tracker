@@ -96,7 +96,7 @@ public static class GlobeViewMath
     /// </summary>
     /// <remarks>
     /// Where the track crosses the limb between two samples, the run is extended to the crossing itself,
-    /// found by bisection, so the line reaches the edge of the globe. The focused track is sampled every
+    /// found by bisection along the great-circle arc, so the line reaches the edge of the globe. The focused track is sampled every
     /// 60 seconds, which for a low orbit is several degrees of arc: stopping at the last visible sample
     /// would leave a visible gap. A NaN gap is never bridged.
     /// </remarks>
@@ -154,27 +154,51 @@ public static class GlobeViewMath
     }
 
     /// <summary>
-    /// The projected point where the line from a visible sample to a hidden one meets the limb. Bisection on
-    /// visibility along the straight line in latitude and longitude, which is accurate for samples a few
-    /// degrees apart. Returns the last point found visible, so the result is always on the globe.
+    /// The projected point where the track between a visible sample and a hidden one meets the limb.
+    /// Bisection on visibility along the short great-circle arc between the two samples. Interpolating
+    /// latitude and longitude separately would be wrong near a pole, where neighbouring samples can differ
+    /// by up to 180 degrees of longitude and the straight line in (lat, lon) bends away from the real path.
+    /// Returns the last point found visible, so the result is always on the globe.
     /// </summary>
     private static (double X, double Y) LimbCrossing(GlobeBasis basis, GeoCoordinate visible, GeoCoordinate hidden)
     {
-        var dLon = (hidden.LongitudeDeg - visible.LongitudeDeg + 540.0) % 360.0 - 180.0;
-        var dLat = hidden.LatitudeDeg - visible.LatitudeDeg;
+        var (ax, ay, az) = UnitVector(visible.LatitudeDeg, visible.LongitudeDeg);
+        var (bx, by, bz) = UnitVector(hidden.LatitudeDeg, hidden.LongitudeDeg);
+        var omega = Math.Acos(Math.Clamp(ax * bx + ay * by + az * bz, -1.0, 1.0));
+        var sinOmega = Math.Sin(omega);
+
+        (double Lat, double Lon) At(double t)
+        {
+            // Spherical interpolation. For samples that are the same point there is no arc to walk.
+            var wa = sinOmega < 1e-12 ? 1.0 : Math.Sin((1.0 - t) * omega) / sinOmega;
+            var wb = sinOmega < 1e-12 ? 0.0 : Math.Sin(t * omega) / sinOmega;
+            var x = wa * ax + wb * bx;
+            var y = wa * ay + wb * by;
+            var z = wa * az + wb * bz;
+            return (Math.Atan2(z, Math.Sqrt(x * x + y * y)) * 180.0 / Math.PI, Math.Atan2(y, x) * 180.0 / Math.PI);
+        }
 
         double lo = 0.0, hi = 1.0;
         for (var i = 0; i < 40; i++)
         {
             var mid = 0.5 * (lo + hi);
-            if (basis.Project(visible.LatitudeDeg + dLat * mid, visible.LongitudeDeg + dLon * mid).Visible)
+            var (lat, lon) = At(mid);
+            if (basis.Project(lat, lon).Visible)
                 lo = mid;
             else
                 hi = mid;
         }
 
-        var edge = basis.Project(visible.LatitudeDeg + dLat * lo, visible.LongitudeDeg + dLon * lo);
+        var (edgeLat, edgeLon) = At(lo);
+        var edge = basis.Project(edgeLat, edgeLon);
         return (edge.X, edge.Y);
+    }
+
+    private static (double X, double Y, double Z) UnitVector(double latDeg, double lonDeg)
+    {
+        var lat = latDeg * Math.PI / 180.0;
+        var lon = lonDeg * Math.PI / 180.0;
+        return (Math.Cos(lat) * Math.Cos(lon), Math.Cos(lat) * Math.Sin(lon), Math.Sin(lat));
     }
 
     /// <summary>Great-circle destination from a start point, an angular distance and a bearing.</summary>
