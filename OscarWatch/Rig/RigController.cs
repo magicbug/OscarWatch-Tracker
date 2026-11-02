@@ -1128,7 +1128,10 @@ public sealed class RigController : IRigController, IDisposable
         if (IsStalePostWriteDialEcho(dialHz))
             return;
 
-        if (_holdPassbandCaptureUntilDialMatches)
+        // Serial CAT can still be reporting the previous row. Flex status is the slice itself:
+        // a change is the operator, and a lagging pre-write echo is rejected above.
+        if (_holdPassbandCaptureUntilDialMatches
+            && !KnobTuneCapturePolicy.UsesImmediateStatusCapture(_cachedSettings.Type))
         {
             if (!DialMatchesLastCatWrite(dialHz, KnobTuneThresholdHz()))
                 return;
