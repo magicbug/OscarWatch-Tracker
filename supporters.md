@@ -28,6 +28,7 @@ Thank you to everyone who has donated to support OscarWatch development.
 | Alan                     | WA4SCA         |
 | Mark                     | N8MH           |
 | Bruce                    | VE7PTN         |
+| Lucky                    | VU2LBW         |
 
 
 If you donate and would like to be listed here, let Peter know your name and callsign.
