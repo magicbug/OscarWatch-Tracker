@@ -95,8 +95,10 @@ public static class GlobeViewMath
     /// cannot be drawn as a line. Coordinates are in radians of arc on the projection plane.
     /// </summary>
     /// <remarks>
-    /// Runs end at the last visible sample rather than at the exact limb crossing. At the usual
-    /// sampling interval this leaves a gap well under a pixel at normal window sizes.
+    /// Where the track crosses the limb between two samples, the run is extended to the crossing itself,
+    /// found by bisection, so the line reaches the edge of the globe. The focused track is sampled every
+    /// 60 seconds, which for a low orbit is several degrees of arc: stopping at the last visible sample
+    /// would leave a visible gap. A NaN gap is never bridged.
     /// </remarks>
     public static IReadOnlyList<IReadOnlyList<(double X, double Y)>> ProjectTrack(
         GlobeCamera camera, IReadOnlyList<GeoCoordinate> track)
@@ -107,22 +109,37 @@ public static class GlobeViewMath
 
         var runs = new List<IReadOnlyList<(double X, double Y)>>();
         List<(double X, double Y)>? current = null;
+        GeoCoordinate? previous = null; // the last sample, or null at the start and after a NaN gap
+        var previousVisible = false;
 
         foreach (var p in track)
         {
-            var projected = double.IsNaN(p.LatitudeDeg)
-                ? new GlobePoint(0, 0, false)
-                : basis.Project(p.LatitudeDeg, p.LongitudeDeg);
+            if (double.IsNaN(p.LatitudeDeg))
+            {
+                CloseRun();
+                previous = null;
+                continue;
+            }
 
+            var projected = basis.Project(p.LatitudeDeg, p.LongitudeDeg);
             if (projected.Visible)
             {
+                if (current is null && previous is { } hiddenBefore && !previousVisible)
+                    current = [LimbCrossing(basis, visible: p, hidden: hiddenBefore)];
+
                 current ??= [];
                 current.Add((projected.X, projected.Y));
             }
             else
             {
+                if (current is not null && previous is { } visibleBefore && previousVisible)
+                    current.Add(LimbCrossing(basis, visible: visibleBefore, hidden: p));
+
                 CloseRun();
             }
+
+            previous = p;
+            previousVisible = projected.Visible;
         }
 
         CloseRun();
@@ -134,6 +151,30 @@ public static class GlobeViewMath
                 runs.Add(current);
             current = null;
         }
+    }
+
+    /// <summary>
+    /// The projected point where the line from a visible sample to a hidden one meets the limb. Bisection on
+    /// visibility along the straight line in latitude and longitude, which is accurate for samples a few
+    /// degrees apart. Returns the last point found visible, so the result is always on the globe.
+    /// </summary>
+    private static (double X, double Y) LimbCrossing(GlobeBasis basis, GeoCoordinate visible, GeoCoordinate hidden)
+    {
+        var dLon = (hidden.LongitudeDeg - visible.LongitudeDeg + 540.0) % 360.0 - 180.0;
+        var dLat = hidden.LatitudeDeg - visible.LatitudeDeg;
+
+        double lo = 0.0, hi = 1.0;
+        for (var i = 0; i < 40; i++)
+        {
+            var mid = 0.5 * (lo + hi);
+            if (basis.Project(visible.LatitudeDeg + dLat * mid, visible.LongitudeDeg + dLon * mid).Visible)
+                lo = mid;
+            else
+                hi = mid;
+        }
+
+        var edge = basis.Project(visible.LatitudeDeg + dLat * lo, visible.LongitudeDeg + dLon * lo);
+        return (edge.X, edge.Y);
     }
 
     /// <summary>Great-circle destination from a start point, an angular distance and a bearing.</summary>
