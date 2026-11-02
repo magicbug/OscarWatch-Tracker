@@ -108,6 +108,7 @@ public sealed class RigController : IRigController, IDisposable
     private double _lastContextTxOffsetKHz;
     private DopplerStrategy _lastContextDopplerStrategy = DopplerStrategy.Full;
     private bool _forceFrequencyApply;
+    private bool _immediateOperatorOffsetApply;
     private bool _blockKnobCapture;
     /// <summary>FT4 modem holds CAT Doppler between explicit slot-boundary steps.</summary>
     private bool _ft4SlotGatedDoppler;
@@ -464,7 +465,7 @@ public sealed class RigController : IRigController, IDisposable
                     _cachedSettings = command.Settings;
                     _cachedCatPausedOverride = command.CatPausedOverride;
                     ApplyPublishState(_cachedSettings, command.Context, command.ReinitializePass, command.CatPausedOverride);
-                    if (!command.ReinitializePass && _forceFrequencyApply)
+                    if (command.ReinitializePass || _forceFrequencyApply)
                         RunLoopIteration(ignoreDopplerSuspend: true);
                     break;
 
@@ -706,6 +707,9 @@ public sealed class RigController : IRigController, IDisposable
         else if (resolved.SelectedCtcssHz is > 0)
             ApplyCtcss(settings, resolved, force: false);
 
+        if (passKeyChanged || reinitializePass)
+            _forceFrequencyApply = true;
+
         NoteContextOffsetChange(resolved);
         NoteContextDopplerStrategyChange(resolved);
         _isTracking = true;
@@ -931,7 +935,7 @@ public sealed class RigController : IRigController, IDisposable
         }
 
         // OrbitDeck-style FT4: hold the dial within a slot; only write on ForceFt4DopplerStep.
-        if (_ft4SlotGatedDoppler && !_ft4ForceDopplerStep)
+        if (_ft4SlotGatedDoppler && !_ft4ForceDopplerStep && !_forceFrequencyApply)
             return;
         var directStep = _ft4DirectDopplerStep;
         _ft4ForceDopplerStep = false;
@@ -1286,6 +1290,9 @@ public sealed class RigController : IRigController, IDisposable
 
     private bool CanWriteInteractiveSub()
     {
+        if (_immediateOperatorOffsetApply)
+            return true;
+
         var cooldownMs = _vfoNotMoving && _receiveDialMatchesLastCatWrite
             ? InteractiveSubDopplerCooldownMs
             : InteractiveSubWriteCooldownMs(_cachedSettings);
@@ -1392,8 +1399,18 @@ public sealed class RigController : IRigController, IDisposable
         var txDelta = _isBeaconOnly ? 0 : Math.Abs(txHz - _lastRigTxHz);
         var correctRx = strategy != DopplerStrategy.UplinkOnly;
         var correctTx = !_isBeaconOnly && strategy != DopplerStrategy.DownlinkOnly;
-        var writeRx = correctRx && (forceApply || rxDelta > thresholdHz || thresholdHz == 0);
-        var writeTx = correctTx && (forceApply || txDelta > thresholdHz || thresholdHz == 0);
+        bool writeRx;
+        bool writeTx;
+        if (forceApply)
+        {
+            writeRx = strategy != DopplerStrategy.UplinkOnly;
+            writeTx = !_isBeaconOnly;
+        }
+        else
+        {
+            writeRx = correctRx && (rxDelta > thresholdHz || thresholdHz == 0);
+            writeTx = correctTx && (txDelta > thresholdHz || thresholdHz == 0);
+        }
 
         if (holdDownlinkCatWrites)
             writeRx = false;
@@ -1416,7 +1433,8 @@ public sealed class RigController : IRigController, IDisposable
         if (writeTx && _interactive && !settings.DualRadioEnabled && !CanWriteInteractiveSub())
         {
             _forceFrequencyApply = true;
-            writeTx = false;
+            if (!_immediateOperatorOffsetApply)
+                writeTx = false;
         }
 
         if (!writeRx && !writeTx)
@@ -1513,6 +1531,7 @@ public sealed class RigController : IRigController, IDisposable
         // Keep _lastRigRxHz from WriteRx — an immediate dial read often still shows the pre-offset
         // frequency and leaves linear tracking matched to the wrong baseline until the knob moves.
         _blockKnobCapture = false;
+        _immediateOperatorOffsetApply = false;
     }
 
     private static long? DisplayHz(long displayHz, long lastWrittenHz) =>
@@ -2526,9 +2545,13 @@ public sealed class RigController : IRigController, IDisposable
         _lastContextRxOffsetKHz = context.ReceiveOffsetKHz;
         _lastContextTxOffsetKHz = context.TransmitOffsetKHz;
         _forceFrequencyApply = true;
+        _immediateOperatorOffsetApply = true;
         _blockKnobCapture = true;
-        ClearDialHistory();
-        MarkProgrammaticFrequencySettle();
+        if (_lastRigRxHz > 0)
+            SeedDialHistoryStable(_lastRigRxHz);
+        else
+            ClearDialHistory();
+        _vfoNotMoving = true;
         LogDopplerEvent(
             _cachedSettings,
             context,

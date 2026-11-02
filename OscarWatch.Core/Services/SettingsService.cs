@@ -426,6 +426,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.Ft4.MigrateLegacyNumericDeviceIds();
         settings.Ft4.UplinkCalibrationKHzBySatellite ??=
             new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        settings.Ft4.MigrateLegacySatelliteOnlyUplinkCalibrations();
         settings.Sstv ??= new OscarWatch.Core.Sstv.SstvSettings();
         settings.Sstv.InputDeviceId ??= "";
         settings.Sstv.InputDeviceDisplayName ??= "";

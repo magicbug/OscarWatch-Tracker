@@ -1,4 +1,5 @@
 using OscarWatch.Core.Hardware;
+using OscarWatch.Core.Models;
 using OscarWatch.Core.PskReporter;
 
 namespace OscarWatch.Core.Ft4;
@@ -212,27 +213,66 @@ public sealed class Ft4Settings
     public int? WindowX { get; set; }
     public int? WindowY { get; set; }
 
-    /// <summary>Per-satellite uplink calibration in kHz (shared across modes).</summary>
+    /// <summary>
+    /// Uplink echo calibration in kHz. Keys are either legacy satellite names (RS-44) or
+    /// <see cref="Ft4UplinkCalibration.FormatTransponderKey"/> transponder fingerprints.
+    /// </summary>
     public Dictionary<string, double> UplinkCalibrationKHzBySatellite { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
 
-    public double GetUplinkCalibrationKHz(string? satelliteName)
+    public double GetUplinkCalibrationKHz(string? satelliteName, SatelliteTransponderMode? mode = null)
     {
+        if (mode is not null && Ft4SlotGate.IsFt4Transponder(mode)
+            && !string.IsNullOrWhiteSpace(satelliteName))
+        {
+            var transponderKey = Ft4UplinkCalibration.FormatTransponderKey(satelliteName, mode);
+            if (transponderKey.Length > 0
+                && UplinkCalibrationKHzBySatellite.TryGetValue(transponderKey, out var perMode))
+                return perMode;
+        }
+
         if (string.IsNullOrWhiteSpace(satelliteName))
             return 0;
-        return UplinkCalibrationKHzBySatellite.TryGetValue(satelliteName.Trim(), out var khz)
-            ? khz
+
+        return UplinkCalibrationKHzBySatellite.TryGetValue(satelliteName.Trim(), out var legacy)
+            ? legacy
             : 0;
     }
 
-    public void SetUplinkCalibrationKHz(string satelliteName, double khz)
+    public void SetUplinkCalibrationKHz(string? satelliteName, double khz, SatelliteTransponderMode? mode = null)
     {
-        var key = satelliteName.Trim();
-        if (key.Length == 0)
-            return;
-        if (Math.Abs(khz) < 0.0001)
-            UplinkCalibrationKHzBySatellite.Remove(key);
+        string key;
+        if (mode is not null && Ft4SlotGate.IsFt4Transponder(mode)
+            && !string.IsNullOrWhiteSpace(satelliteName))
+        {
+            key = Ft4UplinkCalibration.FormatTransponderKey(satelliteName, mode);
+            if (key.Length == 0)
+                return;
+        }
+        else if (!string.IsNullOrWhiteSpace(satelliteName))
+        {
+            key = satelliteName.Trim();
+        }
         else
+        {
+            return;
+        }
+
+        if (Math.Abs(khz) < 0.0001)
+        {
+            UplinkCalibrationKHzBySatellite.Remove(key);
+            return;
+        }
+
             UplinkCalibrationKHzBySatellite[key] = Math.Clamp(khz, -20.0, 20.0);
+
+        if (Ft4UplinkCalibration.IsTransponderKey(key)
+            && Ft4UplinkCalibration.TryGetSatelliteFromKey(key) is { } sat)
+            UplinkCalibrationKHzBySatellite.Remove(sat);
+    }
+
+    /// <summary>Legacy satellite-only keys remain as fallback until a transponder-specific trim is saved.</summary>
+    public void MigrateLegacySatelliteOnlyUplinkCalibrations()
+    {
     }
 }

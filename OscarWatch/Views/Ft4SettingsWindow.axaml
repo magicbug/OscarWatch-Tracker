@@ -425,11 +425,17 @@
                          Text="{loc:Localize Key=Ft4.EchoCalibration.Satellite}"
                          VerticalAlignment="Center" />
               <ComboBox Grid.Row="0" Grid.Column="1"
-                        ItemsSource="{Binding EchoCalibrationSatelliteOptions}"
-                        SelectedItem="{Binding SelectedEchoCalibrationSatellite}"
+                        ItemsSource="{Binding EchoCalibrationEntries}"
+                        SelectedItem="{Binding SelectedEchoCalibrationEntry}"
                         HorizontalAlignment="Stretch"
                         MinWidth="260"
-                        IsEnabled="{Binding HasEchoCalibrationSatellite}" />
+                        IsEnabled="{Binding HasEchoCalibrationSatellite}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Label}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
               <TextBlock Grid.Row="1" Grid.Column="0"
                          Text="{loc:Localize Key=Ft4.EchoCalibration.TrimHz}"
                          VerticalAlignment="Center" />

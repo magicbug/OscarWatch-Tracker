@@ -20,6 +20,18 @@ public sealed class Ft4SettingsTests
         settings.SetUplinkCalibrationKHz("RS-44", 0);
         Assert.Equal(0, settings.GetUplinkCalibrationKHz("RS-44"));
         Assert.Empty(settings.UplinkCalibrationKHzBySatellite);
+
+        var mode = new OscarWatch.Core.Models.SatelliteTransponderMode
+        {
+            Type = "FT4",
+            DownlinkKHz = 435_611,
+            UplinkKHz = 145_960,
+        };
+        settings.SetUplinkCalibrationKHz("RS-44", 0.4, mode);
+        Assert.Equal(0.4, settings.GetUplinkCalibrationKHz("RS-44", mode));
+        Assert.True(
+            settings.UplinkCalibrationKHzBySatellite.ContainsKey(
+                Ft4UplinkCalibration.FormatTransponderKey("RS-44", mode)));
     }
 
     [Fact]

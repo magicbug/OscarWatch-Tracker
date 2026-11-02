@@ -562,7 +562,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         if (Ft4SlotGate.IsFt4Transponder(SelectedMode)
             && !string.IsNullOrWhiteSpace(_currentSatelliteName))
         {
-            txOffset += _settings.Current.Ft4.GetUplinkCalibrationKHz(_currentSatelliteName);
+            txOffset += _settings.Current.Ft4.GetUplinkCalibrationKHz(_currentSatelliteName, SelectedMode);
         }
 
         return txOffset;

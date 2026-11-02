@@ -8,30 +8,39 @@ public sealed class Ft4SlotGateTests
     private static SatelliteTransponderMode Mode(string type) => new() { Type = type };
 
     [Fact]
-    public void Ft4_window_open_holds_on_any_transponder()
+    public void Ft4_window_open_does_not_hold_on_ssb()
     {
-        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: true, Mode("SSB Transponder")));
-        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: true, null));
+        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, Mode("SSB Transponder")));
+        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, null));
     }
 
     [Fact]
-    public void Ft4_transponder_holds_with_the_window_closed()
+    public void Ft4_transponder_holds_while_session_running()
     {
-        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode("FT4")));
-        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode(" ft4 ")));
+        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, Mode("FT4")));
+        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, Mode(" ft4 ")));
+        Assert.True(Ft4SlotGate.ShouldHold(sessionRunning: true, Mode("FT4 Asia")));
     }
 
     [Fact]
-    public void Other_transponder_with_the_window_closed_releases()
+    public void Other_transponder_releases()
     {
-        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode("SSB Transponder")));
-        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, Mode("CW TLM")));
-        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, windowOpen: false, null));
+        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, Mode("SSB Transponder")));
+        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, Mode("CW TLM")));
+        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: true, null));
     }
 
     [Fact]
     public void No_session_never_holds()
     {
-        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: false, windowOpen: true, Mode("FT4")));
+        Assert.False(Ft4SlotGate.ShouldHold(sessionRunning: false, Mode("FT4")));
+    }
+
+    [Fact]
+    public void IsFt4_transponder_includes_custom_type_prefix()
+    {
+        Assert.True(Ft4SlotGate.IsFt4Transponder(Mode("FT4 Asia")));
+        Assert.False(Ft4SlotGate.IsFt4Transponder(Mode("SSB Transponder")));
+        Assert.False(Ft4SlotGate.IsFt4Transponder(Mode("FT40")));
     }
 }

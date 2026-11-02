@@ -391,7 +391,7 @@ public sealed class Ft4ModemService : IDisposable
     /// </summary>
     private void SyncSlotGate(bool sessionRunning)
     {
-        var hold = Ft4SlotGate.ShouldHold(sessionRunning, _windowOpen, _frequencies.SelectedMode);
+        var hold = Ft4SlotGate.ShouldHold(sessionRunning, _frequencies.SelectedMode);
         lock (_slotGateLock)
         {
             if (hold == _slotGateHeld)
@@ -1068,7 +1068,8 @@ public sealed class Ft4ModemService : IDisposable
                     if (!alreadyTx && !IsTuning)
                         KickTransmit(slotStart, ct);
                     SyncSlotGate(sessionRunning: true);
-                    if (!CatTransmitOwnsTheRig(slotStart))
+                    if (!CatTransmitOwnsTheRig(slotStart)
+                        && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
                         _rig.ForceFt4DopplerStep();
                     RefreshClockFromGps();
 
@@ -2441,16 +2442,19 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         var sat = ResolveCalibrationSatellite();
-        if (sat is null)
+        var mode = _frequencies.SelectedMode;
+        if (sat is null || !Ft4SlotGate.IsFt4Transponder(mode))
             return;
 
         // Positive audio error (echo above the marker) needs a higher uplink dial on a
         // reversing LSB-up / USB-down satellite, which brings the echo back down.
         var deltaKHz = errorHz / 1000.0;
-        var current = _settings.Current.Ft4.GetUplinkCalibrationKHz(sat);
-        _settings.Current.Ft4.SetUplinkCalibrationKHz(sat, current + deltaKHz);
+        var current = _settings.Current.Ft4.GetUplinkCalibrationKHz(sat, mode);
+        _settings.Current.Ft4.SetUplinkCalibrationKHz(sat, current + deltaKHz, mode);
         _settings.RequestSave();
-        Status = _l.Get("Ft4.Status.EchoCalibration", deltaKHz * 1000.0, sat);
+        var label = Ft4UplinkCalibration.FormatDisplayLabel(
+            Ft4UplinkCalibration.FormatTransponderKey(sat, mode));
+        Status = _l.Get("Ft4.Status.EchoCalibration", deltaKHz * 1000.0, label);
         Changed?.Invoke();
     }
 
@@ -2546,7 +2550,9 @@ public sealed class Ft4ModemService : IDisposable
 
             var rxOffset = _frequencies.ReceiveOffsetKHz;
             var txOffset = _frequencies.TransmitOffsetKHz
-                + _settings.Current.Ft4.GetUplinkCalibrationKHz(ResolveCalibrationSatellite());
+                + _settings.Current.Ft4.GetUplinkCalibrationKHz(
+                    ResolveCalibrationSatellite(),
+                    _frequencies.SelectedMode);
 
             var s0 = Ft4DopplerShift.ComputeShiftsHz(mode, rr0, rxOffset, txOffset);
             var s1 = Ft4DopplerShift.ComputeShiftsHz(mode, rr1, rxOffset, txOffset);

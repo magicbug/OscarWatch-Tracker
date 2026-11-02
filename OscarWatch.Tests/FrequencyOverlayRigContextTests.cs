@@ -253,7 +253,7 @@ public class FrequencyOverlayRigContextTests
     public void TryBuildRigTrackingContext_adds_ft4_uplink_calibration_to_transmit_offset()
     {
         var settings = new TestSettingsService();
-        settings.Current.Ft4.SetUplinkCalibrationKHz("HO-113", 0.25);
+        settings.Current.Ft4.SetUplinkCalibrationKHz("HO-113", 0.25); // legacy satellite key; FT4 mode still reads it
         var database = new TestSatelliteDatabaseService(
         [
             new SatelliteRadioEntry
