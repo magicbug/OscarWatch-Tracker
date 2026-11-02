@@ -328,7 +328,6 @@ public sealed class PassElevationTimelineControl : ThemeAwareControl
                 {
                     Pass = pass,
                     Profile = profile,
-                    PaletteIndex = i,
                 };
             }
 
@@ -821,7 +820,7 @@ public sealed class PassElevationTimelineControl : ThemeAwareControl
             : (byte)(128 - (int)(64 * distanceFraction));
         var strokeWidth = isFocused ? 2.0 : 1.0;
 
-        var satColor = PlotColors.ForIndex(entry.PaletteIndex);
+        var satColor = PlotColors.ForIndex(entry.Pass.PaletteIndex);
         var fillColor = Color.FromArgb(fillOpacity, satColor.R, satColor.G, satColor.B);
         var strokeColor = Color.FromArgb(255, satColor.R, satColor.G, satColor.B);
 
@@ -1251,5 +1250,4 @@ internal sealed class TimelinePassEntry
     public StreamGeometry? Geometry { get; set; }
     public double GeometryWidth { get; set; }
     public double GeometryHeight { get; set; }
-    public int PaletteIndex { get; set; }
 }

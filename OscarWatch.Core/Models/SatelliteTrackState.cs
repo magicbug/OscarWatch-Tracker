@@ -4,6 +4,12 @@ public sealed class SatelliteTrackState
 {
     public required string Name { get; set; }
     public required string NoradId { get; init; }
+
+    /// <summary>
+    /// Position of this satellite in the enabled list. The map and sky plot colour from this,
+    /// matching <see cref="PassInfo.PaletteIndex"/>.
+    /// </summary>
+    public int PaletteIndex { get; init; }
     public required GeoCoordinate Subpoint { get; init; }
     public LookAngles? LookAngles { get; init; }
     /// <summary>Compass azimuth ~1–2 s ahead (rotator east-side north-wrap lookahead).</summary>

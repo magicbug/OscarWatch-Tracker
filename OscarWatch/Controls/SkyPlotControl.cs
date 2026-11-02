@@ -359,7 +359,7 @@ public class SkyPlotControl : ThemeAwareControl
                 continue;
 
             visibleCount++;
-            var color = PlotColors.ForIndex(i);
+            var color = PlotColors.ForIndex(states[i].PaletteIndex);
             var isFocused = states[i].NoradId == FocusedNoradId;
             PlotMarkerDrawing.DrawSatelliteMarker(
                 context,
@@ -545,7 +545,7 @@ public class SkyPlotControl : ThemeAwareControl
             if (states[i].NoradId != FocusedNoradId)
                 continue;
 
-            pathColor = PlotColors.ForIndex(i);
+            pathColor = PlotColors.ForIndex(states[i].PaletteIndex);
             break;
         }
 

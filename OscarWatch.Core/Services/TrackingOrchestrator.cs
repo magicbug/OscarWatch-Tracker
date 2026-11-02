@@ -132,8 +132,9 @@ public sealed class TrackingOrchestrator
         states.Clear();
         var sunEci = GetCachedSunPosition(utc);
 
-        foreach (var sat in sats)
+        for (var enabledIndex = 0; enabledIndex < sats.Count; enabledIndex++)
         {
+            var sat = sats[enabledIndex];
             if (!_propagator.HasSatellite(sat.NoradId))
                 continue;
 
@@ -244,6 +245,7 @@ public sealed class TrackingOrchestrator
                 {
                     Name = ResolveDisplayName(sat),
                     NoradId = sat.NoradId,
+                    PaletteIndex = enabledIndex,
                     Subpoint = subpoint,
                     LookAngles = look,
                     MotionHeadingDeg = motionHeadingDeg,
@@ -329,6 +331,7 @@ public sealed class TrackingOrchestrator
                         {
                             Name = s.Name,
                             NoradId = s.NoradId,
+                            PaletteIndex = s.PaletteIndex,
                             Subpoint = s.Subpoint,
                             LookAngles = s.LookAngles,
                             MotionHeadingDeg = s.MotionHeadingDeg,
@@ -486,13 +489,15 @@ public sealed class TrackingOrchestrator
             // Allow partial results to be collected below.
         }
 
-        return tasks
+        var passes = tasks
             .Where(t => t.IsCompletedSuccessfully)
             .SelectMany(t => t.Result)
             .Where(p => p.Duration >= minDuration)
             .Select(ApplyDisplayName)
             .OrderBy(p => p.AosUtc)
             .ToList();
+        StampPaletteIndices(sats, passes);
+        return passes;
     }
 
     public Task<IReadOnlyList<MutualPassInfo>> GetMutualPassesAsync(
@@ -554,6 +559,7 @@ public sealed class TrackingOrchestrator
             .Where(p => p.Duration >= minPassDuration)
             .Select(ApplyDisplayName)
             .ToList();
+        StampPaletteIndices(sats, localPasses);
 
         var remotePasses = remoteTasks
             .Where(t => t.IsCompletedSuccessfully)
@@ -561,6 +567,7 @@ public sealed class TrackingOrchestrator
             .Where(p => p.Duration >= minPassDuration)
             .Select(ApplyDisplayName)
             .ToList();
+        StampPaletteIndices(sats, remotePasses);
 
         return MutualPassFinder.FindOverlaps(localPasses, remotePasses, minMutualDuration)
             .Select(ApplyDisplayName)
@@ -569,6 +576,23 @@ public sealed class TrackingOrchestrator
 
     private string ResolveDisplayName(SatelliteCatalogEntry sat) =>
         SatelliteDisplayName.Resolve(sat.Name, sat.NoradId, _satelliteDatabase);
+
+    private static void StampPaletteIndices(IReadOnlyList<SatelliteCatalogEntry> enabled, IEnumerable<PassInfo> passes)
+    {
+        var indexByNorad = new Dictionary<string, int>(enabled.Count, StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < enabled.Count; i++)
+        {
+            var id = enabled[i].NoradId;
+            if (!string.IsNullOrEmpty(id))
+                indexByNorad.TryAdd(id, i);
+        }
+
+        foreach (var pass in passes)
+        {
+            if (indexByNorad.TryGetValue(pass.NoradId, out var index))
+                pass.PaletteIndex = index;
+        }
+    }
 
     private PassInfo ApplyDisplayName(PassInfo pass)
     {

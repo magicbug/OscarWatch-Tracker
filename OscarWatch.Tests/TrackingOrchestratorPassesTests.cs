@@ -45,6 +45,50 @@ public sealed class TrackingOrchestratorPassesTests
 
         Assert.Single(passes);
         Assert.Equal("25544", passes[0].NoradId);
+        Assert.Equal(0, passes[0].PaletteIndex);
+    }
+
+    [Fact]
+    public async Task GetPassesAsync_uses_one_palette_index_per_enabled_satellite()
+    {
+        var aos = DateTime.UtcNow.AddHours(1);
+        PassInfo Make(string id, string name, int hours) => new()
+        {
+            NoradId = id,
+            SatelliteName = name,
+            AosUtc = aos.AddHours(hours),
+            LosUtc = aos.AddHours(hours).AddMinutes(10),
+            MaxElevationUtc = aos.AddHours(hours).AddMinutes(5),
+            MaxElevationDeg = 40
+        };
+
+        var enabled = new[]
+        {
+            new SatelliteCatalogEntry { NoradId = "25544", Name = "ISS", Line1 = "", Line2 = "" },
+            new SatelliteCatalogEntry { NoradId = "44909", Name = "RS-44", Line1 = "", Line2 = "" }
+        };
+
+        var orchestrator = new TrackingOrchestrator(
+            new StubSettingsService(),
+            new StubTleService(enabled),
+            new NoOpPropagator(),
+            new NoOpGroundGeometry(),
+            new MappedPassPredictor(new Dictionary<string, PassInfo[]>(StringComparer.Ordinal)
+            {
+                ["25544"] = [Make("25544", "ISS", 2), Make("25544", "ISS", 5)],
+                ["44909"] = [Make("44909", "RS-44", 1)]
+            }));
+
+        var passes = await orchestrator.GetPassesAsync(
+            new GroundStation(),
+            minimumElevationDeg: 5,
+            predictionHours: 24,
+            minimumDurationMinutes: 0);
+
+        Assert.Equal(["44909", "25544", "25544"], passes.Select(p => p.NoradId).ToArray());
+        Assert.Equal(1, passes[0].PaletteIndex);
+        Assert.Equal(0, passes[1].PaletteIndex);
+        Assert.Equal(0, passes[2].PaletteIndex);
     }
 
     private sealed class StubSettingsService : ISettingsService
@@ -135,6 +179,27 @@ public sealed class TrackingOrchestratorPassesTests
 
             if (string.Equals(satellite.NoradId, _goodNoradId, StringComparison.Ordinal))
                 return Task.FromResult(_goodPasses);
+
+            return Task.FromResult<IReadOnlyList<PassInfo>>([]);
+        }
+    }
+
+    private sealed class MappedPassPredictor : IPassPredictor
+    {
+        private readonly Dictionary<string, PassInfo[]> _passes;
+
+        public MappedPassPredictor(Dictionary<string, PassInfo[]> passes) => _passes = passes;
+
+        public Task<IReadOnlyList<PassInfo>> GetPassesAsync(
+            SatelliteCatalogEntry satellite,
+            GroundStation site,
+            DateTime utcStart,
+            DateTime utcEnd,
+            double minimumElevationDeg,
+            CancellationToken cancellationToken = default)
+        {
+            if (_passes.TryGetValue(satellite.NoradId, out var passes))
+                return Task.FromResult<IReadOnlyList<PassInfo>>(passes);
 
             return Task.FromResult<IReadOnlyList<PassInfo>>([]);
         }

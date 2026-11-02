@@ -1856,6 +1856,7 @@ public partial class MainViewModel : ViewModelBase
         {
             Name = state.Name,
             NoradId = state.NoradId,
+            PaletteIndex = state.PaletteIndex,
             Subpoint = state.Subpoint,
             LookAngles = state.LookAngles,
             AheadAzimuthDeg = ahead,
