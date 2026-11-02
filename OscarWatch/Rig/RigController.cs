@@ -2142,11 +2142,18 @@ public sealed class RigController : IRigController, IDisposable
     /// <summary>
     /// Pass init has just programmed a new row. Hold passband capture until the dial
     /// readback shows that frequency, so the previous transponder is not stored as a tune.
+    /// If this read already matches the frequency just sent, the radio has accepted it
+    /// and the next dial movement is a real tune.
     /// </summary>
     private void ArmDialMatchBeforePassbandCapture()
     {
         _holdPassbandCaptureUntilDialMatches = true;
         MarkProgrammaticFrequencySettle();
+        if (TryReadReceiveDialHz(out var dialHz)
+            && DialMatchesLastCatWrite(dialHz, KnobTuneThresholdHz()))
+        {
+            _holdPassbandCaptureUntilDialMatches = false;
+        }
     }
 
     private void TryBandSwap(RigSettings settings, RigTrackingContext context)
