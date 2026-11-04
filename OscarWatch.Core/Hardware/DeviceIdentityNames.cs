@@ -40,6 +40,7 @@ public static class DeviceIdentityNames
         RotatorType.Saebrt => "SAEBRTrack rotator",
         RotatorType.UrcTcp => "URC rotator",
         RotatorType.GreenHeronRt21 => "RT-21 rotator",
+        RotatorType.AntRunner => "AntRunner rotator",
         _ => type.ToString()
     };
 }

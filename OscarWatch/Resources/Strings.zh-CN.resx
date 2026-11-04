@@ -3115,7 +3115,7 @@
     <value>旋转器类型</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 用于 Yaesu 及兼容型号。SPID 用于 SP 模式控制器（Rot1Prog / Rot2Prog）。SPID MD-01 / MD-02 (TCP) 用于原生以太网（协议 SPID ROT2，默认端口 23）。EasyComm 用于 EC 模式（SPID、M2 及其他文本协议控制器）。SAEBRTrack 用于经典卫星跟踪接口（9600 波特）。OZ9AAR URC (TCP) 用于 Ultimate Rotator Controller（以太网，默认端口 1111；请将 URC 设为 REM/远程模式）。Green Heron RT-21 Az-El 使用两个 COM 端口（方位角与仰角），DCU-1 协议、4800 波特；请勿选择 GS-232。串口协议也可通过 TCP 串口服务器（例如 ser2net）连接，而无需本地 COM 口。</value>
+    <value>GS-232 用于 Yaesu 及兼容型号。SPID 用于 SP 模式控制器（Rot1Prog / Rot2Prog）。SPID MD-01 / MD-02 (TCP) 用于原生以太网（协议 SPID ROT2，默认端口 23）。EasyComm 用于 EC 模式（SPID、M2 及其他文本协议控制器）。SAEBRTrack 用于经典卫星跟踪接口（9600 波特）。OZ9AAR URC (TCP) 用于 Ultimate Rotator Controller（以太网，默认端口 1111；请将 URC 设为 REM/远程模式）。Green Heron RT-21 Az-El 使用两个 COM 端口（方位角与仰角），DCU-1 协议、4800 波特；请勿选择 GS-232。AntRunner (GRBL) 用于 MuseLab AntRunner（USB 串口，115200 波特，无需 Hamlib；通电前请指向正北并调平）。串口协议也可通过 TCP 串口服务器（例如 ser2net）连接，而无需本地 COM 口。</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>方位角串口</value>

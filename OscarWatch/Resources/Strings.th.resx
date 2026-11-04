@@ -3119,7 +3119,7 @@ LOS: {2}
     <value>ชนิดโรเตอร์</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 สำหรับ Yaesu และโคลน SPID สำหรับคอนโทรลเลอร์โหมด SP (Rot1Prog / Rot2Prog) SPID MD-01 / MD-02 (TCP) สำหรับอีเทอร์เน็ตโดยตรง (โปรโตคอล SPID ROT2 พอร์ตเริ่มต้น 23) EasyComm สำหรับโหมด EC (SPID, M2 และคอนโทรลเลอร์โปรโตคอลข้อความอื่น) SAEBRTrack สำหรับอินเทอร์เฟซติดตามดาวเทียมคลาสสิก (9600 บอด) OZ9AAR URC (TCP) สำหรับ Ultimate Rotator Controller ผ่านอีเทอร์เน็ต (พอร์ตเริ่มต้น 1111; ตั้ง URC เป็นโหมด REM/remote) Green Heron RT-21 Az-El ใช้สองพอร์ต COM (อะซิมัทและมุมเงย) โปรโตคอล DCU-1 ที่ 4800 บอด; อย่าเลือก GS-232 โปรโตคอลอนุกรมยังใช้เซิร์ฟเวอร์อนุกรม TCP (เช่น ser2net) แทนพอร์ต COM ในเครื่องได้</value>
+    <value>GS-232 สำหรับ Yaesu และโคลน SPID สำหรับคอนโทรลเลอร์โหมด SP (Rot1Prog / Rot2Prog) SPID MD-01 / MD-02 (TCP) สำหรับอีเทอร์เน็ตโดยตรง (โปรโตคอล SPID ROT2 พอร์ตเริ่มต้น 23) EasyComm สำหรับโหมด EC (SPID, M2 และคอนโทรลเลอร์โปรโตคอลข้อความอื่น) SAEBRTrack สำหรับอินเทอร์เฟซติดตามดาวเทียมคลาสสิก (9600 บอด) OZ9AAR URC (TCP) สำหรับ Ultimate Rotator Controller ผ่านอีเทอร์เน็ต (พอร์ตเริ่มต้น 1111; ตั้ง URC เป็นโหมด REM/remote) Green Heron RT-21 Az-El ใช้สองพอร์ต COM (อะซิมัทและมุมเงย) โปรโตคอล DCU-1 ที่ 4800 บอด; อย่าเลือก GS-232 AntRunner (GRBL) สำหรับ MuseLab AntRunner ผ่านพอร์ตอนุกรม USB ที่ 115200 บอด (ไม่ต้องใช้ Hamlib; หันไปทางทิศเหนือและปรับให้ได้ระดับก่อนเปิดเครื่อง) โปรโตคอลอนุกรมยังใช้เซิร์ฟเวอร์อนุกรม TCP (เช่น ser2net) แทนพอร์ต COM ในเครื่องได้</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>พอร์ตอนุกรมอะซิมัท</value>

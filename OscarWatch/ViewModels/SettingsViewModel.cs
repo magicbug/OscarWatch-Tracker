@@ -282,7 +282,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public IReadOnlyList<TleAutoUpdateOption> TleAutoUpdateOptions { get; }
 
-    public int[] RotatorBaudRateOptions { get; } = [600, 1200, 2400, 4800, 9600, 19200];
+    public int[] RotatorBaudRateOptions { get; } = [600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
 
     public int[] RigBaudRateOptions { get; } = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
 
@@ -913,7 +913,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             new(RotatorType.EasyComm, "EasyComm"),
             new(RotatorType.Saebrt, "SAEBRTrack"),
             new(RotatorType.UrcTcp, "OZ9AAR URC (TCP)"),
-            new(RotatorType.GreenHeronRt21, "Green Heron RT-21 Az-El")
+            new(RotatorType.GreenHeronRt21, "Green Heron RT-21 Az-El"),
+            new(RotatorType.AntRunner, "AntRunner (GRBL)")
         ];
         RotatorTransportChoices =
         [
@@ -2290,6 +2291,14 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             RotatorBaudRate = 4800;
             SelectedElevationRangeChoice = ElevationRangeChoices.FirstOrDefault(
                 o => o.Value == RotatorElevationRange.Deg90) ?? ElevationRangeChoices[0];
+        }
+        else if (value.Value == RotatorType.AntRunner)
+        {
+            RotatorBaudRate = 115200;
+            SelectedAzimuthRangeChoice = AzimuthRangeChoices.FirstOrDefault(
+                o => o.Value == RotatorAzimuthRange.Deg360) ?? AzimuthRangeChoices[0];
+            SelectedElevationRangeChoice = ElevationRangeChoices.FirstOrDefault(
+                o => o.Value == RotatorElevationRange.Deg180) ?? ElevationRangeChoices[0];
         }
         else if (value.Value == RotatorType.SpidMd01)
         {

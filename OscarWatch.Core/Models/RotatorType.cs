@@ -16,5 +16,9 @@ public enum RotatorType
     /// <summary>
     /// Green Heron RT-21 Az-El: two independent DCU-1 serial links (azimuth and elevation COM ports).
     /// </summary>
-    GreenHeronRt21
+    GreenHeronRt21,
+    /// <summary>
+    /// MuseLab AntRunner: GRBL 1.1 on ESP32 over serial (115200). X azimuth, Y elevation, 360° = 40 mm.
+    /// </summary>
+    AntRunner
 }

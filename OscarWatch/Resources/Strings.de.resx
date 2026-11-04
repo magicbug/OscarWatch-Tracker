@@ -3119,7 +3119,7 @@ Fortfahren?</value>
     <value>Rotortyp</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 für Yaesu und Klone. SPID für Steuerungen im SP-Modus (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) für natives Ethernet (Protokoll SPID ROT2, Standardport 23). EasyComm für EC-Modus (SPID, M2 und andere Textprotokoll-Steuerungen). SAEBRTrack für klassische Satelliten-Tracker-Schnittstellen (9600 Baud). OZ9AAR URC (TCP) für den Ultimate Rotator Controller über Ethernet (Standardport 1111; URC auf REM/Remote-Modus setzen). Green Heron RT-21 Az-El nutzt zwei COM-Ports (Azimut und Elevation), DCU-1-Protokoll mit 4800 Baud; nicht GS-232 wählen. Serielle Protokolle können statt eines lokalen COM-Ports auch einen TCP-Serial-Server nutzen (z. B. ser2net).</value>
+    <value>GS-232 für Yaesu und Klone. SPID für Steuerungen im SP-Modus (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) für natives Ethernet (Protokoll SPID ROT2, Standardport 23). EasyComm für EC-Modus (SPID, M2 und andere Textprotokoll-Steuerungen). SAEBRTrack für klassische Satelliten-Tracker-Schnittstellen (9600 Baud). OZ9AAR URC (TCP) für den Ultimate Rotator Controller über Ethernet (Standardport 1111; URC auf REM/Remote-Modus setzen). Green Heron RT-21 Az-El nutzt zwei COM-Ports (Azimut und Elevation), DCU-1-Protokoll mit 4800 Baud; nicht GS-232 wählen. AntRunner (GRBL) für den MuseLab AntRunner über USB-Seriell mit 115200 Baud (kein Hamlib nötig; vor dem Einschalten nach Norden ausrichten und waagerecht stellen). Serielle Protokolle können statt eines lokalen COM-Ports auch einen TCP-Serial-Server nutzen (z. B. ser2net).</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Azimut-Seriellport</value>

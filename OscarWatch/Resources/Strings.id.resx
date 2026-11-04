@@ -3119,7 +3119,7 @@ Lanjutkan?</value>
     <value>Jenis rotator</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 untuk Yaesu dan klon. SPID untuk pengontrol mode SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) untuk Ethernet bawaan (protokol SPID ROT2, port bawaan 23). EasyComm untuk mode EC (SPID, M2, dan pengontrol protokol teks lain). SAEBRTrack untuk antarmuka pelacak satelit klasik (9600 baud). OZ9AAR URC (TCP) untuk Ultimate Rotator Controller lewat Ethernet (port bawaan 1111; setel URC ke mode REM/remote). Green Heron RT-21 Az-El memakai dua port COM (azimut dan elevasi), protokol DCU-1 pada 4800 baud; jangan pilih GS-232. Protokol serial juga bisa memakai server serial TCP (mis. ser2net) alih-alih port COM lokal.</value>
+    <value>GS-232 untuk Yaesu dan klon. SPID untuk pengontrol mode SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) untuk Ethernet bawaan (protokol SPID ROT2, port bawaan 23). EasyComm untuk mode EC (SPID, M2, dan pengontrol protokol teks lain). SAEBRTrack untuk antarmuka pelacak satelit klasik (9600 baud). OZ9AAR URC (TCP) untuk Ultimate Rotator Controller lewat Ethernet (port bawaan 1111; setel URC ke mode REM/remote). Green Heron RT-21 Az-El memakai dua port COM (azimut dan elevasi), protokol DCU-1 pada 4800 baud; jangan pilih GS-232. AntRunner (GRBL) untuk MuseLab AntRunner lewat serial USB pada 115200 baud (tanpa Hamlib; arahkan ke utara dan datarkan sebelum dinyalakan). Protokol serial juga bisa memakai server serial TCP (mis. ser2net) alih-alih port COM lokal.</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Port serial azimut</value>

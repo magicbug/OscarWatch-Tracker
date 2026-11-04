@@ -54,6 +54,7 @@ Reference implementations:
 | SPID MD-01 / MD-02 (TCP) | Same Rot2Prog binary over TCP (default port 23); set-position returns a 12-byte status | [`SpidRotator.cs`](../OscarWatch/Rotator/SpidRotator.cs) via `RotatorType.SpidMd01` |
 | OZ9AAR URC (TCP) | JSON `{"POLL"}` / `{"GOTO":[az,el]}` over TCP (default port 1111) | [`UrcTcpRotator.cs`](../OscarWatch/Rotator/UrcTcpRotator.cs) |
 | Green Heron RT-21 Az-El | DCU-1 per axis on **two** COM ports (`AP1xxx.y\r;`, `BI1;`, stop `;`) | [`GreenHeronRt21Rotator.cs`](../OscarWatch/Rotator/GreenHeronRt21Rotator.cs) |
+| AntRunner (GRBL 1.1) | Absolute jog `$J=G90 G21 F50 X.. Y..` in mm (360° = 40 mm, X az, Y el), status `?` → `<Idle\|MPos:x,y,z\|...>`, stop is jog cancel `0x85`. Reads `$$` on open but never writes settings. Handles north wrap itself (360° rotator, machine X spans one extra turn either way). | [`GrblRotator.cs`](../OscarWatch/Rotator/GrblRotator.cs) |
 
 ## Serial I/O patterns
 
