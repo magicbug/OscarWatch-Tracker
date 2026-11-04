@@ -983,15 +983,10 @@
             <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                        FontSize="11"
                        TextWrapping="Wrap"
-                       Text="{loc:Localize Key=Settings.Rotator.TypeNote}" />
-            <StackPanel Spacing="4" IsVisible="{Binding ShowRotatorAzimuthOnlyOption}">
-              <CheckBox Content="{loc:Localize Key=Settings.Rotator.AzimuthOnly}"
-                        IsChecked="{Binding RotatorAzimuthOnly, Mode=TwoWay}" />
-              <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                         FontSize="11"
-                         TextWrapping="Wrap"
-                         Text="{loc:Localize Key=Settings.Rotator.AzimuthOnlyNote}" />
-            </StackPanel>
+                       Text="{Binding RotatorTypeNote}" />
+            <CheckBox Content="{loc:Localize Key=Settings.Rotator.AzimuthOnly}"
+                      IsChecked="{Binding RotatorAzimuthOnly, Mode=TwoWay}"
+                      IsVisible="{Binding ShowRotatorAzimuthOnlyOption}" />
             <StackPanel Spacing="10" IsVisible="{Binding ShowRotatorTransportFields}">
               <TextBlock Text="{loc:Localize Key=Settings.Rotator.Transport}" />
               <ComboBox ItemsSource="{Binding RotatorTransportChoices}"

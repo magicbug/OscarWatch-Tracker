@@ -318,6 +318,18 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     public bool ShowRotatorAzimuthOnlyOption =>
         SelectedRotatorTypeChoice?.Value == RotatorType.YaesuGs232;
 
+    public string RotatorTypeNote => SelectedRotatorTypeChoice?.Value switch
+    {
+        RotatorType.Spid => _l.Get("Settings.Rotator.TypeNote.Spid"),
+        RotatorType.SpidMd01 => _l.Get("Settings.Rotator.TypeNote.SpidMd01"),
+        RotatorType.EasyComm => _l.Get("Settings.Rotator.TypeNote.EasyComm"),
+        RotatorType.Saebrt => _l.Get("Settings.Rotator.TypeNote.Saebrt"),
+        RotatorType.UrcTcp => _l.Get("Settings.Rotator.TypeNote.Urc"),
+        RotatorType.GreenHeronRt21 => _l.Get("Settings.Rotator.TypeNote.GreenHeron"),
+        RotatorType.AntRunner => _l.Get("Settings.Rotator.TypeNote.AntRunner"),
+        _ => _l.Get("Settings.Rotator.TypeNote.Gs232")
+    };
+
     public bool IsRotatorAzimuthOnlyActive => ShowRotatorAzimuthOnlyOption && RotatorAzimuthOnly;
 
     public bool ShowRotatorElevationSettings => !IsRotatorAzimuthOnlyActive;
@@ -2344,6 +2356,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRotatorUrcNetworkNote));
         OnPropertyChanged(nameof(ShowRotatorSpidMd01NetworkNote));
         OnPropertyChanged(nameof(ShowRotatorTcpSerialNetworkNote));
+        OnPropertyChanged(nameof(RotatorTypeNote));
         NotifyRotatorAzimuthOnlyVisibility();
     }
 

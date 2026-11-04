@@ -3136,14 +3136,32 @@ LOS: {2}
   <data name="Settings.Rotator.Type">
     <value>ชนิดโรเตอร์</value>
   </data>
-  <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 สำหรับ Yaesu และโคลน SPID สำหรับคอนโทรลเลอร์โหมด SP (Rot1Prog / Rot2Prog) SPID MD-01 / MD-02 (TCP) สำหรับอีเทอร์เน็ตโดยตรง (โปรโตคอล SPID ROT2 พอร์ตเริ่มต้น 23) EasyComm สำหรับโหมด EC (SPID, M2 และคอนโทรลเลอร์โปรโตคอลข้อความอื่น) SAEBRTrack สำหรับอินเทอร์เฟซติดตามดาวเทียมคลาสสิก (9600 บอด) OZ9AAR URC (TCP) สำหรับ Ultimate Rotator Controller ผ่านอีเทอร์เน็ต (พอร์ตเริ่มต้น 1111; ตั้ง URC เป็นโหมด REM/remote) Green Heron RT-21 Az-El ใช้สองพอร์ต COM (อะซิมัทและมุมเงย) โปรโตคอล DCU-1 ที่ 4800 บอด; อย่าเลือก GS-232 AntRunner (GRBL) สำหรับ MuseLab AntRunner ผ่านพอร์ตอนุกรม USB ที่ 115200 บอด (ไม่ต้องใช้ Hamlib; หันไปทางทิศเหนือและปรับให้ได้ระดับก่อนเปิดเครื่อง) โปรโตคอลอนุกรมยังใช้เซิร์ฟเวอร์อนุกรม TCP (เช่น ser2net) แทนพอร์ต COM ในเครื่องได้</value>
+  <data name="Settings.Rotator.TypeNote.Gs232">
+    <value>Yaesu และโคลน</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Spid">
+    <value>คอนโทรลเลอร์โหมด SP (Rot1Prog / Rot2Prog)</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.SpidMd01">
+    <value>อีเทอร์เน็ตโดยตรง โปรโตคอล SPID ROT2 พอร์ตเริ่มต้น 23</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.EasyComm">
+    <value>โปรโตคอลข้อความสำหรับโหมด EC ของ SPID, M2 และคอนโทรลเลอร์ที่คล้ายกัน</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Saebrt">
+    <value>อินเทอร์เฟซติดตามดาวเทียมคลาสสิก</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Urc">
+    <value>Ultimate Rotator Controller ผ่านอีเทอร์เน็ต ตั้งเป็นโหมด remote (REM)</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.GreenHeron">
+    <value>สองพอร์ต COM หนึ่งพอร์ตต่อหนึ่งแกน</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.AntRunner">
+    <value>MuseLab AntRunner ผ่าน USB หันไปทางทิศเหนือและปรับให้ได้ระดับก่อนเปิดเครื่อง</value>
   </data>
   <data name="Settings.Rotator.AzimuthOnly">
-    <value>อะซิมัทเท่านั้น (ไม่มีแกนมุมเงย)</value>
-  </data>
-  <data name="Settings.Rotator.AzimuthOnlyNote">
-    <value>สำหรับคอนโทรลเลอร์ GS-232 ที่หมุนได้เฉพาะอะซิมัท เช่น RTC-59 กับ Emoto 1300MSA OscarWatch สั่งหมุนด้วย Maaa และอ่านตำแหน่งด้วย C ไม่ใช้ช่วงมุมเงย มุมเงยตำแหน่งจอด ค่าชดเชยมุมเงย และการหลีกเลี่ยง keyhole</value>
+    <value>อะซิมัทเท่านั้น</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>พอร์ตอนุกรมอะซิมัท</value>

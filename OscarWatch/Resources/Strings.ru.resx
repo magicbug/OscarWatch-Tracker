@@ -3136,14 +3136,32 @@ LOS: {2}
   <data name="Settings.Rotator.Type">
     <value>Тип ротатора</value>
   </data>
-  <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 для Yaesu и клонов. SPID для контроллеров в режиме SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) для встроенного Ethernet (протокол SPID ROT2, порт по умолчанию 23). EasyComm для режима EC (SPID, M2 и другие текстовые протоколы). SAEBRTrack для классических интерфейсов спутниковых трекеров (9600 бод). OZ9AAR URC (TCP) для Ultimate Rotator Controller по Ethernet (порт по умолчанию 1111; поставьте URC в режим REM/remote). Green Heron RT-21 Az-El использует два COM-порта (азимут и угол места), протокол DCU-1 на 4800 бод; не выбирайте GS-232. AntRunner (GRBL) для MuseLab AntRunner через USB-последовательный порт на 115200 бод (Hamlib не нужен; перед включением направьте на север и выставьте по горизонту). Последовательные протоколы также могут идти через TCP-сервер последовательного порта (напр. ser2net) вместо локального COM.</value>
+  <data name="Settings.Rotator.TypeNote.Gs232">
+    <value>Yaesu и клоны.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Spid">
+    <value>Контроллеры в режиме SP (Rot1Prog / Rot2Prog).</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.SpidMd01">
+    <value>Встроенный Ethernet, протокол SPID ROT2, порт по умолчанию 23.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.EasyComm">
+    <value>Текстовый протокол для режима EC (SPID, M2 и похожие контроллеры).</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Saebrt">
+    <value>Классические интерфейсы спутниковых трекеров.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Urc">
+    <value>Ultimate Rotator Controller по Ethernet. Поставьте режим remote (REM).</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.GreenHeron">
+    <value>Два COM-порта, по одному на ось.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.AntRunner">
+    <value>MuseLab AntRunner по USB. Перед включением направьте на север и выставьте по горизонту.</value>
   </data>
   <data name="Settings.Rotator.AzimuthOnly">
-    <value>Только азимут (без оси угла места)</value>
-  </data>
-  <data name="Settings.Rotator.AzimuthOnlyNote">
-    <value>Для контроллеров GS-232, которые вращают только по азимуту, например RTC-59 с Emoto 1300MSA. OscarWatch поворачивает ротатор командой Maaa и читает положение командой C. Диапазон угла места, угол места парковки, поправка угла места и обход keyhole не используются.</value>
+    <value>Только азимут</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Последовательный порт азимута</value>

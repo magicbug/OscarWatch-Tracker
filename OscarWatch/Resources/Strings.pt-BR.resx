@@ -3132,14 +3132,32 @@ Continuar?</value>
   <data name="Settings.Rotator.Type">
     <value>Tipo de rotor</value>
   </data>
-  <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 para Yaesu e clones. SPID para controladores em modo SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) para Ethernet nativo (protocolo SPID ROT2, porta 23). EasyComm para modo EC (SPID, M2 e outros controladores de protocolo texto). SAEBRTrack para interfaces clássicas de seguimento por satélite (9600 baud). OZ9AAR URC (TCP) para Ultimate Rotator Controller via Ethernet (porta 1111; modo REM/remoto). Green Heron RT-21 Az-El usa duas portas COM (azimute e elevação), protocolo DCU-1 a 4800 baud; não selecione GS-232. AntRunner (GRBL) para o MuseLab AntRunner via serial USB a 115200 baud (sem Hamlib; aponte para o norte e nivele antes de ligar). Os protocolos série também podem usar um servidor série TCP (por exemplo ser2net) em vez de uma porta COM local.</value>
+  <data name="Settings.Rotator.TypeNote.Gs232">
+    <value>Yaesu e clones.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Spid">
+    <value>Controladores em modo SP (Rot1Prog / Rot2Prog).</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.SpidMd01">
+    <value>Ethernet nativo, protocolo SPID ROT2, porta padrão 23.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.EasyComm">
+    <value>Protocolo de texto para o modo EC da SPID, M2 e controladores semelhantes.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Saebrt">
+    <value>Interfaces clássicas de seguimento por satélite.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Urc">
+    <value>Ultimate Rotator Controller via Ethernet. Defina o modo remoto (REM).</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.GreenHeron">
+    <value>Duas portas COM, uma por eixo.</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.AntRunner">
+    <value>MuseLab AntRunner via USB. Aponte para o norte e nivele antes de ligar.</value>
   </data>
   <data name="Settings.Rotator.AzimuthOnly">
-    <value>Somente azimute (sem eixo de elevação)</value>
-  </data>
-  <data name="Settings.Rotator.AzimuthOnlyNote">
-    <value>Para controladores GS-232 que giram só em azimute, como um RTC-59 com um Emoto 1300MSA. O OscarWatch move o rotor com Maaa e lê a posição com C. Faixa de elevação, elevação de estacionamento, deslocamento de elevação e prevenção de keyhole não são usados.</value>
+    <value>Somente azimute</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Porta série de azimute</value>

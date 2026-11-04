@@ -1824,14 +1824,32 @@
   <data name="Settings.Rotator.Type">
     <value>ローテータータイプ</value>
   </data>
-  <data name="Settings.Rotator.TypeNote">
-    <value>GS-232はYaesuおよび互換機。SPIDはSPモード（Rot1Prog / Rot2Prog）。SPID MD-01 / MD-02 (TCP) はネイティブEthernet（プロトコル SPID ROT2、既定ポート23）。EasyCommはECモード（SPID、M2などのテキストプロトコルコントローラ）。SAEBRTrackは古典的な衛星トラッカーインターフェース（9600ボー）。OZ9AAR URC (TCP) は Ultimate Rotator Controller（Ethernet、既定ポート1111、URCをREM/リモートモードに設定）。Green Heron RT-21 Az-ElはCOMポートが2つ（アジマスとエレベーション）、DCU-1プロトコル4800ボー。GS-232は選ばないでください。AntRunner (GRBL) はMuseLab AntRunner（USBシリアル115200ボー、Hamlib不要。電源投入前に北へ向けて水平にしてください）。シリアルプロトコルはローカルCOMの代わりにTCPシリアルサーバー（例: ser2net）も利用できます。</value>
+  <data name="Settings.Rotator.TypeNote.Gs232">
+    <value>Yaesuおよび互換機。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Spid">
+    <value>SPモードのコントローラー（Rot1Prog / Rot2Prog）。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.SpidMd01">
+    <value>ネイティブEthernet。プロトコルは SPID ROT2、既定ポートは 23。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.EasyComm">
+    <value>SPIDのECモード、M2などのテキストプロトコル。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Saebrt">
+    <value>古典的な衛星トラッカーインターフェース。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Urc">
+    <value>Ultimate Rotator Controller（Ethernet）。リモート（REM）モードに設定してください。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.GreenHeron">
+    <value>COMポートが2つ（軸ごとに1つ）。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.AntRunner">
+    <value>MuseLab AntRunner（USB）。電源投入前に北へ向けて水平にしてください。</value>
   </data>
   <data name="Settings.Rotator.AzimuthOnly">
-    <value>アジマスのみ（エレベーション軸なし）</value>
-  </data>
-  <data name="Settings.Rotator.AzimuthOnlyNote">
-    <value>アジマスだけを回すGS-232コントローラー用です（例: Emoto 1300MSAとRTC-59）。OscarWatchはMaaaでローテーターを動かし、Cで位置を読み取ります。エレベーション範囲、パークのエレベーション、エレベーションのオフセット、キーホール回避は使用しません。</value>
+    <value>アジマスのみ</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>アジマスのシリアルポート</value>

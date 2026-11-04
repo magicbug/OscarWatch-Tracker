@@ -3132,14 +3132,32 @@
   <data name="Settings.Rotator.Type">
     <value>旋转器类型</value>
   </data>
-  <data name="Settings.Rotator.TypeNote">
-    <value>GS-232 用于 Yaesu 及兼容型号。SPID 用于 SP 模式控制器（Rot1Prog / Rot2Prog）。SPID MD-01 / MD-02 (TCP) 用于原生以太网（协议 SPID ROT2，默认端口 23）。EasyComm 用于 EC 模式（SPID、M2 及其他文本协议控制器）。SAEBRTrack 用于经典卫星跟踪接口（9600 波特）。OZ9AAR URC (TCP) 用于 Ultimate Rotator Controller（以太网，默认端口 1111；请将 URC 设为 REM/远程模式）。Green Heron RT-21 Az-El 使用两个 COM 端口（方位角与仰角），DCU-1 协议、4800 波特；请勿选择 GS-232。AntRunner (GRBL) 用于 MuseLab AntRunner（USB 串口，115200 波特，无需 Hamlib；通电前请指向正北并调平）。串口协议也可通过 TCP 串口服务器（例如 ser2net）连接，而无需本地 COM 口。</value>
+  <data name="Settings.Rotator.TypeNote.Gs232">
+    <value>用于 Yaesu 及兼容型号。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Spid">
+    <value>用于 SP 模式控制器（Rot1Prog / Rot2Prog）。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.SpidMd01">
+    <value>原生以太网，协议 SPID ROT2，默认端口 23。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.EasyComm">
+    <value>用于 SPID EC 模式、M2 及类似控制器的文本协议。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Saebrt">
+    <value>经典卫星跟踪接口。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.Urc">
+    <value>通过以太网连接 Ultimate Rotator Controller。请设为远程（REM）模式。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.GreenHeron">
+    <value>两个 COM 端口，每轴一个。</value>
+  </data>
+  <data name="Settings.Rotator.TypeNote.AntRunner">
+    <value>MuseLab AntRunner，通过 USB 连接。通电前请指向正北并调平。</value>
   </data>
   <data name="Settings.Rotator.AzimuthOnly">
-    <value>仅方位角（无仰角轴）</value>
-  </data>
-  <data name="Settings.Rotator.AzimuthOnlyNote">
-    <value>适用于只转动方位角的 GS-232 控制器，例如 RTC-59 配 Emoto 1300MSA。OscarWatch 用 Maaa 转动旋转器，用 C 读取位置。不使用仰角范围、停放仰角、仰角偏移和锁孔规避。</value>
+    <value>仅方位角</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>方位角串口</value>
