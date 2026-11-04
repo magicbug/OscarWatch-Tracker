@@ -312,8 +312,19 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     public bool IsRotatorSmartAzimuth450Enabled =>
         SelectedAzimuthRangeChoice?.Value == RotatorAzimuthRange.Deg450;
 
+    [ObservableProperty]
+    private bool _rotatorAzimuthOnly;
+
+    public bool ShowRotatorAzimuthOnlyOption =>
+        SelectedRotatorTypeChoice?.Value == RotatorType.YaesuGs232;
+
+    public bool IsRotatorAzimuthOnlyActive => ShowRotatorAzimuthOnlyOption && RotatorAzimuthOnly;
+
+    public bool ShowRotatorElevationSettings => !IsRotatorAzimuthOnlyActive;
+
     public bool IsRotatorKeyholeSettingsVisible =>
-        SelectedElevationRangeChoice?.Value == RotatorElevationRange.Deg180;
+        SelectedElevationRangeChoice?.Value == RotatorElevationRange.Deg180
+        && !IsRotatorAzimuthOnlyActive;
 
     public bool ShowRotatorTransportFields =>
         SelectedRotatorTypeChoice?.Value is not (
@@ -1289,8 +1300,10 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             AzimuthOffsetDeg = RotatorAzimuthOffsetDeg,
             ElevationOffsetDeg = RotatorElevationOffsetDeg,
             SmartAzimuth450 = RotatorSmartAzimuth450,
+            AzimuthOnly = RotatorAzimuthOnly,
             KeyholeAvoidanceEnabled = RotatorKeyholeAvoidanceEnabled
-                && SelectedElevationRangeChoice?.Value == RotatorElevationRange.Deg180,
+                && SelectedElevationRangeChoice?.Value == RotatorElevationRange.Deg180
+                && !IsRotatorAzimuthOnlyActive,
             SlewRateDegPerSec = RotatorSlewRateDegPerSec,
             KeyholeThresholdDeg = RotatorKeyholeThresholdDeg,
             MovementThresholdDeg = RotatorMovementThresholdDeg
@@ -1534,6 +1547,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             RotatorAzimuthOffsetDeg = rotator.AzimuthOffsetDeg;
             RotatorElevationOffsetDeg = rotator.ElevationOffsetDeg;
             RotatorSmartAzimuth450 = rotator.SmartAzimuth450;
+            RotatorAzimuthOnly = rotator.AzimuthOnly;
             RotatorKeyholeAvoidanceEnabled = rotator.KeyholeAvoidanceEnabled;
             RotatorSlewRateDegPerSec = rotator.SlewRateDegPerSec;
             RotatorKeyholeThresholdDeg = rotator.KeyholeThresholdDeg;
@@ -2330,7 +2344,18 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRotatorUrcNetworkNote));
         OnPropertyChanged(nameof(ShowRotatorSpidMd01NetworkNote));
         OnPropertyChanged(nameof(ShowRotatorTcpSerialNetworkNote));
+        NotifyRotatorAzimuthOnlyVisibility();
     }
+
+    private void NotifyRotatorAzimuthOnlyVisibility()
+    {
+        OnPropertyChanged(nameof(ShowRotatorAzimuthOnlyOption));
+        OnPropertyChanged(nameof(IsRotatorAzimuthOnlyActive));
+        OnPropertyChanged(nameof(ShowRotatorElevationSettings));
+        OnPropertyChanged(nameof(IsRotatorKeyholeSettingsVisible));
+    }
+
+    partial void OnRotatorAzimuthOnlyChanged(bool value) => NotifyRotatorAzimuthOnlyVisibility();
 
     private static int ResolveRotatorNetworkPortForSave(RotatorType type, int port)
     {

@@ -45,6 +45,12 @@ public sealed class RotatorSettings
     /// <summary>TCP port for URC, SPID MD-01, or TCP serial. URC default is 1111; MD-01 default is 23.</summary>
     public int NetworkPort { get; set; } = DefaultNetworkPort;
 
+    /// <summary>
+    /// GS-232 controller with no elevation axis: sends <c>Maaa</c> and reads position with <c>C</c>.
+    /// Ignored for other rotator types; use <see cref="IsAzimuthOnly"/>.
+    /// </summary>
+    public bool AzimuthOnly { get; set; }
+
     public RotatorAzimuthRange AzimuthRange { get; set; } = RotatorAzimuthRange.Deg450;
     public RotatorElevationRange ElevationRange { get; set; } = RotatorElevationRange.Deg180;
     /// <summary>Start slewing when satellite elevation reaches this value while approaching.</summary>
@@ -109,6 +115,9 @@ public sealed class RotatorSettings
 
     public double MaxAzimuthDeg => (double)AzimuthRange;
     public double MaxElevationDeg => (double)ElevationRange;
+
+    /// <summary>True when the rotator has no elevation axis (GS-232 with <see cref="AzimuthOnly"/>).</summary>
+    public bool IsAzimuthOnly => AzimuthOnly && Type == RotatorType.YaesuGs232;
 
     /// <summary>True when this type always uses two local serial ports (azimuth + elevation).</summary>
     public bool UsesDualSerialPorts => Type == RotatorType.GreenHeronRt21;

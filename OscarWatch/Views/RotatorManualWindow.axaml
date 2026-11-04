@@ -32,7 +32,7 @@
     </StackPanel>
 
     <StackPanel Spacing="12">
-      <TextBlock Text="Manual rotator control"
+      <TextBlock Text="{loc:Localize Key=Window.RotatorManual.Title}"
                  FontSize="16"
                  FontWeight="SemiBold" />
       <TextBlock TextWrapping="Wrap"
@@ -44,15 +44,16 @@
                  FontFamily="Consolas,Courier New,monospace" />
       <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
         <StackPanel Grid.Column="0" Spacing="4">
-          <TextBlock Text="Azimuth (°)" />
+          <TextBlock Text="{loc:Localize Key=RotatorManual.Azimuth}" />
           <NumericUpDown Value="{Binding AzimuthDeg, Mode=TwoWay}"
                          Minimum="0"
                          Maximum="{Binding MaxAzimuthDeg}"
                          Increment="1"
                          FormatString="F0" />
         </StackPanel>
-        <StackPanel Grid.Column="1" Spacing="4">
-          <TextBlock Text="Elevation (°)" />
+        <StackPanel Grid.Column="1" Spacing="4"
+                    IsVisible="{Binding ShowElevation}">
+          <TextBlock Text="{loc:Localize Key=RotatorManual.Elevation}" />
           <NumericUpDown Value="{Binding ElevationDeg, Mode=TwoWay}"
                          Minimum="0"
                          Maximum="{Binding MaxElevationDeg}"

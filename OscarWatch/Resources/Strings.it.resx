@@ -2311,6 +2311,24 @@ Continuare?</value>
   <data name="DopplerInsights.Phase.Summary">
     <value>Errore p95 downlink {0} Hz · scritture CAT {1}% · variazione massima {2} Hz/s · elevazione massima {3}°</value>
   </data>
+  <data name="RotatorManual.Azimuth">
+    <value>Azimut (°)</value>
+  </data>
+  <data name="RotatorManual.Elevation">
+    <value>Elevazione (°)</value>
+  </data>
+  <data name="RotatorManual.NotConnected">
+    <value>Non connesso</value>
+  </data>
+  <data name="RotatorManual.PositionUnknown">
+    <value>Posizione sconosciuta</value>
+  </data>
+  <data name="RotatorManual.PositionAzEl">
+    <value>Az {0} · El {1}</value>
+  </data>
+  <data name="RotatorManual.PositionAzimuth">
+    <value>Az {0}</value>
+  </data>
   <data name="Window.RotatorManual.Title">
     <value>Controllo manuale del rotore</value>
   </data>
@@ -3120,6 +3138,12 @@ Continuare?</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
     <value>GS-232 per Yaesu e cloni. SPID per controller in modalità SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) per Ethernet nativo (protocollo SPID ROT2, porta predefinita 23). EasyComm per modalità EC (SPID, M2 e altri controller con protocollo testuale). SAEBRTrack per le interfacce classiche di inseguimento satellitare (9600 baud). OZ9AAR URC (TCP) per Ultimate Rotator Controller via Ethernet (porta predefinita 1111; imposta URC in modalità REM/remota). Green Heron RT-21 Az-El usa due porte COM (azimut ed elevazione), protocollo DCU-1 a 4800 baud; non selezionare GS-232. AntRunner (GRBL) per il MuseLab AntRunner via seriale USB a 115200 baud (Hamlib non serve; orientalo a nord e mettilo in bolla prima di accenderlo). I protocolli seriali possono usare anche un server seriale TCP (ad esempio ser2net) al posto di una porta COM locale.</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnly">
+    <value>Solo azimut (senza asse di elevazione)</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnlyNote">
+    <value>Per controller GS-232 che ruotano solo in azimut, come un RTC-59 con un Emoto 1300MSA. OscarWatch muove il rotore con Maaa e legge la posizione con C. Intervallo di elevazione, elevazione di parcheggio, offset di elevazione ed evitamento del keyhole non vengono usati.</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Porta seriale azimut</value>

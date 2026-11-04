@@ -1827,6 +1827,12 @@
   <data name="Settings.Rotator.TypeNote">
     <value>GS-232はYaesuおよび互換機。SPIDはSPモード（Rot1Prog / Rot2Prog）。SPID MD-01 / MD-02 (TCP) はネイティブEthernet（プロトコル SPID ROT2、既定ポート23）。EasyCommはECモード（SPID、M2などのテキストプロトコルコントローラ）。SAEBRTrackは古典的な衛星トラッカーインターフェース（9600ボー）。OZ9AAR URC (TCP) は Ultimate Rotator Controller（Ethernet、既定ポート1111、URCをREM/リモートモードに設定）。Green Heron RT-21 Az-ElはCOMポートが2つ（アジマスとエレベーション）、DCU-1プロトコル4800ボー。GS-232は選ばないでください。AntRunner (GRBL) はMuseLab AntRunner（USBシリアル115200ボー、Hamlib不要。電源投入前に北へ向けて水平にしてください）。シリアルプロトコルはローカルCOMの代わりにTCPシリアルサーバー（例: ser2net）も利用できます。</value>
   </data>
+  <data name="Settings.Rotator.AzimuthOnly">
+    <value>アジマスのみ（エレベーション軸なし）</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnlyNote">
+    <value>アジマスだけを回すGS-232コントローラー用です（例: Emoto 1300MSAとRTC-59）。OscarWatchはMaaaでローテーターを動かし、Cで位置を読み取ります。エレベーション範囲、パークのエレベーション、エレベーションのオフセット、キーホール回避は使用しません。</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>アジマスのシリアルポート</value>
   </data>
@@ -3641,6 +3647,24 @@
   </data>
   <data name="DopplerInsights.Phase.Summary">
     <value>ダウンリンク誤差 p95 {0} Hz · CAT書き込み {1}% · ピークスルー {2} Hz/s · 最大仰角 {3}°</value>
+  </data>
+  <data name="RotatorManual.Azimuth">
+    <value>アジマス (°)</value>
+  </data>
+  <data name="RotatorManual.Elevation">
+    <value>エレベーション (°)</value>
+  </data>
+  <data name="RotatorManual.NotConnected">
+    <value>未接続</value>
+  </data>
+  <data name="RotatorManual.PositionUnknown">
+    <value>位置不明</value>
+  </data>
+  <data name="RotatorManual.PositionAzEl">
+    <value>Az {0} · El {1}</value>
+  </data>
+  <data name="RotatorManual.PositionAzimuth">
+    <value>Az {0}</value>
   </data>
   <data name="Window.RotatorManual.Title">
     <value>手動ローテーター操作</value>

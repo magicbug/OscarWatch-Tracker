@@ -984,6 +984,14 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Rotator.TypeNote}" />
+            <StackPanel Spacing="4" IsVisible="{Binding ShowRotatorAzimuthOnlyOption}">
+              <CheckBox Content="{loc:Localize Key=Settings.Rotator.AzimuthOnly}"
+                        IsChecked="{Binding RotatorAzimuthOnly, Mode=TwoWay}" />
+              <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                         FontSize="11"
+                         TextWrapping="Wrap"
+                         Text="{loc:Localize Key=Settings.Rotator.AzimuthOnlyNote}" />
+            </StackPanel>
             <StackPanel Spacing="10" IsVisible="{Binding ShowRotatorTransportFields}">
               <TextBlock Text="{loc:Localize Key=Settings.Rotator.Transport}" />
               <ComboBox ItemsSource="{Binding RotatorTransportChoices}"
@@ -1106,20 +1114,22 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Rotator.SmartAzimuthNote}" />
-            <TextBlock Text="{loc:Localize Key=Settings.Rotator.ElevationRange}" />
-            <ComboBox ItemsSource="{Binding ElevationRangeChoices}"
-                      SelectedItem="{Binding SelectedElevationRangeChoice, Mode=TwoWay}"
-                      HorizontalAlignment="Stretch">
-              <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:RotatorElevationOption">
-                  <TextBlock Text="{Binding Label}" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                       FontSize="11"
-                       TextWrapping="Wrap"
-                       Text="{loc:Localize Key=Settings.Rotator.ElevationRangeNote}" />
+            <StackPanel Spacing="10" IsVisible="{Binding ShowRotatorElevationSettings}">
+              <TextBlock Text="{loc:Localize Key=Settings.Rotator.ElevationRange}" />
+              <ComboBox ItemsSource="{Binding ElevationRangeChoices}"
+                        SelectedItem="{Binding SelectedElevationRangeChoice, Mode=TwoWay}"
+                        HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:RotatorElevationOption">
+                    <TextBlock Text="{Binding Label}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                         FontSize="11"
+                         TextWrapping="Wrap"
+                         Text="{loc:Localize Key=Settings.Rotator.ElevationRangeNote}" />
+            </StackPanel>
             <TextBlock Text="Tracking" Margin="0,12,0,0" FontWeight="SemiBold" FontSize="13" />
             <TextBlock Text="{loc:Localize Key=Settings.Rotator.TrackStart}" Margin="0,8,0,0" />
             <NumericUpDown Value="{Binding RotatorTrackStartElevationDeg, Mode=TwoWay}"
@@ -1145,7 +1155,8 @@
                                Minimum="0" Maximum="450"
                                Increment="1" FormatString="F0" />
               </StackPanel>
-              <StackPanel Grid.Column="1" Spacing="4">
+              <StackPanel Grid.Column="1" Spacing="4"
+                          IsVisible="{Binding ShowRotatorElevationSettings}">
                 <TextBlock Text="{loc:Localize Key=Settings.Rotator.ParkElevation}" />
                 <NumericUpDown Value="{Binding RotatorParkElevationDeg, Mode=TwoWay}"
                                Minimum="0" Maximum="180"
@@ -1167,7 +1178,8 @@
                                Minimum="-180" Maximum="180"
                                Increment="0.1" FormatString="F1" />
               </StackPanel>
-              <StackPanel Grid.Column="1" Spacing="4">
+              <StackPanel Grid.Column="1" Spacing="4"
+                          IsVisible="{Binding ShowRotatorElevationSettings}">
                 <TextBlock Text="{loc:Localize Key=Settings.Rotator.ElevationOffset}" />
                 <NumericUpDown Value="{Binding RotatorElevationOffsetDeg, Mode=TwoWay}"
                                Minimum="-45" Maximum="45"

@@ -51,6 +51,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
     private int _connectedNetworkPort;
     private bool _connectedUsesNetworkEndpoint;
     private RotatorType _connectedType;
+    private bool _connectedAzimuthOnly;
     private string? _lastTargetNoradId;
     private double? _lastAzimuth;
     private double? _lastElevation;
@@ -433,7 +434,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
                 // FlippedStart keeps the mirrored command for the whole pass, including
                 // from AOS, so the pre-position slew is not undone below the keyhole threshold.
                 var el = lookAngles.ElevationDeg;
-                if (ShouldTrackFlipped())
+                if (!settings.IsAzimuthOnly && ShouldTrackFlipped())
                 {
                     az = RotatorAzimuthPlanner.Normalize360(az + 180.0);
                     el = FlippedElevationDeg(el, settings.MaxElevationDeg);
@@ -532,11 +533,13 @@ public sealed class RotatorController : IRotatorController, IDisposable
             return;
 
         var (az, el) = RotatorCalibration.ApplyOffsets(azimuthDeg, elevationDeg, settings);
+        if (settings.IsAzimuthOnly)
+            el = 0;
 
         _standbyManualActive = true;
         _parked = false;
         _displayCommandedAzimuth = (int)Math.Round(az);
-        _displayCommandedElevation = (int)Math.Round(el);
+        _displayCommandedElevation = settings.IsAzimuthOnly ? null : (int)Math.Round(el);
         _displayCompassAzimuth = (int)Math.Round(RotatorAzimuthPlanner.Normalize360(az));
 
         try
@@ -628,6 +631,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         _connectedNetworkPort = 0;
         _connectedUsesNetworkEndpoint = false;
         _connectedType = default;
+        _connectedAzimuthOnly = false;
     }
 
     private void ResetTrackingState()
@@ -689,6 +693,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         _keyholeFlippedActive = false;
 
         if (!settings.KeyholeAvoidanceEnabled
+            || settings.IsAzimuthOnly
             || settings.ElevationRange != RotatorElevationRange.Deg180
             || _propagator is null
             || _activePassInfo is null)
@@ -753,7 +758,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
     private bool TryHandleKeyholePrePosition(RotatorSettings settings, SatelliteTrackState? target)
     {
         // Only applies if we have a flipped plan with pre-position data
-        if (_keyholePlan?.Strategy != KeyholeStrategy.FlippedStart
+        if (settings.IsAzimuthOnly
+            || _keyholePlan?.Strategy != KeyholeStrategy.FlippedStart
             || _keyholePlan.FlippedStartAzimuthDeg is null
             || _keyholePlan.PrePositionLeadTime is null
             || _activePassInfo is null)
@@ -836,6 +842,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         if (_rotator is not null
             && _connectedType == settings.Type
             && _connectedUsesNetworkEndpoint == settings.UsesNetworkEndpoint
+            && _connectedAzimuthOnly == settings.IsAzimuthOnly
             && ConnectionIdentityMatches(settings))
             return true;
 
@@ -854,6 +861,13 @@ public sealed class RotatorController : IRotatorController, IDisposable
             _connectedNetworkPort = settings.NetworkPort;
             _connectedUsesNetworkEndpoint = settings.UsesNetworkEndpoint;
             _connectedType = settings.Type;
+            _connectedAzimuthOnly = settings.IsAzimuthOnly;
+            if (_connectedAzimuthOnly)
+            {
+                _displayElevation = null;
+                _displayCommandedElevation = null;
+            }
+
             _connectFailureLog.Reset();
             return true;
         }
@@ -908,10 +922,12 @@ public sealed class RotatorController : IRotatorController, IDisposable
 
         var commandAzInput = RotatorCalibration.ApplyAzimuthOffset(azimuthDeg, settings)
             ?? RotatorAzimuthPlanner.Normalize360(azimuthDeg);
-        var commandEl = Math.Clamp(
-            elevationDeg + settings.ElevationOffsetDeg,
-            0,
-            settings.MaxElevationDeg);
+        var commandEl = settings.IsAzimuthOnly
+            ? 0
+            : Math.Clamp(
+                elevationDeg + settings.ElevationOffsetDeg,
+                0,
+                settings.MaxElevationDeg);
         var aheadForPlanner = RotatorCalibration.ApplyAzimuthOffset(aheadAzimuthDeg, settings);
         var remainingPathCrossesNorth = false;
         if (_activePassInfo is not null)
@@ -935,7 +951,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
             : commandAzInput;
 
         _displayCommandedAzimuth = (int)Math.Round(commandAz);
-        _displayCommandedElevation = (int)Math.Round(commandEl);
+        _displayCommandedElevation = settings.IsAzimuthOnly ? null : (int)Math.Round(commandEl);
         _displayCompassAzimuth = (int)Math.Round(RotatorAzimuthPlanner.Normalize360(azimuthDeg));
 
         var send = _lastAzimuth is null || _lastElevation is null
@@ -973,7 +989,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
             return;
 
         var az = settings.ParkAzimuthDeg;
-        var el = settings.ParkElevationDeg;
+        var el = settings.IsAzimuthOnly ? 0 : settings.ParkElevationDeg;
         if (_parked && !force && !HasOutstandingArrivalError(settings, az, el))
             return;
 
@@ -1048,7 +1064,9 @@ public sealed class RotatorController : IRotatorController, IDisposable
             _stillSlewing = MovedSinceLastPoll(_displayAzimuth, az) || MovedSinceLastPoll(_displayElevation, el);
             if (az is not null)
                 _displayAzimuth = az;
-            if (el is not null)
+            if (_connectedAzimuthOnly)
+                _displayElevation = null;
+            else if (el is not null)
                 _displayElevation = el;
         }
         catch (Exception ex)

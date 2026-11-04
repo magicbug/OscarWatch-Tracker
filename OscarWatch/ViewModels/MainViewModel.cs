@@ -129,6 +129,9 @@ public partial class MainViewModel : ViewModelBase
     private string _rotatorElevationText = "—";
 
     [ObservableProperty]
+    private bool _showRotatorElevation = true;
+
+    [ObservableProperty]
     private string _rotatorLinkStatusText = "";
 
     [ObservableProperty]
@@ -1421,6 +1424,7 @@ public partial class MainViewModel : ViewModelBase
         }
 
         ShowRotatorStatus = true;
+        ShowRotatorElevation = !_settings.Current.Rotator.IsAzimuthOnly;
         var status = _rotator.GetPositionStatus();
         RotatorAzimuthText = FormatRotatorAzimuthText(status);
         RotatorElevationText = FormatRotatorElevationText(status);

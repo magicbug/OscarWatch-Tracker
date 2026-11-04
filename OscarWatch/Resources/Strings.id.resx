@@ -2311,6 +2311,24 @@ Lanjutkan?</value>
   <data name="DopplerInsights.Phase.Summary">
     <value>Galat downlink p95 {0} Hz · tulis CAT {1}% · peak slew {2} Hz/s · elevasi maks {3}°</value>
   </data>
+  <data name="RotatorManual.Azimuth">
+    <value>Azimut (°)</value>
+  </data>
+  <data name="RotatorManual.Elevation">
+    <value>Elevasi (°)</value>
+  </data>
+  <data name="RotatorManual.NotConnected">
+    <value>Tidak terhubung</value>
+  </data>
+  <data name="RotatorManual.PositionUnknown">
+    <value>Posisi tidak diketahui</value>
+  </data>
+  <data name="RotatorManual.PositionAzEl">
+    <value>Az {0} · El {1}</value>
+  </data>
+  <data name="RotatorManual.PositionAzimuth">
+    <value>Az {0}</value>
+  </data>
   <data name="Window.RotatorManual.Title">
     <value>Kontrol rotator manual</value>
   </data>
@@ -3120,6 +3138,12 @@ Lanjutkan?</value>
   </data>
   <data name="Settings.Rotator.TypeNote">
     <value>GS-232 untuk Yaesu dan klon. SPID untuk pengontrol mode SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) untuk Ethernet bawaan (protokol SPID ROT2, port bawaan 23). EasyComm untuk mode EC (SPID, M2, dan pengontrol protokol teks lain). SAEBRTrack untuk antarmuka pelacak satelit klasik (9600 baud). OZ9AAR URC (TCP) untuk Ultimate Rotator Controller lewat Ethernet (port bawaan 1111; setel URC ke mode REM/remote). Green Heron RT-21 Az-El memakai dua port COM (azimut dan elevasi), protokol DCU-1 pada 4800 baud; jangan pilih GS-232. AntRunner (GRBL) untuk MuseLab AntRunner lewat serial USB pada 115200 baud (tanpa Hamlib; arahkan ke utara dan datarkan sebelum dinyalakan). Protokol serial juga bisa memakai server serial TCP (mis. ser2net) alih-alih port COM lokal.</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnly">
+    <value>Hanya azimut (tanpa sumbu elevasi)</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnlyNote">
+    <value>Untuk pengontrol GS-232 yang hanya memutar azimut, seperti RTC-59 dengan Emoto 1300MSA. OscarWatch menggerakkan rotator dengan Maaa dan membaca posisi dengan C. Rentang elevasi, elevasi parkir, offset elevasi, dan penghindaran keyhole tidak dipakai.</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Port serial azimut</value>

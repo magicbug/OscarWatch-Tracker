@@ -467,7 +467,8 @@
                                    HorizontalAlignment="Center"
                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
                       </StackPanel>
-                      <StackPanel Grid.Column="1" Spacing="2" HorizontalAlignment="Center">
+                      <StackPanel Grid.Column="1" Spacing="2" HorizontalAlignment="Center"
+                                  IsVisible="{Binding ShowRotatorElevation}">
                         <TextBlock Text="{Binding RotatorElevationText}"
                                    FontSize="18"
                                    FontWeight="SemiBold"

@@ -47,7 +47,7 @@ Reference implementations:
 
 | Driver | Protocol | File |
 |--------|----------|------|
-| Yaesu GS-232 / clones | `Waaa eee`, queries `C2`/`C`/`B` | [`Gs232Rotator.cs`](../OscarWatch/Rotator/Gs232Rotator.cs) |
+| Yaesu GS-232 / clones | `Waaa eee`, queries `C2`/`C`/`B`. With `RotatorSettings.AzimuthOnly` (azimuth-only controllers such as the RTC-59): `Maaa`, queries `C` only, elevation always null | [`Gs232Rotator.cs`](../OscarWatch/Rotator/Gs232Rotator.cs) |
 | EasyComm II | `AZ120.5 EL45.0` (LF-terminated) | [`EasyCommRotator.cs`](../OscarWatch/Rotator/EasyCommRotator.cs) |
 | SAEBRTrack | `AZ120EL045` compact whole degrees (LF-terminated); fire-and-forget — `GetPosition` returns nulls (no wire queries) | [`SaebrtRotator.cs`](../OscarWatch/Rotator/SaebrtRotator.cs) |
 | SPID Rot1Prog / Rot2Prog | 13-byte binary packets (stop/status/set); no reply to set on classic hardware | [`SpidRotator.cs`](../OscarWatch/Rotator/SpidRotator.cs) |

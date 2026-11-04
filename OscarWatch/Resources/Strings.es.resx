@@ -2307,6 +2307,24 @@
   <data name="Window.Sunlight.Title">
     <value>Predicción de iluminación solar</value>
   </data>
+  <data name="RotatorManual.Azimuth">
+    <value>Acimut (°)</value>
+  </data>
+  <data name="RotatorManual.Elevation">
+    <value>Elevación (°)</value>
+  </data>
+  <data name="RotatorManual.NotConnected">
+    <value>No conectado</value>
+  </data>
+  <data name="RotatorManual.PositionUnknown">
+    <value>Posición desconocida</value>
+  </data>
+  <data name="RotatorManual.PositionAzEl">
+    <value>Az {0} · El {1}</value>
+  </data>
+  <data name="RotatorManual.PositionAzimuth">
+    <value>Az {0}</value>
+  </data>
   <data name="Window.RotatorManual.Title">
     <value>Control manual del rotor</value>
   </data>
@@ -3116,6 +3134,12 @@
   </data>
   <data name="Settings.Rotator.TypeNote">
     <value>GS-232 para Yaesu y clones. SPID para controladores en modo SP (Rot1Prog / Rot2Prog). SPID MD-01 / MD-02 (TCP) para Ethernet nativo (protocolo SPID ROT2, puerto 23). EasyComm para modo EC (SPID, M2 y otros controladores con protocolo de texto). SAEBRTrack para interfaces clásicas de seguimiento por satélite (9600 baudios). OZ9AAR URC (TCP) para Ultimate Rotator Controller por Ethernet (puerto 1111; modo REM/remoto). Green Heron RT-21 Az-El usa dos puertos COM (acimut y elevación), protocolo DCU-1 a 4800 baudios; no elija GS-232. AntRunner (GRBL) para el MuseLab AntRunner por serie USB a 115200 baudios (no necesita Hamlib; oriéntelo al norte y nivélelo antes de encenderlo). Los protocolos serie también pueden usar un servidor serie TCP (p. ej. ser2net) en lugar de un puerto COM local.</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnly">
+    <value>Solo acimut (sin eje de elevación)</value>
+  </data>
+  <data name="Settings.Rotator.AzimuthOnlyNote">
+    <value>Para controladores GS-232 que solo giran en acimut, como un RTC-59 con un Emoto 1300MSA. OscarWatch mueve el rotor con Maaa y lee la posición con C. No se usan el rango de elevación, la elevación de reposo, el ajuste de elevación ni la evitación del keyhole.</value>
   </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Puerto serie de acimut</value>
