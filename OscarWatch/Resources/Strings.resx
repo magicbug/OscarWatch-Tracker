@@ -4695,6 +4695,21 @@ Latest: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Decibels above the automatic noise floor. A smaller range makes signals stand out more. Default is 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>Waterfall speed</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>How quickly new lines are added. A slower speed keeps more of the pass on screen, so weak traces stay visible longer, and the spectrum is built less often. Fast is the original speed.</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>Slow ({0} s)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>Medium ({0} s)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>Fast ({0} s)</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>Calling me</value>
   </data>

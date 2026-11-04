@@ -27,6 +27,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     private readonly Ft4ModemService _modem;
     private readonly IQsoLogbookRepository _logbook;
     private readonly DispatcherTimer _uiTimer;
+    private int _waterfallTicksSinceRow;
     private bool _disposed;
     private bool _loadingDevices;
     private bool _loadingEchoCalibration;
@@ -67,6 +68,19 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             new PttLineOption(PttLine.Dtr, _l.Get("Ft4.Ptt.Dtr")),
         ];
 
+        WaterfallSpeedOptions =
+        [
+            new Ft4WaterfallSpeedOption(
+                Ft4Settings.SlowWaterfallSpeed,
+                WaterfallSpeedLabel("Ft4.WaterfallSpeed.Slow", Ft4Settings.SlowWaterfallSpeed)),
+            new Ft4WaterfallSpeedOption(
+                Ft4Settings.MediumWaterfallSpeed,
+                WaterfallSpeedLabel("Ft4.WaterfallSpeed.Medium", Ft4Settings.MediumWaterfallSpeed)),
+            new Ft4WaterfallSpeedOption(
+                Ft4Settings.FastWaterfallSpeed,
+                WaterfallSpeedLabel("Ft4.WaterfallSpeed.Fast", Ft4Settings.FastWaterfallSpeed)),
+        ];
+
         var ft4 = _settings.Current.Ft4;
         _skipRrr = ft4.SkipRrr;
         _apEnabled = ft4.ApEnabled;
@@ -97,6 +111,15 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _pttTailMs = Math.Clamp(ft4.PttTailMs, 0, 2000);
         _decodeFontSize = Math.Clamp(ft4.DecodeFontSize, 10, 28);
         _waterfallRangeDb = Ft4Settings.ClampWaterfallRangeDb(ft4.WaterfallRangeDb);
+        var waterfallSpeed = Ft4Settings.ClampWaterfallSpeed(ft4.WaterfallSpeed);
+        if (waterfallSpeed != ft4.WaterfallSpeed)
+        {
+            ft4.WaterfallSpeed = waterfallSpeed;
+            _settings.RequestSave();
+        }
+
+        _selectedWaterfallSpeed = WaterfallSpeedOptions.First(o => o.Value == waterfallSpeed);
+        _waterfallTicksSinceRow = Ft4Settings.WaterfallTicksPerRow(waterfallSpeed) - 1;
         _callingMeColour = Ft4DecodeHighlight.NormalizeColour(ft4.CallingMeColour)
             ?? Ft4DecodeHighlight.DefaultCallingMeColour;
         _replyingColour = Ft4DecodeHighlight.NormalizeColour(ft4.ReplyingColour)
@@ -138,7 +161,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _logbook.QsosChanged += OnLogbookQsosChanged;
         _ = RefreshWorkedSetsAsync();
 
-        _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+        _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(Ft4Settings.WaterfallUiTickMs) };
         _uiTimer.Tick += (_, _) => RefreshUiTick();
         SlotPeriodLabel = _l.Get("Ft4.Slot.Rx");
         SlotProgressText = "0%";
@@ -164,6 +187,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<PttMethodOption> PttMethodOptions { get; }
 
     public IReadOnlyList<PttLineOption> PttLineOptions { get; }
+
+    public IReadOnlyList<Ft4WaterfallSpeedOption> WaterfallSpeedOptions { get; }
 
     public string StationCallsign =>
         Ft4MessageCodec.NormalizeCall(_settings.Current.GroundStation.Callsign ?? "");
@@ -247,6 +272,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private double _decodeFontSize = 12;
 
     [ObservableProperty] private double _waterfallRangeDb = Ft4Settings.DefaultWaterfallRangeDb;
+
+    [ObservableProperty] private Ft4WaterfallSpeedOption? _selectedWaterfallSpeed;
     [ObservableProperty] private string _callingMeColour = Ft4DecodeHighlight.DefaultCallingMeColour;
     [ObservableProperty] private string _replyingColour = Ft4DecodeHighlight.DefaultReplyingColour;
     [ObservableProperty] private string _newCallColour = Ft4DecodeHighlight.DefaultNewCallColour;
@@ -492,6 +519,23 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.Current.Ft4.WaterfallRangeDb = clamped;
         _settings.RequestSave();
     }
+
+    partial void OnSelectedWaterfallSpeedChanged(Ft4WaterfallSpeedOption? value)
+    {
+        if (value is null)
+            return;
+
+        var speed = Ft4Settings.ClampWaterfallSpeed(value.Value);
+        _waterfallTicksSinceRow = Ft4Settings.WaterfallTicksPerRow(speed) - 1;
+        if (_settings.Current.Ft4.WaterfallSpeed == speed)
+            return;
+
+        _settings.Current.Ft4.WaterfallSpeed = speed;
+        _settings.RequestSave();
+    }
+
+    private string WaterfallSpeedLabel(string key, int speed) =>
+        _l.Get(key, Ft4Settings.WaterfallHistorySeconds(speed, Ft4WaterfallControl.HistoryRows));
 
     partial void OnCallingMeColourChanged(string value) =>
         CommitDecodeColour(
@@ -1745,9 +1789,16 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 ? _l.Get("Ft4.Waterfall.Listening")
                 : _l.Get("Ft4.Waterfall.ListeningSat", sat);
 
-            var bins = new float[Ft4WaterfallControl.SpectrumColumns];
-            if (_modem.TryBuildSpectrum(bins))
-                SpectrumBins = bins;
+            var speed = Ft4Settings.ClampWaterfallSpeed(
+                SelectedWaterfallSpeed?.Value ?? Ft4Settings.DefaultWaterfallSpeed);
+            _waterfallTicksSinceRow++;
+            if (_waterfallTicksSinceRow >= Ft4Settings.WaterfallTicksPerRow(speed))
+            {
+                _waterfallTicksSinceRow = 0;
+                var bins = new float[Ft4WaterfallControl.SpectrumColumns];
+                if (_modem.TryBuildSpectrum(bins))
+                    SpectrumBins = bins;
+            }
         }
 
         TxPlaybackPeakPercent = Math.Clamp(_modem.TxPlaybackPeak * 100.0, 0, 100);
@@ -1764,6 +1815,11 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _logbook.QsosChanged -= OnLogbookQsosChanged;
         _ = StopSessionAsync();
     }
+}
+
+public sealed record Ft4WaterfallSpeedOption(int Value, string Label)
+{
+    public override string ToString() => Label;
 }
 
 public sealed record PttMethodOption(PttMethod Value, string Label)

@@ -4695,6 +4695,21 @@
   <data name="Ft4.WaterfallRange.Note">
     <value>自动噪声底之上显示的分贝数。范围越小，信号越突出。默认值为 40 dB。</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>瀑布图速度</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>新行加入的快慢。较慢时屏幕上保留更长的过境时间，弱信号痕迹停留更久，频谱计算也更少。快是原来的速度。</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>慢（{0} 秒）</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>中（{0} 秒）</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>快（{0} 秒）</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>呼叫我</value>
   </data>

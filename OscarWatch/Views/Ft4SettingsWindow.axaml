@@ -319,6 +319,18 @@
             </Grid>
             <TextBlock Classes="ft4-note"
                        Text="{loc:Localize Key=Ft4.WaterfallRange.Note}" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <TextBlock Grid.Column="0"
+                         Text="{loc:Localize Key=Ft4.WaterfallSpeed}"
+                         VerticalAlignment="Center" />
+              <ComboBox Grid.Column="1"
+                        ItemsSource="{Binding WaterfallSpeedOptions}"
+                        SelectedItem="{Binding SelectedWaterfallSpeed}"
+                        HorizontalAlignment="Stretch"
+                        MinWidth="220" />
+            </Grid>
+            <TextBlock Classes="ft4-note"
+                       Text="{loc:Localize Key=Ft4.WaterfallSpeed.Note}" />
 
             <Separator Classes="ft4-rule" />
             <TextBlock Classes="ft4-section"

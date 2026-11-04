@@ -4699,6 +4699,21 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Dezibel über dem automatisch nachgeführten Rauschboden. Ein kleinerer Bereich hebt Signale stärker hervor. Voreinstellung ist 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>Wasserfall-Geschwindigkeit</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>Wie schnell neue Zeilen hinzukommen. Eine langsamere Geschwindigkeit hält mehr vom Durchgang auf dem Bildschirm, schwache Spuren bleiben länger sichtbar, und das Spektrum wird seltener berechnet. Schnell ist die ursprüngliche Geschwindigkeit.</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>Langsam ({0} s)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>Mittel ({0} s)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>Schnell ({0} s)</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>Ruft mich</value>
   </data>

@@ -4699,6 +4699,21 @@ LOS: {2}
   <data name="Ft4.WaterfallRange.Note">
     <value>Децибелы над автоматически определяемым уровнем шума. Меньший диапазон делает сигналы заметнее. По умолчанию 40 дБ.</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>Скорость водопада</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>Как быстро добавляются новые строки. При меньшей скорости на экране остаётся большая часть прохода, слабые следы видны дольше, а спектр считается реже. Значение «Быстро» соответствует исходной скорости.</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>Медленно ({0} с)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>Средне ({0} с)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>Быстро ({0} с)</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>Вызывает меня</value>
   </data>

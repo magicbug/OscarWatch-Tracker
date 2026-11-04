@@ -4699,6 +4699,21 @@ LOS: {2}
   <data name="Ft4.WaterfallRange.Note">
     <value>จำนวนเดซิเบลเหนือพื้นสัญญาณรบกวนที่ติดตามอัตโนมัติ ช่วงที่แคบลงทำให้สัญญาณเด่นขึ้น ค่าเริ่มต้นคือ 40 dB</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>ความเร็ววอเตอร์ฟอล</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>ความเร็วในการเพิ่มแถวใหม่ ความเร็วที่ช้ากว่าจะคงภาพบนจอนานขึ้น ร่องรอยสัญญาณอ่อนจะมองเห็นนานขึ้น และคำนวณสเปกตรัมน้อยลง เร็วคือความเร็วเดิม</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>ช้า ({0} วิ)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>ปานกลาง ({0} วิ)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>เร็ว ({0} วิ)</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>เรียกฉัน</value>
   </data>

@@ -4699,6 +4699,21 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Desibel di atas lantai derau otomatis. Rentang yang lebih kecil membuat sinyal lebih menonjol. Bawaan adalah 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>Kecepatan waterfall</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>Seberapa cepat baris baru ditambahkan. Kecepatan lebih lambat menampilkan lebih banyak lintasan di layar, jejak lemah tetap terlihat lebih lama, dan spektrum dihitung lebih jarang. Cepat adalah kecepatan semula.</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>Lambat ({0} dtk)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>Sedang ({0} dtk)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>Cepat ({0} dtk)</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>Memanggil saya</value>
   </data>

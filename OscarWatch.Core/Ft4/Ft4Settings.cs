@@ -174,6 +174,54 @@ public sealed class Ft4Settings
     public static double ClampWaterfallRangeDb(double value) =>
         Math.Clamp(value, MinWaterfallRangeDb, MaxWaterfallRangeDb);
 
+    /// <summary>Slowest waterfall scroll. About 48 seconds stay on screen.</summary>
+    public const int SlowWaterfallSpeed = 1;
+
+    /// <summary>Middle waterfall scroll. About 24 seconds stay on screen.</summary>
+    public const int MediumWaterfallSpeed = 2;
+
+    /// <summary>Original waterfall scroll. About 12 seconds stay on screen.</summary>
+    public const int FastWaterfallSpeed = 3;
+
+    public const int DefaultWaterfallSpeed = FastWaterfallSpeed;
+
+    public const int MinWaterfallSpeed = SlowWaterfallSpeed;
+
+    public const int MaxWaterfallSpeed = FastWaterfallSpeed;
+
+    /// <summary>
+    /// FT4 window refresh, in milliseconds. Waterfall speed counts these ticks.
+    /// The slot clock uses the same timer.
+    /// </summary>
+    public const int WaterfallUiTickMs = 100;
+
+    /// <summary>
+    /// How fast the waterfall scrolls. <see cref="SlowWaterfallSpeed"/> draws a new
+    /// line every four refreshes, <see cref="MediumWaterfallSpeed"/> every two,
+    /// and <see cref="FastWaterfallSpeed"/> (the default) every refresh.
+    /// Slower speeds keep more of the pass on screen and build the spectrum less often.
+    /// </summary>
+    public int WaterfallSpeed { get; set; } = DefaultWaterfallSpeed;
+
+    public static int ClampWaterfallSpeed(int value) =>
+        Math.Clamp(value, MinWaterfallSpeed, MaxWaterfallSpeed);
+
+    /// <summary>How many <see cref="WaterfallUiTickMs"/> refreshes pass before a new waterfall line.</summary>
+    public static int WaterfallTicksPerRow(int speed) =>
+        ClampWaterfallSpeed(speed) switch
+        {
+            SlowWaterfallSpeed => 4,
+            MediumWaterfallSpeed => 2,
+            _ => 1,
+        };
+
+    /// <summary>
+    /// Approximate seconds kept on screen for <paramref name="historyRows"/> at this speed.
+    /// The row count stays fixed, so a slower speed covers more time.
+    /// </summary>
+    public static int WaterfallHistorySeconds(int speed, int historyRows) =>
+        historyRows < 1 ? 0 : historyRows * WaterfallTicksPerRow(speed) * WaterfallUiTickMs / 1000;
+
     /// <summary>Row background for a decode addressed to this station. #RRGGBB or #AARRGGBB.</summary>
     public string CallingMeColour { get; set; } = Ft4DecodeHighlight.DefaultCallingMeColour;
 

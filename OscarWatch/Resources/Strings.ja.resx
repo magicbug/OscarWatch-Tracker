@@ -4695,6 +4695,21 @@
   <data name="Ft4.WaterfallRange.Note">
     <value>自動で追従するノイズフロアからのデシベル幅です。範囲を狭くすると信号が目立ちます。初期値は 40 dB です。</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>ウォーターフォールの速度</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>新しい行を足す速さです。遅くするとパスのより長い時間が画面に残り、弱いトレースが見え続け、スペクトルの計算も少なくなります。「速い」は従来の速度です。</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>遅い（{0} 秒）</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>中（{0} 秒）</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>速い（{0} 秒）</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>自分宛て</value>
   </data>

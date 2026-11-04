@@ -45,6 +45,7 @@ public sealed class Ft4SettingsTests
         Assert.False(settings.OscarWatchSpotsEnabled);
         Assert.Equal(12, settings.DecodeFontSize);
         Assert.Equal(Ft4Settings.DefaultWaterfallRangeDb, settings.WaterfallRangeDb);
+        Assert.Equal(Ft4Settings.FastWaterfallSpeed, settings.WaterfallSpeed);
         Assert.Equal(Ft4DecodeHighlight.DefaultCallingMeColour, settings.CallingMeColour);
         Assert.Equal(Ft4DecodeHighlight.DefaultReplyingColour, settings.ReplyingColour);
         Assert.Equal(Ft4DecodeHighlight.DefaultNewCallColour, settings.NewCallColour);
@@ -120,5 +121,30 @@ public sealed class Ft4SettingsTests
         Assert.Equal(40, Ft4Settings.ClampWaterfallRangeDb(40));
         Assert.Equal(Ft4Settings.MinWaterfallRangeDb, Ft4Settings.ClampWaterfallRangeDb(0));
         Assert.Equal(Ft4Settings.MaxWaterfallRangeDb, Ft4Settings.ClampWaterfallRangeDb(200));
+    }
+
+    [Fact]
+    public void Waterfall_speed_clamps_and_keeps_more_history_when_slower()
+    {
+        Assert.Equal(Ft4Settings.SlowWaterfallSpeed, Ft4Settings.ClampWaterfallSpeed(0));
+        Assert.Equal(Ft4Settings.FastWaterfallSpeed, Ft4Settings.ClampWaterfallSpeed(9));
+        Assert.Equal(4, Ft4Settings.WaterfallTicksPerRow(Ft4Settings.SlowWaterfallSpeed));
+        Assert.Equal(2, Ft4Settings.WaterfallTicksPerRow(Ft4Settings.MediumWaterfallSpeed));
+        Assert.Equal(1, Ft4Settings.WaterfallTicksPerRow(Ft4Settings.FastWaterfallSpeed));
+        Assert.Equal(48, Ft4Settings.WaterfallHistorySeconds(Ft4Settings.SlowWaterfallSpeed, 120));
+        Assert.Equal(24, Ft4Settings.WaterfallHistorySeconds(Ft4Settings.MediumWaterfallSpeed, 120));
+        Assert.Equal(12, Ft4Settings.WaterfallHistorySeconds(Ft4Settings.FastWaterfallSpeed, 120));
+        Assert.Equal(0, Ft4Settings.WaterfallHistorySeconds(Ft4Settings.FastWaterfallSpeed, 0));
+    }
+
+    [Fact]
+    public void Missing_waterfall_speed_keeps_the_original_rate()
+    {
+        var settings = JsonSerializer.Deserialize<Ft4Settings>("{}", new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        })!;
+
+        Assert.Equal(Ft4Settings.DefaultWaterfallSpeed, settings.WaterfallSpeed);
     }
 }

@@ -4695,6 +4695,21 @@ Está utilizando la versión {0}.
   <data name="Ft4.WaterfallRange.Note">
     <value>Decibelios por encima del suelo de ruido automático. Un rango menor hace que las señales destaquen más. El valor predeterminado es 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallSpeed">
+    <value>Velocidad de la cascada</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Note">
+    <value>La rapidez con la que se añaden líneas nuevas. Una velocidad más lenta mantiene más del pase en pantalla, las trazas débiles se ven más tiempo y el espectro se calcula con menos frecuencia. Rápida es la velocidad original.</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Slow">
+    <value>Lenta ({0} s)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Medium">
+    <value>Media ({0} s)</value>
+  </data>
+  <data name="Ft4.WaterfallSpeed.Fast">
+    <value>Rápida ({0} s)</value>
+  </data>
   <data name="Ft4.Decode.CallingMe">
     <value>Me llama</value>
   </data>
