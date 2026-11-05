@@ -88,16 +88,18 @@ body:
         1. In OscarWatch, choose **Help → Copy diagnostics** and paste the clipboard contents below (settings are redacted; API keys are not included).
         2. Choose **Help → Open logs folder** and attach the log file for the day the problem occurred (`oscarwatch-YYYYMMDD.log`). Drag the file into this issue, or paste a relevant excerpt if it is very large.
 
+        **If OscarWatch will not start (version 1.1.7 or later):** run **OscarWatch Troubleshooter** from the same folder as OscarWatch (`OscarWatch.Troubleshoot.exe` on Windows, `OscarWatch.Troubleshoot` on macOS and Linux) and use **Copy diagnostics** and **Open log folder** there instead. See [OscarWatch will not start](https://oscarwatch.org/docs/troubleshooting#troubleshooter).
+
         Log folder locations:
         - **Windows:** `%AppData%\OscarWatch\logs\`
         - **macOS:** `~/Library/Application Support/OscarWatch/logs/`
-        - **Linux:** `~/.local/share/OscarWatch/logs/`
+        - **Linux:** `~/.config/OscarWatch/logs/`
 
   - type: textarea
     id: diagnostics
     attributes:
       label: Diagnostics bundle
-      description: Paste the output from Help → Copy diagnostics.
+      description: Paste the output from Help → Copy diagnostics, or from Copy diagnostics in OscarWatch Troubleshooter if OscarWatch will not start.
       render: shell
     validations:
       required: true
