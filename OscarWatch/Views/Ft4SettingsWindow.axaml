@@ -337,6 +337,18 @@
                        Text="{loc:Localize Key=Ft4.Settings.Group.DecodeList}" />
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
               <TextBlock Grid.Column="0"
+                         Text="{loc:Localize Key=Ft4.DecodeLayout}"
+                         VerticalAlignment="Center" />
+              <ComboBox Grid.Column="1"
+                        ItemsSource="{Binding DecodeLayoutOptions}"
+                        SelectedItem="{Binding SelectedDecodeLayout}"
+                        HorizontalAlignment="Stretch"
+                        MinWidth="220" />
+            </Grid>
+            <TextBlock Classes="ft4-note"
+                       Text="{loc:Localize Key=Ft4.DecodeLayout.Note}" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <TextBlock Grid.Column="0"
                          Text="{loc:Localize Key=Ft4.DecodeFontSize}"
                          VerticalAlignment="Center" />
               <NumericUpDown Grid.Column="1"

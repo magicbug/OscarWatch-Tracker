@@ -4711,6 +4711,24 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Schriftgröße der Decode-Liste (10–28). Größere Werte helfen bei eingeschränkter Sehkraft.</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>Layout</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>Einfach (eine Liste)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>Erweitert (zwei Spalten)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>Einfach zeigt alle Decodes in einer Liste. Erweitert fügt eine zweite Spalte hinzu, die nur Stationen zeigt, die Sie rufen, und Ihre eigenen Sendungen. So bleibt ein voller Überflug übersichtlich. Diese Zeilen stehen weiterhin auch in der vollständigen Liste.</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>Bandaktivität</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>Ruft mich</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>Wasserfall-Bereich</value>
   </data>

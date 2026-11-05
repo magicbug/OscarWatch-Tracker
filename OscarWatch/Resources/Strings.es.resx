@@ -4707,6 +4707,24 @@ Está utilizando la versión {0}.
   <data name="Ft4.DecodeFontSize.Note">
     <value>Tamaño de fuente de la lista de decodes (10–28). Los tamaños mayores ayudan con visión reducida.</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>Diseño</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>Básico (una lista)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>Avanzado (dos columnas)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>Básico muestra todos los decodes en una lista. Avanzado añade una segunda columna solo con las estaciones que le llaman y los mensajes que usted envía, para seguir mejor un pase con mucha actividad. Esas líneas siguen apareciendo también en la lista completa.</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>Actividad de la banda</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>Me llaman</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>Rango de la cascada</value>
   </data>

@@ -69,7 +69,144 @@
       <Setter Property="TextWrapping" Value="Wrap" />
       <Setter Property="TextAlignment" Value="Center" />
     </Style>
+    <Style Selector="ListBox.ft4-decodes">
+      <Setter Property="FontFamily" Value="Consolas,Courier New,monospace" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="ListBox.ft4-decodes ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
   </Window.Styles>
+
+  <Window.Resources>
+    <!-- Fixed column widths so RX / TX / Echo rows stay aligned with the header. -->
+    <DataTemplate x:Key="Ft4DecodeHeaderTemplate" x:DataType="vm:Ft4ViewModel">
+      <Grid ColumnDefinitions="76,48,48,72,*,52"
+            ColumnSpacing="10"
+            Margin="4,0,4,6">
+        <TextBlock Grid.Column="0"
+                   Text="{loc:Localize Key=Ft4.Decodes.Time}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}" />
+        <TextBlock Grid.Column="1"
+                   Text="{loc:Localize Key=Ft4.Decodes.Kind}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}" />
+        <TextBlock Grid.Column="2"
+                   Text="{loc:Localize Key=Ft4.Decodes.Dt}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}" />
+        <TextBlock Grid.Column="3"
+                   Text="{loc:Localize Key=Ft4.Decodes.Snr}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}" />
+        <TextBlock Grid.Column="4"
+                   Text="{loc:Localize Key=Ft4.Decodes.Message}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}" />
+        <TextBlock Grid.Column="5"
+                   Text="{loc:Localize Key=Ft4.Decodes.Hz}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}"
+                   HorizontalAlignment="Right" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="Ft4DecodeRowTemplate" x:DataType="vm:Ft4DecodeRowViewModel">
+      <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10" Margin="4,2"
+            Background="{Binding RowBackground}"
+            PointerPressed="OnDecodeRowPointerPressed">
+        <Grid.Styles>
+          <Style Selector="TextBlock.ft4-ink">
+            <Setter Property="Foreground" Value="{Binding RowForeground}" />
+          </Style>
+        </Grid.Styles>
+        <TextBlock Grid.Column="0"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{Binding Message.SlotUtc, StringFormat={}{0:HH:mm:ss}}" />
+        <TextBlock Grid.Column="1"
+                   Text="{loc:Localize Key=Ft4.Decodes.Tx}"
+                   FontWeight="SemiBold"
+                   Foreground="{Binding TxForeground}"
+                   IsVisible="{Binding Message.IsTransmitted}" />
+        <TextBlock Grid.Column="1"
+                   Text="{loc:Localize Key=Ft4.Decodes.Echo}"
+                   FontWeight="SemiBold"
+                   Foreground="#6DB3F2"
+                   IsVisible="{Binding Message.IsOwnEcho}" />
+        <TextBlock Grid.Column="1"
+                   Text="{loc:Localize Key=Ft4.Decodes.Ap}"
+                   FontWeight="SemiBold"
+                   Foreground="#E0A84A"
+                   IsVisible="{Binding Message.IsAcceptedApriori}" />
+        <TextBlock Grid.Column="1"
+                   Text="{loc:Localize Key=Ft4.Decodes.Ap}"
+                   FontWeight="SemiBold"
+                   Foreground="#E0A84A"
+                   TextDecorations="Strikethrough"
+                   ToolTip.Tip="{loc:Localize Key=Ft4.Decodes.ApRejected.Tip}"
+                   AutomationProperties.Name="{loc:Localize Key=Ft4.Decodes.ApRejected.Tip}"
+                   IsVisible="{Binding Message.IsRejectedApriori}" />
+        <TextBlock Grid.Column="1"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{loc:Localize Key=Ft4.Decodes.Pounce}"
+                   FontWeight="SemiBold"
+                   ToolTip.Tip="{loc:Localize Key=Ft4.Decodes.Pounce.Tip}"
+                   AutomationProperties.Name="{loc:Localize Key=Ft4.Decodes.Pounce.Tip}"
+                   IsVisible="{Binding IsPounceTarget}" />
+        <TextBlock Grid.Column="2"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{Binding DtText}"
+                   IsVisible="{Binding Message.IsReceiveActivity}" />
+        <TextBlock Grid.Column="2"
+                   Text="{Binding DtText}"
+                   Foreground="#6DB3F2"
+                   IsVisible="{Binding Message.IsOwnEcho}" />
+        <TextBlock Grid.Column="2"
+                   Text="-"
+                   Opacity="0.45"
+                   IsVisible="{Binding Message.IsTransmitted}" />
+        <TextBlock Grid.Column="3"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{Binding Message.SnrDb, StringFormat={}{0:+0;-0;0} dB}"
+                   IsVisible="{Binding Message.IsReceiveActivity}" />
+        <TextBlock Grid.Column="3"
+                   Text="{Binding Message.SnrDb, StringFormat={}{0:+0;-0;0} dB}"
+                   Foreground="#6DB3F2"
+                   IsVisible="{Binding Message.IsOwnEcho}" />
+        <TextBlock Grid.Column="3"
+                   Text="-"
+                   Opacity="0.45"
+                   IsVisible="{Binding Message.IsTransmitted}" />
+        <TextBlock Grid.Column="4"
+                   Text="{Binding Message.Text}"
+                   FontWeight="SemiBold"
+                   IsVisible="{Binding Message.IsTransmitted}"
+                   Foreground="{Binding TxForeground}" />
+        <TextBlock Grid.Column="4"
+                   Text="{Binding Message.Text}"
+                   FontWeight="SemiBold"
+                   IsVisible="{Binding Message.IsOwnEcho}"
+                   Foreground="#6DB3F2" />
+        <TextBlock Grid.Column="4"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{Binding Message.Text}"
+                   IsVisible="{Binding Message.IsReceiveActivity}" />
+        <TextBlock Grid.Column="5"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{Binding Message.FreqHz, StringFormat={}{0:0}}"
+                   Opacity="0.9"
+                   HorizontalAlignment="Right" />
+      </Grid>
+    </DataTemplate>
+  </Window.Resources>
 
   <DockPanel>
     <!-- Edge-to-edge waterfall (top / left / right of the client area). -->
@@ -202,160 +339,70 @@
             </StackPanel>
           </DockPanel>
 
-          <!-- Fixed column widths so RX / TX / Echo rows stay aligned with the header. -->
-          <Grid DockPanel.Dock="Top"
-                ColumnDefinitions="76,48,48,72,*,52"
-                ColumnSpacing="10"
-                Margin="4,0,4,6">
-            <TextBlock Grid.Column="0"
-                       Text="{loc:Localize Key=Ft4.Decodes.Time}"
-                       Classes="ft4-meta"
-                       FontWeight="SemiBold"
-                       FontSize="{Binding DecodeFontSize}" />
-            <TextBlock Grid.Column="1"
-                       Text="{loc:Localize Key=Ft4.Decodes.Kind}"
-                       Classes="ft4-meta"
-                       FontWeight="SemiBold"
-                       FontSize="{Binding DecodeFontSize}" />
-            <TextBlock Grid.Column="2"
-                       Text="{loc:Localize Key=Ft4.Decodes.Dt}"
-                       Classes="ft4-meta"
-                       FontWeight="SemiBold"
-                       FontSize="{Binding DecodeFontSize}" />
-            <TextBlock Grid.Column="3"
-                       Text="{loc:Localize Key=Ft4.Decodes.Snr}"
-                       Classes="ft4-meta"
-                       FontWeight="SemiBold"
-                       FontSize="{Binding DecodeFontSize}" />
-            <TextBlock Grid.Column="4"
-                       Text="{loc:Localize Key=Ft4.Decodes.Message}"
-                       Classes="ft4-meta"
-                       FontWeight="SemiBold"
-                       FontSize="{Binding DecodeFontSize}" />
-            <TextBlock Grid.Column="5"
-                       Text="{loc:Localize Key=Ft4.Decodes.Hz}"
-                       Classes="ft4-meta"
-                       FontWeight="SemiBold"
-                       FontSize="{Binding DecodeFontSize}"
-                       HorizontalAlignment="Right" />
-          </Grid>
+          <Grid x:Name="DecodeColumns" ColumnDefinitions="*,0">
+            <DockPanel Grid.Column="0">
+              <TextBlock DockPanel.Dock="Top"
+                         Text="{loc:Localize Key=Ft4.Decodes.BandActivity}"
+                         FontWeight="SemiBold"
+                         Margin="4,0,4,4"
+                         IsVisible="{Binding IsAdvancedDecodeLayout}" />
+              <ContentControl DockPanel.Dock="Top"
+                              Content="{Binding}"
+                              ContentTemplate="{StaticResource Ft4DecodeHeaderTemplate}" />
+              <ListBox x:Name="DecodeList"
+                       Classes="ft4-decodes"
+                       ItemsSource="{Binding Decodes}"
+                       SelectedItem="{Binding SelectedDecode}"
+                       ItemTemplate="{StaticResource Ft4DecodeRowTemplate}"
+                       FontSize="{Binding DecodeFontSize}">
+                <!-- A virtualizing panel painted the newest rows twice while the list
+                     was pulled back to the top. Scrolling rebuilt it and the copies vanished. -->
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel />
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ContextMenu>
+                  <ContextMenu Opening="OnDecodeContextMenuOpening"
+                               Closed="OnDecodeContextMenuClosed">
+                    <MenuItem Header="{loc:Localize Key=Ft4.Pounce.OnStation}"
+                              Click="OnPounceOnStationClick" />
+                  </ContextMenu>
+                </ListBox.ContextMenu>
+              </ListBox>
+            </DockPanel>
 
-          <ListBox x:Name="DecodeList"
-                   ItemsSource="{Binding Decodes}"
-                   SelectedItem="{Binding SelectedDecode}"
-                   FontFamily="Consolas,Courier New,monospace"
-                   FontSize="{Binding DecodeFontSize}"
-                   Padding="0">
-            <!-- A virtualizing panel painted the newest rows twice while the list
-                 was pulled back to the top. Scrolling rebuilt it and the copies vanished. -->
-            <ListBox.ItemsPanel>
-              <ItemsPanelTemplate>
-                <StackPanel />
-              </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ContextMenu>
-              <ContextMenu Opening="OnDecodeContextMenuOpening"
-                           Closed="OnDecodeContextMenuClosed">
-                <MenuItem Header="{loc:Localize Key=Ft4.Pounce.OnStation}"
-                          Click="OnPounceOnStationClick" />
-              </ContextMenu>
-            </ListBox.ContextMenu>
-            <ListBox.Styles>
-              <Style Selector="ListBoxItem">
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-              </Style>
-            </ListBox.Styles>
-            <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:Ft4DecodeRowViewModel">
-                <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10" Margin="4,2"
-                      Background="{Binding RowBackground}"
-                      PointerPressed="OnDecodeRowPointerPressed">
-                  <Grid.Styles>
-                    <Style Selector="TextBlock.ft4-ink">
-                      <Setter Property="Foreground" Value="{Binding RowForeground}" />
-                    </Style>
-                  </Grid.Styles>
-                  <TextBlock Grid.Column="0"
-                             Classes.ft4-ink="{Binding HasRowForeground}"
-                             Text="{Binding Message.SlotUtc, StringFormat={}{0:HH:mm:ss}}" />
-                  <TextBlock Grid.Column="1"
-                             Text="{loc:Localize Key=Ft4.Decodes.Tx}"
-                             FontWeight="SemiBold"
-                             Foreground="{Binding TxForeground}"
-                             IsVisible="{Binding Message.IsTransmitted}" />
-                  <TextBlock Grid.Column="1"
-                             Text="{loc:Localize Key=Ft4.Decodes.Echo}"
-                             FontWeight="SemiBold"
-                             Foreground="#6DB3F2"
-                             IsVisible="{Binding Message.IsOwnEcho}" />
-                  <TextBlock Grid.Column="1"
-                             Text="{loc:Localize Key=Ft4.Decodes.Ap}"
-                             FontWeight="SemiBold"
-                             Foreground="#E0A84A"
-                             IsVisible="{Binding Message.IsAcceptedApriori}" />
-                  <TextBlock Grid.Column="1"
-                             Text="{loc:Localize Key=Ft4.Decodes.Ap}"
-                             FontWeight="SemiBold"
-                             Foreground="#E0A84A"
-                             TextDecorations="Strikethrough"
-                             ToolTip.Tip="{loc:Localize Key=Ft4.Decodes.ApRejected.Tip}"
-                             AutomationProperties.Name="{loc:Localize Key=Ft4.Decodes.ApRejected.Tip}"
-                             IsVisible="{Binding Message.IsRejectedApriori}" />
-                  <TextBlock Grid.Column="1"
-                             Classes.ft4-ink="{Binding HasRowForeground}"
-                             Text="{loc:Localize Key=Ft4.Decodes.Pounce}"
-                             FontWeight="SemiBold"
-                             ToolTip.Tip="{loc:Localize Key=Ft4.Decodes.Pounce.Tip}"
-                             AutomationProperties.Name="{loc:Localize Key=Ft4.Decodes.Pounce.Tip}"
-                             IsVisible="{Binding IsPounceTarget}" />
-                  <TextBlock Grid.Column="2"
-                             Classes.ft4-ink="{Binding HasRowForeground}"
-                             Text="{Binding DtText}"
-                             IsVisible="{Binding Message.IsReceiveActivity}" />
-                  <TextBlock Grid.Column="2"
-                             Text="{Binding DtText}"
-                             Foreground="#6DB3F2"
-                             IsVisible="{Binding Message.IsOwnEcho}" />
-                  <TextBlock Grid.Column="2"
-                             Text="-"
-                             Opacity="0.45"
-                             IsVisible="{Binding Message.IsTransmitted}" />
-                  <TextBlock Grid.Column="3"
-                             Classes.ft4-ink="{Binding HasRowForeground}"
-                             Text="{Binding Message.SnrDb, StringFormat={}{0:+0;-0;0} dB}"
-                             IsVisible="{Binding Message.IsReceiveActivity}" />
-                  <TextBlock Grid.Column="3"
-                             Text="{Binding Message.SnrDb, StringFormat={}{0:+0;-0;0} dB}"
-                             Foreground="#6DB3F2"
-                             IsVisible="{Binding Message.IsOwnEcho}" />
-                  <TextBlock Grid.Column="3"
-                             Text="-"
-                             Opacity="0.45"
-                             IsVisible="{Binding Message.IsTransmitted}" />
-                  <TextBlock Grid.Column="4"
-                             Text="{Binding Message.Text}"
-                             FontWeight="SemiBold"
-                             IsVisible="{Binding Message.IsTransmitted}"
-                             Foreground="{Binding TxForeground}" />
-                  <TextBlock Grid.Column="4"
-                             Text="{Binding Message.Text}"
-                             FontWeight="SemiBold"
-                             IsVisible="{Binding Message.IsOwnEcho}"
-                             Foreground="#6DB3F2" />
-                  <TextBlock Grid.Column="4"
-                             Classes.ft4-ink="{Binding HasRowForeground}"
-                             Text="{Binding Message.Text}"
-                             IsVisible="{Binding Message.IsReceiveActivity}" />
-                  <TextBlock Grid.Column="5"
-                             Classes.ft4-ink="{Binding HasRowForeground}"
-                             Text="{Binding Message.FreqHz, StringFormat={}{0:0}}"
-                             Opacity="0.9"
-                             HorizontalAlignment="Right" />
-                </Grid>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+            <DockPanel Grid.Column="1"
+                       Margin="10,0,0,0"
+                       IsVisible="{Binding IsAdvancedDecodeLayout}">
+              <TextBlock DockPanel.Dock="Top"
+                         Text="{loc:Localize Key=Ft4.Decodes.CallingMe}"
+                         FontWeight="SemiBold"
+                         Margin="4,0,4,4" />
+              <ContentControl DockPanel.Dock="Top"
+                              Content="{Binding}"
+                              ContentTemplate="{StaticResource Ft4DecodeHeaderTemplate}" />
+              <ListBox x:Name="CallsToMeList"
+                       Classes="ft4-decodes"
+                       ItemsSource="{Binding CallsToMe}"
+                       SelectedItem="{Binding SelectedCallToMe}"
+                       ItemTemplate="{StaticResource Ft4DecodeRowTemplate}"
+                       FontSize="{Binding DecodeFontSize}">
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel />
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ContextMenu>
+                  <ContextMenu Opening="OnDecodeContextMenuOpening"
+                               Closed="OnDecodeContextMenuClosed">
+                    <MenuItem Header="{loc:Localize Key=Ft4.Pounce.OnStation}"
+                              Click="OnPounceOnStationClick" />
+                  </ContextMenu>
+                </ListBox.ContextMenu>
+              </ListBox>
+            </DockPanel>
+          </Grid>
         </DockPanel>
       </Border>
 

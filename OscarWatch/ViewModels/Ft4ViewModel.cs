@@ -81,6 +81,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 WaterfallSpeedLabel("Ft4.WaterfallSpeed.Fast", Ft4Settings.FastWaterfallSpeed)),
         ];
 
+        DecodeLayoutOptions =
+        [
+            new Ft4DecodeLayoutOption(Ft4DecodeLayout.Basic, _l.Get("Ft4.DecodeLayout.Basic")),
+            new Ft4DecodeLayoutOption(Ft4DecodeLayout.Advanced, _l.Get("Ft4.DecodeLayout.Advanced")),
+        ];
+
         var ft4 = _settings.Current.Ft4;
         _skipRrr = ft4.SkipRrr;
         _apEnabled = ft4.ApEnabled;
@@ -110,6 +116,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _pttLeadMs = Math.Clamp(ft4.PttLeadMs, 0, 2000);
         _pttTailMs = Math.Clamp(ft4.PttTailMs, 0, 2000);
         _decodeFontSize = Math.Clamp(ft4.DecodeFontSize, 10, 28);
+        _selectedDecodeLayout = DecodeLayoutOptions.FirstOrDefault(o => o.Value == ft4.DecodeLayout)
+            ?? DecodeLayoutOptions[0];
         _waterfallRangeDb = Ft4Settings.ClampWaterfallRangeDb(ft4.WaterfallRangeDb);
         var waterfallSpeed = Ft4Settings.ClampWaterfallSpeed(ft4.WaterfallSpeed);
         if (waterfallSpeed != ft4.WaterfallSpeed)
@@ -173,6 +181,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<Ft4DecodeRowViewModel> Decodes { get; } = [];
 
+    /// <summary>
+    /// The same rows as <see cref="Decodes"/>, limited to calls to this station and its own sends.
+    /// Shown in the second column of the advanced layout.
+    /// </summary>
+    public ObservableCollection<Ft4DecodeRowViewModel> CallsToMe { get; } = [];
+
     public ObservableCollection<Ft4AudioDeviceOption> InputDeviceOptions { get; } = [];
 
     public ObservableCollection<Ft4AudioDeviceOption> OutputDeviceOptions { get; } = [];
@@ -189,6 +203,10 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     public IReadOnlyList<PttLineOption> PttLineOptions { get; }
 
     public IReadOnlyList<Ft4WaterfallSpeedOption> WaterfallSpeedOptions { get; }
+
+    public IReadOnlyList<Ft4DecodeLayoutOption> DecodeLayoutOptions { get; }
+
+    public bool IsAdvancedDecodeLayout => SelectedDecodeLayout?.Value == Ft4DecodeLayout.Advanced;
 
     public string StationCallsign =>
         Ft4MessageCodec.NormalizeCall(_settings.Current.GroundStation.Callsign ?? "");
@@ -274,6 +292,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private double _waterfallRangeDb = Ft4Settings.DefaultWaterfallRangeDb;
 
     [ObservableProperty] private Ft4WaterfallSpeedOption? _selectedWaterfallSpeed;
+    [ObservableProperty] private Ft4DecodeLayoutOption? _selectedDecodeLayout;
     [ObservableProperty] private string _callingMeColour = Ft4DecodeHighlight.DefaultCallingMeColour;
     [ObservableProperty] private string _replyingColour = Ft4DecodeHighlight.DefaultReplyingColour;
     [ObservableProperty] private string _newCallColour = Ft4DecodeHighlight.DefaultNewCallColour;
@@ -531,6 +550,16 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             return;
 
         _settings.Current.Ft4.WaterfallSpeed = speed;
+        _settings.RequestSave();
+    }
+
+    partial void OnSelectedDecodeLayoutChanged(Ft4DecodeLayoutOption? value)
+    {
+        OnPropertyChanged(nameof(IsAdvancedDecodeLayout));
+        if (value is null || _settings.Current.Ft4.DecodeLayout == value.Value)
+            return;
+
+        _settings.Current.Ft4.DecodeLayout = value.Value;
         _settings.RequestSave();
     }
 
@@ -892,6 +921,17 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     }
 
     partial void OnSelectedDecodeChanged(Ft4DecodeRowViewModel? value)
+    {
+        if (value is null)
+            return;
+        AnswerDecode(value.Message);
+    }
+
+    /// <summary>Selection in the calling-me column. Kept apart from <see cref="SelectedDecode"/>
+    /// because a row from the full list may not be in this one.</summary>
+    [ObservableProperty] private Ft4DecodeRowViewModel? _selectedCallToMe;
+
+    partial void OnSelectedCallToMeChanged(Ft4DecodeRowViewModel? value)
     {
         if (value is null)
             return;
@@ -1271,6 +1311,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         _modem.ClearDecodes();
         Decodes.Clear();
+        CallsToMe.Clear();
         RxAudioHz = TxAudioHz;
         StatusLine = _l.Get("Ft4.Status.DecodesCleared");
     }
@@ -1649,6 +1690,36 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
         while (Decodes.Count > messages.Count)
             Decodes.RemoveAt(Decodes.Count - 1);
+
+        SyncCallsToMeRows();
+    }
+
+    /// <summary>
+    /// Keep <see cref="CallsToMe"/> as the matching rows of <see cref="Decodes"/>, in the same order.
+    /// Rows are inserted in place so the list scrolls to a new line the same way as the full list.
+    /// </summary>
+    private void SyncCallsToMeRows()
+    {
+        var mine = StationCallsign;
+        var wanted = Decodes.Where(r => Ft4CallingMeColumn.Includes(r.Message, mine)).ToList();
+        var keep = new HashSet<Ft4DecodeRowViewModel>(wanted, ReferenceEqualityComparer.Instance);
+        for (var i = CallsToMe.Count - 1; i >= 0; i--)
+        {
+            if (!keep.Contains(CallsToMe[i]))
+                CallsToMe.RemoveAt(i);
+        }
+
+        for (var i = 0; i < wanted.Count; i++)
+        {
+            if (i < CallsToMe.Count && ReferenceEquals(CallsToMe[i], wanted[i]))
+                continue;
+
+            var existing = CallsToMe.IndexOf(wanted[i]);
+            if (existing >= 0)
+                CallsToMe.Move(existing, i);
+            else
+                CallsToMe.Insert(i, wanted[i]);
+        }
     }
 
     private void RefreshDecodeHighlights()
@@ -1715,6 +1786,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(StationCallsign));
         OnPropertyChanged(nameof(StationGrid));
         OnPropertyChanged(nameof(TxMessageWatermark));
+        SyncCallsToMeRows();
         if (_windowOpen && !_modem.IsRunning)
             StartSession();
     }
@@ -1818,6 +1890,11 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 }
 
 public sealed record Ft4WaterfallSpeedOption(int Value, string Label)
+{
+    public override string ToString() => Label;
+}
+
+public sealed record Ft4DecodeLayoutOption(Ft4DecodeLayout Value, string Label)
 {
     public override string ToString() => Label;
 }

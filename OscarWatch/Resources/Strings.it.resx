@@ -4711,6 +4711,24 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Dimensione del carattere per l'elenco delle decodifiche (10–28). I valori più grandi aiutano chi ha difficoltà visive.</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>Disposizione</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>Base (un elenco)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>Avanzata (due colonne)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>Base mostra tutte le decodifiche in un unico elenco. Avanzata aggiunge una seconda colonna con solo le stazioni che ti chiamano e i messaggi che invii, così un passaggio affollato è più facile da seguire. Queste righe restano anche nell'elenco completo.</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>Attività in banda</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>Mi chiamano</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>Intervallo della cascata</value>
   </data>

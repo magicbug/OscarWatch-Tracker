@@ -158,6 +158,9 @@ public sealed class Ft4Settings
     /// <summary>Font size for the decode / activity list (points). Default 12.</summary>
     public double DecodeFontSize { get; set; } = 12;
 
+    /// <summary>Basic is one decode list. Advanced adds a column for calls to this station.</summary>
+    public Ft4DecodeLayout DecodeLayout { get; set; } = Ft4DecodeLayout.Basic;
+
     /// <summary>dB span above the automatic waterfall noise floor. Default 40.</summary>
     public const double DefaultWaterfallRangeDb = 40;
 

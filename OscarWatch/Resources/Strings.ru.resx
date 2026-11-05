@@ -4711,6 +4711,24 @@ LOS: {2}
   <data name="Ft4.DecodeFontSize.Note">
     <value>Размер шрифта списка декодов (10–28). Больший размер удобнее при слабом зрении.</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>Вид</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>Простой (один список)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>Расширенный (два столбца)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>Простой вид показывает все декоды одним списком. Расширенный добавляет второй столбец, где только станции, зовущие вас, и ваши передачи, чтобы было проще следить за загруженным пролётом. Эти строки остаются и в полном списке.</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>Активность на диапазоне</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>Зовут меня</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>Диапазон водопада</value>
   </data>

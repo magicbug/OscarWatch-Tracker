@@ -4707,6 +4707,24 @@ Latest: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Font size for the decode list (10–28). Larger sizes help with poorer vision.</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>Layout</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>Basic (one list)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>Advanced (two columns)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>Basic shows every decode in one list. Advanced adds a second column with only the stations calling you and the messages you send, so a busy pass is easier to follow. Those lines still appear in the full list too.</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>Band activity</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>Calling me</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>Waterfall range</value>
   </data>

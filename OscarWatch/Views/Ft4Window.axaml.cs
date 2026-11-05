@@ -16,8 +16,11 @@ namespace OscarWatch.Views;
 
 public partial class Ft4Window : Window
 {
+    private const double BasicMinWidth = 720;
+    private const double AdvancedMinWidth = 960;
+    private const double AdvancedWidth = 1180;
+
     private bool _closeConfirmed;
-    private ScrollViewer? _decodeScroll;
     private Ft4DecodeRowViewModel? _contextRow;
 
     public Ft4Window()
@@ -34,28 +37,53 @@ public partial class Ft4Window : Window
             return;
 
         vm.Decodes.CollectionChanged += OnDecodeRowsChanged;
+        vm.CallsToMe.CollectionChanged += OnCallsToMeRowsChanged;
+        vm.PropertyChanged += OnViewModelPropertyChanged;
+        ApplyDecodeLayout(vm.IsAdvancedDecodeLayout);
         await vm.OnWindowOpenedAsync().ConfigureAwait(true);
     }
 
-    private void OnDecodeRowsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Ft4ViewModel.IsAdvancedDecodeLayout) && sender is Ft4ViewModel vm)
+            ApplyDecodeLayout(vm.IsAdvancedDecodeLayout);
+    }
+
+    /// <summary>Show or hide the calling-me column, and make room for it.</summary>
+    private void ApplyDecodeLayout(bool advanced)
+    {
+        DecodeColumns.ColumnDefinitions[1].Width = advanced
+            ? new GridLength(1, GridUnitType.Star)
+            : new GridLength(0);
+        MinWidth = advanced ? AdvancedMinWidth : BasicMinWidth;
+        if (advanced && WindowState == WindowState.Normal && Width < AdvancedWidth)
+            Width = AdvancedWidth;
+    }
+
+    private void OnDecodeRowsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        ScrollToNewest(DecodeList, e);
+
+    private void OnCallsToMeRowsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+        ScrollToNewest(CallsToMeList, e);
+
+    private static void ScrollToNewest(ListBox list, NotifyCollectionChangedEventArgs e)
     {
         // Newest lines are inserted at the top. The list keeps its scroll offset,
         // so each cycle appears above the viewport until the operator scrolls up.
         if (e.Action != NotifyCollectionChangedAction.Add || e.NewStartingIndex != 0)
             return;
 
-        Dispatcher.UIThread.Post(ScrollDecodesToTop, DispatcherPriority.Background);
+        Dispatcher.UIThread.Post(() => ScrollToTop(list), DispatcherPriority.Background);
     }
 
-    private void ScrollDecodesToTop()
+    private static void ScrollToTop(ListBox list)
     {
-        if (DecodeList.ItemCount == 0)
+        if (list.ItemCount == 0)
             return;
 
-        DecodeList.ScrollIntoView(0);
-        _decodeScroll ??= DecodeList.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
-        if (_decodeScroll is not null)
-            _decodeScroll.Offset = new Vector(_decodeScroll.Offset.X, 0);
+        list.ScrollIntoView(0);
+        if (list.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault() is { } scroll)
+            scroll.Offset = new Vector(scroll.Offset.X, 0);
     }
 
     private async void OnClosing(object? sender, WindowClosingEventArgs e)
@@ -85,6 +113,8 @@ public partial class Ft4Window : Window
             return;
 
         vm.Decodes.CollectionChanged -= OnDecodeRowsChanged;
+        vm.CallsToMe.CollectionChanged -= OnCallsToMeRowsChanged;
+        vm.PropertyChanged -= OnViewModelPropertyChanged;
         await vm.OnWindowClosedAsync().ConfigureAwait(true);
     }
 
@@ -124,7 +154,8 @@ public partial class Ft4Window : Window
 
     private void OnDecodeContextMenuOpening(object? sender, CancelEventArgs e)
     {
-        _contextRow ??= DecodeList.SelectedItem as Ft4DecodeRowViewModel;
+        var list = ReferenceEquals(sender, CallsToMeList.ContextMenu) ? CallsToMeList : DecodeList;
+        _contextRow ??= list.SelectedItem as Ft4DecodeRowViewModel;
         if (_contextRow is null
             || !_contextRow.Message.IsReceiveActivity
             || string.IsNullOrWhiteSpace(_contextRow.Message.CallDe))

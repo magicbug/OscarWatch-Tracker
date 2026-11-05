@@ -4711,6 +4711,24 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Ukuran font daftar decode (10–28). Ukuran lebih besar membantu penglihatan lemah.</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>Tata letak</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>Dasar (satu daftar)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>Lanjutan (dua kolom)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>Dasar menampilkan semua decode dalam satu daftar. Lanjutan menambahkan kolom kedua yang hanya berisi stasiun yang memanggil Anda dan pesan yang Anda kirim, sehingga lintasan yang ramai lebih mudah diikuti. Baris tersebut tetap muncul di daftar lengkap.</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>Aktivitas band</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>Memanggil saya</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>Rentang waterfall</value>
   </data>

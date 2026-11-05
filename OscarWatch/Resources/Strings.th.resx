@@ -4711,6 +4711,24 @@ LOS: {2}
   <data name="Ft4.DecodeFontSize.Note">
     <value>ขนาดแบบอักษรรายการถอดรหัส (10–28) ขนาดใหญ่ช่วยเมื่อสายตาไม่ดี</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>รูปแบบ</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>พื้นฐาน (รายการเดียว)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>ขั้นสูง (สองคอลัมน์)</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>พื้นฐานแสดงการถอดรหัสทั้งหมดในรายการเดียว ขั้นสูงเพิ่มคอลัมน์ที่สองซึ่งแสดงเฉพาะสถานีที่เรียกคุณและข้อความที่คุณส่ง เพื่อให้ติดตามรอบที่มีคนเรียกมากได้ง่ายขึ้น บรรทัดเหล่านั้นยังคงแสดงในรายการเต็มด้วย</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>กิจกรรมบนย่าน</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>เรียกฉัน</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>ช่วงวอเตอร์ฟอล</value>
   </data>

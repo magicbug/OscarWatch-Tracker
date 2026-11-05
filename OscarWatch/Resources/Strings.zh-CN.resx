@@ -4707,6 +4707,24 @@
   <data name="Ft4.DecodeFontSize.Note">
     <value>解码列表字体大小（10–28）。较大字号便于视力较弱时阅读。</value>
   </data>
+  <data name="Ft4.DecodeLayout">
+    <value>布局</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Basic">
+    <value>基本（单列表）</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Advanced">
+    <value>高级（两栏）</value>
+  </data>
+  <data name="Ft4.DecodeLayout.Note">
+    <value>基本模式在一个列表中显示所有解码。高级模式增加第二栏，只显示呼叫您的电台和您发送的消息，便于在繁忙的过境中跟踪通联。这些行仍会出现在完整列表中。</value>
+  </data>
+  <data name="Ft4.Decodes.BandActivity">
+    <value>频段活动</value>
+  </data>
+  <data name="Ft4.Decodes.CallingMe">
+    <value>呼叫我</value>
+  </data>
   <data name="Ft4.WaterfallRange">
     <value>瀑布图范围</value>
   </data>
