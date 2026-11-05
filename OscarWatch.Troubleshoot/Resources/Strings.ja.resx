@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Window.Title">
+    <value>OscarWatch トラブルシューティング</value>
+  </data>
+  <data name="Intro">
+    <value>OscarWatch が起動しない、またはウィンドウが表示されないときに使います。OscarWatch が動いていなくても使えます。</value>
+  </data>
+  <data name="Section.Status">
+    <value>状態</value>
+  </data>
+  <data name="Action.Refresh">
+    <value>更新</value>
+  </data>
+  <data name="Label.Process">
+    <value>OscarWatch プロセス</value>
+  </data>
+  <data name="Label.Application">
+    <value>アプリケーション</value>
+  </data>
+  <data name="Label.System">
+    <value>システム</value>
+  </data>
+  <data name="Label.DataFolder">
+    <value>OscarWatch フォルダー</value>
+  </data>
+  <data name="Label.LogFolder">
+    <value>ログフォルダー</value>
+  </data>
+  <data name="Label.LatestLog">
+    <value>最新のログ</value>
+  </data>
+  <data name="Label.Settings">
+    <value>設定ファイル</value>
+  </data>
+  <data name="Label.Radio">
+    <value>無線機</value>
+  </data>
+  <data name="Label.Rotator">
+    <value>ローテーター</value>
+  </data>
+  <data name="Label.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Process.NotRunning">
+    <value>実行されていません</value>
+  </data>
+  <data name="Process.Running">
+    <value>実行中（プロセス {0}、開始 {1}）</value>
+  </data>
+  <data name="Application.Found">
+    <value>バージョン {0}</value>
+  </data>
+  <data name="Application.NotFound">
+    <value>トラブルシューティングと同じ場所に OscarWatch が見つかりません。</value>
+  </data>
+  <data name="Log.None">
+    <value>ログファイルがありません。OscarWatch がログを書き始める前に停止した可能性があります。</value>
+  </data>
+  <data name="Log.Latest">
+    <value>{0}（書き込み {1}）</value>
+  </data>
+  <data name="Settings.Missing">
+    <value>見つかりません。OscarWatch は起動時に既定の設定で作成します。</value>
+  </data>
+  <data name="Settings.Readable">
+    <value>読み取り可能（書き込み {0}）</value>
+  </data>
+  <data name="Settings.Unreadable">
+    <value>読み取れません: {0}</value>
+  </data>
+  <data name="Device.On">
+    <value>オン（{0}）</value>
+  </data>
+  <data name="Device.OnNoTarget">
+    <value>オン</value>
+  </data>
+  <data name="Device.Off">
+    <value>オフ</value>
+  </data>
+  <data name="Device.Unknown">
+    <value>未設定</value>
+  </data>
+  <data name="Section.RecentErrors">
+    <value>ログ内の最近のエラー</value>
+  </data>
+  <data name="Errors.None">
+    <value>最新のログにエラーはありません。</value>
+  </data>
+  <data name="Section.Files">
+    <value>ファイルと診断</value>
+  </data>
+  <data name="Files.Hint">
+    <value>診断情報には、最新のログ、パスワードと API キーを除いた設定、システムの詳細が含まれます。問題の説明と一緒にサポートへ送ってください。</value>
+  </data>
+  <data name="Action.OpenDataFolder">
+    <value>OscarWatch フォルダーを開く</value>
+  </data>
+  <data name="Action.OpenLogFolder">
+    <value>ログフォルダーを開く</value>
+  </data>
+  <data name="Action.CopyDiagnostics">
+    <value>診断情報をコピー</value>
+  </data>
+  <data name="Action.SaveDiagnostics">
+    <value>診断ファイルを保存</value>
+  </data>
+  <data name="Section.Process">
+    <value>応答しない OscarWatch</value>
+  </data>
+  <data name="Process.Hint">
+    <value>OscarWatch が実行中なのにウィンドウが表示されない場合は、終了してから起動し直してください。</value>
+  </data>
+  <data name="Action.CloseOscarWatch">
+    <value>OscarWatch を終了</value>
+  </data>
+  <data name="Action.StartOscarWatch">
+    <value>OscarWatch を起動</value>
+  </data>
+  <data name="Section.Hardware">
+    <value>無線機、ローテーター、GPS</value>
+  </data>
+  <data name="Hardware.Hint">
+    <value>接続中に OscarWatch が止まったり終了したりする場合は、これらをオフにしてください。ポートなどの設定は残るので、設定画面でいつでもオンに戻せます。</value>
+  </data>
+  <data name="Action.DisableHardware">
+    <value>無線機、ローテーター、GPS をオフにする</value>
+  </data>
+  <data name="Section.Reset">
+    <value>設定のリセット</value>
+  </data>
+  <data name="Reset.Hint">
+    <value>最後の手段です。settings.json とそのバックアップを日付付きのフォルダーへ移動し、OscarWatch を既定の設定で起動させます。削除されるものはありません。</value>
+  </data>
+  <data name="Action.PutSettingsAside">
+    <value>設定を退避する</value>
+  </data>
+  <data name="Confirm.Continue">
+    <value>続行</value>
+  </data>
+  <data name="Confirm.Cancel">
+    <value>キャンセル</value>
+  </data>
+  <data name="Confirm.CloseOscarWatch">
+    <value>今すぐ OscarWatch を終了しますか？保存されていない変更は失われる可能性があります。</value>
+  </data>
+  <data name="Confirm.CloseFirst">
+    <value>OscarWatch が実行中です。先に終了しないと、終了時にこの変更が元に戻る可能性があります。OscarWatch を終了して続行しますか？</value>
+  </data>
+  <data name="Confirm.DisableHardware">
+    <value>settings.json で次の接続をオフにしますか？
+
+無線機: {0}
+ローテーター: {1}
+GPS: {2}</value>
+  </data>
+  <data name="Confirm.PutSettingsAside">
+    <value>settings.json とそのバックアップを {0} へ移動しますか？OscarWatch は既定の設定で起動します。</value>
+  </data>
+  <data name="Result.Closed">
+    <value>OscarWatch を終了しました。</value>
+  </data>
+  <data name="Result.CloseFailed">
+    <value>OscarWatch を終了できませんでした: {0}</value>
+  </data>
+  <data name="Result.StillRunning">
+    <value>OscarWatch がまだ実行中のため、何も変更していません。</value>
+  </data>
+  <data name="Result.Started">
+    <value>OscarWatch を起動しました。</value>
+  </data>
+  <data name="Result.StartFailed">
+    <value>OscarWatch を起動できませんでした: {0}</value>
+  </data>
+  <data name="Result.AlreadyRunning">
+    <value>OscarWatch はすでに実行中です。</value>
+  </data>
+  <data name="Result.HardwareDisabled">
+    <value>無線機、ローテーター、GPS をオフにしました。OscarWatch を起動して開くか確認してください。</value>
+  </data>
+  <data name="Result.HardwareAlreadyOff">
+    <value>無線機、ローテーター、GPS はすでにオフです。</value>
+  </data>
+  <data name="Result.SettingsMissing">
+    <value>変更する settings.json がありません。</value>
+  </data>
+  <data name="Result.SettingsUnreadable">
+    <value>settings.json を読み取れないため、変更していません。</value>
+  </data>
+  <data name="Result.SettingsAside">
+    <value>設定を {0} へ移動しました。</value>
+  </data>
+  <data name="Result.NothingToMove">
+    <value>移動する設定ファイルがありません。</value>
+  </data>
+  <data name="Result.DiagnosticsCopied">
+    <value>診断情報をクリップボードにコピーしました。</value>
+  </data>
+  <data name="Result.DiagnosticsSaved">
+    <value>診断情報を {0} に保存しました。</value>
+  </data>
+  <data name="Result.Failed">
+    <value>うまくいきませんでした: {0}</value>
+  </data>
+  <data name="Result.FolderOpenFailed">
+    <value>フォルダーを開けませんでした: {0}</value>
+  </data>
+  <data name="Save.Title">
+    <value>診断ファイルを保存</value>
+  </data>
+</root>

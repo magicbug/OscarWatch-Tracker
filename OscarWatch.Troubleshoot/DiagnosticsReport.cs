@@ -1,0 +1,89 @@
+using System.Runtime.InteropServices;
+using System.Text;
+
+namespace OscarWatch.Troubleshoot;
+
+/// <summary>English support bundle: environment, device switches, redacted settings, and the log tail.</summary>
+internal static class DiagnosticsReport
+{
+    private const int LogTailLineCount = 200;
+
+    public static string Build()
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("OscarWatch troubleshooter diagnostics");
+        builder.AppendLine($"Generated (UTC): {DateTime.UtcNow:O}");
+        builder.AppendLine($"Troubleshooter version: {typeof(DiagnosticsReport).Assembly.GetName().Version?.ToString(3) ?? "dev"}");
+        builder.AppendLine($"OS: {OsName.Describe()}");
+        builder.AppendLine($"Runtime: {RuntimeInformation.FrameworkDescription}");
+        builder.AppendLine();
+
+        builder.AppendLine("== OscarWatch ==");
+        builder.AppendLine(TrackerProcess.ExecutableExists
+            ? $"Application: {TrackerProcess.ExecutablePath} (version {TrackerProcess.ReadVersion() ?? "unknown"})"
+            : $"Application: not found at {TrackerProcess.ExecutablePath}");
+        var running = TrackerProcess.FindRunning();
+        builder.AppendLine(running.Count == 0
+            ? "Process: not running"
+            : "Process: running, " + string.Join(", ", running.Select(p => $"PID {p.Id} started {p.StartedLocal:O}")));
+        builder.AppendLine($"Data folder: {TroubleshootPaths.DataFolder}");
+        builder.AppendLine();
+
+        var settings = SettingsFile.Read(TroubleshootPaths.SettingsPath);
+        builder.AppendLine("== Settings file ==");
+        builder.AppendLine($"State: {settings.State}");
+        if (settings.LastWriteLocal is { } written)
+            builder.AppendLine($"Written: {written:O}");
+        if (!string.IsNullOrEmpty(settings.Error))
+            builder.AppendLine($"Error: {settings.Error}");
+        builder.AppendLine($"Radio: {Describe(settings.Radio)}");
+        builder.AppendLine($"Rotator: {Describe(settings.Rotator)}");
+        builder.AppendLine($"GPS: {Describe(settings.Gps)}");
+        builder.AppendLine();
+
+        builder.AppendLine("== Settings (redacted) ==");
+        builder.AppendLine(SettingsFile.Redacted(TroubleshootPaths.SettingsPath));
+        builder.AppendLine();
+
+        var latest = LogFiles.FindLatest(TroubleshootPaths.LogFolder);
+        IReadOnlyList<string> lines = [];
+        builder.AppendLine("== Latest log ==");
+        if (latest is null)
+        {
+            builder.AppendLine("(no log files)");
+        }
+        else
+        {
+            builder.AppendLine($"{latest.FullName} (written {latest.LastWriteTime:O})");
+            try
+            {
+                lines = LogFiles.ReadLines(latest.FullName);
+            }
+            catch (Exception ex)
+            {
+                builder.AppendLine($"(could not read log: {ex.Message})");
+            }
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("== Recent errors ==");
+        var problems = LogFiles.RecentProblems(lines);
+        builder.AppendLine(problems.Count == 0 ? "(none)" : string.Join(Environment.NewLine + Environment.NewLine, problems));
+        builder.AppendLine();
+
+        builder.AppendLine("== Log tail ==");
+        builder.AppendLine(lines.Count == 0 ? "(empty)" : string.Join(Environment.NewLine, LogFiles.Tail(lines, LogTailLineCount)));
+        return builder.ToString();
+    }
+
+    private static string Describe(DeviceState device)
+    {
+        var state = device.Enabled switch
+        {
+            true => "enabled",
+            false => "disabled",
+            null => "not set"
+        };
+        return device.Target.Length == 0 ? state : $"{state} ({device.Target})";
+    }
+}

@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Window.Title">
+    <value>OscarWatch Troubleshooter</value>
+  </data>
+  <data name="Intro">
+    <value>Use this when OscarWatch will not start or its window does not appear. It works without OscarWatch running.</value>
+  </data>
+  <data name="Section.Status">
+    <value>Status</value>
+  </data>
+  <data name="Action.Refresh">
+    <value>Refresh</value>
+  </data>
+  <data name="Label.Process">
+    <value>OscarWatch process</value>
+  </data>
+  <data name="Label.Application">
+    <value>Application</value>
+  </data>
+  <data name="Label.System">
+    <value>System</value>
+  </data>
+  <data name="Label.DataFolder">
+    <value>OscarWatch folder</value>
+  </data>
+  <data name="Label.LogFolder">
+    <value>Log folder</value>
+  </data>
+  <data name="Label.LatestLog">
+    <value>Latest log</value>
+  </data>
+  <data name="Label.Settings">
+    <value>Settings file</value>
+  </data>
+  <data name="Label.Radio">
+    <value>Radio</value>
+  </data>
+  <data name="Label.Rotator">
+    <value>Rotator</value>
+  </data>
+  <data name="Label.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Process.NotRunning">
+    <value>Not running</value>
+  </data>
+  <data name="Process.Running">
+    <value>Running (process {0}, started {1})</value>
+  </data>
+  <data name="Application.Found">
+    <value>Version {0}</value>
+  </data>
+  <data name="Application.NotFound">
+    <value>OscarWatch was not found beside the troubleshooter.</value>
+  </data>
+  <data name="Log.None">
+    <value>No log files. OscarWatch may have stopped before it could start logging.</value>
+  </data>
+  <data name="Log.Latest">
+    <value>{0}, written {1}</value>
+  </data>
+  <data name="Settings.Missing">
+    <value>Not found. OscarWatch creates one with default settings when it starts.</value>
+  </data>
+  <data name="Settings.Readable">
+    <value>Readable, written {0}</value>
+  </data>
+  <data name="Settings.Unreadable">
+    <value>Cannot be read: {0}</value>
+  </data>
+  <data name="Device.On">
+    <value>On ({0})</value>
+  </data>
+  <data name="Device.OnNoTarget">
+    <value>On</value>
+  </data>
+  <data name="Device.Off">
+    <value>Off</value>
+  </data>
+  <data name="Device.Unknown">
+    <value>Not set</value>
+  </data>
+  <data name="Section.RecentErrors">
+    <value>Recent errors in the log</value>
+  </data>
+  <data name="Errors.None">
+    <value>No errors in the latest log.</value>
+  </data>
+  <data name="Section.Files">
+    <value>Files and diagnostics</value>
+  </data>
+  <data name="Files.Hint">
+    <value>Diagnostics include the latest log, your settings with passwords and API keys removed, and system details. Send them to support with a description of the problem.</value>
+  </data>
+  <data name="Action.OpenDataFolder">
+    <value>Open OscarWatch folder</value>
+  </data>
+  <data name="Action.OpenLogFolder">
+    <value>Open log folder</value>
+  </data>
+  <data name="Action.CopyDiagnostics">
+    <value>Copy diagnostics</value>
+  </data>
+  <data name="Action.SaveDiagnostics">
+    <value>Save diagnostics file</value>
+  </data>
+  <data name="Section.Process">
+    <value>Stuck OscarWatch</value>
+  </data>
+  <data name="Process.Hint">
+    <value>If OscarWatch is running but no window appears, close it and start it again.</value>
+  </data>
+  <data name="Action.CloseOscarWatch">
+    <value>Close OscarWatch</value>
+  </data>
+  <data name="Action.StartOscarWatch">
+    <value>Start OscarWatch</value>
+  </data>
+  <data name="Section.Hardware">
+    <value>Radio, rotator and GPS</value>
+  </data>
+  <data name="Hardware.Hint">
+    <value>If OscarWatch hangs or closes while connecting, turn these off. Ports and other settings are kept, so you can turn them back on in Settings.</value>
+  </data>
+  <data name="Action.DisableHardware">
+    <value>Turn off radio, rotator and GPS</value>
+  </data>
+  <data name="Section.Reset">
+    <value>Reset settings</value>
+  </data>
+  <data name="Reset.Hint">
+    <value>Last resort. Moves settings.json and its backups into a dated folder, so OscarWatch starts with default settings. Nothing is deleted.</value>
+  </data>
+  <data name="Action.PutSettingsAside">
+    <value>Put settings aside</value>
+  </data>
+  <data name="Confirm.Continue">
+    <value>Continue</value>
+  </data>
+  <data name="Confirm.Cancel">
+    <value>Cancel</value>
+  </data>
+  <data name="Confirm.CloseOscarWatch">
+    <value>Close OscarWatch now? Changes it has not saved may be lost.</value>
+  </data>
+  <data name="Confirm.CloseFirst">
+    <value>OscarWatch is running. It has to be closed first, or it could undo this change when it exits. Close OscarWatch and continue?</value>
+  </data>
+  <data name="Confirm.DisableHardware">
+    <value>Turn off these connections in settings.json?
+
+Radio: {0}
+Rotator: {1}
+GPS: {2}</value>
+  </data>
+  <data name="Confirm.PutSettingsAside">
+    <value>Move settings.json and its backups into {0}? OscarWatch will start with default settings.</value>
+  </data>
+  <data name="Result.Closed">
+    <value>OscarWatch has been closed.</value>
+  </data>
+  <data name="Result.CloseFailed">
+    <value>OscarWatch could not be closed: {0}</value>
+  </data>
+  <data name="Result.StillRunning">
+    <value>OscarWatch is still running, so nothing was changed.</value>
+  </data>
+  <data name="Result.Started">
+    <value>OscarWatch has been started.</value>
+  </data>
+  <data name="Result.StartFailed">
+    <value>OscarWatch could not be started: {0}</value>
+  </data>
+  <data name="Result.AlreadyRunning">
+    <value>OscarWatch is already running.</value>
+  </data>
+  <data name="Result.HardwareDisabled">
+    <value>Radio, rotator and GPS are now off. Start OscarWatch to check that it opens.</value>
+  </data>
+  <data name="Result.HardwareAlreadyOff">
+    <value>Radio, rotator and GPS are already off.</value>
+  </data>
+  <data name="Result.SettingsMissing">
+    <value>There is no settings.json to change.</value>
+  </data>
+  <data name="Result.SettingsUnreadable">
+    <value>settings.json cannot be read, so it was not changed.</value>
+  </data>
+  <data name="Result.SettingsAside">
+    <value>Settings moved to {0}.</value>
+  </data>
+  <data name="Result.NothingToMove">
+    <value>There are no settings files to move.</value>
+  </data>
+  <data name="Result.DiagnosticsCopied">
+    <value>Diagnostics copied to the clipboard.</value>
+  </data>
+  <data name="Result.DiagnosticsSaved">
+    <value>Diagnostics saved to {0}.</value>
+  </data>
+  <data name="Result.Failed">
+    <value>That did not work: {0}</value>
+  </data>
+  <data name="Result.FolderOpenFailed">
+    <value>The folder could not be opened: {0}</value>
+  </data>
+  <data name="Save.Title">
+    <value>Save diagnostics file</value>
+  </data>
+</root>

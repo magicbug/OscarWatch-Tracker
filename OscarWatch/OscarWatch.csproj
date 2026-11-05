@@ -39,6 +39,9 @@
     <ProjectReference Include="..\OscarWatch.PortAudioProbe\OscarWatch.PortAudioProbe.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\OscarWatch.Troubleshoot\OscarWatch.Troubleshoot.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
   <Target Name="BuildPortAudioProbe" AfterTargets="Build">
@@ -66,6 +69,30 @@
     <MSBuild Projects="..\OscarWatch.PortAudioProbe\OscarWatch.PortAudioProbe.csproj"
              Targets="Publish"
              Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=false;PublishDir=$(PublishDir)" />
+  </Target>
+
+  <!-- The project reference copies only the troubleshooter's apphost, so its own assemblies are copied here.
+       Its package dependencies are already present at the same pinned versions. -->
+  <Target Name="CopyTroubleshooterToOutput" AfterTargets="Build">
+    <PropertyGroup>
+      <_TroubleshootOutputDir>..\OscarWatch.Troubleshoot\bin\$(Configuration)\net10.0\</_TroubleshootOutputDir>
+      <_TroubleshootOutputDir Condition="'$(RuntimeIdentifier)' != ''">..\OscarWatch.Troubleshoot\bin\$(Configuration)\net10.0\$(RuntimeIdentifier)\</_TroubleshootOutputDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <_TroubleshootFiles Include="$(_TroubleshootOutputDir)OscarWatch.Troubleshoot.*;$(_TroubleshootOutputDir)**\OscarWatch.Troubleshoot.resources.dll"
+                          Exclude="$(_TroubleshootOutputDir)win-*\**;$(_TroubleshootOutputDir)linux-*\**;$(_TroubleshootOutputDir)osx-*\**" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_TroubleshootFiles)"
+          DestinationFiles="@(_TroubleshootFiles->'$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(_TroubleshootOutputDir)OscarWatch.Troubleshoot.dll')" />
+  </Target>
+
+  <!-- The troubleshooter ships beside OscarWatch so operators can run it when OscarWatch will not start. -->
+  <Target Name="PublishTroubleshooter" AfterTargets="Publish">
+    <MSBuild Projects="..\OscarWatch.Troubleshoot\OscarWatch.Troubleshoot.csproj"
+             Targets="Publish"
+             Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=$(PublishSingleFile);IncludeNativeLibrariesForSelfExtract=$(IncludeNativeLibrariesForSelfExtract);PublishDir=$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(PublishDir)'))" />
   </Target>
 
   <ItemGroup>

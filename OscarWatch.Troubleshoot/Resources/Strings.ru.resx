@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Window.Title">
+    <value>Устранение неполадок OscarWatch</value>
+  </data>
+  <data name="Intro">
+    <value>Используйте, если OscarWatch не запускается или его окно не появляется. Работает и без запущенного OscarWatch.</value>
+  </data>
+  <data name="Section.Status">
+    <value>Состояние</value>
+  </data>
+  <data name="Action.Refresh">
+    <value>Обновить</value>
+  </data>
+  <data name="Label.Process">
+    <value>Процесс OscarWatch</value>
+  </data>
+  <data name="Label.Application">
+    <value>Приложение</value>
+  </data>
+  <data name="Label.System">
+    <value>Система</value>
+  </data>
+  <data name="Label.DataFolder">
+    <value>Папка OscarWatch</value>
+  </data>
+  <data name="Label.LogFolder">
+    <value>Папка журналов</value>
+  </data>
+  <data name="Label.LatestLog">
+    <value>Последний журнал</value>
+  </data>
+  <data name="Label.Settings">
+    <value>Файл настроек</value>
+  </data>
+  <data name="Label.Radio">
+    <value>Радиостанция</value>
+  </data>
+  <data name="Label.Rotator">
+    <value>Поворотное устройство</value>
+  </data>
+  <data name="Label.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Process.NotRunning">
+    <value>Не запущен</value>
+  </data>
+  <data name="Process.Running">
+    <value>Запущен (процесс {0}, начало {1})</value>
+  </data>
+  <data name="Application.Found">
+    <value>Версия {0}</value>
+  </data>
+  <data name="Application.NotFound">
+    <value>OscarWatch не найден рядом со средством устранения неполадок.</value>
+  </data>
+  <data name="Log.None">
+    <value>Файлов журнала нет. Возможно, OscarWatch остановился до того, как начал вести журнал.</value>
+  </data>
+  <data name="Log.Latest">
+    <value>{0}, записан {1}</value>
+  </data>
+  <data name="Settings.Missing">
+    <value>Не найден. OscarWatch создаёт его с настройками по умолчанию при запуске.</value>
+  </data>
+  <data name="Settings.Readable">
+    <value>Читается, записан {0}</value>
+  </data>
+  <data name="Settings.Unreadable">
+    <value>Не удаётся прочитать: {0}</value>
+  </data>
+  <data name="Device.On">
+    <value>Включено ({0})</value>
+  </data>
+  <data name="Device.OnNoTarget">
+    <value>Включено</value>
+  </data>
+  <data name="Device.Off">
+    <value>Выключено</value>
+  </data>
+  <data name="Device.Unknown">
+    <value>Не задано</value>
+  </data>
+  <data name="Section.RecentErrors">
+    <value>Последние ошибки в журнале</value>
+  </data>
+  <data name="Errors.None">
+    <value>В последнем журнале ошибок нет.</value>
+  </data>
+  <data name="Section.Files">
+    <value>Файлы и диагностика</value>
+  </data>
+  <data name="Files.Hint">
+    <value>Диагностика содержит последний журнал, ваши настройки без паролей и ключей API, а также сведения о системе. Отправьте её в поддержку вместе с описанием проблемы.</value>
+  </data>
+  <data name="Action.OpenDataFolder">
+    <value>Открыть папку OscarWatch</value>
+  </data>
+  <data name="Action.OpenLogFolder">
+    <value>Открыть папку журналов</value>
+  </data>
+  <data name="Action.CopyDiagnostics">
+    <value>Скопировать диагностику</value>
+  </data>
+  <data name="Action.SaveDiagnostics">
+    <value>Сохранить файл диагностики</value>
+  </data>
+  <data name="Section.Process">
+    <value>OscarWatch завис</value>
+  </data>
+  <data name="Process.Hint">
+    <value>Если OscarWatch запущен, но окно не появляется, закройте его и запустите снова.</value>
+  </data>
+  <data name="Action.CloseOscarWatch">
+    <value>Закрыть OscarWatch</value>
+  </data>
+  <data name="Action.StartOscarWatch">
+    <value>Запустить OscarWatch</value>
+  </data>
+  <data name="Section.Hardware">
+    <value>Радиостанция, поворотное устройство и GPS</value>
+  </data>
+  <data name="Hardware.Hint">
+    <value>Если OscarWatch зависает или закрывается при подключении, выключите их. Порты и другие настройки сохраняются, поэтому их можно снова включить в Настройках.</value>
+  </data>
+  <data name="Action.DisableHardware">
+    <value>Выключить радиостанцию, поворотное устройство и GPS</value>
+  </data>
+  <data name="Section.Reset">
+    <value>Сброс настроек</value>
+  </data>
+  <data name="Reset.Hint">
+    <value>Крайняя мера. Перемещает settings.json и его резервные копии в папку с датой, чтобы OscarWatch запустился с настройками по умолчанию. Ничего не удаляется.</value>
+  </data>
+  <data name="Action.PutSettingsAside">
+    <value>Отложить настройки</value>
+  </data>
+  <data name="Confirm.Continue">
+    <value>Продолжить</value>
+  </data>
+  <data name="Confirm.Cancel">
+    <value>Отмена</value>
+  </data>
+  <data name="Confirm.CloseOscarWatch">
+    <value>Закрыть OscarWatch сейчас? Несохранённые изменения могут быть потеряны.</value>
+  </data>
+  <data name="Confirm.CloseFirst">
+    <value>OscarWatch запущен. Сначала его нужно закрыть, иначе при выходе он может отменить это изменение. Закрыть OscarWatch и продолжить?</value>
+  </data>
+  <data name="Confirm.DisableHardware">
+    <value>Выключить эти подключения в settings.json?
+
+Радиостанция: {0}
+Поворотное устройство: {1}
+GPS: {2}</value>
+  </data>
+  <data name="Confirm.PutSettingsAside">
+    <value>Переместить settings.json и его резервные копии в {0}? OscarWatch запустится с настройками по умолчанию.</value>
+  </data>
+  <data name="Result.Closed">
+    <value>OscarWatch закрыт.</value>
+  </data>
+  <data name="Result.CloseFailed">
+    <value>Не удалось закрыть OscarWatch: {0}</value>
+  </data>
+  <data name="Result.StillRunning">
+    <value>OscarWatch всё ещё запущен, поэтому ничего не изменено.</value>
+  </data>
+  <data name="Result.Started">
+    <value>OscarWatch запущен.</value>
+  </data>
+  <data name="Result.StartFailed">
+    <value>Не удалось запустить OscarWatch: {0}</value>
+  </data>
+  <data name="Result.AlreadyRunning">
+    <value>OscarWatch уже запущен.</value>
+  </data>
+  <data name="Result.HardwareDisabled">
+    <value>Радиостанция, поворотное устройство и GPS выключены. Запустите OscarWatch и проверьте, открывается ли он.</value>
+  </data>
+  <data name="Result.HardwareAlreadyOff">
+    <value>Радиостанция, поворотное устройство и GPS уже выключены.</value>
+  </data>
+  <data name="Result.SettingsMissing">
+    <value>Файла settings.json для изменения нет.</value>
+  </data>
+  <data name="Result.SettingsUnreadable">
+    <value>Не удаётся прочитать settings.json, поэтому он не изменён.</value>
+  </data>
+  <data name="Result.SettingsAside">
+    <value>Настройки перемещены в {0}.</value>
+  </data>
+  <data name="Result.NothingToMove">
+    <value>Нет файлов настроек для перемещения.</value>
+  </data>
+  <data name="Result.DiagnosticsCopied">
+    <value>Диагностика скопирована в буфер обмена.</value>
+  </data>
+  <data name="Result.DiagnosticsSaved">
+    <value>Диагностика сохранена в {0}.</value>
+  </data>
+  <data name="Result.Failed">
+    <value>Не получилось: {0}</value>
+  </data>
+  <data name="Result.FolderOpenFailed">
+    <value>Не удалось открыть папку: {0}</value>
+  </data>
+  <data name="Save.Title">
+    <value>Сохранить файл диагностики</value>
+  </data>
+</root>

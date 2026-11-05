@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Window.Title">
+    <value>OscarWatch 故障排除</value>
+  </data>
+  <data name="Intro">
+    <value>当 OscarWatch 无法启动或窗口不出现时使用。OscarWatch 未运行时也可以使用。</value>
+  </data>
+  <data name="Section.Status">
+    <value>状态</value>
+  </data>
+  <data name="Action.Refresh">
+    <value>刷新</value>
+  </data>
+  <data name="Label.Process">
+    <value>OscarWatch 进程</value>
+  </data>
+  <data name="Label.Application">
+    <value>应用程序</value>
+  </data>
+  <data name="Label.System">
+    <value>系统</value>
+  </data>
+  <data name="Label.DataFolder">
+    <value>OscarWatch 文件夹</value>
+  </data>
+  <data name="Label.LogFolder">
+    <value>日志文件夹</value>
+  </data>
+  <data name="Label.LatestLog">
+    <value>最新日志</value>
+  </data>
+  <data name="Label.Settings">
+    <value>设置文件</value>
+  </data>
+  <data name="Label.Radio">
+    <value>电台</value>
+  </data>
+  <data name="Label.Rotator">
+    <value>旋转器</value>
+  </data>
+  <data name="Label.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Process.NotRunning">
+    <value>未运行</value>
+  </data>
+  <data name="Process.Running">
+    <value>正在运行（进程 {0}，启动于 {1}）</value>
+  </data>
+  <data name="Application.Found">
+    <value>版本 {0}</value>
+  </data>
+  <data name="Application.NotFound">
+    <value>在故障排除工具旁边找不到 OscarWatch。</value>
+  </data>
+  <data name="Log.None">
+    <value>没有日志文件。OscarWatch 可能在开始记录日志之前就已停止。</value>
+  </data>
+  <data name="Log.Latest">
+    <value>{0}，写入于 {1}</value>
+  </data>
+  <data name="Settings.Missing">
+    <value>未找到。OscarWatch 启动时会用默认设置创建。</value>
+  </data>
+  <data name="Settings.Readable">
+    <value>可读取，写入于 {0}</value>
+  </data>
+  <data name="Settings.Unreadable">
+    <value>无法读取：{0}</value>
+  </data>
+  <data name="Device.On">
+    <value>开启（{0}）</value>
+  </data>
+  <data name="Device.OnNoTarget">
+    <value>开启</value>
+  </data>
+  <data name="Device.Off">
+    <value>关闭</value>
+  </data>
+  <data name="Device.Unknown">
+    <value>未设置</value>
+  </data>
+  <data name="Section.RecentErrors">
+    <value>日志中的最近错误</value>
+  </data>
+  <data name="Errors.None">
+    <value>最新日志中没有错误。</value>
+  </data>
+  <data name="Section.Files">
+    <value>文件和诊断</value>
+  </data>
+  <data name="Files.Hint">
+    <value>诊断信息包括最新日志、去除了密码和 API 密钥的设置以及系统详情。请连同问题描述一起发送给支持人员。</value>
+  </data>
+  <data name="Action.OpenDataFolder">
+    <value>打开 OscarWatch 文件夹</value>
+  </data>
+  <data name="Action.OpenLogFolder">
+    <value>打开日志文件夹</value>
+  </data>
+  <data name="Action.CopyDiagnostics">
+    <value>复制诊断信息</value>
+  </data>
+  <data name="Action.SaveDiagnostics">
+    <value>保存诊断文件</value>
+  </data>
+  <data name="Section.Process">
+    <value>OscarWatch 无响应</value>
+  </data>
+  <data name="Process.Hint">
+    <value>如果 OscarWatch 正在运行但没有窗口出现，请关闭后重新启动。</value>
+  </data>
+  <data name="Action.CloseOscarWatch">
+    <value>关闭 OscarWatch</value>
+  </data>
+  <data name="Action.StartOscarWatch">
+    <value>启动 OscarWatch</value>
+  </data>
+  <data name="Section.Hardware">
+    <value>电台、旋转器和 GPS</value>
+  </data>
+  <data name="Hardware.Hint">
+    <value>如果 OscarWatch 在连接时卡住或关闭，请关闭这些设备。端口和其他设置会保留，之后可以在设置中重新开启。</value>
+  </data>
+  <data name="Action.DisableHardware">
+    <value>关闭电台、旋转器和 GPS</value>
+  </data>
+  <data name="Section.Reset">
+    <value>重置设置</value>
+  </data>
+  <data name="Reset.Hint">
+    <value>最后手段。将 settings.json 及其备份移到一个带日期的文件夹，使 OscarWatch 以默认设置启动。不会删除任何内容。</value>
+  </data>
+  <data name="Action.PutSettingsAside">
+    <value>移开设置</value>
+  </data>
+  <data name="Confirm.Continue">
+    <value>继续</value>
+  </data>
+  <data name="Confirm.Cancel">
+    <value>取消</value>
+  </data>
+  <data name="Confirm.CloseOscarWatch">
+    <value>现在关闭 OscarWatch 吗？未保存的更改可能会丢失。</value>
+  </data>
+  <data name="Confirm.CloseFirst">
+    <value>OscarWatch 正在运行。必须先关闭它，否则它退出时可能会撤销此更改。关闭 OscarWatch 并继续吗？</value>
+  </data>
+  <data name="Confirm.DisableHardware">
+    <value>在 settings.json 中关闭这些连接吗？
+
+电台：{0}
+旋转器：{1}
+GPS：{2}</value>
+  </data>
+  <data name="Confirm.PutSettingsAside">
+    <value>将 settings.json 及其备份移到 {0} 吗？OscarWatch 将以默认设置启动。</value>
+  </data>
+  <data name="Result.Closed">
+    <value>OscarWatch 已关闭。</value>
+  </data>
+  <data name="Result.CloseFailed">
+    <value>无法关闭 OscarWatch：{0}</value>
+  </data>
+  <data name="Result.StillRunning">
+    <value>OscarWatch 仍在运行，因此未做任何更改。</value>
+  </data>
+  <data name="Result.Started">
+    <value>OscarWatch 已启动。</value>
+  </data>
+  <data name="Result.StartFailed">
+    <value>无法启动 OscarWatch：{0}</value>
+  </data>
+  <data name="Result.AlreadyRunning">
+    <value>OscarWatch 已在运行。</value>
+  </data>
+  <data name="Result.HardwareDisabled">
+    <value>电台、旋转器和 GPS 已关闭。请启动 OscarWatch 检查它能否打开。</value>
+  </data>
+  <data name="Result.HardwareAlreadyOff">
+    <value>电台、旋转器和 GPS 已经是关闭状态。</value>
+  </data>
+  <data name="Result.SettingsMissing">
+    <value>没有可更改的 settings.json。</value>
+  </data>
+  <data name="Result.SettingsUnreadable">
+    <value>无法读取 settings.json，因此未做更改。</value>
+  </data>
+  <data name="Result.SettingsAside">
+    <value>设置已移到 {0}。</value>
+  </data>
+  <data name="Result.NothingToMove">
+    <value>没有需要移动的设置文件。</value>
+  </data>
+  <data name="Result.DiagnosticsCopied">
+    <value>诊断信息已复制到剪贴板。</value>
+  </data>
+  <data name="Result.DiagnosticsSaved">
+    <value>诊断信息已保存到 {0}。</value>
+  </data>
+  <data name="Result.Failed">
+    <value>操作失败：{0}</value>
+  </data>
+  <data name="Result.FolderOpenFailed">
+    <value>无法打开文件夹：{0}</value>
+  </data>
+  <data name="Save.Title">
+    <value>保存诊断文件</value>
+  </data>
+</root>

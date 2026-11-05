@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Window.Title">
+    <value>ตัวแก้ไขปัญหา OscarWatch</value>
+  </data>
+  <data name="Intro">
+    <value>ใช้เมื่อ OscarWatch เปิดไม่ขึ้นหรือหน้าต่างไม่ปรากฏ เครื่องมือนี้ทำงานได้แม้ OscarWatch ไม่ได้ทำงานอยู่</value>
+  </data>
+  <data name="Section.Status">
+    <value>สถานะ</value>
+  </data>
+  <data name="Action.Refresh">
+    <value>รีเฟรช</value>
+  </data>
+  <data name="Label.Process">
+    <value>โปรเซส OscarWatch</value>
+  </data>
+  <data name="Label.Application">
+    <value>แอปพลิเคชัน</value>
+  </data>
+  <data name="Label.System">
+    <value>ระบบ</value>
+  </data>
+  <data name="Label.DataFolder">
+    <value>โฟลเดอร์ OscarWatch</value>
+  </data>
+  <data name="Label.LogFolder">
+    <value>โฟลเดอร์บันทึก</value>
+  </data>
+  <data name="Label.LatestLog">
+    <value>บันทึกล่าสุด</value>
+  </data>
+  <data name="Label.Settings">
+    <value>ไฟล์การตั้งค่า</value>
+  </data>
+  <data name="Label.Radio">
+    <value>วิทยุ</value>
+  </data>
+  <data name="Label.Rotator">
+    <value>โรเตเตอร์</value>
+  </data>
+  <data name="Label.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Process.NotRunning">
+    <value>ไม่ได้ทำงาน</value>
+  </data>
+  <data name="Process.Running">
+    <value>กำลังทำงาน (โปรเซส {0}, เริ่ม {1})</value>
+  </data>
+  <data name="Application.Found">
+    <value>เวอร์ชัน {0}</value>
+  </data>
+  <data name="Application.NotFound">
+    <value>ไม่พบ OscarWatch ข้างตัวแก้ไขปัญหา</value>
+  </data>
+  <data name="Log.None">
+    <value>ไม่มีไฟล์บันทึก OscarWatch อาจหยุดทำงานก่อนเริ่มเขียนบันทึก</value>
+  </data>
+  <data name="Log.Latest">
+    <value>{0}, เขียนเมื่อ {1}</value>
+  </data>
+  <data name="Settings.Missing">
+    <value>ไม่พบ OscarWatch จะสร้างไฟล์ด้วยค่าเริ่มต้นเมื่อเปิดโปรแกรม</value>
+  </data>
+  <data name="Settings.Readable">
+    <value>อ่านได้ เขียนเมื่อ {0}</value>
+  </data>
+  <data name="Settings.Unreadable">
+    <value>อ่านไม่ได้: {0}</value>
+  </data>
+  <data name="Device.On">
+    <value>เปิด ({0})</value>
+  </data>
+  <data name="Device.OnNoTarget">
+    <value>เปิด</value>
+  </data>
+  <data name="Device.Off">
+    <value>ปิด</value>
+  </data>
+  <data name="Device.Unknown">
+    <value>ยังไม่ได้ตั้งค่า</value>
+  </data>
+  <data name="Section.RecentErrors">
+    <value>ข้อผิดพลาดล่าสุดในบันทึก</value>
+  </data>
+  <data name="Errors.None">
+    <value>ไม่มีข้อผิดพลาดในบันทึกล่าสุด</value>
+  </data>
+  <data name="Section.Files">
+    <value>ไฟล์และการวินิจฉัย</value>
+  </data>
+  <data name="Files.Hint">
+    <value>ข้อมูลวินิจฉัยประกอบด้วยบันทึกล่าสุด การตั้งค่าของคุณโดยตัดรหัสผ่านและคีย์ API ออก และรายละเอียดระบบ ส่งให้ฝ่ายสนับสนุนพร้อมคำอธิบายปัญหา</value>
+  </data>
+  <data name="Action.OpenDataFolder">
+    <value>เปิดโฟลเดอร์ OscarWatch</value>
+  </data>
+  <data name="Action.OpenLogFolder">
+    <value>เปิดโฟลเดอร์บันทึก</value>
+  </data>
+  <data name="Action.CopyDiagnostics">
+    <value>คัดลอกข้อมูลวินิจฉัย</value>
+  </data>
+  <data name="Action.SaveDiagnostics">
+    <value>บันทึกไฟล์วินิจฉัย</value>
+  </data>
+  <data name="Section.Process">
+    <value>OscarWatch ค้าง</value>
+  </data>
+  <data name="Process.Hint">
+    <value>หาก OscarWatch ทำงานอยู่แต่ไม่มีหน้าต่างปรากฏ ให้ปิดแล้วเปิดใหม่</value>
+  </data>
+  <data name="Action.CloseOscarWatch">
+    <value>ปิด OscarWatch</value>
+  </data>
+  <data name="Action.StartOscarWatch">
+    <value>เปิด OscarWatch</value>
+  </data>
+  <data name="Section.Hardware">
+    <value>วิทยุ โรเตเตอร์ และ GPS</value>
+  </data>
+  <data name="Hardware.Hint">
+    <value>หาก OscarWatch ค้างหรือปิดตัวระหว่างเชื่อมต่อ ให้ปิดอุปกรณ์เหล่านี้ พอร์ตและการตั้งค่าอื่นยังคงอยู่ คุณจึงเปิดกลับได้ในการตั้งค่า</value>
+  </data>
+  <data name="Action.DisableHardware">
+    <value>ปิดวิทยุ โรเตเตอร์ และ GPS</value>
+  </data>
+  <data name="Section.Reset">
+    <value>รีเซ็ตการตั้งค่า</value>
+  </data>
+  <data name="Reset.Hint">
+    <value>ทางเลือกสุดท้าย ย้าย settings.json และไฟล์สำรองไปไว้ในโฟลเดอร์ที่มีวันที่ เพื่อให้ OscarWatch เริ่มด้วยค่าเริ่มต้น ไม่มีอะไรถูกลบ</value>
+  </data>
+  <data name="Action.PutSettingsAside">
+    <value>ย้ายการตั้งค่าออกไปก่อน</value>
+  </data>
+  <data name="Confirm.Continue">
+    <value>ดำเนินการต่อ</value>
+  </data>
+  <data name="Confirm.Cancel">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="Confirm.CloseOscarWatch">
+    <value>ปิด OscarWatch ตอนนี้หรือไม่ การเปลี่ยนแปลงที่ยังไม่บันทึกอาจสูญหาย</value>
+  </data>
+  <data name="Confirm.CloseFirst">
+    <value>OscarWatch กำลังทำงานอยู่ ต้องปิดก่อน มิฉะนั้นอาจยกเลิกการเปลี่ยนแปลงนี้ตอนปิดโปรแกรม ปิด OscarWatch แล้วดำเนินการต่อหรือไม่</value>
+  </data>
+  <data name="Confirm.DisableHardware">
+    <value>ปิดการเชื่อมต่อเหล่านี้ใน settings.json หรือไม่
+
+วิทยุ: {0}
+โรเตเตอร์: {1}
+GPS: {2}</value>
+  </data>
+  <data name="Confirm.PutSettingsAside">
+    <value>ย้าย settings.json และไฟล์สำรองไปที่ {0} หรือไม่ OscarWatch จะเริ่มด้วยค่าเริ่มต้น</value>
+  </data>
+  <data name="Result.Closed">
+    <value>ปิด OscarWatch แล้ว</value>
+  </data>
+  <data name="Result.CloseFailed">
+    <value>ปิด OscarWatch ไม่ได้: {0}</value>
+  </data>
+  <data name="Result.StillRunning">
+    <value>OscarWatch ยังทำงานอยู่ จึงไม่ได้เปลี่ยนแปลงอะไร</value>
+  </data>
+  <data name="Result.Started">
+    <value>เปิด OscarWatch แล้ว</value>
+  </data>
+  <data name="Result.StartFailed">
+    <value>เปิด OscarWatch ไม่ได้: {0}</value>
+  </data>
+  <data name="Result.AlreadyRunning">
+    <value>OscarWatch ทำงานอยู่แล้ว</value>
+  </data>
+  <data name="Result.HardwareDisabled">
+    <value>ปิดวิทยุ โรเตเตอร์ และ GPS แล้ว เปิด OscarWatch เพื่อตรวจสอบว่าเปิดขึ้น</value>
+  </data>
+  <data name="Result.HardwareAlreadyOff">
+    <value>วิทยุ โรเตเตอร์ และ GPS ปิดอยู่แล้ว</value>
+  </data>
+  <data name="Result.SettingsMissing">
+    <value>ไม่มี settings.json ให้เปลี่ยน</value>
+  </data>
+  <data name="Result.SettingsUnreadable">
+    <value>อ่าน settings.json ไม่ได้ จึงไม่ได้เปลี่ยนแปลง</value>
+  </data>
+  <data name="Result.SettingsAside">
+    <value>ย้ายการตั้งค่าไปที่ {0} แล้ว</value>
+  </data>
+  <data name="Result.NothingToMove">
+    <value>ไม่มีไฟล์การตั้งค่าให้ย้าย</value>
+  </data>
+  <data name="Result.DiagnosticsCopied">
+    <value>คัดลอกข้อมูลวินิจฉัยไปยังคลิปบอร์ดแล้ว</value>
+  </data>
+  <data name="Result.DiagnosticsSaved">
+    <value>บันทึกข้อมูลวินิจฉัยไว้ที่ {0} แล้ว</value>
+  </data>
+  <data name="Result.Failed">
+    <value>ไม่สำเร็จ: {0}</value>
+  </data>
+  <data name="Result.FolderOpenFailed">
+    <value>เปิดโฟลเดอร์ไม่ได้: {0}</value>
+  </data>
+  <data name="Save.Title">
+    <value>บันทึกไฟล์วินิจฉัย</value>
+  </data>
+</root>

@@ -17,6 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OscarWatch\OscarWatch.csproj" />
+    <ProjectReference Include="..\OscarWatch.Troubleshoot\OscarWatch.Troubleshoot.csproj" />
     <ProjectReference Include="..\OscarWatch.Core\OscarWatch.Core.csproj" />
     <ProjectReference Include="..\OscarWatch.Orbit\OscarWatch.Orbit.csproj" />
   </ItemGroup>

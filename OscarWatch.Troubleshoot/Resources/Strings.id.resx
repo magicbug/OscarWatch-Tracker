@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Window.Title">
+    <value>Pemecah Masalah OscarWatch</value>
+  </data>
+  <data name="Intro">
+    <value>Gunakan ini saat OscarWatch tidak mau mulai atau jendelanya tidak muncul. Alat ini berfungsi tanpa OscarWatch berjalan.</value>
+  </data>
+  <data name="Section.Status">
+    <value>Status</value>
+  </data>
+  <data name="Action.Refresh">
+    <value>Segarkan</value>
+  </data>
+  <data name="Label.Process">
+    <value>Proses OscarWatch</value>
+  </data>
+  <data name="Label.Application">
+    <value>Aplikasi</value>
+  </data>
+  <data name="Label.System">
+    <value>Sistem</value>
+  </data>
+  <data name="Label.DataFolder">
+    <value>Folder OscarWatch</value>
+  </data>
+  <data name="Label.LogFolder">
+    <value>Folder log</value>
+  </data>
+  <data name="Label.LatestLog">
+    <value>Log terbaru</value>
+  </data>
+  <data name="Label.Settings">
+    <value>Berkas pengaturan</value>
+  </data>
+  <data name="Label.Radio">
+    <value>Radio</value>
+  </data>
+  <data name="Label.Rotator">
+    <value>Rotator</value>
+  </data>
+  <data name="Label.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Process.NotRunning">
+    <value>Tidak berjalan</value>
+  </data>
+  <data name="Process.Running">
+    <value>Berjalan (proses {0}, dimulai {1})</value>
+  </data>
+  <data name="Application.Found">
+    <value>Versi {0}</value>
+  </data>
+  <data name="Application.NotFound">
+    <value>OscarWatch tidak ditemukan di samping pemecah masalah.</value>
+  </data>
+  <data name="Log.None">
+    <value>Tidak ada berkas log. OscarWatch mungkin berhenti sebelum sempat mulai mencatat log.</value>
+  </data>
+  <data name="Log.Latest">
+    <value>{0}, ditulis {1}</value>
+  </data>
+  <data name="Settings.Missing">
+    <value>Tidak ditemukan. OscarWatch membuatnya dengan pengaturan bawaan saat mulai.</value>
+  </data>
+  <data name="Settings.Readable">
+    <value>Dapat dibaca, ditulis {0}</value>
+  </data>
+  <data name="Settings.Unreadable">
+    <value>Tidak dapat dibaca: {0}</value>
+  </data>
+  <data name="Device.On">
+    <value>Aktif ({0})</value>
+  </data>
+  <data name="Device.OnNoTarget">
+    <value>Aktif</value>
+  </data>
+  <data name="Device.Off">
+    <value>Nonaktif</value>
+  </data>
+  <data name="Device.Unknown">
+    <value>Belum diatur</value>
+  </data>
+  <data name="Section.RecentErrors">
+    <value>Galat terbaru di log</value>
+  </data>
+  <data name="Errors.None">
+    <value>Tidak ada galat di log terbaru.</value>
+  </data>
+  <data name="Section.Files">
+    <value>Berkas dan diagnostik</value>
+  </data>
+  <data name="Files.Hint">
+    <value>Diagnostik berisi log terbaru, pengaturan Anda tanpa kata sandi dan kunci API, serta detail sistem. Kirimkan ke dukungan beserta penjelasan masalahnya.</value>
+  </data>
+  <data name="Action.OpenDataFolder">
+    <value>Buka folder OscarWatch</value>
+  </data>
+  <data name="Action.OpenLogFolder">
+    <value>Buka folder log</value>
+  </data>
+  <data name="Action.CopyDiagnostics">
+    <value>Salin diagnostik</value>
+  </data>
+  <data name="Action.SaveDiagnostics">
+    <value>Simpan berkas diagnostik</value>
+  </data>
+  <data name="Section.Process">
+    <value>OscarWatch macet</value>
+  </data>
+  <data name="Process.Hint">
+    <value>Jika OscarWatch berjalan tetapi jendelanya tidak muncul, tutup lalu jalankan lagi.</value>
+  </data>
+  <data name="Action.CloseOscarWatch">
+    <value>Tutup OscarWatch</value>
+  </data>
+  <data name="Action.StartOscarWatch">
+    <value>Jalankan OscarWatch</value>
+  </data>
+  <data name="Section.Hardware">
+    <value>Radio, rotator, dan GPS</value>
+  </data>
+  <data name="Hardware.Hint">
+    <value>Jika OscarWatch macet atau tertutup saat menyambung, matikan perangkat ini. Port dan pengaturan lain tetap disimpan, sehingga Anda dapat menyalakannya lagi di Pengaturan.</value>
+  </data>
+  <data name="Action.DisableHardware">
+    <value>Matikan radio, rotator, dan GPS</value>
+  </data>
+  <data name="Section.Reset">
+    <value>Atur ulang pengaturan</value>
+  </data>
+  <data name="Reset.Hint">
+    <value>Pilihan terakhir. Memindahkan settings.json dan cadangannya ke folder bertanggal, sehingga OscarWatch mulai dengan pengaturan bawaan. Tidak ada yang dihapus.</value>
+  </data>
+  <data name="Action.PutSettingsAside">
+    <value>Sisihkan pengaturan</value>
+  </data>
+  <data name="Confirm.Continue">
+    <value>Lanjutkan</value>
+  </data>
+  <data name="Confirm.Cancel">
+    <value>Batal</value>
+  </data>
+  <data name="Confirm.CloseOscarWatch">
+    <value>Tutup OscarWatch sekarang? Perubahan yang belum disimpan bisa hilang.</value>
+  </data>
+  <data name="Confirm.CloseFirst">
+    <value>OscarWatch sedang berjalan. OscarWatch harus ditutup dulu, atau perubahan ini bisa dibatalkan saat ia keluar. Tutup OscarWatch dan lanjutkan?</value>
+  </data>
+  <data name="Confirm.DisableHardware">
+    <value>Matikan sambungan ini di settings.json?
+
+Radio: {0}
+Rotator: {1}
+GPS: {2}</value>
+  </data>
+  <data name="Confirm.PutSettingsAside">
+    <value>Pindahkan settings.json dan cadangannya ke {0}? OscarWatch akan mulai dengan pengaturan bawaan.</value>
+  </data>
+  <data name="Result.Closed">
+    <value>OscarWatch telah ditutup.</value>
+  </data>
+  <data name="Result.CloseFailed">
+    <value>OscarWatch tidak dapat ditutup: {0}</value>
+  </data>
+  <data name="Result.StillRunning">
+    <value>OscarWatch masih berjalan, jadi tidak ada yang diubah.</value>
+  </data>
+  <data name="Result.Started">
+    <value>OscarWatch telah dijalankan.</value>
+  </data>
+  <data name="Result.StartFailed">
+    <value>OscarWatch tidak dapat dijalankan: {0}</value>
+  </data>
+  <data name="Result.AlreadyRunning">
+    <value>OscarWatch sudah berjalan.</value>
+  </data>
+  <data name="Result.HardwareDisabled">
+    <value>Radio, rotator, dan GPS sekarang nonaktif. Jalankan OscarWatch untuk memastikan ia terbuka.</value>
+  </data>
+  <data name="Result.HardwareAlreadyOff">
+    <value>Radio, rotator, dan GPS sudah nonaktif.</value>
+  </data>
+  <data name="Result.SettingsMissing">
+    <value>Tidak ada settings.json yang bisa diubah.</value>
+  </data>
+  <data name="Result.SettingsUnreadable">
+    <value>settings.json tidak dapat dibaca, jadi tidak diubah.</value>
+  </data>
+  <data name="Result.SettingsAside">
+    <value>Pengaturan dipindahkan ke {0}.</value>
+  </data>
+  <data name="Result.NothingToMove">
+    <value>Tidak ada berkas pengaturan yang perlu dipindahkan.</value>
+  </data>
+  <data name="Result.DiagnosticsCopied">
+    <value>Diagnostik disalin ke papan klip.</value>
+  </data>
+  <data name="Result.DiagnosticsSaved">
+    <value>Diagnostik disimpan ke {0}.</value>
+  </data>
+  <data name="Result.Failed">
+    <value>Tidak berhasil: {0}</value>
+  </data>
+  <data name="Result.FolderOpenFailed">
+    <value>Folder tidak dapat dibuka: {0}</value>
+  </data>
+  <data name="Save.Title">
+    <value>Simpan berkas diagnostik</value>
+  </data>
+</root>

@@ -1,0 +1,47 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OscarWatch.Troubleshoot.App"
+             RequestedThemeVariant="Default">
+
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="Window">
+      <Setter Property="Icon" Value="/Assets/OscarWatch-Icon.png" />
+    </Style>
+    <Style Selector="TextBlock.section">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.hint">
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="TextBlock.label">
+      <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+      <Setter Property="Margin" Value="0,0,16,6" />
+    </Style>
+    <Style Selector="SelectableTextBlock.value">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="12,4" />
+    </Style>
+  </Application.Styles>
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="SecondaryTextBrush" Color="#525252" />
+          <SolidColorBrush x:Key="SectionBorderBrush" Color="#D0D4D8" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="SecondaryTextBrush" Color="#C4C7CC" />
+          <SolidColorBrush x:Key="SectionBorderBrush" Color="#4A4F55" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

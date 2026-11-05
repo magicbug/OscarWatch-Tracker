@@ -1,0 +1,124 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:OscarWatch.Troubleshoot"
+        xmlns:t="using:OscarWatch.Troubleshoot.Localization"
+        x:Class="OscarWatch.Troubleshoot.MainWindow"
+        x:DataType="local:MainViewModel"
+        Title="{t:Tr Window.Title}"
+        Width="1080" Height="700"
+        MinWidth="720" MinHeight="480"
+        WindowStartupLocation="CenterScreen">
+
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            Padding="16,8"
+            MinHeight="36">
+      <SelectableTextBlock Text="{Binding ResultText}"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center"
+                           AutomationProperties.LiveSetting="Polite" />
+    </Border>
+
+    <ScrollViewer AllowAutoHide="False">
+      <StackPanel Margin="20" Spacing="20">
+        <TextBlock Text="{t:Tr Intro}" TextWrapping="Wrap" />
+
+        <Grid ColumnDefinitions="*,28,*">
+          <StackPanel Grid.Column="0" Spacing="20">
+            <StackPanel Spacing="8">
+              <DockPanel>
+                <Button DockPanel.Dock="Right"
+                        Content="{t:Tr Action.Refresh}"
+                        Command="{Binding RefreshCommand}" />
+                <TextBlock Classes="section" Text="{t:Tr Section.Status}" VerticalAlignment="Center" />
+              </DockPanel>
+
+              <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                <TextBlock Classes="label" Grid.Row="0" Text="{t:Tr Label.Process}" />
+                <SelectableTextBlock Classes="value" Grid.Row="0" Grid.Column="1" Text="{Binding ProcessText}" />
+
+                <TextBlock Classes="label" Grid.Row="1" Text="{t:Tr Label.Application}" />
+                <SelectableTextBlock Classes="value" Grid.Row="1" Grid.Column="1" Text="{Binding ApplicationText}" />
+
+                <TextBlock Classes="label" Grid.Row="2" Text="{t:Tr Label.System}" />
+                <SelectableTextBlock Classes="value" Grid.Row="2" Grid.Column="1" Text="{Binding SystemText}" />
+
+                <TextBlock Classes="label" Grid.Row="3" Text="{t:Tr Label.DataFolder}" />
+                <SelectableTextBlock Classes="value" Grid.Row="3" Grid.Column="1" Text="{Binding DataFolderText}" />
+
+                <TextBlock Classes="label" Grid.Row="4" Text="{t:Tr Label.LogFolder}" />
+                <SelectableTextBlock Classes="value" Grid.Row="4" Grid.Column="1" Text="{Binding LogFolderText}" />
+
+                <TextBlock Classes="label" Grid.Row="5" Text="{t:Tr Label.LatestLog}" />
+                <SelectableTextBlock Classes="value" Grid.Row="5" Grid.Column="1" Text="{Binding LatestLogText}" />
+
+                <TextBlock Classes="label" Grid.Row="6" Text="{t:Tr Label.Settings}" />
+                <SelectableTextBlock Classes="value" Grid.Row="6" Grid.Column="1" Text="{Binding SettingsText}" />
+
+                <TextBlock Classes="label" Grid.Row="7" Text="{t:Tr Label.Radio}" />
+                <SelectableTextBlock Classes="value" Grid.Row="7" Grid.Column="1" Text="{Binding RadioText}" />
+
+                <TextBlock Classes="label" Grid.Row="8" Text="{t:Tr Label.Rotator}" />
+                <SelectableTextBlock Classes="value" Grid.Row="8" Grid.Column="1" Text="{Binding RotatorText}" />
+
+                <TextBlock Classes="label" Grid.Row="9" Text="{t:Tr Label.Gps}" />
+                <SelectableTextBlock Classes="value" Grid.Row="9" Grid.Column="1" Text="{Binding GpsText}" />
+              </Grid>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+              <TextBlock Classes="section" Text="{t:Tr Section.RecentErrors}" />
+              <TextBox Text="{Binding RecentErrorsText}"
+                       IsReadOnly="True"
+                       AcceptsReturn="True"
+                       TextWrapping="NoWrap"
+                       Height="200"
+                       FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace"
+                       FontSize="12"
+                       AutomationProperties.Name="{t:Tr Section.RecentErrors}" />
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Column="2" Spacing="20">
+            <StackPanel Spacing="8">
+              <TextBlock Classes="section" Text="{t:Tr Section.Files}" />
+              <TextBlock Classes="hint" Text="{t:Tr Files.Hint}" />
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <Button Content="{t:Tr Action.OpenDataFolder}" Command="{Binding OpenDataFolderCommand}" />
+                <Button Content="{t:Tr Action.OpenLogFolder}" Command="{Binding OpenLogFolderCommand}" />
+                <Button Content="{t:Tr Action.CopyDiagnostics}" Command="{Binding CopyDiagnosticsCommand}" />
+                <Button Content="{t:Tr Action.SaveDiagnostics}" Command="{Binding SaveDiagnosticsCommand}" />
+              </WrapPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+              <TextBlock Classes="section" Text="{t:Tr Section.Process}" />
+              <TextBlock Classes="hint" Text="{t:Tr Process.Hint}" />
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <Button Content="{t:Tr Action.CloseOscarWatch}" Command="{Binding CloseOscarWatchCommand}" />
+                <Button Content="{t:Tr Action.StartOscarWatch}" Command="{Binding StartOscarWatchCommand}" />
+              </WrapPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+              <TextBlock Classes="section" Text="{t:Tr Section.Hardware}" />
+              <TextBlock Classes="hint" Text="{t:Tr Hardware.Hint}" />
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <Button Content="{t:Tr Action.DisableHardware}" Command="{Binding DisableHardwareCommand}" />
+              </WrapPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+              <TextBlock Classes="section" Text="{t:Tr Section.Reset}" />
+              <TextBlock Classes="hint" Text="{t:Tr Reset.Hint}" />
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <Button Content="{t:Tr Action.PutSettingsAside}" Command="{Binding PutSettingsAsideCommand}" />
+              </WrapPanel>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>
