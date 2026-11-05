@@ -29,11 +29,18 @@ public sealed class Ft4CallingMeColumnTests
     }
 
     [Fact]
-    public void Other_traffic_echo_and_rejected_hints_are_left_out()
+    public void Own_echoes_are_included()
+    {
+        var echo = Line("CQ MM9SQL IO87", "CQ", "MM9SQL", echo: true);
+        Assert.True(Ft4CallingMeColumn.Includes(echo, "MM9SQL"));
+        Assert.True(Ft4CallingMeColumn.Includes(echo, null));
+    }
+
+    [Fact]
+    public void Other_traffic_and_rejected_hints_are_left_out()
     {
         Assert.False(Ft4CallingMeColumn.Includes(Line("CQ PD1B JO32", "CQ", "PD1B"), "MM9SQL"));
         Assert.False(Ft4CallingMeColumn.Includes(Line("G4ABC PD1B -10", "G4ABC", "PD1B"), "MM9SQL"));
-        Assert.False(Ft4CallingMeColumn.Includes(Line("CQ MM9SQL IO87", "CQ", "MM9SQL", echo: true), "MM9SQL"));
         Assert.False(Ft4CallingMeColumn.Includes(Line("MM9SQL G4ABC -12", "MM9SQL", "G4ABC", rejected: true), "MM9SQL"));
     }
 
