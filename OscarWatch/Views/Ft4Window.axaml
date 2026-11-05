@@ -354,7 +354,7 @@
             </StackPanel>
           </DockPanel>
 
-          <Grid x:Name="DecodeColumns" ColumnDefinitions="*,0">
+          <Grid x:Name="DecodeColumns" ColumnDefinitions="*,Auto,0">
             <DockPanel Grid.Column="0" Grid.IsSharedSizeScope="True">
               <TextBlock DockPanel.Dock="Top"
                          Text="{loc:Localize Key=Ft4.Decodes.BandActivity}"
@@ -387,9 +387,15 @@
               </ListBox>
             </DockPanel>
 
-            <DockPanel Grid.Column="1"
+            <GridSplitter x:Name="DecodeColumnsSplitter"
+                          Grid.Column="1"
+                          Width="10"
+                          Background="Transparent"
+                          ResizeDirection="Columns"
+                          IsVisible="{Binding IsAdvancedDecodeLayout}" />
+
+            <DockPanel Grid.Column="2"
                        Grid.IsSharedSizeScope="True"
-                       Margin="10,0,0,0"
                        IsVisible="{Binding IsAdvancedDecodeLayout}">
               <TextBlock DockPanel.Dock="Top"
                          Text="{loc:Localize Key=Ft4.Decodes.CallingMe}"

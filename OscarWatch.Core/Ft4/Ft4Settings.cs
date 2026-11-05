@@ -258,11 +258,26 @@ public sealed class Ft4Settings
     /// <summary>Text colour for a message this station transmitted.</summary>
     public string TxTextColour { get; set; } = Ft4DecodeHighlight.DefaultTxTextColour;
 
-    /// <summary>Window size/position.</summary>
+    /// <summary>Window size/position. Size and position are the last normal (not maximised) bounds.</summary>
     public int? WindowWidth { get; set; }
     public int? WindowHeight { get; set; }
     public int? WindowX { get; set; }
     public int? WindowY { get; set; }
+    public bool WindowMaximised { get; set; }
+
+    public const double DefaultDecodeColumnShare = 0.5;
+
+    public const double MinDecodeColumnShare = 0.25;
+
+    public const double MaxDecodeColumnShare = 0.75;
+
+    /// <summary>Share of the decode area given to Band activity in the advanced layout. The rest is Calling me.</summary>
+    public double DecodeColumnShare { get; set; } = DefaultDecodeColumnShare;
+
+    public static double ClampDecodeColumnShare(double value) =>
+        double.IsFinite(value)
+            ? Math.Clamp(value, MinDecodeColumnShare, MaxDecodeColumnShare)
+            : DefaultDecodeColumnShare;
 
     /// <summary>
     /// Uplink echo calibration in kHz. Keys are either a legacy satellite name (RS-44)

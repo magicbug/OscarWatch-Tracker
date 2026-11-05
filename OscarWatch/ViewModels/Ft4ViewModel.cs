@@ -208,6 +208,19 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     public bool IsAdvancedDecodeLayout => SelectedDecodeLayout?.Value == Ft4DecodeLayout.Advanced;
 
+    /// <summary>Share of the decode area given to Band activity in the advanced layout.</summary>
+    public double DecodeColumnShare => Ft4Settings.ClampDecodeColumnShare(_settings.Current.Ft4.DecodeColumnShare);
+
+    public void SaveDecodeColumnShare(double share)
+    {
+        var clamped = Ft4Settings.ClampDecodeColumnShare(share);
+        if (Math.Abs(_settings.Current.Ft4.DecodeColumnShare - clamped) < 0.001)
+            return;
+
+        _settings.Current.Ft4.DecodeColumnShare = clamped;
+        _settings.RequestSave();
+    }
+
     public string StationCallsign =>
         Ft4MessageCodec.NormalizeCall(_settings.Current.GroundStation.Callsign ?? "");
 

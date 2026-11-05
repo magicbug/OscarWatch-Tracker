@@ -45,6 +45,8 @@ public sealed class Ft4SettingsTests
         Assert.False(settings.OscarWatchSpotsEnabled);
         Assert.Equal(12, settings.DecodeFontSize);
         Assert.Equal(Ft4DecodeLayout.Basic, settings.DecodeLayout);
+        Assert.Equal(Ft4Settings.DefaultDecodeColumnShare, settings.DecodeColumnShare);
+        Assert.False(settings.WindowMaximised);
         Assert.Equal(Ft4Settings.DefaultWaterfallRangeDb, settings.WaterfallRangeDb);
         Assert.Equal(Ft4Settings.FastWaterfallSpeed, settings.WaterfallSpeed);
         Assert.Equal(Ft4DecodeHighlight.DefaultCallingMeColour, settings.CallingMeColour);
@@ -58,6 +60,16 @@ public sealed class Ft4SettingsTests
         Assert.Equal("", settings.NewGridTextColour);
         Assert.Equal("", settings.CqTextColour);
         Assert.Equal(Ft4DecodeHighlight.DefaultTxTextColour, settings.TxTextColour);
+    }
+
+    [Theory]
+    [InlineData(0.5, 0.5)]
+    [InlineData(0.1, Ft4Settings.MinDecodeColumnShare)]
+    [InlineData(0.9, Ft4Settings.MaxDecodeColumnShare)]
+    [InlineData(double.NaN, Ft4Settings.DefaultDecodeColumnShare)]
+    public void Decode_column_share_is_kept_within_range(double stored, double expected)
+    {
+        Assert.Equal(expected, Ft4Settings.ClampDecodeColumnShare(stored));
     }
 
     [Fact]
