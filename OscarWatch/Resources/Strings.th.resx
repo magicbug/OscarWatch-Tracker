@@ -4741,6 +4741,12 @@ LOS: {2}
   <data name="Ft4.WaterfallFlatten.Note">
     <value>ชดเชยความลาดของฟิลเตอร์ SSB ของวิทยุ เพื่อให้ขอบของพาสแบนด์ไม่มืดกว่าตรงกลาง เหมือน Flatten ใน WSJT-X เปิดเป็นค่าเริ่มต้น</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>เส้นแบ่งช่วงพร้อมเวลา UTC</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>วาดเส้นขวางวอเตอร์ฟอลล์ที่จุดเริ่มต้นของแต่ละช่วง พร้อมเวลาเริ่มต้นแบบ UTC เหมือน WSJT-X เปิดเป็นค่าเริ่มต้น</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>ความเร็ววอเตอร์ฟอล</value>
   </data>

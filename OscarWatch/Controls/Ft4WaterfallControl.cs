@@ -308,6 +308,10 @@ public sealed class Ft4WaterfallControl : Control
                 _rowSlotStarts[0] = slotStart;
             _lastRowSlotStart = slotStart;
         }
+        else
+        {
+            _lastRowSlotStart = DateTime.MinValue;
+        }
 
         for (var x = 0; x < SpectrumColumns; x++)
             _rows[x] = bins[x];

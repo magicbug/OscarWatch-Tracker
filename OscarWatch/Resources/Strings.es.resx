@@ -4737,6 +4737,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.WaterfallFlatten.Note">
     <value>Compensa la pendiente del filtro SSB de la radio para que los bordes de la banda de paso no se vean más oscuros que el centro, como Flatten en WSJT-X. Activado por defecto.</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>Líneas de intervalo con horas UTC</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>Dibuja una línea en la cascada al inicio de cada intervalo, con su hora UTC de inicio, como WSJT-X. Activado por defecto.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Velocidad de la cascada</value>
   </data>

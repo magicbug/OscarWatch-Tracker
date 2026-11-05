@@ -4737,6 +4737,12 @@
   <data name="Ft4.WaterfallFlatten.Note">
     <value>無線機の SSB フィルターの傾きを補正し、通過帯域の端が中央より暗く表示されないようにします（WSJT-X の Flatten と同様）。既定でオンです。</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>スロット境界線と UTC 時刻</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>各スロットの開始位置にウォーターフォールを横切る線を引き、UTC 開始時刻を表示します（WSJT-X と同様）。既定でオンです。</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>ウォーターフォールの速度</value>
   </data>

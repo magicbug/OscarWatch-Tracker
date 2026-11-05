@@ -183,6 +183,9 @@ public sealed class Ft4Settings
     /// </summary>
     public bool WaterfallFlatten { get; set; } = true;
 
+    /// <summary>Draw a line at the start of each slot with its UTC start time (like WSJT-X). On by default.</summary>
+    public bool WaterfallSlotLines { get; set; } = true;
+
     /// <summary>Slowest waterfall scroll. About 48 seconds stay on screen.</summary>
     public const int SlowWaterfallSpeed = 1;
 

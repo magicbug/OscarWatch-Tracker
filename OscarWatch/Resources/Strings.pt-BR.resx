@@ -4737,6 +4737,12 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.WaterfallFlatten.Note">
     <value>Compensa a inclinação do filtro SSB do rádio para que as bordas da banda passante não fiquem mais escuras que o centro, como o Flatten do WSJT-X. Ativado por padrão.</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>Linhas de slot com horários UTC</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>Desenha uma linha na cascata no início de cada slot, com o horário UTC de início, como o WSJT-X. Ativado por padrão.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Velocidade da cascata</value>
   </data>

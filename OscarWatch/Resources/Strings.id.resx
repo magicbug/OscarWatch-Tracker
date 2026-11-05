@@ -4741,6 +4741,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.WaterfallFlatten.Note">
     <value>Meratakan kemiringan filter SSB radio Anda sehingga tepi passband tidak lebih gelap daripada bagian tengah, seperti Flatten di WSJT-X. Aktif secara bawaan.</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>Garis slot dengan waktu UTC</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>Menggambar garis melintasi waterfall pada awal setiap slot, dengan waktu mulai UTC, seperti WSJT-X. Aktif secara bawaan.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Kecepatan waterfall</value>
   </data>

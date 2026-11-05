@@ -49,6 +49,8 @@ public sealed class Ft4SettingsTests
         Assert.False(settings.WindowMaximised);
         Assert.Equal(Ft4Settings.DefaultWaterfallRangeDb, settings.WaterfallRangeDb);
         Assert.Equal(Ft4Settings.FastWaterfallSpeed, settings.WaterfallSpeed);
+        Assert.True(settings.WaterfallFlatten);
+        Assert.True(settings.WaterfallSlotLines);
         Assert.Equal(Ft4DecodeHighlight.DefaultCallingMeColour, settings.CallingMeColour);
         Assert.Equal(Ft4DecodeHighlight.DefaultReplyingColour, settings.ReplyingColour);
         Assert.Equal(Ft4DecodeHighlight.DefaultNewCallColour, settings.NewCallColour);

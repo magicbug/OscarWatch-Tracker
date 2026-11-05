@@ -120,6 +120,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             ?? DecodeLayoutOptions[0];
         _waterfallRangeDb = Ft4Settings.ClampWaterfallRangeDb(ft4.WaterfallRangeDb);
         _waterfallFlatten = ft4.WaterfallFlatten;
+        _waterfallSlotLines = ft4.WaterfallSlotLines;
         var waterfallSpeed = Ft4Settings.ClampWaterfallSpeed(ft4.WaterfallSpeed);
         if (waterfallSpeed != ft4.WaterfallSpeed)
         {
@@ -305,6 +306,13 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty] private double _waterfallRangeDb = Ft4Settings.DefaultWaterfallRangeDb;
     [ObservableProperty] private bool _waterfallFlatten = true;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(WaterfallSlotSeconds))]
+    private bool _waterfallSlotLines = true;
+
+    /// <summary>Slot length for the waterfall's slot lines, or 0 when they are turned off.</summary>
+    public double WaterfallSlotSeconds => WaterfallSlotLines ? Ft4SlotClock.Ft4SlotSeconds : 0;
 
     [ObservableProperty] private Ft4WaterfallSpeedOption? _selectedWaterfallSpeed;
     [ObservableProperty] private Ft4DecodeLayoutOption? _selectedDecodeLayout;
@@ -560,6 +568,15 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             return;
 
         _settings.Current.Ft4.WaterfallFlatten = value;
+        _settings.RequestSave();
+    }
+
+    partial void OnWaterfallSlotLinesChanged(bool value)
+    {
+        if (_settings.Current.Ft4.WaterfallSlotLines == value)
+            return;
+
+        _settings.Current.Ft4.WaterfallSlotLines = value;
         _settings.RequestSave();
     }
 

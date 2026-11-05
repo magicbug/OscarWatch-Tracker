@@ -4737,6 +4737,12 @@ Latest: {1} ({2})</value>
   <data name="Ft4.WaterfallFlatten.Note">
     <value>Evens out the slope of your radio's SSB filter so the edges of the passband are not darker than the middle, like WSJT-X Flatten. On by default.</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>Slot lines with UTC times</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>Draws a line across the waterfall at the start of each slot, with its UTC start time, like WSJT-X. On by default.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Waterfall speed</value>
   </data>

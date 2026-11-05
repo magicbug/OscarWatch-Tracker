@@ -4741,6 +4741,12 @@ LOS: {2}
   <data name="Ft4.WaterfallFlatten.Note">
     <value>Компенсирует спад SSB-фильтра радиостанции, чтобы края полосы пропускания не были темнее середины, как Flatten в WSJT-X. Включено по умолчанию.</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>Линии слотов с временем UTC</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>Рисует линию поперёк водопада в начале каждого слота с временем начала по UTC, как WSJT-X. Включено по умолчанию.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Скорость водопада</value>
   </data>

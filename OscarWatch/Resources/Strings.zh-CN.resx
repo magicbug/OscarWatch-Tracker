@@ -4737,6 +4737,12 @@
   <data name="Ft4.WaterfallFlatten.Note">
     <value>补偿电台 SSB 滤波器的斜率，使通带边缘不会比中间更暗，与 WSJT-X 的 Flatten 相同。默认开启。</value>
   </data>
+  <data name="Ft4.WaterfallSlotLines">
+    <value>时隙分隔线和 UTC 时间</value>
+  </data>
+  <data name="Ft4.WaterfallSlotLines.Note">
+    <value>在每个时隙开始处横跨瀑布图画一条线，并显示其 UTC 开始时间，与 WSJT-X 相同。默认开启。</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>瀑布图速度</value>
   </data>

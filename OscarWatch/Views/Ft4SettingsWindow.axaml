@@ -323,6 +323,10 @@
                       IsChecked="{Binding WaterfallFlatten}" />
             <TextBlock Classes="ft4-note"
                        Text="{loc:Localize Key=Ft4.WaterfallFlatten.Note}" />
+            <CheckBox Content="{loc:Localize Key=Ft4.WaterfallSlotLines}"
+                      IsChecked="{Binding WaterfallSlotLines}" />
+            <TextBlock Classes="ft4-note"
+                       Text="{loc:Localize Key=Ft4.WaterfallSlotLines.Note}" />
             <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
               <TextBlock Grid.Column="0"
                          Text="{loc:Localize Key=Ft4.WaterfallSpeed}"

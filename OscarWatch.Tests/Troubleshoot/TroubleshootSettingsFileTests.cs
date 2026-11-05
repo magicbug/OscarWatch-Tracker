@@ -111,6 +111,7 @@ public sealed class TroubleshootSettingsFileTests : IDisposable
         tracker.Current.Ft4.UplinkCalibrationKHzBySatellite["RS-44|FT4 Asia"] = -0.05;
         tracker.Current.Ft4.WaterfallRangeDb = 30;
         tracker.Current.Ft4.WaterfallFlatten = false;
+        tracker.Current.Ft4.WaterfallSlotLines = false;
         tracker.Current.Rig.Enabled = true;
         await tracker.SaveAsync();
 
@@ -126,6 +127,7 @@ public sealed class TroubleshootSettingsFileTests : IDisposable
         Assert.Empty(reloaded.Current.Ft4.UplinkCalibrationKHzBySatellite);
         Assert.Equal(30, reloaded.Current.Ft4.WaterfallRangeDb);
         Assert.False(reloaded.Current.Ft4.WaterfallFlatten);
+        Assert.False(reloaded.Current.Ft4.WaterfallSlotLines);
         Assert.True(reloaded.Current.Rig.Enabled);
     }
 
