@@ -89,8 +89,8 @@
           <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Kind" />
           <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Dt" />
           <ColumnDefinition Width="Auto" MinWidth="72" SharedSizeGroup="Ft4Snr" />
-          <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" MinWidth="52" SharedSizeGroup="Ft4Hz" />
+          <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0"
                    Text="{loc:Localize Key=Ft4.Decodes.Time}"
@@ -113,16 +113,17 @@
                    FontWeight="SemiBold"
                    FontSize="{Binding DecodeFontSize}" />
         <TextBlock Grid.Column="4"
-                   Text="{loc:Localize Key=Ft4.Decodes.Message}"
-                   Classes="ft4-meta"
-                   FontWeight="SemiBold"
-                   FontSize="{Binding DecodeFontSize}" />
-        <TextBlock Grid.Column="5"
                    Text="{loc:Localize Key=Ft4.Decodes.Hz}"
                    Classes="ft4-meta"
                    FontWeight="SemiBold"
                    FontSize="{Binding DecodeFontSize}"
                    HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="5"
+                   Text="{loc:Localize Key=Ft4.Decodes.Message}"
+                   Classes="ft4-meta"
+                   FontWeight="SemiBold"
+                   FontSize="{Binding DecodeFontSize}"
+                   TextTrimming="CharacterEllipsis" />
       </Grid>
     </DataTemplate>
 
@@ -135,8 +136,8 @@
           <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Kind" />
           <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Dt" />
           <ColumnDefinition Width="Auto" MinWidth="72" SharedSizeGroup="Ft4Snr" />
-          <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" MinWidth="52" SharedSizeGroup="Ft4Hz" />
+          <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.Styles>
           <Style Selector="TextBlock.ft4-ink">
@@ -201,24 +202,31 @@
                    Opacity="0.45"
                    IsVisible="{Binding Message.IsTransmitted}" />
         <TextBlock Grid.Column="4"
-                   Text="{Binding Message.Text}"
-                   FontWeight="SemiBold"
-                   IsVisible="{Binding Message.IsTransmitted}"
-                   Foreground="{Binding TxForeground}" />
-        <TextBlock Grid.Column="4"
-                   Text="{Binding Message.Text}"
-                   FontWeight="SemiBold"
-                   IsVisible="{Binding Message.IsOwnEcho}"
-                   Foreground="#6DB3F2" />
-        <TextBlock Grid.Column="4"
-                   Classes.ft4-ink="{Binding HasRowForeground}"
-                   Text="{Binding Message.Text}"
-                   IsVisible="{Binding Message.IsReceiveActivity}" />
-        <TextBlock Grid.Column="5"
                    Classes.ft4-ink="{Binding HasRowForeground}"
                    Text="{Binding Message.FreqHz, StringFormat={}{0:0}}"
                    Opacity="0.9"
                    HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="5"
+                   Text="{Binding Message.Text}"
+                   FontWeight="SemiBold"
+                   TextTrimming="CharacterEllipsis"
+                   ToolTip.Tip="{Binding Message.Text}"
+                   IsVisible="{Binding Message.IsTransmitted}"
+                   Foreground="{Binding TxForeground}" />
+        <TextBlock Grid.Column="5"
+                   Text="{Binding Message.Text}"
+                   FontWeight="SemiBold"
+                   TextTrimming="CharacterEllipsis"
+                   ToolTip.Tip="{Binding Message.Text}"
+                   IsVisible="{Binding Message.IsOwnEcho}"
+                   Foreground="#6DB3F2" />
+        <TextBlock Grid.Column="5"
+                   Classes.ft4-ink="{Binding HasRowForeground}"
+                   Text="{Binding Message.Text}"
+                   TextTrimming="CharacterEllipsis"
+                   ToolTip.Tip="{Binding Message.Text}"
+                   IsVisible="{Binding Message.IsReceiveActivity}" />
+
       </Grid>
     </DataTemplate>
   </Window.Resources>
@@ -359,6 +367,7 @@
               <TextBlock DockPanel.Dock="Top"
                          Text="{loc:Localize Key=Ft4.Decodes.BandActivity}"
                          FontWeight="SemiBold"
+                         HorizontalAlignment="Center"
                          Margin="4,0,4,4"
                          IsVisible="{Binding IsAdvancedDecodeLayout}" />
               <ContentControl DockPanel.Dock="Top"
@@ -400,6 +409,7 @@
               <TextBlock DockPanel.Dock="Top"
                          Text="{loc:Localize Key=Ft4.Decodes.CallingMe}"
                          FontWeight="SemiBold"
+                         HorizontalAlignment="Center"
                          Margin="4,0,4,4" />
               <ContentControl DockPanel.Dock="Top"
                               Content="{Binding}"
