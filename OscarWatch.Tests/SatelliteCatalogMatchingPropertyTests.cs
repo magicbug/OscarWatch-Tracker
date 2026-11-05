@@ -12,8 +12,8 @@ namespace OscarWatch.Tests;
 /// **Validates: Requirements 12.1, 12.2, 12.3, 12.4, 12.5**
 ///
 /// Property-based tests verifying that <see cref="SatelliteCatalogMatching.IsEnabled"/>
-/// correctly identifies enabled satellites using exact, substring, reverse-substring,
-/// and parenthetical matching strategies.
+/// identifies enabled satellites by exact name, or by the text before a bracketed alias
+/// and the alias inside the brackets.
 /// </summary>
 public class SatelliteCatalogMatchingPropertyTests
 {
@@ -21,17 +21,17 @@ public class SatelliteCatalogMatchingPropertyTests
     /// Property 31: Satellite Catalog Matching Positive.
     ///
     /// For any satellite name and enabled set where at least one matching strategy
-    /// applies (exact, substring, reverse-substring, or parenthetical), IsEnabled
+    /// applies (exact name, bracketed alias, or the text before the brackets), IsEnabled
     /// returns true.
     /// </summary>
     [Property]
     public bool Positive_match_returns_true_when_any_strategy_matches(int strategyIndex, NonEmptyString baseName, NonEmptyString prefix, NonEmptyString suffix)
     {
-        var baseStr = baseName.Get;
-        var prefixStr = prefix.Get;
-        var suffixStr = suffix.Get;
+        var baseStr = baseName.Get.Trim();
+        var prefixStr = prefix.Get.Trim();
+        var suffixStr = suffix.Get.Trim();
 
-        // Skip inputs containing characters that could accidentally trigger other strategies
+        // Skip inputs containing characters that could accidentally trigger other strategies.
         if (baseStr.Contains('(') || baseStr.Contains(')'))
             return true;
         if (prefixStr.Contains('(') || prefixStr.Contains(')'))
@@ -56,20 +56,21 @@ public class SatelliteCatalogMatchingPropertyTests
                 break;
 
             case 1:
-                // Strategy (b): Satellite name contains enabled entry as a whole token
-                satelliteName = prefixStr + " " + baseStr + " " + suffixStr;
+                // Catalogue name uses the enabled name as the text before the brackets.
+                if (string.IsNullOrWhiteSpace(suffixStr))
+                    return true;
+                satelliteName = baseStr + " (" + suffixStr + ")";
                 enabledSet = new HashSet<string> { baseStr };
                 break;
 
             case 2:
-                // Strategy (c): Enabled entry contains satellite name as a whole token
+                // Enabled list stores the long form; the catalogue entry is the alias.
                 satelliteName = baseStr;
-                enabledSet = new HashSet<string> { prefixStr + " " + baseStr + " " + suffixStr };
+                enabledSet = new HashSet<string> { prefixStr + " (" + baseStr + ")" };
                 break;
 
             case 3:
-                // Strategy (d): Satellite name contains enabled name in parentheses
-                // Build satellite name like "PREFIX (baseStr) SUFFIX"
+                // Catalogue name uses the enabled name as the alias inside the brackets.
                 satelliteName = prefixStr + " (" + baseStr + ") " + suffixStr;
                 enabledSet = new HashSet<string> { baseStr };
                 break;
@@ -93,7 +94,7 @@ public class SatelliteCatalogMatchingPropertyTests
     /// Property 32: Satellite Catalog Matching Negative.
     ///
     /// For any satellite name and enabled set where no matching strategy applies
-    /// (no exact, substring, reverse-substring, or parenthetical match), IsEnabled
+    /// (no exact name and no shared bracketed prefix or alias), IsEnabled
     /// returns false.
     /// </summary>
     [Property]

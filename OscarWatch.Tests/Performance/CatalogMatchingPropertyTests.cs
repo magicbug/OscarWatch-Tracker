@@ -21,8 +21,8 @@ public class CatalogMatchingPropertyTests : IDisposable
     }
 
     /// <summary>
-    /// Reference implementation of the original linear-scan matching logic (pre-optimisation).
-    /// Used as the oracle to verify the optimised version produces identical results.
+    /// Linear scan of the same bracketed-alias rules, without the parenthesis index.
+    /// Used as the oracle to verify the indexed lookup produces identical results.
     /// </summary>
     private static bool ReferenceIsEnabled(string satelliteName, IReadOnlySet<string> enabled)
     {
@@ -34,15 +34,20 @@ public class CatalogMatchingPropertyTests : IDisposable
             if (string.IsNullOrWhiteSpace(name))
                 continue;
 
-            if (SatelliteCatalogMatching.ContainsToken(satelliteName, name)
-                || SatelliteCatalogMatching.ContainsToken(name, satelliteName))
-                return true;
+            if (!SatelliteCatalogMatching.TrySplitParenthetical(name, out var prefix, out var alias))
+                continue;
 
-            if (satelliteName.Contains($"({name})", StringComparison.OrdinalIgnoreCase))
+            if (prefix.Length > 0 && satelliteName.Equals(prefix, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (alias.Length > 0 && satelliteName.Equals(alias, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
 
-        return false;
+        if (!SatelliteCatalogMatching.TrySplitParenthetical(satelliteName, out var satPrefix, out var satAlias))
+            return false;
+
+        return (satPrefix.Length > 0 && enabled.Contains(satPrefix))
+            || (satAlias.Length > 0 && enabled.Contains(satAlias));
     }
 
     /// <summary>
@@ -115,7 +120,7 @@ public class CatalogMatchingPropertyTests : IDisposable
         var enabledName = $"{baseName} ({alias})";
         var enabled = new HashSet<string>(new[] { enabledName }, StringComparer.OrdinalIgnoreCase);
 
-        // Satellite named just "ALIAS" — should match via substring containment in enabled name
+        // Satellite named just "ALIAS" matches the alias inside the enabled name's brackets.
         var satellite = new SatelliteCatalogEntry
         {
             Name = alias,

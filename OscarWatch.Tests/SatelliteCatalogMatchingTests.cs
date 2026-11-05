@@ -4,7 +4,7 @@ using OscarWatch.Core.Services;
 namespace OscarWatch.Tests;
 
 /// <summary>
-/// Edge-case tests for <see cref="SatelliteCatalogMatching"/>: token boundaries,
+/// Edge-case tests for <see cref="SatelliteCatalogMatching"/>: bracketed aliases,
 /// catalogue ID preference, Alpha-5 normalisation, and additive ID migrate.
 /// </summary>
 public sealed class SatelliteCatalogMatchingTests
@@ -39,11 +39,67 @@ public sealed class SatelliteCatalogMatchingTests
     }
 
     [Fact]
-    public void ContainsToken_requires_non_alnum_boundaries()
+    public void Parenthetical_prefix_matches_ISS_and_alias_matches_ZARYA()
     {
-        Assert.True(SatelliteCatalogMatching.ContainsToken("SAUDISAT 1C (SO-50)", "SO-50"));
-        Assert.True(SatelliteCatalogMatching.ContainsToken("ISAT (CUBE)", "ISAT"));
-        Assert.False(SatelliteCatalogMatching.ContainsToken("OrigamiSat 2", "ISAT"));
+        var issLong = Entry("ISS (ZARYA)", "25544");
+        var iss = Entry("ISS", "25544");
+        var zarya = Entry("ZARYA", "25544");
+
+        var byShort = new HashSet<string>(["ISS"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(issLong, byShort));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(zarya, byShort));
+
+        var byLong = new HashSet<string>(["ISS (ZARYA)"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(iss, byLong));
+        Assert.True(SatelliteCatalogMatching.IsEnabled(zarya, byLong));
+    }
+
+    [Fact]
+    public void Meteor_family_names_do_not_cross_enable()
+    {
+        var shortName = Entry("METEOR-M2", "40069");
+        var meteorM2 = Entry("METEOR-M 2", "40069");
+        var m2 = Entry("METEOR-M2 2", "44387");
+        var m3 = Entry("METEOR-M2 3", "57166");
+        var m4 = Entry("METEOR-M2 4", "59051");
+        var n2 = Entry("METEOR-M N2", "40069");
+        var n2Dash3 = Entry("METEOR-M N2-3", "57166");
+
+        var oneNumbered = new HashSet<string>(["METEOR-M2 3"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(m3, oneNumbered));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(shortName, oneNumbered));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(meteorM2, oneNumbered));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(m2, oneNumbered));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(m4, oneNumbered));
+
+        var shortOnly = new HashSet<string>(["METEOR-M2"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(shortName, shortOnly));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(m2, shortOnly));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(m3, shortOnly));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(m4, shortOnly));
+
+        var hyphen = new HashSet<string>(["METEOR-M N2"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(n2, hyphen));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(n2Dash3, hyphen));
+    }
+
+    [Fact]
+    public void Noaa_parenthetical_name_does_not_select_the_other_noaa_bird()
+    {
+        var noaa20 = Entry("NOAA 20 (JPSS-1)", "43013");
+        var noaa21 = Entry("NOAA 21 (JPSS-2)", "54234");
+
+        var byLong = new HashSet<string>(["NOAA 20 (JPSS-1)"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(noaa20, byLong));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(noaa21, byLong));
+
+        var byAlias = new HashSet<string>(["JPSS-1"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(noaa20, byAlias));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(noaa21, byAlias));
+
+        var byPrefix = new HashSet<string>(["NOAA 20"], StringComparer.OrdinalIgnoreCase);
+        Assert.True(SatelliteCatalogMatching.IsEnabled(noaa20, byPrefix));
+        Assert.False(SatelliteCatalogMatching.IsEnabled(noaa21, byPrefix));
     }
 
     [Fact]
@@ -141,6 +197,29 @@ public sealed class SatelliteCatalogMatchingTests
         settings.EnabledSatelliteNames = ["OrigamiSat 2"];
         Assert.True(SatelliteCatalogMatching.TryMigrateEnabledSatelliteIds(settings, [origami]));
         Assert.Contains("68795", settings.EnabledSatelliteNoradIds);
+    }
+
+    [Fact]
+    public void TryMigrate_does_not_append_sibling_meteor_names()
+    {
+        var shortName = Entry("METEOR-M2", "40069");
+        var m2 = Entry("METEOR-M2 2", "44387");
+        var m3 = Entry("METEOR-M2 3", "57166");
+        var m4 = Entry("METEOR-M2 4", "59051");
+        var settings = new AppSettings
+        {
+            EnabledSatelliteNames = ["METEOR-M2 3"],
+            EnabledSatelliteNoradIds = []
+        };
+
+        Assert.True(SatelliteCatalogMatching.TryMigrateEnabledSatelliteIds(
+            settings, [shortName, m2, m3, m4]));
+
+        Assert.Equal(["METEOR-M2 3"], settings.EnabledSatelliteNames);
+        Assert.Equal(["57166"], settings.EnabledSatelliteNoradIds);
+
+        Assert.False(SatelliteCatalogMatching.TryMigrateEnabledSatelliteIds(
+            settings, [shortName, m2, m3, m4]));
     }
 
     private static SatelliteCatalogEntry Entry(string name, string noradId) => new()

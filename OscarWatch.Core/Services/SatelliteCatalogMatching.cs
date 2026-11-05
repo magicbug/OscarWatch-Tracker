@@ -6,8 +6,8 @@ namespace OscarWatch.Core.Services;
 public static class SatelliteCatalogMatching
 {
     /// <summary>
-    /// Pre-computed index: maps parenthesised aliases extracted from enabled names to true.
-    /// E.g. if enabled contains "RADFXSAT (FOX-1B)", index contains "FOX-1B" → true.
+    /// Pre-computed index of the text before the brackets and the alias inside them.
+    /// If enabled contains "ISS (ZARYA)", the index contains "ISS" and "ZARYA".
     /// </summary>
     private static Dictionary<string, bool>? _parenthesisIndex;
 
@@ -16,6 +16,12 @@ public static class SatelliteCatalogMatching
     /// When the enabled set instance changes, the index is rebuilt.
     /// </summary>
     private static IReadOnlySet<string>? _lastEnabledSet;
+
+    /// <summary>
+    /// Size of <see cref="_lastEnabledSet"/> when the index was built.
+    /// Migrate appends names to the same set, and a count change forces a rebuild.
+    /// </summary>
+    private static int _lastEnabledCount;
 
     private static readonly object ParenthesisIndexLock = new();
 
@@ -43,26 +49,40 @@ public static class SatelliteCatalogMatching
         if (enabled.Contains(satellite.Name))
             return true;
 
-        // O(1) check: is the satellite name itself a parenthesised alias from an enabled name?
+        // Enabled "ISS (ZARYA)" or "SAUDISAT 1C (SO-50)" also selects the prefix
+        // ("ISS", "SAUDISAT 1C") and the alias inside the brackets ("ZARYA", "SO-50").
+        // A space or hyphen is not an alias boundary, so "METEOR-M2" does not select
+        // "METEOR-M2 2" and "METEOR-M N2" does not select "METEOR-M N2-3".
         var index = GetOrBuildParenthesisIndex(enabled);
         if (index.Count > 0 && index.ContainsKey(satellite.Name))
             return true;
 
-        // O(M) token-aware substring fallback — aliases like SO-50 ↔ SAUDISAT 1C (SO-50),
-        // without treating "ISAT" as a match for "OrigamiSat 2" (mid-token "iSat").
-        foreach (var name in enabled)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                continue;
+        // Catalogue "ISS (ZARYA)" is selected when the operator stored "ISS" or "ZARYA".
+        if (!TrySplitParenthetical(satellite.Name, out var prefix, out var alias))
+            return false;
 
-            if (ContainsToken(satellite.Name, name) || ContainsToken(name, satellite.Name))
-                return true;
+        return (prefix.Length > 0 && enabled.Contains(prefix))
+            || (alias.Length > 0 && enabled.Contains(alias));
+    }
 
-            if (satellite.Name.Contains($"({name})", StringComparison.OrdinalIgnoreCase))
-                return true;
-        }
+    /// <summary>
+    /// Splits <paramref name="name"/> into the text before the first brackets and the alias inside them.
+    /// </summary>
+    internal static bool TrySplitParenthetical(string name, out string prefix, out string alias)
+    {
+        prefix = "";
+        alias = "";
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
 
-        return false;
+        var openParen = name.IndexOf('(');
+        var closeParen = name.IndexOf(')');
+        if (openParen < 0 || closeParen <= openParen + 1)
+            return false;
+
+        prefix = name[..openParen].Trim();
+        alias = name[(openParen + 1)..closeParen].Trim();
+        return prefix.Length > 0 || alias.Length > 0;
     }
 
     /// <summary>
@@ -171,43 +191,15 @@ public static class SatelliteCatalogMatching
     }
 
     /// <summary>
-    /// True when <paramref name="needle"/> appears in <paramref name="haystack"/> as a whole
-    /// token bounded by non-letter/non-digit characters (or string ends).
-    /// </summary>
-    internal static bool ContainsToken(string haystack, string needle)
-    {
-        if (string.IsNullOrEmpty(haystack) || string.IsNullOrEmpty(needle))
-            return false;
-
-        var start = 0;
-        while (start <= haystack.Length - needle.Length)
-        {
-            var index = haystack.IndexOf(needle, start, StringComparison.OrdinalIgnoreCase);
-            if (index < 0)
-                return false;
-
-            var beforeOk = index == 0 || !IsNameTokenChar(haystack[index - 1]);
-            var afterIndex = index + needle.Length;
-            var afterOk = afterIndex == haystack.Length || !IsNameTokenChar(haystack[afterIndex]);
-            if (beforeOk && afterOk)
-                return true;
-
-            start = index + 1;
-        }
-
-        return false;
-    }
-
-    private static bool IsNameTokenChar(char c) => char.IsLetterOrDigit(c);
-
-    /// <summary>
     /// Returns the parenthesis alias index, rebuilding it only if the enabled set instance changes.
     /// </summary>
     private static Dictionary<string, bool> GetOrBuildParenthesisIndex(IReadOnlySet<string> enabled)
     {
         lock (ParenthesisIndexLock)
         {
-            if (ReferenceEquals(_lastEnabledSet, enabled) && _parenthesisIndex is not null)
+            if (ReferenceEquals(_lastEnabledSet, enabled)
+                && _parenthesisIndex is not null
+                && _lastEnabledCount == enabled.Count)
                 return _parenthesisIndex;
 
             var index = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
@@ -216,18 +208,18 @@ public static class SatelliteCatalogMatching
             {
                 if (string.IsNullOrWhiteSpace(name)) continue;
 
-                var openParen = name.IndexOf('(');
-                var closeParen = name.IndexOf(')');
-                if (openParen >= 0 && closeParen > openParen + 1)
-                {
-                    var alias = name[(openParen + 1)..closeParen].Trim();
-                    if (!string.IsNullOrWhiteSpace(alias))
-                        index[alias] = true;
-                }
+                if (!TrySplitParenthetical(name, out var prefix, out var alias))
+                    continue;
+
+                if (prefix.Length > 0)
+                    index[prefix] = true;
+                if (alias.Length > 0)
+                    index[alias] = true;
             }
 
             _parenthesisIndex = index;
             _lastEnabledSet = enabled;
+            _lastEnabledCount = enabled.Count;
             return _parenthesisIndex;
         }
     }
@@ -241,6 +233,7 @@ public static class SatelliteCatalogMatching
         {
             _parenthesisIndex = null;
             _lastEnabledSet = null;
+            _lastEnabledCount = 0;
         }
     }
 }
