@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>Der Ordner konnte nicht geöffnet werden: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>FT4-Echo-Kalibrierungen</value>
+  </data>
+  <data name="Echo.None">
+    <value>Keine gespeichert</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} gespeichert</value>
+  </data>
+  <data name="Section.Echo">
+    <value>FT4-Echo-Kalibrierungen</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>Wenn FT4 nach einem falschen Echo neben der Frequenz sendet, löschen Sie die gespeicherten Uplink-Korrekturen. OscarWatch kann sie aus Ihren nächsten Echos neu lernen.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>FT4-Echo-Kalibrierungen löschen</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>Alle {0} gespeicherten FT4-Echo-Kalibrierungen löschen? Jeder Satellit und Transponder hat danach keine Uplink-Korrektur mehr.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>FT4-Echo-Kalibrierungen gelöscht. OscarWatch kann sie aus Ihren nächsten Echos neu lernen.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>Es gibt keine FT4-Echo-Kalibrierungen zum Löschen.</value>
+  </data>
   <data name="Save.Title">
     <value>Diagnosedatei speichern</value>
   </data>

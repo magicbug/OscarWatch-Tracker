@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>Folder tidak dapat dibuka: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>Kalibrasi gema FT4</value>
+  </data>
+  <data name="Echo.None">
+    <value>Tidak ada yang tersimpan</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} tersimpan</value>
+  </data>
+  <data name="Section.Echo">
+    <value>Kalibrasi gema FT4</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>Jika FT4 memancar di luar frekuensi setelah gema yang salah, hapus koreksi uplink yang tersimpan. OscarWatch dapat mempelajarinya lagi dari gema Anda berikutnya.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>Hapus kalibrasi gema FT4</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>Hapus semua {0} kalibrasi gema FT4 yang tersimpan? Semua satelit dan transponder kembali tanpa koreksi uplink.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>Kalibrasi gema FT4 dihapus. OscarWatch dapat mempelajarinya lagi dari gema Anda berikutnya.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>Tidak ada kalibrasi gema FT4 untuk dihapus.</value>
+  </data>
   <data name="Save.Title">
     <value>Simpan berkas diagnostik</value>
   </data>

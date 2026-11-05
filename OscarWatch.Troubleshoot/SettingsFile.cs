@@ -20,12 +20,21 @@ internal sealed record SettingsSnapshot(
     string? Error,
     DeviceState Radio,
     DeviceState Rotator,
-    DeviceState Gps);
+    DeviceState Gps,
+    int EchoCalibrationCount = 0);
 
 internal enum DisableHardwareResult
 {
     Disabled,
     AlreadyDisabled,
+    Missing,
+    Unreadable
+}
+
+internal enum ClearEchoCalibrationsResult
+{
+    Cleared,
+    NoneSaved,
     Missing,
     Unreadable
 }
@@ -86,8 +95,36 @@ internal static class SettingsFile
             null,
             ReadRadio(GetChild(root, "rig") as JsonObject),
             ReadRotator(GetChild(root, "rotator") as JsonObject),
-            ReadGps(GetChild(root, "gps") as JsonObject));
+            ReadGps(GetChild(root, "gps") as JsonObject),
+            EchoCalibrations(root)?.Count ?? 0);
     }
+
+    /// <summary>
+    /// Empties the FT4 uplink echo calibrations (every satellite and transponder trim).
+    /// The FT4 settings Clear all button does the same; everything else is left as it is.
+    /// </summary>
+    public static ClearEchoCalibrationsResult ClearEchoCalibrations(string path)
+    {
+        if (!File.Exists(path))
+            return ClearEchoCalibrationsResult.Missing;
+
+        if (!TryLoad(path, out var root, out _))
+            return ClearEchoCalibrationsResult.Unreadable;
+
+        var calibrations = EchoCalibrations(root);
+        if (calibrations is null || calibrations.Count == 0)
+            return ClearEchoCalibrationsResult.NoneSaved;
+
+        calibrations.Clear();
+        BackUp(path);
+        WriteAtomic(path, root.ToJsonString(WriteOptions));
+        return ClearEchoCalibrationsResult.Cleared;
+    }
+
+    private static JsonObject? EchoCalibrations(JsonObject root) =>
+        GetChild(root, "ft4") is JsonObject ft4
+            ? GetChild(ft4, "uplinkCalibrationKHzBySatellite") as JsonObject
+            : null;
 
     /// <summary>Sets <c>enabled</c> to false for the rig, rotator, and GPS. Everything else is left as it is.</summary>
     public static DisableHardwareResult DisableHardware(string path)

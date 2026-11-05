@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>Не удалось открыть папку: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>Калибровки эха FT4</value>
+  </data>
+  <data name="Echo.None">
+    <value>Нет сохранённых</value>
+  </data>
+  <data name="Echo.Count">
+    <value>Сохранено: {0}</value>
+  </data>
+  <data name="Section.Echo">
+    <value>Калибровки эха FT4</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>Если после ошибочного эха FT4 передаёт не на той частоте, сбросьте сохранённые поправки аплинка. OscarWatch сможет снова определить их по следующим эхо.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>Сбросить калибровки эха FT4</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>Сбросить все сохранённые калибровки эха FT4 ({0})? У всех спутников и транспондеров не останется поправки аплинка.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>Калибровки эха FT4 сброшены. OscarWatch сможет снова определить их по следующим эхо.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>Нет калибровок эха FT4 для сброса.</value>
+  </data>
   <data name="Save.Title">
     <value>Сохранить файл диагностики</value>
   </data>

@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>เปิดโฟลเดอร์ไม่ได้: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>การปรับเทียบเอคโค่ FT4</value>
+  </data>
+  <data name="Echo.None">
+    <value>ไม่มีที่บันทึกไว้</value>
+  </data>
+  <data name="Echo.Count">
+    <value>บันทึกไว้ {0} รายการ</value>
+  </data>
+  <data name="Section.Echo">
+    <value>การปรับเทียบเอคโค่ FT4</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>หาก FT4 ส่งคลาดความถี่หลังจากเอคโค่ที่ผิดพลาด ให้ล้างค่าทริมอัปลิงก์ที่บันทึกไว้ OscarWatch จะเรียนรู้ใหม่ได้จากเอคโค่ครั้งถัดไป</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>ล้างการปรับเทียบเอคโค่ FT4</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>ล้างการปรับเทียบเอคโค่ FT4 ที่บันทึกไว้ทั้ง {0} รายการหรือไม่ ดาวเทียมและทรานสปอนเดอร์ทั้งหมดจะไม่มีค่าทริมอัปลิงก์</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>ล้างการปรับเทียบเอคโค่ FT4 แล้ว OscarWatch จะเรียนรู้ใหม่ได้จากเอคโค่ครั้งถัดไป</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>ไม่มีการปรับเทียบเอคโค่ FT4 ให้ล้าง</value>
+  </data>
   <data name="Save.Title">
     <value>บันทึกไฟล์วินิจฉัย</value>
   </data>

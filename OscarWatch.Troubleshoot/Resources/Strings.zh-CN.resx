@@ -209,6 +209,33 @@ GPS：{2}</value>
   <data name="Result.FolderOpenFailed">
     <value>无法打开文件夹：{0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>FT4 回波校准</value>
+  </data>
+  <data name="Echo.None">
+    <value>未保存</value>
+  </data>
+  <data name="Echo.Count">
+    <value>已保存 {0} 个</value>
+  </data>
+  <data name="Section.Echo">
+    <value>FT4 回波校准</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>如果错误的回波导致 FT4 发射偏离频率，请清除已保存的上行微调。OscarWatch 可以从之后的回波重新学习。</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>清除 FT4 回波校准</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>清除全部 {0} 个已保存的 FT4 回波校准？所有卫星和转发器将不再有上行微调。</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>已清除 FT4 回波校准。OscarWatch 可以从之后的回波重新学习。</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>没有可清除的 FT4 回波校准。</value>
+  </data>
   <data name="Save.Title">
     <value>保存诊断文件</value>
   </data>

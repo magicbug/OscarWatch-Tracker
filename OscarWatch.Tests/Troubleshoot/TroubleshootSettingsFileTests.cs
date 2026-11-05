@@ -103,6 +103,57 @@ public sealed class TroubleshootSettingsFileTests : IDisposable
     }
 
     [Fact]
+    public async Task ClearEchoCalibrations_empties_every_trim_and_tracker_keeps_other_ft4_settings()
+    {
+        var tracker = new SettingsService(SettingsPath);
+        tracker.Load();
+        tracker.Current.Ft4.UplinkCalibrationKHzBySatellite["RS-44"] = 0.12;
+        tracker.Current.Ft4.UplinkCalibrationKHzBySatellite["RS-44|FT4 Asia"] = -0.05;
+        tracker.Current.Ft4.WaterfallRangeDb = 30;
+        tracker.Current.Ft4.WaterfallFlatten = false;
+        tracker.Current.Rig.Enabled = true;
+        await tracker.SaveAsync();
+
+        Assert.Equal(2, SettingsFile.Read(SettingsPath).EchoCalibrationCount);
+        var backupsBefore = Directory.GetFiles(_dir, "settings.json.bak-*").Length;
+        Assert.Equal(ClearEchoCalibrationsResult.Cleared, SettingsFile.ClearEchoCalibrations(SettingsPath));
+        Assert.Equal(0, SettingsFile.Read(SettingsPath).EchoCalibrationCount);
+        Assert.Equal(backupsBefore + 1, Directory.GetFiles(_dir, "settings.json.bak-*").Length);
+
+        var reloaded = new SettingsService(SettingsPath);
+        reloaded.Load();
+        Assert.Null(reloaded.LoadError);
+        Assert.Empty(reloaded.Current.Ft4.UplinkCalibrationKHzBySatellite);
+        Assert.Equal(30, reloaded.Current.Ft4.WaterfallRangeDb);
+        Assert.False(reloaded.Current.Ft4.WaterfallFlatten);
+        Assert.True(reloaded.Current.Rig.Enabled);
+    }
+
+    [Theory]
+    [InlineData("""{ "ft4": { "uplinkCalibrationKHzBySatellite": {} } }""")]
+    [InlineData("""{ "ft4": { "waterfallRangeDb": 40 } }""")]
+    [InlineData("""{ "rig": { "enabled": true } }""")]
+    public void ClearEchoCalibrations_reports_none_saved_and_leaves_file_untouched(string json)
+    {
+        File.WriteAllText(SettingsPath, json);
+
+        Assert.Equal(ClearEchoCalibrationsResult.NoneSaved, SettingsFile.ClearEchoCalibrations(SettingsPath));
+        Assert.Equal(json, File.ReadAllText(SettingsPath));
+        Assert.Empty(Directory.GetFiles(_dir, "settings.json.bak-*"));
+    }
+
+    [Fact]
+    public void ClearEchoCalibrations_does_not_rewrite_unreadable_settings()
+    {
+        const string broken = """{ "ft4": { "uplinkCalibrationKHzBySatellite": { "RS-44": 0.1 }, """;
+        File.WriteAllText(SettingsPath, broken);
+
+        Assert.Equal(ClearEchoCalibrationsResult.Unreadable, SettingsFile.ClearEchoCalibrations(SettingsPath));
+        Assert.Equal(broken, File.ReadAllText(SettingsPath));
+        Assert.Equal(ClearEchoCalibrationsResult.Missing, SettingsFile.ClearEchoCalibrations(Path.Combine(_dir, "none.json")));
+    }
+
+    [Fact]
     public void Read_describes_devices_and_targets()
     {
         File.WriteAllText(SettingsPath, """

@@ -39,6 +39,7 @@ internal static class DiagnosticsReport
         builder.AppendLine($"Radio: {Describe(settings.Radio)}");
         builder.AppendLine($"Rotator: {Describe(settings.Rotator)}");
         builder.AppendLine($"GPS: {Describe(settings.Gps)}");
+        builder.AppendLine($"FT4 echo calibrations: {settings.EchoCalibrationCount}");
         builder.AppendLine();
 
         builder.AppendLine("== Settings (redacted) ==");

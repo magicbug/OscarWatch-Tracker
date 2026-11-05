@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>フォルダーを開けませんでした: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>FT4 エコー校正</value>
+  </data>
+  <data name="Echo.None">
+    <value>保存なし</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} 件保存</value>
+  </data>
+  <data name="Section.Echo">
+    <value>FT4 エコー校正</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>誤ったエコーの後で FT4 の送信周波数がずれる場合は、保存されたアップリンクトリムを消去してください。次のエコーから再び学習できます。</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>FT4 エコー校正を消去</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>保存されている FT4 エコー校正 {0} 件をすべて消去しますか？すべての衛星とトランスポンダーのアップリンクトリムがなくなります。</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>FT4 エコー校正を消去しました。次のエコーから再び学習できます。</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>消去する FT4 エコー校正はありません。</value>
+  </data>
   <data name="Save.Title">
     <value>診断ファイルを保存</value>
   </data>

@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>Não foi possível abrir a pasta: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>Calibrações de eco FT4</value>
+  </data>
+  <data name="Echo.None">
+    <value>Nenhuma salva</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} salvas</value>
+  </data>
+  <data name="Section.Echo">
+    <value>Calibrações de eco FT4</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>Se o FT4 transmitir fora da frequência depois de um eco errado, limpe os trims de uplink salvos. O OscarWatch pode aprendê-los de novo com seus próximos ecos.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>Limpar calibrações de eco FT4</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>Limpar todas as {0} calibrações de eco FT4 salvas? Todos os satélites e transponders ficam sem trim de uplink.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>Calibrações de eco FT4 limpas. O OscarWatch pode aprendê-las de novo com seus próximos ecos.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>Não há calibrações de eco FT4 para limpar.</value>
+  </data>
   <data name="Save.Title">
     <value>Salvar arquivo de diagnóstico</value>
   </data>

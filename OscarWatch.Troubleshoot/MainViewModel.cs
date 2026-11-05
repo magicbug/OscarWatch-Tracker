@@ -28,6 +28,7 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
     [ObservableProperty] private string _radioText = "";
     [ObservableProperty] private string _rotatorText = "";
     [ObservableProperty] private string _gpsText = "";
+    [ObservableProperty] private string _echoCalibrationsText = "";
     [ObservableProperty] private string _recentErrorsText = "";
     [ObservableProperty] private string _resultText = "";
 
@@ -183,6 +184,48 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
     }
 
     [RelayCommand]
+    private async Task ClearEchoCalibrationsAsync()
+    {
+        Refresh();
+        switch (_settings.State)
+        {
+            case SettingsFileState.Missing:
+                ResultText = Tr.Get("Result.SettingsMissing");
+                return;
+            case SettingsFileState.Unreadable:
+                ResultText = Tr.Get("Result.SettingsUnreadable");
+                return;
+        }
+
+        if (_settings.EchoCalibrationCount == 0)
+        {
+            ResultText = Tr.Get("Result.EchoNoneSaved");
+            return;
+        }
+
+        if (!await host.ConfirmAsync(Tr.Format("Confirm.ClearEchoCalibrations", _settings.EchoCalibrationCount))
+            || !await EnsureTrackerClosedAsync())
+            return;
+
+        try
+        {
+            ResultText = SettingsFile.ClearEchoCalibrations(TroubleshootPaths.SettingsPath) switch
+            {
+                ClearEchoCalibrationsResult.Cleared => Tr.Get("Result.EchoCleared"),
+                ClearEchoCalibrationsResult.NoneSaved => Tr.Get("Result.EchoNoneSaved"),
+                ClearEchoCalibrationsResult.Missing => Tr.Get("Result.SettingsMissing"),
+                _ => Tr.Get("Result.SettingsUnreadable")
+            };
+        }
+        catch (Exception ex)
+        {
+            ResultText = Tr.Format("Result.Failed", ex.Message);
+        }
+
+        Refresh();
+    }
+
+    [RelayCommand]
     private async Task PutSettingsAsideAsync()
     {
         var folderName = "settings-aside-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
@@ -285,6 +328,11 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
         RadioText = DescribeDevice(_settings.Radio);
         RotatorText = DescribeDevice(_settings.Rotator);
         GpsText = DescribeDevice(_settings.Gps);
+        EchoCalibrationsText = _settings.State != SettingsFileState.Readable
+            ? Tr.Get("Device.Unknown")
+            : _settings.EchoCalibrationCount == 0
+                ? Tr.Get("Echo.None")
+                : Tr.Format("Echo.Count", _settings.EchoCalibrationCount);
     }
 
     private static string DescribeDevice(DeviceState device) => device.Enabled switch

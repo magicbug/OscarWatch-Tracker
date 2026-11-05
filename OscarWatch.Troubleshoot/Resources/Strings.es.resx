@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>No se pudo abrir la carpeta: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>Calibraciones de eco FT4</value>
+  </data>
+  <data name="Echo.None">
+    <value>Ninguna guardada</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} guardadas</value>
+  </data>
+  <data name="Section.Echo">
+    <value>Calibraciones de eco FT4</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>Si FT4 transmite fuera de frecuencia tras un eco erróneo, borre las correcciones de subida guardadas. OscarWatch puede volver a aprenderlas con sus próximos ecos.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>Borrar calibraciones de eco FT4</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>¿Borrar las {0} calibraciones de eco FT4 guardadas? Todos los satélites y transpondedores quedarán sin corrección de subida.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>Calibraciones de eco FT4 borradas. OscarWatch puede volver a aprenderlas con sus próximos ecos.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>No hay calibraciones de eco FT4 que borrar.</value>
+  </data>
   <data name="Save.Title">
     <value>Guardar archivo de diagnóstico</value>
   </data>

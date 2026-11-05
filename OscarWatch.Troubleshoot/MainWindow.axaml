@@ -5,7 +5,7 @@
         x:Class="OscarWatch.Troubleshoot.MainWindow"
         x:DataType="local:MainViewModel"
         Title="{t:Tr Window.Title}"
-        Width="1080" Height="700"
+        Width="1080" Height="760"
         MinWidth="720" MinHeight="480"
         WindowStartupLocation="CenterScreen">
 
@@ -34,7 +34,7 @@
                 <TextBlock Classes="section" Text="{t:Tr Section.Status}" VerticalAlignment="Center" />
               </DockPanel>
 
-              <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+              <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                 <TextBlock Classes="label" Grid.Row="0" Text="{t:Tr Label.Process}" />
                 <SelectableTextBlock Classes="value" Grid.Row="0" Grid.Column="1" Text="{Binding ProcessText}" />
 
@@ -64,6 +64,9 @@
 
                 <TextBlock Classes="label" Grid.Row="9" Text="{t:Tr Label.Gps}" />
                 <SelectableTextBlock Classes="value" Grid.Row="9" Grid.Column="1" Text="{Binding GpsText}" />
+
+                <TextBlock Classes="label" Grid.Row="10" Text="{t:Tr Label.EchoCalibrations}" />
+                <SelectableTextBlock Classes="value" Grid.Row="10" Grid.Column="1" Text="{Binding EchoCalibrationsText}" />
               </Grid>
             </StackPanel>
 
@@ -106,6 +109,14 @@
               <TextBlock Classes="hint" Text="{t:Tr Hardware.Hint}" />
               <WrapPanel ItemSpacing="8" LineSpacing="8">
                 <Button Content="{t:Tr Action.DisableHardware}" Command="{Binding DisableHardwareCommand}" />
+              </WrapPanel>
+            </StackPanel>
+
+            <StackPanel Spacing="8">
+              <TextBlock Classes="section" Text="{t:Tr Section.Echo}" />
+              <TextBlock Classes="hint" Text="{t:Tr Echo.Hint}" />
+              <WrapPanel ItemSpacing="8" LineSpacing="8">
+                <Button Content="{t:Tr Action.ClearEchoCalibrations}" Command="{Binding ClearEchoCalibrationsCommand}" />
               </WrapPanel>
             </StackPanel>
 

@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>Impossibile aprire la cartella: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>Calibrazioni dell'eco FT4</value>
+  </data>
+  <data name="Echo.None">
+    <value>Nessuna salvata</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} salvate</value>
+  </data>
+  <data name="Section.Echo">
+    <value>Calibrazioni dell'eco FT4</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>Se FT4 trasmette fuori frequenza dopo un eco errato, azzera le correzioni di uplink salvate. OscarWatch può impararle di nuovo dai tuoi prossimi echi.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>Azzera calibrazioni dell'eco FT4</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>Azzerare tutte le {0} calibrazioni dell'eco FT4 salvate? Ogni satellite e transponder torna senza correzione di uplink.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>Calibrazioni dell'eco FT4 azzerate. OscarWatch può impararle di nuovo dai tuoi prossimi echi.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>Non ci sono calibrazioni dell'eco FT4 da azzerare.</value>
+  </data>
   <data name="Save.Title">
     <value>Salva file di diagnostica</value>
   </data>

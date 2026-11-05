@@ -209,6 +209,33 @@ GPS: {2}</value>
   <data name="Result.FolderOpenFailed">
     <value>The folder could not be opened: {0}</value>
   </data>
+  <data name="Label.EchoCalibrations">
+    <value>FT4 echo calibrations</value>
+  </data>
+  <data name="Echo.None">
+    <value>None saved</value>
+  </data>
+  <data name="Echo.Count">
+    <value>{0} saved</value>
+  </data>
+  <data name="Section.Echo">
+    <value>FT4 echo calibrations</value>
+  </data>
+  <data name="Echo.Hint">
+    <value>If FT4 transmits off frequency after a bad echo, clear the saved uplink trims. OscarWatch can learn them again from your next echoes.</value>
+  </data>
+  <data name="Action.ClearEchoCalibrations">
+    <value>Clear FT4 echo calibrations</value>
+  </data>
+  <data name="Confirm.ClearEchoCalibrations">
+    <value>Clear all {0} saved FT4 echo calibrations? Every satellite and transponder goes back to no uplink trim.</value>
+  </data>
+  <data name="Result.EchoCleared">
+    <value>FT4 echo calibrations cleared. OscarWatch can learn them again from your next echoes.</value>
+  </data>
+  <data name="Result.EchoNoneSaved">
+    <value>There are no FT4 echo calibrations to clear.</value>
+  </data>
   <data name="Save.Title">
     <value>Save diagnostics file</value>
   </data>
