@@ -4735,6 +4735,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Dezibel über dem automatisch nachgeführten Rauschboden. Ein kleinerer Bereich hebt Signale stärker hervor. Voreinstellung ist 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>Wasserfall glätten</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>Gleicht den Abfall des SSB-Filters Ihres Funkgeräts aus, damit die Ränder des Durchlassbereichs nicht dunkler sind als die Mitte, wie Flatten in WSJT-X. Standardmäßig eingeschaltet.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Wasserfall-Geschwindigkeit</value>
   </data>

@@ -256,7 +256,8 @@ public sealed class Ft4ModemService : IDisposable
         if (!IsRunning || bins.Length == 0)
             return false;
 
-        Span<float> scratch = stackalloc float[4096];
+        // The whole monitor ring, so the analyser can average several FFTs into the row.
+        var scratch = new float[Ft4AudioService.MonitorSamples];
         var n = _audio.CopyMonitorSamples(scratch);
         if (n < 512)
             return false;

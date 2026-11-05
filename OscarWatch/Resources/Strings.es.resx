@@ -4731,6 +4731,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.WaterfallRange.Note">
     <value>Decibelios por encima del suelo de ruido automático. Un rango menor hace que las señales destaquen más. El valor predeterminado es 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>Aplanar cascada</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>Compensa la pendiente del filtro SSB de la radio para que los bordes de la banda de paso no se vean más oscuros que el centro, como Flatten en WSJT-X. Activado por defecto.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Velocidad de la cascada</value>
   </data>

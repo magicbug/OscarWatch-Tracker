@@ -4731,6 +4731,12 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Decibéis acima do piso de ruído automático. Uma faixa menor faz os sinais se destacarem mais. O padrão é 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>Achatar cascata</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>Compensa a inclinação do filtro SSB do rádio para que as bordas da banda passante não fiquem mais escuras que o centro, como o Flatten do WSJT-X. Ativado por padrão.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Velocidade da cascata</value>
   </data>

@@ -4735,6 +4735,12 @@ LOS: {2}
   <data name="Ft4.WaterfallRange.Note">
     <value>จำนวนเดซิเบลเหนือพื้นสัญญาณรบกวนที่ติดตามอัตโนมัติ ช่วงที่แคบลงทำให้สัญญาณเด่นขึ้น ค่าเริ่มต้นคือ 40 dB</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>ปรับวอเตอร์ฟอลล์ให้เรียบ</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>ชดเชยความลาดของฟิลเตอร์ SSB ของวิทยุ เพื่อให้ขอบของพาสแบนด์ไม่มืดกว่าตรงกลาง เหมือน Flatten ใน WSJT-X เปิดเป็นค่าเริ่มต้น</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>ความเร็ววอเตอร์ฟอล</value>
   </data>

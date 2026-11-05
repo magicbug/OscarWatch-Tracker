@@ -4735,6 +4735,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Desibel di atas lantai derau otomatis. Rentang yang lebih kecil membuat sinyal lebih menonjol. Bawaan adalah 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>Ratakan waterfall</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>Meratakan kemiringan filter SSB radio Anda sehingga tepi passband tidak lebih gelap daripada bagian tengah, seperti Flatten di WSJT-X. Aktif secara bawaan.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Kecepatan waterfall</value>
   </data>

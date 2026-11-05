@@ -25,6 +25,16 @@ public sealed class Ft4WaterfallControl : Control
     private bool _hasSpectrum;
     private bool _levelsPrimed;
     private double _noiseFloor = -80;
+    private readonly double[] _segmentFloors = new double[Ft4SpectrumAnalyzer.FlattenSegments];
+    private readonly double[] _rowSegmentFloors = new double[Ft4SpectrumAnalyzer.FlattenSegments];
+    private readonly float[] _baseline = new float[SpectrumColumns];
+
+    /// <summary>
+    /// Measure the floor per frequency segment instead of across the whole passband, so the
+    /// edges of the radio's SSB filter are not painted darker than the middle (WSJT-X Flatten).
+    /// </summary>
+    public static readonly StyledProperty<bool> FlattenProperty =
+        AvaloniaProperty.Register<Ft4WaterfallControl, bool>(nameof(Flatten));
 
     /// <summary>dB span above the noise floor. Avoids peak-auto gain blow-out.</summary>
     public static readonly StyledProperty<double> DisplayRangeDbProperty =
@@ -88,6 +98,8 @@ public sealed class Ft4WaterfallControl : Control
             ToneMarkersHzProperty);
         DisplayRangeDbProperty.Changed.AddClassHandler<Ft4WaterfallControl>((control, _) =>
             control.RepaintSpectrum());
+        FlattenProperty.Changed.AddClassHandler<Ft4WaterfallControl>((control, _) =>
+            control._levelsPrimed = false);
         FocusableProperty.OverrideDefaultValue<Ft4WaterfallControl>(true);
     }
 
@@ -157,6 +169,12 @@ public sealed class Ft4WaterfallControl : Control
         set => SetValue(MinNoiseFloorDbProperty, value);
     }
 
+    public bool Flatten
+    {
+        get => GetValue(FlattenProperty);
+        set => SetValue(FlattenProperty, value);
+    }
+
     /// <summary>Decibels above the automatic noise floor painted on the waterfall.</summary>
     public double DisplayRangeDb
     {
@@ -198,22 +216,31 @@ public sealed class Ft4WaterfallControl : Control
         set => SetSpectrum(value);
     }
 
+    // The range slider sets contrast; the floor follows the band quickly. New rows are
+    // coloured once and history is never restretched, so a fast floor does not pump.
     private void UpdateLevels(ReadOnlySpan<float> bins)
     {
-        var floor = Math.Max(Ft4SpectrumAnalyzer.EstimateNoiseFloorDb(bins, percentile: 0.20f), MinNoiseFloorDb);
-        if (!_levelsPrimed)
+        if (Flatten)
         {
-            _noiseFloor = floor;
-            _levelsPrimed = true;
-            return;
+            Ft4SpectrumAnalyzer.MeasureSegmentFloorsDb(bins, _rowSegmentFloors);
+            for (var k = 0; k < _segmentFloors.Length; k++)
+            {
+                var floor = Math.Max(_rowSegmentFloors[k], MinNoiseFloorDb);
+                _segmentFloors[k] = _levelsPrimed
+                    ? Ft4SpectrumAnalyzer.FollowNoiseFloor(_segmentFloors[k], floor)
+                    : floor;
+            }
+
+            Ft4SpectrumAnalyzer.InterpolateBaselineDb(_segmentFloors, _baseline);
+        }
+        else
+        {
+            var floor = Math.Max(Ft4SpectrumAnalyzer.EstimateNoiseFloorDb(bins, percentile: 0.20f), MinNoiseFloorDb);
+            _noiseFloor = _levelsPrimed ? Ft4SpectrumAnalyzer.FollowNoiseFloor(_noiseFloor, floor) : floor;
+            Array.Fill(_baseline, (float)_noiseFloor);
         }
 
-        // The range slider sets contrast. This tracker only follows the band, and a quiet
-        // gap must not lift the whole scale. New rows are coloured once; history is not
-        // restretched on every update (that made the picture pump).
-        var delta = floor - _noiseFloor;
-        var step = delta > 0 ? 0.02 : 0.008;
-        _noiseFloor += delta * step;
+        _levelsPrimed = true;
     }
 
     private void EnsureBitmap()
@@ -298,7 +325,7 @@ public sealed class Ft4WaterfallControl : Control
     {
         for (var x = 0; x < SpectrumColumns; x++)
         {
-            var color = MapColor(bins[x], range);
+            var color = MapColor(bins[x] - _baseline[x], range);
             var pixel = row + (x * 4);
             pixel[0] = color.B;
             pixel[1] = color.G;
@@ -307,11 +334,11 @@ public sealed class Ft4WaterfallControl : Control
         }
     }
 
-    private Color MapColor(float db, double rangeDb)
+    private static Color MapColor(float dbAboveFloor, double rangeDb)
     {
         // Map noise floor → +range into 0…1. Strong tones clip at white without
         // dragging the whole passband up (the previous peak-tracker caused that).
-        var t = (db - _noiseFloor) / rangeDb;
+        var t = dbAboveFloor / rangeDb;
         t = Math.Clamp(t, 0, 1);
         // Mild gamma so mid-level noise stays blue/cyan rather than yellow.
         t = Math.Pow(t, 1.15);

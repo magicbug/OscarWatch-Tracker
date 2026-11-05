@@ -4735,6 +4735,12 @@ LOS: {2}
   <data name="Ft4.WaterfallRange.Note">
     <value>Децибелы над автоматически определяемым уровнем шума. Меньший диапазон делает сигналы заметнее. По умолчанию 40 дБ.</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>Выравнивать водопад</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>Компенсирует спад SSB-фильтра радиостанции, чтобы края полосы пропускания не были темнее середины, как Flatten в WSJT-X. Включено по умолчанию.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Скорость водопада</value>
   </data>

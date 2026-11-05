@@ -119,6 +119,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _selectedDecodeLayout = DecodeLayoutOptions.FirstOrDefault(o => o.Value == ft4.DecodeLayout)
             ?? DecodeLayoutOptions[0];
         _waterfallRangeDb = Ft4Settings.ClampWaterfallRangeDb(ft4.WaterfallRangeDb);
+        _waterfallFlatten = ft4.WaterfallFlatten;
         var waterfallSpeed = Ft4Settings.ClampWaterfallSpeed(ft4.WaterfallSpeed);
         if (waterfallSpeed != ft4.WaterfallSpeed)
         {
@@ -303,6 +304,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private double _decodeFontSize = 12;
 
     [ObservableProperty] private double _waterfallRangeDb = Ft4Settings.DefaultWaterfallRangeDb;
+    [ObservableProperty] private bool _waterfallFlatten = true;
 
     [ObservableProperty] private Ft4WaterfallSpeedOption? _selectedWaterfallSpeed;
     [ObservableProperty] private Ft4DecodeLayoutOption? _selectedDecodeLayout;
@@ -549,6 +551,15 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         }
 
         _settings.Current.Ft4.WaterfallRangeDb = clamped;
+        _settings.RequestSave();
+    }
+
+    partial void OnWaterfallFlattenChanged(bool value)
+    {
+        if (_settings.Current.Ft4.WaterfallFlatten == value)
+            return;
+
+        _settings.Current.Ft4.WaterfallFlatten = value;
         _settings.RequestSave();
     }
 

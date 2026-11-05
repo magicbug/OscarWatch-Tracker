@@ -4731,6 +4731,12 @@
   <data name="Ft4.WaterfallRange.Note">
     <value>自動で追従するノイズフロアからのデシベル幅です。範囲を狭くすると信号が目立ちます。初期値は 40 dB です。</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>ウォーターフォールを平坦化</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>無線機の SSB フィルターの傾きを補正し、通過帯域の端が中央より暗く表示されないようにします（WSJT-X の Flatten と同様）。既定でオンです。</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>ウォーターフォールの速度</value>
   </data>

@@ -177,6 +177,12 @@ public sealed class Ft4Settings
     public static double ClampWaterfallRangeDb(double value) =>
         Math.Clamp(value, MinWaterfallRangeDb, MaxWaterfallRangeDb);
 
+    /// <summary>
+    /// Even out the slope of the radio's SSB filter so the passband edges are not darker
+    /// than the middle (like WSJT-X Flatten). On by default.
+    /// </summary>
+    public bool WaterfallFlatten { get; set; } = true;
+
     /// <summary>Slowest waterfall scroll. About 48 seconds stay on screen.</summary>
     public const int SlowWaterfallSpeed = 1;
 

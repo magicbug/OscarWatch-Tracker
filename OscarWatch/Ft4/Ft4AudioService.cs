@@ -14,7 +14,8 @@ public sealed class Ft4AudioService : IDisposable
     private static readonly ILogger Log = Serilog.Log.ForContext<Ft4AudioService>();
     private readonly object _gate = new();
     private readonly ConcurrentQueue<float> _captureRing = new();
-    private readonly float[] _monitorRing = new float[8192];
+    public const int MonitorSamples = 8192;
+    private readonly float[] _monitorRing = new float[MonitorSamples];
     private int _monitorWrite;
     private int _monitorCount;
     private readonly object _monitorGate = new();

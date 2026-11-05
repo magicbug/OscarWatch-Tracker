@@ -53,6 +53,64 @@ public sealed class Ft4SpectrumAnalyzerTests
         Assert.InRange(peakHz, 1400, 1600);
     }
 
+    [Theory]
+    [InlineData(-60, -78)]
+    [InlineData(-78, -60)]
+    public void Noise_floor_settles_within_ten_rows_after_an_agc_step(double startDb, double newFloorDb)
+    {
+        var floor = startDb;
+        for (var row = 0; row < 10; row++)
+            floor = Ft4SpectrumAnalyzer.FollowNoiseFloor(floor, newFloorDb);
+
+        Assert.InRange(floor, newFloorDb - 0.5, newFloorDb + 0.5);
+    }
+
+    [Fact]
+    public void Averaging_several_ffts_steadies_the_noise()
+    {
+        const int sampleRate = 48000;
+        var random = new Random(73);
+        var samples = new float[8192];
+        for (var i = 0; i < samples.Length; i++)
+            samples[i] = (float)(random.NextDouble() * 2 - 1) * 0.1f;
+
+        var single = new float[400];
+        var averaged = new float[400];
+        Assert.True(Ft4SpectrumAnalyzer.TryComputePassband(samples.AsSpan(^4096..), sampleRate, single));
+        Assert.True(Ft4SpectrumAnalyzer.TryComputePassband(samples, sampleRate, averaged));
+
+        Assert.True(Spread(averaged) < Spread(single) * 0.8);
+
+        static double Spread(float[] bins)
+        {
+            var mean = bins.Average();
+            return Math.Sqrt(bins.Average(b => (b - mean) * (b - mean)));
+        }
+    }
+
+    [Fact]
+    public void Flatten_baseline_follows_the_filter_slope_but_not_a_signal()
+    {
+        var bins = new float[400];
+        for (var x = 0; x < bins.Length; x++)
+            bins[x] = -90f + 20f * x / (bins.Length - 1);
+        for (var x = 200; x < 212; x++)
+            bins[x] += 30f;
+
+        var floors = new double[Ft4SpectrumAnalyzer.FlattenSegments];
+        var baseline = new float[bins.Length];
+        Ft4SpectrumAnalyzer.MeasureSegmentFloorsDb(bins, floors);
+        Ft4SpectrumAnalyzer.InterpolateBaselineDb(floors, baseline);
+
+        for (var x = 40; x < 360; x++)
+        {
+            var slope = -90f + 20f * x / (bins.Length - 1);
+            Assert.InRange(baseline[x], slope - 2.5f, slope + 2.5f);
+        }
+
+        Assert.True(bins[205] - baseline[205] > 25);
+    }
+
     [Fact]
     public void Noise_floor_estimate_is_below_tone_peak()
     {

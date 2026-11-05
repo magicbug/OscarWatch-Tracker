@@ -235,6 +235,7 @@
     <!-- Edge-to-edge waterfall (top / left / right of the client area). -->
     <Grid DockPanel.Dock="Top" Height="200">
       <controls:Ft4WaterfallControl Spectrum="{Binding SpectrumBins}"
+                                    Flatten="{Binding WaterfallFlatten}"
                                     TxAudioHz="{Binding TxAudioHz, Mode=TwoWay}"
                                     RxAudioHz="{Binding RxAudioHz, Mode=TwoWay}"
                                     HoldTxFrequency="{Binding HoldTxFrequency}"

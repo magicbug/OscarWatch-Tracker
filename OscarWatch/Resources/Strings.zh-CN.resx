@@ -4731,6 +4731,12 @@
   <data name="Ft4.WaterfallRange.Note">
     <value>自动噪声底之上显示的分贝数。范围越小，信号越突出。默认值为 40 dB。</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>平坦化瀑布图</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>补偿电台 SSB 滤波器的斜率，使通带边缘不会比中间更暗，与 WSJT-X 的 Flatten 相同。默认开启。</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>瀑布图速度</value>
   </data>

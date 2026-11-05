@@ -4735,6 +4735,12 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.WaterfallRange.Note">
     <value>Decibel sopra il livello di rumore automatico. Un intervallo più piccolo rende i segnali più evidenti. Il valore predefinito è 40 dB.</value>
   </data>
+  <data name="Ft4.WaterfallFlatten">
+    <value>Appiattisci cascata</value>
+  </data>
+  <data name="Ft4.WaterfallFlatten.Note">
+    <value>Compensa la pendenza del filtro SSB della radio, così i bordi della banda passante non appaiono più scuri del centro, come Flatten in WSJT-X. Attivo per impostazione predefinita.</value>
+  </data>
   <data name="Ft4.WaterfallSpeed">
     <value>Velocità della cascata</value>
   </data>
