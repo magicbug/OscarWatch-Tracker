@@ -2212,7 +2212,7 @@ public sealed class Ft4ModemService : IDisposable
                     if (_postedEchoes.TryGetValue(echoIdentity, out var shown))
                     {
                         foundOwn = true;
-                        if (!Ft4EchoChoice.IsClearerCopy(shown.FreqHz, shown.SnrDb, echo.FreqHz, echo.SnrDb, txHz))
+                        if (!Ft4EchoChoice.IsClearerCopy(shown.FreqHz, echo.FreqHz, txHz))
                         {
                             Log.Debug(
                                 "FT4 duplicate echo suppressed: {Text} at {Hz:0} Hz, kept {KeptHz:0} Hz",
