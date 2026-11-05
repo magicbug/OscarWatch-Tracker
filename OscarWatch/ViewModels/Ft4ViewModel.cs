@@ -1482,6 +1482,13 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     private bool CanClearAllEchoCalibrations() =>
         _settings.Current.Ft4.UplinkCalibrationKHzBySatellite.Count > 0;
 
+    /// <summary>Waterfall double-click: decode the slot that just ended again, deep, over the whole slot.</summary>
+    [RelayCommand]
+    private void DecodeAgain() =>
+        StatusLine = _modem.DecodeLastSlotAgain()
+            ? _l.Get("Ft4.Status.DecodingAgain")
+            : _l.Get("Ft4.Status.NothingToDecodeAgain");
+
     private void LoadEchoCalibrationHzForSelected()
     {
         var wasLoading = _loadingEchoCalibration;

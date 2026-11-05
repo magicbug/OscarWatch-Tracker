@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -28,6 +30,18 @@ public sealed class Ft4WaterfallControl : Control
     private readonly double[] _segmentFloors = new double[Ft4SpectrumAnalyzer.FlattenSegments];
     private readonly double[] _rowSegmentFloors = new double[Ft4SpectrumAnalyzer.FlattenSegments];
     private readonly float[] _baseline = new float[SpectrumColumns];
+    // Per history row (0 = newest): the slot start when that row is the first of a new slot.
+    private readonly DateTime?[] _rowSlotStarts = new DateTime?[HistoryRows];
+    private DateTime _lastRowSlotStart = DateTime.MinValue;
+    private double? _hoverHz;
+
+    /// <summary>Slot length in seconds for the period lines and UTC labels (WSJT-X style). 0 draws none.</summary>
+    public static readonly StyledProperty<double> SlotSecondsProperty =
+        AvaloniaProperty.Register<Ft4WaterfallControl, double>(nameof(SlotSeconds));
+
+    /// <summary>Run on a double-click, after RX has moved to the clicked frequency.</summary>
+    public static readonly StyledProperty<ICommand?> DecodeAgainCommandProperty =
+        AvaloniaProperty.Register<Ft4WaterfallControl, ICommand?>(nameof(DecodeAgainCommand));
 
     /// <summary>
     /// Measure the floor per frequency segment instead of across the whole passband, so the
@@ -108,6 +122,8 @@ public sealed class Ft4WaterfallControl : Control
         MinHeight = 140;
         Cursor = new Cursor(StandardCursorType.Cross);
         PointerPressed += OnPointerPressed;
+        PointerMoved += OnPointerMoved;
+        PointerExited += (_, _) => SetHoverHz(null);
         ContextRequested += (_, e) => e.Handled = true;
     }
 
@@ -169,6 +185,18 @@ public sealed class Ft4WaterfallControl : Control
         set => SetValue(MinNoiseFloorDbProperty, value);
     }
 
+    public double SlotSeconds
+    {
+        get => GetValue(SlotSecondsProperty);
+        set => SetValue(SlotSecondsProperty, value);
+    }
+
+    public ICommand? DecodeAgainCommand
+    {
+        get => GetValue(DecodeAgainCommandProperty);
+        set => SetValue(DecodeAgainCommandProperty, value);
+    }
+
     public bool Flatten
     {
         get => GetValue(FlattenProperty);
@@ -192,6 +220,8 @@ public sealed class Ft4WaterfallControl : Control
             _bitmap?.Dispose();
             _bitmap = null;
             _levelsPrimed = false;
+            Array.Clear(_rowSlotStarts);
+            _lastRowSlotStart = DateTime.MinValue;
             InvalidateVisual();
             return;
         }
@@ -265,7 +295,19 @@ public sealed class Ft4WaterfallControl : Control
     {
         var occupied = Math.Min(_filledRows, HistoryRows - 1);
         if (occupied > 0)
+        {
             Array.Copy(_rows, 0, _rows, SpectrumColumns, occupied * SpectrumColumns);
+            Array.Copy(_rowSlotStarts, 0, _rowSlotStarts, 1, occupied);
+        }
+
+        _rowSlotStarts[0] = null;
+        if (SlotSeconds > 0)
+        {
+            var slotStart = Ft4SlotClock.SlotStartUtc(Ft4Clock.UtcNow, SlotSeconds);
+            if (_lastRowSlotStart != DateTime.MinValue && slotStart != _lastRowSlotStart)
+                _rowSlotStarts[0] = slotStart;
+            _lastRowSlotStart = slotStart;
+        }
 
         for (var x = 0; x < SpectrumColumns; x++)
             _rows[x] = bins[x];
@@ -379,10 +421,7 @@ public sealed class Ft4WaterfallControl : Control
         if (!left && !(right && HoldTxFrequency))
             return;
 
-        var p = e.GetPosition(this);
-        var hz = Ft4SpectrumAnalyzer.PixelToHz(p.X, Bounds.Width, MinHz, MaxHz);
-        hz = Math.Round(hz / 10.0) * 10.0;
-        hz = Math.Clamp(hz, MinHz, MaxHz);
+        var hz = PointerHz(e);
         if (right && !left && HoldTxFrequency)
             TxAudioHz = hz;
         else
@@ -395,6 +434,27 @@ public sealed class Ft4WaterfallControl : Control
         FrequencySelected?.Invoke(this, hz);
         e.Handled = true;
         InvalidateVisual();
+
+        if (left && e.ClickCount == 2 && DecodeAgainCommand is { } decode && decode.CanExecute(null))
+            decode.Execute(null);
+    }
+
+    private void OnPointerMoved(object? sender, PointerEventArgs e) =>
+        SetHoverHz(ShowTuningBrackets ? PointerHz(e) : null);
+
+    private void SetHoverHz(double? hz)
+    {
+        if (_hoverHz == hz)
+            return;
+        _hoverHz = hz;
+        InvalidateVisual();
+    }
+
+    private double PointerHz(PointerEventArgs e)
+    {
+        var hz = Ft4SpectrumAnalyzer.PixelToHz(e.GetPosition(this).X, Bounds.Width, MinHz, MaxHz);
+        hz = Math.Round(hz / 10.0) * 10.0;
+        return Math.Clamp(hz, MinHz, MaxHz);
     }
 
     public override void Render(DrawingContext context)
@@ -405,6 +465,8 @@ public sealed class Ft4WaterfallControl : Control
         if (_bitmap is not null && _hasSpectrum)
         {
             context.DrawImage(_bitmap, new Rect(0, 0, SpectrumColumns, HistoryRows), bounds);
+            if (SlotSeconds > 0)
+                DrawSlotLines(context, bounds);
         }
         else
         {
@@ -488,5 +550,53 @@ public sealed class Ft4WaterfallControl : Control
                 labelBrush);
             context.DrawText(ft, new Point(tickX + 2, bounds.Height - ft.Height - 1));
         }
+
+        if (ShowTuningBrackets && _hoverHz is { } hoverHz)
+            DrawHoverReadout(context, bounds, hoverHz);
+    }
+
+    /// <summary>A line under the first row of each slot, labelled with that slot's UTC start.</summary>
+    private void DrawSlotLines(DrawingContext context, Rect bounds)
+    {
+        var rowHeight = bounds.Height / HistoryRows;
+        var pen = new Pen(new SolidColorBrush(Color.FromArgb(120, 255, 255, 255)), 1);
+        var brush = new SolidColorBrush(Color.FromArgb(220, 230, 230, 230));
+        var rows = Math.Min(_filledRows, HistoryRows);
+        for (var row = 0; row < rows; row++)
+        {
+            if (_rowSlotStarts[row] is not { } start)
+                continue;
+            var y = Math.Round((row + 1) * rowHeight) + 0.5;
+            context.DrawLine(pen, new Point(0, y), new Point(bounds.Width, y));
+            var label = new FormattedText(
+                start.ToString("HH:mm:ss.f", CultureInfo.InvariantCulture),
+                CultureInfo.InvariantCulture,
+                FlowDirection.LeftToRight,
+                new Typeface("Consolas"),
+                10,
+                brush);
+            context.DrawText(label, new Point(4, Math.Max(0, y - label.Height - 1)));
+        }
+    }
+
+    /// <summary>Dashed line and audio frequency under the mouse, rounded as a click would set it.</summary>
+    private void DrawHoverReadout(DrawingContext context, Rect bounds, double hz)
+    {
+        var x = Ft4SpectrumAnalyzer.HzToPixel(hz, bounds.Width, MinHz, MaxHz);
+        var pen = new Pen(new SolidColorBrush(Color.FromArgb(150, 255, 255, 255)), 1, new DashStyle([3, 3], 0));
+        context.DrawLine(pen, new Point(x, 0), new Point(x, bounds.Height));
+        var label = new FormattedText(
+            $"{hz:0} Hz",
+            CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            new Typeface("Consolas"),
+            11,
+            Brushes.White);
+        var labelX = x + 4 + label.Width > bounds.Width ? x - 4 - label.Width : x + 4;
+        var origin = new Point(labelX, 4);
+        context.FillRectangle(
+            new SolidColorBrush(Color.FromArgb(170, 8, 10, 18)),
+            new Rect(origin.X - 2, origin.Y - 1, label.Width + 4, label.Height + 2));
+        context.DrawText(label, origin);
     }
 }

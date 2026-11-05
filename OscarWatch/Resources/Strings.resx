@@ -4824,6 +4824,12 @@ Latest: {1} ({2})</value>
   <data name="Ft4.Status.EchoClearedAll">
     <value>Cleared all echo calibrations</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Decoding the last receive slot again (deep, whole slot)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>No receive slot to decode again. Double-click during the slot after the one you want.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>TX level</value>
   </data>

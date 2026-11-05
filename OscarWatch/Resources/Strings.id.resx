@@ -4828,6 +4828,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Status.EchoClearedAll">
     <value>Semua kalibrasi gema dihapus</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Mendekode ulang slot terima terakhir (mendalam, seluruh slot)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>Tidak ada slot terima untuk didekode ulang. Klik ganda selama slot setelah slot yang Anda inginkan.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>Level TX</value>
   </data>

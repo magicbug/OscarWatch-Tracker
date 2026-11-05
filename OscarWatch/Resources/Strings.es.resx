@@ -4824,6 +4824,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.Status.EchoClearedAll">
     <value>Todas las calibraciones de eco borradas</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Decodificando de nuevo el último intervalo de recepción (profundo, intervalo completo)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>No hay intervalo de recepción para decodificar de nuevo. Haga doble clic durante el intervalo siguiente al que desea.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>Nivel de TX</value>
   </data>

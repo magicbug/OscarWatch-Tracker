@@ -4824,6 +4824,12 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.Status.EchoClearedAll">
     <value>Todas as calibrações de eco limpas</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Decodificando novamente o último slot de recepção (profundo, slot inteiro)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>Nenhum slot de recepção para decodificar novamente. Clique duas vezes durante o slot seguinte ao desejado.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>Nível de TX</value>
   </data>

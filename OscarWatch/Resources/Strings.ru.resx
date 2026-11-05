@@ -4828,6 +4828,12 @@ LOS: {2}
   <data name="Ft4.Status.EchoClearedAll">
     <value>Все калибровки эха сброшены</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Повторное декодирование последнего слота приёма (глубокое, весь слот)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>Нет слота приёма для повторного декодирования. Дважды щёлкните во время слота, следующего за нужным.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>Уровень TX</value>
   </data>

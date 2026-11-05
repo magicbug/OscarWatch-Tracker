@@ -3,6 +3,7 @@
         xmlns:vm="using:OscarWatch.ViewModels"
         xmlns:controls="using:OscarWatch.Controls"
         xmlns:loc="using:OscarWatch.Localization"
+        xmlns:ft4core="using:OscarWatch.Core.Ft4"
         x:Class="OscarWatch.Views.Ft4Window"
         x:DataType="vm:Ft4ViewModel"
         Title="{loc:Localize Key=Window.Ft4.Title}"
@@ -240,6 +241,8 @@
                                     RxAudioHz="{Binding RxAudioHz, Mode=TwoWay}"
                                     HoldTxFrequency="{Binding HoldTxFrequency}"
                                     ShowTuningBrackets="{Binding !StationSetupMissing}"
+                                    SlotSeconds="{x:Static ft4core:Ft4SlotClock.Ft4SlotSeconds}"
+                                    DecodeAgainCommand="{Binding DecodeAgainCommand}"
                                     DisplayRangeDb="{Binding WaterfallRangeDb}"
                                     StatusText="{Binding WaterfallStatusText}" />
       <Border Classes="ft4-station-warning"

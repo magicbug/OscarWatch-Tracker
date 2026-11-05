@@ -4824,6 +4824,12 @@
   <data name="Ft4.Status.EchoClearedAll">
     <value>すべてのエコー校正をクリアしました</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>直前の受信スロットを再デコード中（ディープ、スロット全体）</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>再デコードできる受信スロットがありません。目的のスロットの次のスロット中にダブルクリックしてください。</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>TXレベル</value>
   </data>

@@ -4828,6 +4828,12 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.Status.EchoClearedAll">
     <value>Tutte le calibrazioni dell'eco sono state azzerate</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Nuova decodifica dell'ultimo slot di ricezione (profonda, slot intero)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>Nessuno slot di ricezione da decodificare di nuovo. Fai doppio clic durante lo slot successivo a quello desiderato.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>Livello TX</value>
   </data>

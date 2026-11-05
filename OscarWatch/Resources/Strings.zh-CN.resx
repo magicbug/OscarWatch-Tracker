@@ -4824,6 +4824,12 @@
   <data name="Ft4.Status.EchoClearedAll">
     <value>已清除全部回波校准</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>正在重新解码上一个接收时隙（深度，整个时隙）</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>没有可重新解码的接收时隙。请在目标时隙的下一个时隙内双击。</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>TX 电平</value>
   </data>

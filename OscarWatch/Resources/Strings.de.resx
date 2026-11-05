@@ -4828,6 +4828,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Status.EchoClearedAll">
     <value>Alle Echo-Kalibrierungen gelöscht</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>Letzter Empfangsslot wird erneut dekodiert (tief, ganzer Slot)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>Kein Empfangsslot zum erneuten Dekodieren. Doppelklicken Sie im Slot nach dem gewünschten.</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>TX-Pegel</value>
   </data>

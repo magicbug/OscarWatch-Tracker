@@ -65,6 +65,9 @@ public sealed class Ft4ModemService : IDisposable
     private long _dopplerPreparedSlotTicks; // TX slot whose CAT Doppler write already finished
     private double _txKickedAudioHz; // TX audio Hz sent in that slot; set before _txKickedSlotTicks
     private DateTime _lastEchoCalibrationSlot = DateTime.MinValue;
+    // Previous slot's receive audio, for a decode-again request. Guarded by _gate.
+    private DateTime _lastRxSlotStart = DateTime.MinValue;
+    private float[]? _lastRxSlotSamples;
     private bool _decodeQueuedThisSlot;
     private bool? _deepDecodeActive;
     private readonly Ft4RxHealth _rxHealth = new(DateTime.UtcNow);
@@ -1046,9 +1049,13 @@ public sealed class Ft4ModemService : IDisposable
                         && Ft4SlotRecordingFiles.ShouldRecord(_snapshot.GetCurrent().ElevationDeg);
                     lock (_gate)
                     {
-                        if ((needEndDecode || recordSlot) && _slotBuffer.Count >= (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
+                        var keepForRedecode = previousSlot != DateTime.MinValue && !previousWasTx;
+                        if ((needEndDecode || recordSlot || keepForRedecode)
+                            && _slotBuffer.Count >= (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
                             previousSamples = _slotBuffer.ToArray();
                         _slotBuffer.Clear();
+                        _lastRxSlotStart = keepForRedecode ? previousSlot : DateTime.MinValue;
+                        _lastRxSlotSamples = keepForRedecode ? previousSamples : null;
                     }
 
                     _currentSlotStart = slotStart;
@@ -1931,7 +1938,35 @@ public sealed class Ft4ModemService : IDisposable
         QueueDecode(_currentSlotStart, snapshot, txSlot: _txThisSlot);
     }
 
-    private void QueueDecode(DateTime slotStart, float[] samples, bool txSlot, bool fullSlotPass = false)
+    /// <summary>
+    /// Decode the slot that has just finished again, as WSJT-X does on a waterfall double-click:
+    /// the whole slot, the deep budget, and the raw capture as well. Mid-pass slots otherwise only
+    /// get the early decode, so a weak trace spotted on the waterfall gets a better chance.
+    /// Only the slot just before the current one: older slots' decode keys are gone, so their
+    /// lines would be posted twice. False when there is no receive slot to decode.
+    /// </summary>
+    public bool DecodeLastSlotAgain()
+    {
+        if (!IsRunning)
+            return false;
+
+        DateTime slot;
+        float[]? samples;
+        lock (_gate)
+        {
+            slot = _lastRxSlotStart;
+            samples = _lastRxSlotSamples;
+        }
+
+        if (samples is null
+            || slot != _currentSlotStart - TimeSpan.FromSeconds(Ft4SlotClock.Ft4SlotSeconds))
+            return false;
+
+        QueueDecode(slot, samples, txSlot: false, fullSlotPass: true, forceDeep: true);
+        return true;
+    }
+
+    private void QueueDecode(DateTime slotStart, float[] samples, bool txSlot, bool fullSlotPass = false, bool forceDeep = false)
     {
         // Long-running: native decode must not occupy a thread-pool worker the modem loop needs.
         _ = Task.Factory.StartNew(
@@ -1939,7 +1974,7 @@ public sealed class Ft4ModemService : IDisposable
             {
                 try
                 {
-                    DecodeSamples(slotStart, samples, txSlot, fullSlotPass);
+                    DecodeSamples(slotStart, samples, txSlot, fullSlotPass, forceDeep);
                 }
                 catch (Exception ex)
                 {
@@ -1986,7 +2021,7 @@ public sealed class Ft4ModemService : IDisposable
     /// Second receive decode of the whole slot near the horizon. Also tries the raw capture,
     /// because a slightly wrong Doppler slope can smear a weak sync in the corrected copy.
     /// </param>
-    private void DecodeSamples(DateTime slotStart, float[] samples, bool txSlot, bool fullSlotPass = false)
+    private void DecodeSamples(DateTime slotStart, float[] samples, bool txSlot, bool fullSlotPass = false, bool forceDeep = false)
     {
         if (samples.Length < (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
             return;
@@ -2012,7 +2047,7 @@ public sealed class Ft4ModemService : IDisposable
         }
 
         var txHz = _sequencer?.TxAudioHz ?? _settings.Current.Ft4.TxAudioHz;
-        var deep = UseDeepDecode();
+        var deep = UseDeepDecode() || forceDeep;
         if (txSlot && _settings.Current.Ft4.ParallelTxEchoDecode)
         {
             DecodeTxSlotParallel(slotStart, raw, corrected, txHz, deep);

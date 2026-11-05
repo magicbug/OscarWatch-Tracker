@@ -4828,6 +4828,12 @@ LOS: {2}
   <data name="Ft4.Status.EchoClearedAll">
     <value>ล้างการปรับเทียบเสียงสะท้อนทั้งหมดแล้ว</value>
   </data>
+  <data name="Ft4.Status.DecodingAgain">
+    <value>กำลังถอดรหัสช่วงรับล่าสุดอีกครั้ง (แบบลึก ทั้งช่วง)</value>
+  </data>
+  <data name="Ft4.Status.NothingToDecodeAgain">
+    <value>ไม่มีช่วงรับให้ถอดรหัสอีกครั้ง ดับเบิลคลิกระหว่างช่วงถัดจากช่วงที่ต้องการ</value>
+  </data>
   <data name="Ft4.TxLevel">
     <value>ระดับ TX</value>
   </data>
