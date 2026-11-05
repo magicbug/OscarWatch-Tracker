@@ -80,11 +80,18 @@
   </Window.Styles>
 
   <Window.Resources>
-    <!-- Fixed column widths so RX / TX / Echo rows stay aligned with the header. -->
+    <!-- Header and rows share column widths per list, so they stay aligned and grow with the font size. -->
     <DataTemplate x:Key="Ft4DecodeHeaderTemplate" x:DataType="vm:Ft4ViewModel">
-      <Grid ColumnDefinitions="76,48,48,72,*,52"
-            ColumnSpacing="10"
+      <Grid ColumnSpacing="10"
             Margin="4,0,4,6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" MinWidth="76" SharedSizeGroup="Ft4Utc" />
+          <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Kind" />
+          <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Dt" />
+          <ColumnDefinition Width="Auto" MinWidth="72" SharedSizeGroup="Ft4Snr" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" MinWidth="52" SharedSizeGroup="Ft4Hz" />
+        </Grid.ColumnDefinitions>
         <TextBlock Grid.Column="0"
                    Text="{loc:Localize Key=Ft4.Decodes.Time}"
                    Classes="ft4-meta"
@@ -120,9 +127,17 @@
     </DataTemplate>
 
     <DataTemplate x:Key="Ft4DecodeRowTemplate" x:DataType="vm:Ft4DecodeRowViewModel">
-      <Grid ColumnDefinitions="76,48,48,72,*,52" ColumnSpacing="10" Margin="4,2"
+      <Grid ColumnSpacing="10" Margin="4,2"
             Background="{Binding RowBackground}"
             PointerPressed="OnDecodeRowPointerPressed">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" MinWidth="76" SharedSizeGroup="Ft4Utc" />
+          <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Kind" />
+          <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Dt" />
+          <ColumnDefinition Width="Auto" MinWidth="72" SharedSizeGroup="Ft4Snr" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" MinWidth="52" SharedSizeGroup="Ft4Hz" />
+        </Grid.ColumnDefinitions>
         <Grid.Styles>
           <Style Selector="TextBlock.ft4-ink">
             <Setter Property="Foreground" Value="{Binding RowForeground}" />
@@ -340,7 +355,7 @@
           </DockPanel>
 
           <Grid x:Name="DecodeColumns" ColumnDefinitions="*,0">
-            <DockPanel Grid.Column="0">
+            <DockPanel Grid.Column="0" Grid.IsSharedSizeScope="True">
               <TextBlock DockPanel.Dock="Top"
                          Text="{loc:Localize Key=Ft4.Decodes.BandActivity}"
                          FontWeight="SemiBold"
@@ -373,6 +388,7 @@
             </DockPanel>
 
             <DockPanel Grid.Column="1"
+                       Grid.IsSharedSizeScope="True"
                        Margin="10,0,0,0"
                        IsVisible="{Binding IsAdvancedDecodeLayout}">
               <TextBlock DockPanel.Dock="Top"
