@@ -18,6 +18,8 @@ public sealed class RotatorSettings
     public const int DefaultNetworkPort = 1111;
     /// <summary>Default TCP port for <see cref="RotatorType.SpidMd01"/> Ethernet.</summary>
     public const int DefaultSpidMd01NetworkPort = 23;
+    /// <summary>Default UDP port for <see cref="RotatorType.PstRotatorUdp"/> (PstRotator answers on port + 1).</summary>
+    public const int DefaultPstRotatorUdpPort = 12000;
 
     public bool Enabled { get; set; }
     public RotatorType Type { get; set; } = RotatorType.YaesuGs232;
@@ -26,6 +28,7 @@ public sealed class RotatorSettings
     /// Serial vs raw TCP for GS-232 / EasyComm / SPID / SAEBRTrack.
     /// Ignored when <see cref="Type"/> is <see cref="RotatorType.UrcTcp"/> (always TCP/JSON),
     /// <see cref="RotatorType.SpidMd01"/> (always TCP Rot2Prog),
+    /// <see cref="RotatorType.PstRotatorUdp"/> (always UDP),
     /// or <see cref="RotatorType.GreenHeronRt21"/> (always dual local serial).
     /// </summary>
     public RotatorTransportKind TransportKind { get; set; } = RotatorTransportKind.Serial;
@@ -39,10 +42,10 @@ public sealed class RotatorSettings
     /// </summary>
     public string ElevationPort { get; set; } = "";
 
-    /// <summary>TCP host for URC, SPID MD-01, or TCP serial (e.g. ser2net). Ignored when using a local serial port.</summary>
+    /// <summary>Host for URC, SPID MD-01, PstRotator (UDP), or TCP serial (e.g. ser2net). Ignored when using a local serial port.</summary>
     public string NetworkHost { get; set; } = DefaultNetworkHost;
 
-    /// <summary>TCP port for URC, SPID MD-01, or TCP serial. URC default is 1111; MD-01 default is 23.</summary>
+    /// <summary>Port for URC, SPID MD-01, PstRotator (UDP), or TCP serial. URC default is 1111; MD-01 default is 23; PstRotator default is 12000.</summary>
     public int NetworkPort { get; set; } = DefaultNetworkPort;
 
     /// <summary>
@@ -124,7 +127,7 @@ public sealed class RotatorSettings
 
     /// <summary>True when this configuration uses TCP host/port instead of a serial COM port.</summary>
     public bool UsesNetworkEndpoint =>
-        Type is RotatorType.UrcTcp or RotatorType.SpidMd01
+        Type is RotatorType.UrcTcp or RotatorType.SpidMd01 or RotatorType.PstRotatorUdp
         || (Type != RotatorType.GreenHeronRt21 && TransportKind == RotatorTransportKind.Tcp);
 
     /// <summary>
@@ -132,7 +135,7 @@ public sealed class RotatorSettings
     /// </summary>
     public bool UsesSerialPort =>
         Type == RotatorType.GreenHeronRt21
-        || (Type is not (RotatorType.UrcTcp or RotatorType.SpidMd01)
+        || (Type is not (RotatorType.UrcTcp or RotatorType.SpidMd01 or RotatorType.PstRotatorUdp)
             && TransportKind == RotatorTransportKind.Serial);
 
     /// <summary>True when the configured connection endpoint is present (serial port or host+port).</summary>

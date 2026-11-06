@@ -3160,6 +3160,9 @@ Lanjutkan?</value>
   <data name="Settings.Rotator.TypeNote.AntRunner">
     <value>MuseLab AntRunner lewat USB. Arahkan ke utara dan datarkan sebelum dinyalakan.</value>
   </data>
+  <data name="Settings.Rotator.TypeNote.PstRotator">
+    <value>PstRotator (YO3DMU) menggerakkan rotator. Aktifkan kontrol UDP di PstRotator.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Hanya azimut</value>
   </data>
@@ -3190,11 +3193,17 @@ Lanjutkan?</value>
   <data name="Settings.Rotator.NetworkPort">
     <value>Port TCP</value>
   </data>
+  <data name="Settings.Rotator.NetworkPortUdp">
+    <value>Port UDP</value>
+  </data>
   <data name="Settings.Rotator.NetworkNote">
     <value>OscarWatch terhubung sebagai klien TCP. Di URC, aktifkan server soket dan pilih mode pelacakan remote (REM) agar perintah GOTO menggerakkan antena. Port bawaan 1111.</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteTcpSerial">
     <value>OscarWatch terhubung sebagai klien TCP ke terowongan serial mentah (misalnya ser2net). Atur baud rate dan opsi serial di server. Paling baik di jaringan lokal: latensi tinggi bisa menyebabkan timeout.</value>
+  </data>
+  <data name="Settings.Rotator.NetworkNotePstRotator">
+    <value>OscarWatch mengirim perintah UDP ke PstRotator (port bawaan 12000) dan menerima posisi di port berikutnya (12001). Masukkan alamat PC yang menjalankan PstRotator dan izinkan kedua port di firewall.</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteSpidMd01">
     <value>OscarWatch terhubung sebagai klien TCP ke port Ethernet MD-01 / MD-02. Pada pengontrol, setel MOTOR CONFIGURATION ke ETH dan protokol ke SPID ROT2. Port TCP bawaan adalah 23. Hanya satu klien yang dapat terhubung pada satu waktu. Firmware 1.2507 atau lebih baru disarankan.</value>

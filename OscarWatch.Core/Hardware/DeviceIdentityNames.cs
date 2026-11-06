@@ -41,6 +41,7 @@ public static class DeviceIdentityNames
         RotatorType.UrcTcp => "URC rotator",
         RotatorType.GreenHeronRt21 => "RT-21 rotator",
         RotatorType.AntRunner => "AntRunner rotator",
+        RotatorType.PstRotatorUdp => "PstRotator",
         _ => type.ToString()
     };
 }

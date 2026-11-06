@@ -1072,7 +1072,7 @@
               <TextBlock Text="{loc:Localize Key=Settings.Rotator.NetworkHost}" />
               <TextBox Text="{Binding RotatorNetworkHost, Mode=TwoWay}"
                        Watermark="{loc:Localize Key=Settings.Rotator.NetworkHostWatermark}" />
-              <TextBlock Text="{loc:Localize Key=Settings.Rotator.NetworkPort}" />
+              <TextBlock Text="{Binding RotatorNetworkPortLabel}" />
               <NumericUpDown Value="{Binding RotatorNetworkPort, Mode=TwoWay}"
                              Minimum="1" Maximum="65535"
                              Increment="1" FormatString="F0" />
@@ -1091,6 +1091,11 @@
                          TextWrapping="Wrap"
                          IsVisible="{Binding ShowRotatorTcpSerialNetworkNote}"
                          Text="{loc:Localize Key=Settings.Rotator.NetworkNoteTcpSerial}" />
+              <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                         FontSize="11"
+                         TextWrapping="Wrap"
+                         IsVisible="{Binding ShowRotatorPstRotatorNetworkNote}"
+                         Text="{loc:Localize Key=Settings.Rotator.NetworkNotePstRotator}" />
             </StackPanel>
             <TextBlock Text="{loc:Localize Key=Settings.Rotator.AzimuthRange}" />
             <ComboBox ItemsSource="{Binding AzimuthRangeChoices}"

@@ -1848,6 +1848,9 @@
   <data name="Settings.Rotator.TypeNote.AntRunner">
     <value>MuseLab AntRunner（USB）。電源投入前に北へ向けて水平にしてください。</value>
   </data>
+  <data name="Settings.Rotator.TypeNote.PstRotator">
+    <value>PstRotator (YO3DMU) がローテーターを動かします。PstRotator で UDP 制御を有効にしてください。</value>
+  </data>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>アジマスのみ</value>
   </data>
@@ -1878,11 +1881,17 @@
   <data name="Settings.Rotator.NetworkPort">
     <value>TCPポート</value>
   </data>
+  <data name="Settings.Rotator.NetworkPortUdp">
+    <value>UDPポート</value>
+  </data>
   <data name="Settings.Rotator.NetworkNote">
     <value>OscarWatchはTCPクライアントとして接続します。URCでソケットサーバーを有効にし、リモート（REM）追跡モードを選ぶとGOTOでアンテナが動きます。既定ポートは1111です。</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteTcpSerial">
     <value>OscarWatchは生のシリアルトンネル（例: ser2net）へTCPクライアントとして接続します。ボーレートやシリアル設定はサーバー側で行ってください。ローカルネットワーク向けです。遅延が大きいとタイムアウトすることがあります。</value>
+  </data>
+  <data name="Settings.Rotator.NetworkNotePstRotator">
+    <value>OscarWatch は PstRotator に UDP コマンドを送信し（既定ポート 12000）、次のポート（12001）で位置を受信します。PstRotator を実行している PC のアドレスを入力し、ファイアウォールで両方のポートを許可してください。</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteSpidMd01">
     <value>OscarWatchはMD-01 / MD-02のEthernetポートへTCPクライアントとして接続します。コントローラでMOTOR CONFIGURATIONをETH、プロトコルをSPID ROT2に設定してください。既定のTCPポートは23です。同時に接続できるクライアントは1つだけです。ファームウェア1.2507以降を推奨します。</value>

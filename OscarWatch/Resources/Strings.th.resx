@@ -3160,6 +3160,9 @@ LOS: {2}
   <data name="Settings.Rotator.TypeNote.AntRunner">
     <value>MuseLab AntRunner ผ่าน USB หันไปทางทิศเหนือและปรับให้ได้ระดับก่อนเปิดเครื่อง</value>
   </data>
+  <data name="Settings.Rotator.TypeNote.PstRotator">
+    <value>PstRotator (YO3DMU) เป็นตัวขับโรเตเตอร์ เปิดการควบคุมผ่าน UDP ใน PstRotator</value>
+  </data>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>อะซิมัทเท่านั้น</value>
   </data>
@@ -3190,11 +3193,17 @@ LOS: {2}
   <data name="Settings.Rotator.NetworkPort">
     <value>พอร์ต TCP</value>
   </data>
+  <data name="Settings.Rotator.NetworkPortUdp">
+    <value>พอร์ต UDP</value>
+  </data>
   <data name="Settings.Rotator.NetworkNote">
     <value>OscarWatch เชื่อมต่อเป็นลูกข่าย TCP บน URC ให้เปิดเซิร์ฟเวอร์ซ็อกเก็ตและเลือกโหมดติดตามระยะไกล (REM) เพื่อให้คำสั่ง GOTO ขยับเสา พอร์ตเริ่มต้นคือ 1111</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteTcpSerial">
     <value>OscarWatch เชื่อมต่อเป็นลูกข่าย TCP ไปยังอุโมงค์อนุกรมดิบ (เช่น ser2net) ตั้งอัตราบอดและตัวเลือกอนุกรมที่เซิร์ฟเวอร์ เหมาะกับเครือข่ายภายใน ความหน่วงสูงอาจทำให้หมดเวลา</value>
+  </data>
+  <data name="Settings.Rotator.NetworkNotePstRotator">
+    <value>OscarWatch ส่งคำสั่ง UDP ไปยัง PstRotator (พอร์ตเริ่มต้น 12000) และรับตำแหน่งที่พอร์ตถัดไป (12001) ใส่ที่อยู่ของพีซีที่รัน PstRotator และอนุญาตทั้งสองพอร์ตในไฟร์วอลล์</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteSpidMd01">
     <value>OscarWatch เชื่อมต่อเป็นลูกข่าย TCP ไปยังพอร์ตอีเทอร์เน็ตของ MD-01 / MD-02 บนคอนโทรลเลอร์ตั้ง MOTOR CONFIGURATION เป็น ETH และโปรโตคอลเป็น SPID ROT2 พอร์ต TCP เริ่มต้นคือ 23 เชื่อมต่อได้ทีละหนึ่งลูกข่ายเท่านั้น แนะนำเฟิร์มแวร์ 1.2507 หรือใหม่กว่า</value>

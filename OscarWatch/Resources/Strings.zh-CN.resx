@@ -3156,6 +3156,9 @@
   <data name="Settings.Rotator.TypeNote.AntRunner">
     <value>MuseLab AntRunner，通过 USB 连接。通电前请指向正北并调平。</value>
   </data>
+  <data name="Settings.Rotator.TypeNote.PstRotator">
+    <value>由 PstRotator (YO3DMU) 驱动旋转器。请在 PstRotator 中启用 UDP 控制。</value>
+  </data>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>仅方位角</value>
   </data>
@@ -3186,11 +3189,17 @@
   <data name="Settings.Rotator.NetworkPort">
     <value>TCP 端口</value>
   </data>
+  <data name="Settings.Rotator.NetworkPortUdp">
+    <value>UDP 端口</value>
+  </data>
   <data name="Settings.Rotator.NetworkNote">
     <value>OscarWatch 作为 TCP 客户端连接。请在 URC 上启用套接字服务器并选择远程（REM）跟踪模式，以便 GOTO 命令驱动天线。默认端口为 1111。</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteTcpSerial">
     <value>OscarWatch 作为 TCP 客户端连接到原始串口隧道（例如 ser2net）。请在服务器端配置波特率和串口选项。建议在局域网使用——高延迟可能导致超时。</value>
+  </data>
+  <data name="Settings.Rotator.NetworkNotePstRotator">
+    <value>OscarWatch 向 PstRotator 发送 UDP 命令（默认端口 12000），并在下一个端口（12001）接收位置。请填写运行 PstRotator 的电脑地址，并在防火墙中放行这两个端口。</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteSpidMd01">
     <value>OscarWatch 作为 TCP 客户端连接到 MD-01 / MD-02 的以太网端口。请在控制器上将 MOTOR CONFIGURATION 设为 ETH，协议设为 SPID ROT2。默认 TCP 端口为 23。同一时间只能连接一个客户端。建议使用固件 1.2507 或更高版本。</value>
