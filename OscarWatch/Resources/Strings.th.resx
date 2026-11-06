@@ -3061,6 +3061,57 @@ LOS: {2}
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima: ให้เมนู CAT-1 RATE ตรงกับการตั้งค่า (ค่าเริ่มต้น 38400) CAT ASCII 8N2 พร้อม RTS ฮาร์ดแวร์: ใช้พอร์ต Enhanced COM (CAT-1) ไม่ใช่ CAT-2 หนึ่ง COM ต่อขา FM ล็อกลูกบิด MAIN VFO ขณะติดตาม</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>การเชื่อมต่อ</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>พอร์ต COM (USB หรือซีเรียล)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>เครือข่าย (LAN)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>ที่อยู่ IP หรือชื่อโฮสต์ของวิทยุ</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>พอร์ต TCP</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>บัญชี (ID ผู้ดูแลหรือผู้ใช้ที่ตั้งไว้ในวิทยุ)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>รหัสผ่าน</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>บัญชีผู้ดูแล (ยกเลิกเลือกสำหรับบัญชีผู้ใช้)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>ทดสอบการเชื่อมต่อ LAN</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>กำลังทดสอบการเชื่อมต่อ…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>กรอกโฮสต์ พอร์ต บัญชี และรหัสผ่านก่อน</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>เชื่อมต่อกับ {0} ที่ {1} MHz แล้ว</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>เชื่อมต่อแล้ว แต่วิทยุไม่ได้ระบุตัวเป็น {0} ตรวจสอบรุ่นวิทยุที่เลือกด้านบน</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>วิทยุปฏิเสธการเชื่อมต่อ ตรวจสอบว่าเปิดการควบคุมผ่าน LAN และไม่มีแอปพลิเคชันอื่น (เช่น ARCP หรือ KNS) เชื่อมต่อกับพอร์ต 60000 อยู่</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>การเข้าสู่ระบบถูกปฏิเสธ ตรวจสอบบัญชี รหัสผ่าน และประเภทบัญชีที่ตั้งไว้ในวิทยุ</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>การเชื่อมต่อ LAN ล้มเหลว: {0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590: วิทยุหนึ่งเครื่องคือหนึ่งขา สำหรับ 10 m ให้ปิดโหมดทรานสเวอร์เตอร์ไว้ สำหรับ 2 m หรือ 70 cm ให้เปิดโหมดทรานสเวอร์เตอร์และตั้งค่าออฟเซ็ตที่วิทยุ OscarWatch จะอ่านค่าและปรับ IF ให้เอง ตั้งอัตราบอดให้ตรงกับเมนู COM ของวิทยุ LAN (เฉพาะ TS-990S และ TS-890S) ต้องใช้ ID ผู้ดูแลหรือผู้ใช้ที่ตั้งไว้ในวิทยุ และใช้พอร์ต 60000 ได้ทีละหนึ่งแอปพลิเคชันเท่านั้น</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>CW เชิงเส้น: คงการรับเป็น USB/LSB (ส่ง CW เท่านั้น)</value>
   </data>

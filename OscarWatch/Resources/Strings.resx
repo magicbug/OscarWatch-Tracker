@@ -3057,6 +3057,57 @@ Continue?</value>
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima: Match menu CAT-1 RATE to Settings (default 38400). 8N2 ASCII CAT with hardware RTS — use the Enhanced COM port (CAT-1), not CAT-2. One COM per leg. FM locks the MAIN VFO dial while tracking.</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>Connection</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>COM port (USB or serial)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>Network (LAN)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>Radio IP address or host name</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>TCP port</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>Account (administrator or user ID set on the radio)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>Password</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>Administrator account (clear for a user account)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>Test LAN connection</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>Testing connection…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>Enter the host, port, account and password first.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>Connected to the {0} at {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>Connected, but the radio did not identify as a {0}. Check the radio model selected above.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>The radio refused the connection. Check that LAN control is on and that no other application (such as ARCP or KNS) is connected to port 60000.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>Login rejected. Check the account, password and account type set on the radio.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>LAN connection failed: {0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590: one radio is one leg. For 10 m, leave transverter mode off. For 2 m or 70 cm, turn transverter mode on and set the offset on the radio; OscarWatch reads it and tunes the IF for you. Match the baud rate to the radio's COM menu. LAN (TS-990S and TS-890S only) needs the administrator or user ID set on the radio, and only one application can use port 60000 at a time.</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>Linear CW: keep receive in USB/LSB (transmit CW only)</value>
   </data>

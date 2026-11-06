@@ -31,6 +31,21 @@ public sealed class RigSettings
     public static bool IsKenwoodThD7xEndpoint(RigType type) =>
         type is RigType.KenwoodThD74 or RigType.KenwoodThD75;
 
+    /// <summary>Common CAT rate preset for TS-990S, TS-890S and TS-590 (must match the radio menu).</summary>
+    public const int KenwoodHfDefaultBaudRate = 115200;
+
+    /// <summary>Kenwood KNS LAN control port on the TS-990S and TS-890S.</summary>
+    public const int KenwoodLanDefaultPort = 60000;
+
+    /// <summary>Kenwood HF base radios used as one dual-radio leg (no SATL).</summary>
+    public static bool IsKenwoodHfEndpoint(RigType type) =>
+        type is RigType.KenwoodTs990s or RigType.KenwoodTs890s
+            or RigType.KenwoodTs590s or RigType.KenwoodTs590sg;
+
+    /// <summary>Kenwood HF radios with a built-in LAN CAT socket.</summary>
+    public static bool IsKenwoodLanCapable(RigType type) =>
+        type is RigType.KenwoodTs990s or RigType.KenwoodTs890s;
+
     public static bool IsYaesuNewCatDualEndpoint(RigType type) =>
         type is RigType.YaesuFt991 or RigType.YaesuFt991a or RigType.YaesuFtx1;
 
@@ -181,7 +196,9 @@ public sealed class RigSettings
             or RigType.IcomIc705 or RigType.IcomIc7300 or RigType.IcomIc905
             or RigType.IcomIc7100
             or RigType.IcomIc706 or RigType.IcomIc706Mkii or RigType.IcomIc706MkiiG
-            or RigType.KenwoodThD74 or RigType.KenwoodThD75;
+            or RigType.KenwoodThD74 or RigType.KenwoodThD75
+            or RigType.KenwoodTs990s or RigType.KenwoodTs890s
+            or RigType.KenwoodTs590s or RigType.KenwoodTs590sg;
 
     public static bool IsSdrDownlinkEndpoint(RigType type) => type == RigType.SdrRigCtlTcp;
 

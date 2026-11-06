@@ -358,6 +358,32 @@ Covers **FTX-1 Field** and **FTX-1optima** (same field head). Downlink uses VFO-
 - On macOS select the radio’s `/dev/cu.*` device (not `/dev/tty.*`); OscarWatch treats a silent FO reply as a failed connection.
 - On a real pass: Doppler on Band B; for FM uplinks needing CTCSS, set the tone on the HT yourself for now.
 
+## Reference: Kenwood TS-990S / TS-890S / TS-590S / TS-590SG (shipped, dual radio only)
+
+| Piece | Path |
+|-------|------|
+| CAT codec and model profiles | [`OscarWatch.Core/Radio/KenwoodHfCatCodec.cs`](../OscarWatch.Core/Radio/KenwoodHfCatCodec.cs) |
+| Serial transport | [`OscarWatch/Rig/KenwoodCatTransport.cs`](../OscarWatch/Rig/KenwoodCatTransport.cs) (shared with the TS-2000; RTS per leg) |
+| LAN transport | [`OscarWatch/Rig/KenwoodLanTransport.cs`](../OscarWatch/Rig/KenwoodLanTransport.cs) (TS-990S and TS-890S, TCP 60000) |
+| Driver | [`OscarWatch/Rig/KenwoodHfDriver.cs`](../OscarWatch/Rig/KenwoodHfDriver.cs) |
+
+- **Dual radio only**: one radio per endpoint, main receiver / VFO A, simplex. `SelectVfo`, split, satellite mode and tone calls are no-ops. `SupportsVfoExchange` is **false**.
+- Profiles (`KenwoodHfProfile`) hold the differences:
+  - **TS-990S** (`ID022;`) and **TS-890S** (`ID024;`): `CB0;` + `TB0;` before tuning, mode via `OM0x;`, transverter state `XV;`.
+  - **TS-590S** (`ID021;`) and **TS-590SG** (`ID023;`): `FR0;`, mode via `MDx;`, transverter state from the menu read `EX0500000;` (TS-590S menu 50) or `EX0560000;` (TS-590SG menu 56). Values 1 and 2 mean on.
+- **Identity first:** `Open` sends only `AI0;`. `TryConfirmIdentity` checks `ID;` against the profile before any control command, so a wrong model never gets tuned.
+- **Transverter:** the driver reads `XO;` (direction 0 plus / 1 minus, 11-digit offset) and converts between sky and `FA` frequencies (plus: `FA` = sky − offset; minus: `FA` = offset − sky). `ReadFrequencyHz` returns the sky frequency. OscarWatch never writes `XV`, `XO` or `EX`. The state is refreshed in `SetMode` (pass start and mode change, because `RigController` calls `SelectVfo` on every Doppler step) and once more when a frequency cannot be converted.
+- **LAN login:** `##CN;` → `##CN1;` (`##CN0;` means another client holds the port), then `##ID…;` → `##ID1;`. TS-890S: account type (0 administrator, 1 user) + 2-digit lengths, UTF-8. TS-990S: 1-digit lengths (max 8 characters), UTF-16LE with no byte-order mark. Failures surface as `KenwoodLanException` with a `KenwoodLanFailure` reason for the settings test button.
+- **LAN keepalive:** the radio drops the socket after 10 s of silence, so the transport sends `ID;` after 5 s idle and reconnects (with a fresh login) when the socket has closed.
+- LAN legs report no serial port (`RigEndpointSettings.SerialPortInUse`), so COM conflict checks and the dual same-port check skip them.
+
+### Hardware checklist (Kenwood HF dual)
+
+- COM: match the radio's COM baud (OscarWatch default 115200). Untick hardware RTS for cables without RTS/CTS.
+- LAN: set an administrator or user ID on the radio, close ARCP / KNS software, then use **Test LAN connection**.
+- 10 m leg: transverter off; `FA` equals the dial frequency.
+- 2 m / 70 cm leg: transverter on with the offset set on the radio; check the log line `transverter on, offset +… Hz` at pass start and that the radio's IF matches sky − offset.
+
 ## Reference: FlexRadio SmartSDR (shipped)
 
 | Piece | Path |

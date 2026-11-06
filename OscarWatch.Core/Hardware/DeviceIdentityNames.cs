@@ -28,6 +28,10 @@ public static class DeviceIdentityNames
         RigType.KenwoodTs2000 => "TS-2000",
         RigType.KenwoodThD74 => "TH-D74",
         RigType.KenwoodThD75 => "TH-D75",
+        RigType.KenwoodTs990s => "TS-990S",
+        RigType.KenwoodTs890s => "TS-890S",
+        RigType.KenwoodTs590s => "TS-590S",
+        RigType.KenwoodTs590sg => "TS-590SG",
         _ => type.ToString()
     };
 

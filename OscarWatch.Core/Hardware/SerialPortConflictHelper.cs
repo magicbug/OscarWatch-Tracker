@@ -41,8 +41,8 @@ public static class SerialPortConflictHelper
         {
             if (rig.DualRadioEnabled)
             {
-                var downPort = rig.Downlink.Port?.Trim() ?? "";
-                var upPort = rig.Uplink.Type == RigType.Dummy ? "" : rig.Uplink.Port?.Trim() ?? "";
+                var downPort = rig.Downlink.SerialPortInUse;
+                var upPort = rig.Uplink.SerialPortInUse;
 
                 if (downPort.Length > 0 && upPort.Length > 0
                     && string.Equals(downPort, upPort, StringComparison.OrdinalIgnoreCase))
@@ -219,12 +219,12 @@ public static class SerialPortConflictHelper
         {
             if (rig.DualRadioEnabled)
             {
-                var down = rig.Downlink.Port?.Trim() ?? "";
-                if (down.Length > 0 && rig.Downlink.Type != RigType.Dummy)
+                var down = rig.Downlink.SerialPortInUse;
+                if (down.Length > 0)
                     yield return (down, "downlink radio");
 
-                var up = rig.Uplink.Port?.Trim() ?? "";
-                if (up.Length > 0 && rig.Uplink.Type != RigType.Dummy)
+                var up = rig.Uplink.SerialPortInUse;
+                if (up.Length > 0)
                     yield return (up, "uplink radio");
             }
             else if (rig.Type != RigType.Dummy)

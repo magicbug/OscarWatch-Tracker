@@ -691,17 +691,32 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public IReadOnlyList<RigTypeOption> RigDualUplinkTypeChoices { get; }
 
+    public KenwoodHfLegSettingsViewModel DownlinkKenwood { get; }
+
+    public KenwoodHfLegSettingsViewModel UplinkKenwood { get; }
+
     public bool ShowDownlinkSerialFields =>
         DualRadioEnabled
-        && SelectedDownlinkRigTypeChoice?.Value != RigType.SdrRigCtlTcp;
+        && SelectedDownlinkRigTypeChoice?.Value != RigType.SdrRigCtlTcp
+        && DownlinkKenwood?.UsesLan != true;
 
     public bool ShowDownlinkSdrFields =>
         DualRadioEnabled
         && SelectedDownlinkRigTypeChoice?.Value == RigType.SdrRigCtlTcp;
 
+    public bool ShowDownlinkRegion =>
+        DualRadioEnabled
+        && SelectedDownlinkRigTypeChoice?.Value != RigType.SdrRigCtlTcp;
+
     public bool ShowUplinkSerialFields =>
         DualRadioEnabled
-        && SelectedUplinkRigTypeChoice?.Value != RigType.Dummy;
+        && SelectedUplinkRigTypeChoice?.Value != RigType.Dummy
+        && UplinkKenwood?.UsesLan != true;
+
+    public bool ShowRigKenwoodHfHint =>
+        DualRadioEnabled
+        && (RigSettings.IsKenwoodHfEndpoint(SelectedDownlinkRigTypeChoice?.Value ?? RigType.None)
+            || RigSettings.IsKenwoodHfEndpoint(SelectedUplinkRigTypeChoice?.Value ?? RigType.None));
 
     public bool ShowRigSingleConfig => !DualRadioEnabled;
 
@@ -872,6 +887,24 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OscarWatch.Core.Recording.FfmpegLocator? ffmpegLocator = null)
     {
         _l = localization;
+        DownlinkKenwood = new KenwoodHfLegSettingsViewModel(localization, () => DualRadioEnabled);
+        UplinkKenwood = new KenwoodHfLegSettingsViewModel(localization, () => DualRadioEnabled);
+        DownlinkKenwood.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(KenwoodHfLegSettingsViewModel.UsesLan))
+            {
+                OnPropertyChanged(nameof(ShowDownlinkSerialFields));
+                RefreshComPortConflictIfReady();
+            }
+        };
+        UplinkKenwood.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(KenwoodHfLegSettingsViewModel.UsesLan))
+            {
+                OnPropertyChanged(nameof(ShowUplinkSerialFields));
+                RefreshComPortConflictIfReady();
+            }
+        };
         _cloudlogLookup = cloudlogLookup;
         _qrzCallbook = qrzCallbook;
         _hamQthCallbook = hamQthCallbook;
@@ -981,7 +1014,11 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             new(RigType.IcomIc706Mkii, "ICOM IC-706MKII"),
             new(RigType.IcomIc706MkiiG, "ICOM IC-706MKIIG"),
             new(RigType.KenwoodThD74, "Kenwood TH-D74"),
-            new(RigType.KenwoodThD75, "Kenwood TH-D75")
+            new(RigType.KenwoodThD75, "Kenwood TH-D75"),
+            new(RigType.KenwoodTs990s, "Kenwood TS-990S"),
+            new(RigType.KenwoodTs890s, "Kenwood TS-890S"),
+            new(RigType.KenwoodTs590s, "Kenwood TS-590S"),
+            new(RigType.KenwoodTs590sg, "Kenwood TS-590SG")
         ];
         RigDualDownlinkTypeChoices =
         [
@@ -1376,6 +1413,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             CwKeepSidebandDownlink = RigCwKeepSidebandDownlink,
             ExitSatelliteModeOnClose = RigExitSatelliteModeOnClose
         };
+        DownlinkKenwood.ApplyTo(_settings.Current.Rig.Downlink);
+        UplinkKenwood.ApplyTo(_settings.Current.Rig.Uplink);
         _settings.Current.Cloudlog = new CloudlogSettings
         {
             Enabled = CloudlogEnabled,
@@ -1602,10 +1641,14 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
                 ?? RigDualUplinkTypeChoices[1];
             SelectedDownlinkComPort = string.IsNullOrWhiteSpace(down.Port) ? null : down.Port;
             SelectedUplinkComPort = string.IsNullOrWhiteSpace(up.Port) ? null : up.Port;
-            DownlinkNetworkHost = string.IsNullOrWhiteSpace(down.NetworkHost)
+            DownlinkKenwood.Load(down);
+            UplinkKenwood.Load(up);
+            DownlinkNetworkHost = RigSettings.IsKenwoodLanCapable(down.Type)
+                ? RigEndpointSettings.SdrRigCtlDefaultHost
+                : string.IsNullOrWhiteSpace(down.NetworkHost)
                 ? RigEndpointSettings.SdrRigCtlDefaultHost
                 : down.NetworkHost;
-            DownlinkNetworkPort = down.NetworkPort > 0
+            DownlinkNetworkPort = down.NetworkPort > 0 && !RigSettings.IsKenwoodLanCapable(down.Type)
                 ? down.NetworkPort
                 : RigEndpointSettings.SdrRigCtlDefaultPort;
             DownlinkSdrTestStatus = "";
@@ -2443,6 +2486,10 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt857CatHint));
         OnPropertyChanged(nameof(ShowRigFt991CatHint));
         OnPropertyChanged(nameof(ShowRigFtx1CatHint));
+        OnPropertyChanged(nameof(ShowRigKenwoodHfHint));
+        OnPropertyChanged(nameof(ShowDownlinkRegion));
+        DownlinkKenwood.NotifyDualRadioChanged();
+        UplinkKenwood.NotifyDualRadioChanged();
         RefreshComPortConflictIfReady();
     }
 
@@ -2540,8 +2587,15 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt857CatHint));
         OnPropertyChanged(nameof(ShowRigFt991CatHint));
         OnPropertyChanged(nameof(ShowRigFtx1CatHint));
+        DownlinkKenwood.RigType = value?.Value ?? RigType.None;
+        OnPropertyChanged(nameof(ShowDownlinkSerialFields));
+        OnPropertyChanged(nameof(ShowDownlinkRegion));
+        OnPropertyChanged(nameof(ShowRigKenwoodHfHint));
         if (_isSynchronizing || value is null)
             return;
+
+        if (RigSettings.IsKenwoodHfEndpoint(value.Value))
+            DownlinkBaudRate = RigSettings.KenwoodHfDefaultBaudRate;
 
         if (value.Value is RigType.YaesuFt817 or RigType.YaesuFt818)
             DownlinkBaudRate = RigSettings.Ft817818DefaultBaudRate;
@@ -2615,6 +2669,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt857CatHint));
         OnPropertyChanged(nameof(ShowRigFt991CatHint));
         OnPropertyChanged(nameof(ShowRigFtx1CatHint));
+        UplinkKenwood.RigType = value?.Value ?? RigType.None;
+        OnPropertyChanged(nameof(ShowUplinkSerialFields));
+        OnPropertyChanged(nameof(ShowRigKenwoodHfHint));
         if (_isSynchronizing || value is null)
             return;
 
@@ -2662,6 +2719,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
         if (RigSettings.IsIc706SeriesEndpoint(value.Value))
             ApplyIc706SeriesDefaults(value.Value, v => UplinkBaudRate = v, v => UplinkCivAddress = v, UplinkCivAddress);
+
+        if (RigSettings.IsKenwoodHfEndpoint(value.Value))
+            UplinkBaudRate = RigSettings.KenwoodHfDefaultBaudRate;
     }
 
     private static bool ShouldSuggestCivAddress(string? address) =>
@@ -2703,12 +2763,14 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             Type = SelectedDownlinkRigTypeChoice?.Value ?? RigType.YaesuFt817,
             Port = SelectedDownlinkComPort ?? "",
             NetworkHost = DownlinkNetworkHost.Trim(),
-            NetworkPort = DownlinkNetworkPort
+            NetworkPort = DownlinkNetworkPort,
+            Connection = DownlinkKenwood.Connection
         },
         Uplink = new RigEndpointSettings
         {
             Type = SelectedUplinkRigTypeChoice?.Value ?? RigType.YaesuFt818,
-            Port = SelectedUplinkComPort ?? ""
+            Port = SelectedUplinkComPort ?? "",
+            Connection = UplinkKenwood.Connection
         }
     };
 

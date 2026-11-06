@@ -3061,6 +3061,57 @@ Fortfahren?</value>
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima: Menü CAT-1 RATE an die Einstellungen anpassen (Standard 38400). 8N2-ASCII-CAT mit Hardware-RTS: Enhanced-COM-Port (CAT-1) nutzen, nicht CAT-2. Ein COM pro Strecke. FM sperrt den MAIN-VFO während der Nachführung.</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>Verbindung</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>COM-Port (USB oder seriell)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>Netzwerk (LAN)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>IP-Adresse oder Hostname des Funkgeräts</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>TCP-Port</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>Konto (Administrator- oder Benutzer-ID aus dem Funkgerät)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>Passwort</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>Administratorkonto (für ein Benutzerkonto deaktivieren)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>LAN-Verbindung testen</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>Verbindung wird getestet…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>Bitte zuerst Host, Port, Konto und Passwort eingeben.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>Verbunden mit {0} auf {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>Verbunden, aber das Funkgerät meldet sich nicht als {0}. Prüfen Sie das oben gewählte Modell.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>Das Funkgerät hat die Verbindung abgelehnt. Prüfen Sie, ob die LAN-Steuerung aktiv ist und keine andere Anwendung (etwa ARCP oder KNS) mit Port 60000 verbunden ist.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>Anmeldung abgelehnt. Prüfen Sie Konto, Passwort und Kontotyp im Funkgerät.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>LAN-Verbindung fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590: ein Funkgerät ist eine Strecke. Für 10 m den Transvertermodus ausgeschaltet lassen. Für 2 m oder 70 cm den Transvertermodus einschalten und den Offset im Funkgerät einstellen; OscarWatch liest ihn aus und stimmt die ZF passend ab. Baudrate an das COM-Menü des Funkgeräts anpassen. LAN (nur TS-990S und TS-890S) benötigt die im Funkgerät eingestellte Administrator- oder Benutzer-ID, und nur eine Anwendung kann Port 60000 gleichzeitig nutzen.</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>Lineares CW: Empfang in USB/LSB belassen (nur CW senden)</value>
   </data>

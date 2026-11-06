@@ -3061,6 +3061,57 @@ LOS: {2}
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima: совпадите меню CAT-1 RATE с настройками (по умолчанию 38400). ASCII CAT 8N2 с аппаратным RTS: порт Enhanced COM (CAT-1), не CAT-2. Один COM на ветвь. FM фиксирует диск MAIN VFO во время сопровождения.</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>Подключение</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>COM-порт (USB или последовательный)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>Сеть (LAN)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>IP-адрес или имя хоста радиостанции</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>TCP-порт</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>Учётная запись (ID администратора или пользователя, заданный в радиостанции)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>Пароль</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>Учётная запись администратора (снимите для пользовательской)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>Проверить LAN-подключение</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>Проверка подключения…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>Сначала укажите хост, порт, учётную запись и пароль.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>Подключено к {0}, частота {1} МГц.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>Подключено, но радиостанция не определилась как {0}. Проверьте выбранную выше модель.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>Радиостанция отклонила подключение. Убедитесь, что управление по LAN включено и никакое другое приложение (например, ARCP или KNS) не подключено к порту 60000.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>Вход отклонён. Проверьте учётную запись, пароль и тип учётной записи, заданные в радиостанции.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>Ошибка LAN-подключения: {0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590: одна радиостанция соответствует одной ветви. Для 10 м оставьте режим трансвертера выключенным. Для 2 м или 70 см включите режим трансвертера и задайте сдвиг в радиостанции; OscarWatch считывает его и сам настраивает ПЧ. Скорость порта должна совпадать с меню COM радиостанции. Для LAN (только TS-990S и TS-890S) нужен ID администратора или пользователя, заданный в радиостанции, и порт 60000 одновременно может использовать только одно приложение.</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>Линейный CW: приём оставлять в USB/LSB (передавать только CW)</value>
   </data>

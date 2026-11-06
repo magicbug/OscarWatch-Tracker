@@ -1749,6 +1749,57 @@
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima: メニューCAT-1 RATEを設定と一致（既定38400）。RTS付き8N2 ASCII CAT — Enhanced COM（CAT-1）を使用（CAT-2不可）。レッグごとに1 COM。FMは追跡中MAIN VFOダイヤル固定。</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>接続</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>COMポート（USBまたはシリアル）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>ネットワーク（LAN）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>無線機のIPアドレスまたはホスト名</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>TCPポート</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>アカウント（無線機で設定した管理者IDまたはユーザーID）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>パスワード</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>管理者アカウント（ユーザーアカウントの場合はオフ）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>LAN接続をテスト</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>接続をテスト中…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>先にホスト、ポート、アカウント、パスワードを入力してください。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>{0} に接続しました（{1} MHz）。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>接続しましたが、無線機が {0} として応答しませんでした。上で選択した機種を確認してください。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>無線機が接続を拒否しました。LANコントロールがオンで、他のアプリケーション（ARCPやKNSなど）がポート60000に接続していないことを確認してください。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>ログインが拒否されました。無線機で設定したアカウント、パスワード、アカウント種別を確認してください。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>LAN接続に失敗しました: {0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590: 1台の無線機が1レッグです。10 mではトランスバーターモードをオフのままにします。2 mまたは70 cmではトランスバーターモードをオンにし、オフセットを無線機で設定してください。OscarWatchがそれを読み取り、IFを自動で合わせます。ボーレートは無線機のCOMメニューに合わせてください。LAN（TS-990SとTS-890Sのみ）には無線機で設定した管理者IDまたはユーザーIDが必要で、ポート60000を同時に使えるアプリケーションは1つだけです。</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>リニアCW: 受信はUSB/LSBのまま（送信のみCW）</value>
   </data>

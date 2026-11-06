@@ -1,4 +1,5 @@
 using OscarWatch.Core.Models;
+using OscarWatch.Core.Radio;
 
 namespace OscarWatch.Rig;
 
@@ -59,6 +60,8 @@ public static class RigDriverFactory
             CreateIc706SeriesDriver(endpoint),
         RigType.KenwoodThD74 or RigType.KenwoodThD75 => new KenwoodThD7xDriver(
             endpoint.Type, endpoint.Port, endpoint.BaudRate, endpoint.CatDelayMs),
+        RigType.KenwoodTs990s or RigType.KenwoodTs890s or RigType.KenwoodTs590s or RigType.KenwoodTs590sg =>
+            CreateKenwoodHfDriver(endpoint),
         _ => CreateSingle(
             endpoint.Type,
             endpoint.Port,
@@ -79,6 +82,28 @@ public static class RigDriverFactory
 
         if (endpoint.Type == RigType.Dummy && isDownlink)
             throw new InvalidOperationException("Dummy radio is supported on the uplink only.");
+    }
+
+    private static IRigDriver CreateKenwoodHfDriver(RigEndpointSettings endpoint)
+    {
+        if (!endpoint.UsesKenwoodLan)
+        {
+            return new KenwoodHfDriver(
+                endpoint.Type,
+                endpoint.Port,
+                endpoint.BaudRate,
+                endpoint.CatDelayMs,
+                endpoint.KenwoodHardwareRtsEnabled);
+        }
+
+        var transport = new KenwoodLanTransport(
+            KenwoodHfCatCodec.GetProfile(endpoint.Type),
+            endpoint.NetworkHost,
+            endpoint.NetworkPort is > 0 and <= 65535 ? endpoint.NetworkPort : RigSettings.KenwoodLanDefaultPort,
+            endpoint.NetworkUser,
+            endpoint.NetworkPassword,
+            endpoint.NetworkUserIsAdministrator);
+        return new KenwoodHfDriver(endpoint.Type, transport, endpoint.CatDelayMs);
     }
 
     private static IRigDriver CreateIc706SeriesDriver(RigEndpointSettings endpoint) =>
@@ -134,6 +159,8 @@ public static class RigDriverFactory
                 throw new InvalidOperationException("FTX-1 series radios require Settings → Radio → Dual radio."),
             RigType.KenwoodThD74 or RigType.KenwoodThD75 =>
                 throw new InvalidOperationException("TH-D74/TH-D75 require Settings → Radio → Dual radio."),
+            RigType.KenwoodTs990s or RigType.KenwoodTs890s or RigType.KenwoodTs590s or RigType.KenwoodTs590sg =>
+                throw new InvalidOperationException("TS-990S, TS-890S and TS-590 radios require Settings → Radio → Dual radio."),
             RigType.KenwoodTs2000 => new KenwoodTs2000Driver(
                 port,
                 baudRate,

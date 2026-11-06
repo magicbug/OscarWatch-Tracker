@@ -3061,6 +3061,57 @@ Lanjutkan?</value>
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima: Samakan menu CAT-1 RATE dengan Pengaturan (bawaan 38400). CAT ASCII 8N2 dengan RTS perangkat keras: pakai port Enhanced COM (CAT-1), bukan CAT-2. Satu COM per kaki. FM mengunci dial MAIN VFO saat pelacakan.</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>Koneksi</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>Port COM (USB atau serial)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>Jaringan (LAN)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>Alamat IP atau nama host radio</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>Port TCP</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>Akun (ID administrator atau pengguna yang diatur di radio)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>Kata sandi</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>Akun administrator (kosongkan untuk akun pengguna)</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>Uji koneksi LAN</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>Menguji koneksi…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>Isi host, port, akun, dan kata sandi terlebih dahulu.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>Terhubung ke {0} pada {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>Terhubung, tetapi radio tidak teridentifikasi sebagai {0}. Periksa model radio yang dipilih di atas.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>Radio menolak koneksi. Pastikan kontrol LAN aktif dan tidak ada aplikasi lain (seperti ARCP atau KNS) yang terhubung ke port 60000.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>Login ditolak. Periksa akun, kata sandi, dan jenis akun yang diatur di radio.</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>Koneksi LAN gagal: {0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590: satu radio adalah satu kaki. Untuk 10 m, biarkan mode transverter mati. Untuk 2 m atau 70 cm, nyalakan mode transverter dan atur offset di radio; OscarWatch membacanya dan menala IF untuk Anda. Samakan baud rate dengan menu COM radio. LAN (hanya TS-990S dan TS-890S) memerlukan ID administrator atau pengguna yang diatur di radio, dan hanya satu aplikasi yang dapat memakai port 60000 pada satu waktu.</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>CW linear: tetap terima di USB/LSB (kirim CW saja)</value>
   </data>

@@ -1669,12 +1669,12 @@ public sealed class RigController : IRigController, IDisposable
             {
                 if (ConfirmDriver(
                         _downlinkDriver!,
-                        settings.Downlink.Port,
+                        FormatEndpointLabel(settings.Downlink),
                         SerialPortConnectErrorHelper.EndpointDownlink,
                         settings.Downlink.Type)
                     && ConfirmDriver(
                         _uplinkDriver!,
-                        settings.Uplink.Port,
+                        FormatEndpointLabel(settings.Uplink),
                         SerialPortConnectErrorHelper.EndpointUplink,
                         settings.Uplink.Type))
                 {
@@ -1690,8 +1690,9 @@ public sealed class RigController : IRigController, IDisposable
         if (downOk && upOk)
             return true;
 
-        var upPort = settings.Uplink.Type == RigType.Dummy ? "" : settings.Uplink.Port;
-        if (SerialPortConnectErrorHelper.TryDescribeDualSamePort(settings.Downlink.Port, upPort, out var sharedPort))
+        var downPort = settings.Downlink.UsesNetwork ? "" : settings.Downlink.Port;
+        var upPort = settings.Uplink.Type == RigType.Dummy || settings.Uplink.UsesNetwork ? "" : settings.Uplink.Port;
+        if (SerialPortConnectErrorHelper.TryDescribeDualSamePort(downPort, upPort, out var sharedPort))
         {
             RecordConnectFailure(SerialPortConnectErrorKind.DualSamePort, sharedPort, endpointLabel: null);
             TearDownRig();
@@ -1707,7 +1708,7 @@ public sealed class RigController : IRigController, IDisposable
             _downlinkConnectedKey = downKey;
             if (!ConfirmDriver(
                     _downlinkDriver,
-                    settings.Downlink.Port,
+                    FormatEndpointLabel(settings.Downlink),
                     SerialPortConnectErrorHelper.EndpointDownlink,
                     settings.Downlink.Type))
             {
@@ -1715,7 +1716,7 @@ public sealed class RigController : IRigController, IDisposable
                 {
                     RecordConnectFailure(
                         SerialPortConnectErrorKind.Generic,
-                        settings.Downlink.Port,
+                        FormatEndpointLabel(settings.Downlink),
                         SerialPortConnectErrorHelper.EndpointDownlink,
                         $"Opened {FormatEndpointLabel(settings.Downlink)} but the link is not active");
                 }
@@ -1729,7 +1730,7 @@ public sealed class RigController : IRigController, IDisposable
             _uplinkConnectedKey = upKey;
             if (!ConfirmDriver(
                     _uplinkDriver,
-                    settings.Uplink.Port,
+                    FormatEndpointLabel(settings.Uplink),
                     SerialPortConnectErrorHelper.EndpointUplink,
                     settings.Uplink.Type))
             {
@@ -1737,7 +1738,7 @@ public sealed class RigController : IRigController, IDisposable
                 {
                     RecordConnectFailure(
                         SerialPortConnectErrorKind.Generic,
-                        settings.Uplink.Port,
+                        FormatEndpointLabel(settings.Uplink),
                         SerialPortConnectErrorHelper.EndpointUplink,
                         $"Opened {FormatEndpointLabel(settings.Uplink)} but the link is not active");
                 }
@@ -1756,11 +1757,11 @@ public sealed class RigController : IRigController, IDisposable
         }
         catch (Exception ex)
         {
-            var failedPort = settings.Downlink.Port;
+            var failedPort = FormatEndpointLabel(settings.Downlink);
             var failedEndpoint = SerialPortConnectErrorHelper.EndpointDownlink;
             if (_uplinkDriver is not null)
             {
-                failedPort = settings.Uplink.Port;
+                failedPort = FormatEndpointLabel(settings.Uplink);
                 failedEndpoint = SerialPortConnectErrorHelper.EndpointUplink;
             }
 
@@ -1827,7 +1828,9 @@ public sealed class RigController : IRigController, IDisposable
             ? "Dummy"
             : RigSettings.IsSdrDownlinkEndpoint(endpoint.Type)
                 ? $"{endpoint.Type}|{endpoint.NetworkHost}|{endpoint.NetworkPort}|{endpoint.CatDelayMs}"
-                : $"{endpoint.Type}|{endpoint.Port}|{endpoint.BaudRate}|{endpoint.CatDelayMs}|{endpoint.CivAddress}";
+                : endpoint.UsesKenwoodLan
+                    ? $"{endpoint.Type}|lan|{endpoint.NetworkHost}|{endpoint.NetworkPort}|{endpoint.NetworkUser}|{endpoint.NetworkPassword.GetHashCode()}|{endpoint.NetworkUserIsAdministrator}|{endpoint.CatDelayMs}"
+                    : $"{endpoint.Type}|{endpoint.Port}|{endpoint.BaudRate}|{endpoint.CatDelayMs}|{endpoint.CivAddress}|{endpoint.KenwoodHardwareRtsEnabled}";
 
     private void RunPassInit(RigSettings settings, RigTrackingContext context)
     {
@@ -3135,7 +3138,7 @@ public sealed class RigController : IRigController, IDisposable
     private static long ToHz(double kHz) => (long)Math.Round(kHz * 1000.0);
 
     private static string FormatEndpointLabel(RigEndpointSettings endpoint) =>
-        RigSettings.IsSdrDownlinkEndpoint(endpoint.Type)
+        endpoint.UsesNetwork
             ? $"{endpoint.NetworkHost}:{endpoint.NetworkPort}"
             : endpoint.Port;
 

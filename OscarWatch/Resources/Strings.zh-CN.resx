@@ -3057,6 +3057,57 @@
   <data name="Settings.Radio.Ftx1Hint">
     <value>FTX-1 Field / FTX-1optima：将菜单 CAT-1 RATE 与设置中的值匹配（默认 38400）。8N2 ASCII CAT，硬件 RTS 控制 — 使用 Enhanced COM 口（CAT-1），不要用 CAT-2。每台链路一个 COM 口。FM 模式下跟踪时锁定 MAIN VFO 旋钮。</value>
   </data>
+  <data name="Settings.Radio.KenwoodConnection">
+    <value>连接</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Serial">
+    <value>COM 口（USB 或串口）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodConnection.Lan">
+    <value>网络（LAN）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanHost">
+    <value>电台 IP 地址或主机名</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPort">
+    <value>TCP 端口</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanUser">
+    <value>账户（电台中设置的管理员 ID 或用户 ID）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanPassword">
+    <value>密码</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanAdministrator">
+    <value>管理员账户（用户账户请取消勾选）</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTest">
+    <value>测试 LAN 连接</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanTesting">
+    <value>正在测试连接…</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanEnterDetails">
+    <value>请先输入主机、端口、账户和密码。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanOk">
+    <value>已连接到 {0}，频率 {1} MHz。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanWrongRadio">
+    <value>已连接，但电台未识别为 {0}。请检查上方选择的型号。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanDenied">
+    <value>电台拒绝了连接。请确认已开启 LAN 控制，且没有其他应用程序（如 ARCP 或 KNS）连接到端口 60000。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanLoginRejected">
+    <value>登录被拒绝。请检查电台中设置的账户、密码和账户类型。</value>
+  </data>
+  <data name="Settings.Radio.KenwoodLanFailed">
+    <value>LAN 连接失败：{0}</value>
+  </data>
+  <data name="Settings.Radio.KenwoodHfHint">
+    <value>TS-990S / TS-890S / TS-590：一台电台对应一条链路。10 m 时请保持变频器（Transverter）模式关闭。2 m 或 70 cm 时请开启变频器模式，并在电台上设置偏移量；OscarWatch 会读取该值并自动调谐中频。波特率需与电台 COM 菜单一致。LAN（仅 TS-990S 和 TS-890S）需要电台中设置的管理员 ID 或用户 ID，且同一时间只能有一个应用程序使用端口 60000。</value>
+  </data>
   <data name="Settings.Radio.CwSideband">
     <value>线性 CW：接收保持 USB/LSB（仅发射 CW）</value>
   </data>

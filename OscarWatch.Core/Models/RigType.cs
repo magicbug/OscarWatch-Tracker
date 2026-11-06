@@ -29,5 +29,13 @@ public enum RigType
     FlexSmartSdr,
     Dummy,
     /// <summary>Yaesu FT-857 / FT-857D (dual-radio leg; FT-817 five-byte CAT).</summary>
-    YaesuFt857
+    YaesuFt857,
+    /// <summary>Kenwood TS-990S (dual-radio leg; COM or LAN).</summary>
+    KenwoodTs990s,
+    /// <summary>Kenwood TS-890S (dual-radio leg; COM or LAN).</summary>
+    KenwoodTs890s,
+    /// <summary>Kenwood TS-590S (dual-radio leg; COM only).</summary>
+    KenwoodTs590s,
+    /// <summary>Kenwood TS-590SG (dual-radio leg; COM only).</summary>
+    KenwoodTs590sg
 }
