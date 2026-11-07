@@ -18,6 +18,11 @@ public partial class MainWindow : Window, ITroubleshootHost
             if (e.Property == TextBox.TextProperty)
                 Gs232LogBox.CaretIndex = Gs232LogBox.Text?.Length ?? 0;
         };
+        TraceTailBox.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == TextBox.TextProperty)
+                TraceTailBox.CaretIndex = TraceTailBox.Text?.Length ?? 0;
+        };
     }
 
     public Task<bool> ConfirmAsync(string message) => ConfirmDialog.ShowAsync(this, message);
@@ -31,12 +36,15 @@ public partial class MainWindow : Window, ITroubleshootHost
 
     public async Task<string?> PickSavePathAsync(string suggestedFileName)
     {
+        var extension = Path.GetExtension(suggestedFileName).TrimStart('.');
+        if (extension.Length == 0)
+            extension = "txt";
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = Tr.Get("Save.Title"),
             SuggestedFileName = suggestedFileName,
-            DefaultExtension = "txt",
-            FileTypeChoices = [new FilePickerFileType("Text") { Patterns = ["*.txt"] }]
+            DefaultExtension = extension,
+            FileTypeChoices = [new FilePickerFileType(extension.ToUpperInvariant()) { Patterns = ["*." + extension] }]
         });
         return file?.TryGetLocalPath();
     }

@@ -544,6 +544,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
 
         try
         {
+            if (RotatorTrace.IsActive)
+                RotatorTrace.Event($"Manual move to az {az:0} el {el:0} (asked for az {azimuthDeg:0} el {elevationDeg:0} before offsets)");
             _rotator.SetPosition(az, el, settings);
             _lastAzimuth = Math.Round(az);
             _lastElevation = Math.Round(el);
@@ -551,6 +553,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Manual move failed: {ex.GetType().Name}: {ex.Message}");
             Log.Warning(ex, "Rotator manual move failed at Az={Az} El={El}", az, el);
             TearDownRotator();
         }
@@ -571,6 +574,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
 
         try
         {
+            RotatorTrace.Event("Stop");
             _rotator.Stop();
             _retryUntilArrived = false;
             if (!_standbyActive)
@@ -578,6 +582,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Stop failed: {ex.GetType().Name}: {ex.Message}");
             Log.Warning(ex, "Rotator stop failed");
             TearDownRotator();
         }
@@ -869,10 +874,13 @@ public sealed class RotatorController : IRotatorController, IDisposable
             }
 
             _connectFailureLog.Reset();
+            if (RotatorTrace.IsActive)
+                RotatorTrace.Event($"Connected: {settings.Type} on {endpoint}, baud {settings.BaudRate}, azimuth only {settings.IsAzimuthOnly}, max azimuth {settings.MaxAzimuthDeg}, threshold {settings.MovementThresholdDeg}°");
             return true;
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Connect failed on {endpoint}: {ex.GetType().Name}: {ex.Message}");
             _connectFailureLog.Warning(ex, "Rotator connect failed on {Endpoint}", endpoint);
             _connectionKind = RotatorConnectionKind.ConnectFailed;
             _connectionDetail = ex.Message;
@@ -954,16 +962,23 @@ public sealed class RotatorController : IRotatorController, IDisposable
         _displayCommandedElevation = settings.IsAzimuthOnly ? null : (int)Math.Round(commandEl);
         _displayCompassAzimuth = (int)Math.Round(RotatorAzimuthPlanner.Normalize360(azimuthDeg));
 
-        var send = _lastAzimuth is null || _lastElevation is null
-            || Math.Abs(commandAz - _lastAzimuth.Value) >= settings.MovementThresholdDeg
-            || Math.Abs(commandEl - _lastElevation.Value) >= settings.MovementThresholdDeg
-            || HasOutstandingArrivalError(settings, commandAz, commandEl);
+        var first = _lastAzimuth is null || _lastElevation is null;
+        var moved = !first
+            && (Math.Abs(commandAz - _lastAzimuth!.Value) >= settings.MovementThresholdDeg
+                || Math.Abs(commandEl - _lastElevation!.Value) >= settings.MovementThresholdDeg);
+        var send = first || moved || HasOutstandingArrivalError(settings, commandAz, commandEl);
 
         if (!send)
             return;
 
         try
         {
+            if (RotatorTrace.IsActive)
+            {
+                var reason = first ? "first command" : moved ? "target moved past the threshold" : "not arrived, sending again";
+                RotatorTrace.Event($"Track to az {commandAz:0} el {commandEl:0} ({reason}; last position az {Show(_displayAzimuth)} el {Show(_displayElevation)})");
+            }
+
             _rotator.SetPosition(commandAz, commandEl, settings);
             _lastAzimuth = Math.Round(commandAz);
             _lastElevation = Math.Round(commandEl);
@@ -975,6 +990,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Track failed: {ex.GetType().Name}: {ex.Message}");
             Log.Warning(ex, "Rotator track failed at Az={Az} El={El}", commandAz, commandEl);
             TearDownRotator();
         }
@@ -995,6 +1011,8 @@ public sealed class RotatorController : IRotatorController, IDisposable
 
         try
         {
+            if (RotatorTrace.IsActive)
+                RotatorTrace.Event($"Park to az {az:0} el {el:0}{(afterPass ? " after the pass" : "")}");
             _rotator.SetPosition(az, el, settings);
             _lastAzimuth = az;
             _lastElevation = el;
@@ -1004,6 +1022,7 @@ public sealed class RotatorController : IRotatorController, IDisposable
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Park failed: {ex.GetType().Name}: {ex.Message}");
             Log.Warning(ex, "Rotator park failed");
             TearDownRotator();
         }
@@ -1024,11 +1043,14 @@ public sealed class RotatorController : IRotatorController, IDisposable
 
         try
         {
+            if (RotatorTrace.IsActive)
+                RotatorTrace.Event($"Not arrived and not moving: position az {Show(_displayAzimuth)} el {Show(_displayElevation)}, target az {az:0} el {el:0}. Sending the target again.");
             _rotator.SetPosition(az, el, settings);
             PollPosition();
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Arrival retry failed: {ex.GetType().Name}: {ex.Message}");
             Log.Warning(ex, "Rotator arrival retry failed at Az={Az} El={El}", az, el);
             TearDownRotator();
         }
@@ -1068,13 +1090,19 @@ public sealed class RotatorController : IRotatorController, IDisposable
                 _displayElevation = null;
             else if (el is not null)
                 _displayElevation = el;
+
+            if (RotatorTrace.IsActive)
+                RotatorTrace.Write("POS", $"az {Show(az)} el {Show(el)}{(_stillSlewing ? ", moving" : "")}");
         }
         catch (Exception ex)
         {
+            RotatorTrace.Event($"Position poll failed: {ex.GetType().Name}: {ex.Message}. Closing the connection.");
             Log.Debug(ex, "Rotator position poll failed");
             TearDownRotator();
         }
     }
+
+    private static string Show(int? degrees) => degrees?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "none";
 
     private static bool MovedSinceLastPoll(int? previous, int? current) =>
         previous is { } before

@@ -32,7 +32,7 @@ public static class RotatorDriverFactory
         var port = settings.NetworkPort > 0
             ? settings.NetworkPort
             : RotatorSettings.DefaultSpidMd01NetworkPort;
-        var transport = new TcpRotatorTransport(host, port, 2000, 2000, "\n");
+        var transport = new TracingRotatorTransport(new TcpRotatorTransport(host, port, 2000, 2000, "\n"), $"{host}:{port}");
         return new SpidRotator(transport, expectSetPositionResponse: true);
     }
 

@@ -16,6 +16,14 @@ internal interface ITroubleshootHost
     Task<string?> PickSavePathAsync(string suggestedFileName);
 }
 
+/// <summary>A backup as shown in the restore list.</summary>
+internal sealed record BackupChoice(SettingsBackup Backup)
+{
+    public override string ToString() => Backup.Callsign.Length > 0
+        ? Tr.Format("Backup.Item", Backup.Name, MainViewModel.FormatWritten(Backup), Backup.Callsign)
+        : Tr.Format("Backup.ItemNoCallsign", Backup.Name, MainViewModel.FormatWritten(Backup));
+}
+
 internal sealed partial class MainViewModel(ITroubleshootHost host) : ObservableObject
 {
     [ObservableProperty] private string _processText = "";
@@ -30,18 +38,36 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
     [ObservableProperty] private string _gpsText = "";
     [ObservableProperty] private string _echoCalibrationsText = "";
     [ObservableProperty] private string _recentErrorsText = "";
+    [ObservableProperty] private string _findingsText = "";
     [ObservableProperty] private string _resultText = "";
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CloseOscarWatchCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CaptureFreezeReportCommand))]
     private bool _isTrackerRunning;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StartOscarWatchCommand))]
     private bool _isTrackerFound;
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CaptureFreezeReportCommand))]
+    private bool _isCapturing;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RestoreBackupCommand))]
+    private BackupChoice? _selectedBackup;
+
+    [ObservableProperty] private IReadOnlyList<BackupChoice> _backups = [];
+    [ObservableProperty] private string _backupsText = "";
+
     private SettingsSnapshot _settings = SettingsFile.Read(TroubleshootPaths.SettingsPath);
+    private IReadOnlyList<RunningTracker> _running = [];
+    private int _recentErrorCount;
     private Gs232ProbeViewModel? _gs232;
+    private RotatorTraceViewModel? _rotatorTrace;
+
+    public RotatorTraceViewModel RotatorTrace => _rotatorTrace ??= new RotatorTraceViewModel(host, text => ResultText = text);
 
     public Gs232ProbeViewModel Gs232 => _gs232 ??= new Gs232ProbeViewModel(
         host,
@@ -57,6 +83,7 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
     public void Refresh()
     {
         var running = TrackerProcess.FindRunning();
+        _running = running;
         IsTrackerRunning = running.Count > 0;
         ProcessText = running.Count == 0
             ? Tr.Get("Process.NotRunning")
@@ -74,7 +101,71 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
 
         RefreshLog();
         RefreshSettings();
+        RefreshBackups();
+        RefreshFindings();
+        RotatorTrace.Update();
     }
+
+    [RelayCommand(CanExecute = nameof(CanCaptureFreezeReport))]
+    private async Task CaptureFreezeReportAsync()
+    {
+        var path = await host.PickSavePathAsync(FreezeReport.SuggestedFileName(DateTime.Now));
+        if (path is null)
+            return;
+
+        var ids = TrackerProcess.FindRunning().Select(process => process.Id).ToList();
+        IsCapturing = true;
+        ResultText = Tr.Get("Result.FreezeCapturing");
+        try
+        {
+            var result = await Task.Run(() => FreezeReport.Create(path, ids, TroubleshootPaths.LogFolder, DiagnosticsReport.Build));
+            var size = Math.Max(1, result.ZipBytes / (1024 * 1024));
+            ResultText = result.DumpsWritten == ids.Count && ids.Count > 0
+                ? Tr.Format("Result.FreezeSaved", path, size)
+                : Tr.Format("Result.FreezeSavedNoDump", path, size, string.Join(" ", result.Problems));
+        }
+        catch (Exception ex)
+        {
+            ResultText = Tr.Format("Result.Failed", ex.Message);
+        }
+        finally
+        {
+            IsCapturing = false;
+        }
+
+        Refresh();
+    }
+
+    private bool CanCaptureFreezeReport() => IsTrackerRunning && !IsCapturing;
+
+    [RelayCommand(CanExecute = nameof(CanRestoreBackup))]
+    private async Task RestoreBackupAsync()
+    {
+        if (SelectedBackup is not { } choice)
+            return;
+
+        if (!await host.ConfirmAsync(Tr.Format("Confirm.RestoreBackup", choice.Backup.Name, FormatWritten(choice.Backup)))
+            || !await EnsureTrackerClosedAsync())
+            return;
+
+        try
+        {
+            ResultText = SettingsFile.RestoreBackup(TroubleshootPaths.SettingsPath, choice.Backup.Path) switch
+            {
+                RestoreBackupResult.Restored => Tr.Format("Result.BackupRestored", choice.Backup.Name),
+                RestoreBackupResult.Missing => Tr.Get("Result.BackupMissing"),
+                _ => Tr.Get("Result.BackupUnreadable")
+            };
+        }
+        catch (Exception ex)
+        {
+            ResultText = Tr.Format("Result.Failed", ex.Message);
+        }
+
+        Refresh();
+    }
+
+    private bool CanRestoreBackup() => SelectedBackup is not null;
 
     [RelayCommand]
     private void OpenDataFolder() => OpenFolder(TroubleshootPaths.DataFolder);
@@ -300,8 +391,40 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
         }
     }
 
+    private void RefreshBackups()
+    {
+        var selected = SelectedBackup?.Backup.Path;
+        Backups = SettingsFile.ListBackups(TroubleshootPaths.SettingsPath).Select(backup => new BackupChoice(backup)).ToList();
+        SelectedBackup = Backups.FirstOrDefault(choice => choice.Backup.Path == selected) ?? Backups.FirstOrDefault();
+        BackupsText = Backups.Count == 0 ? Tr.Get("Backup.None") : Tr.Format("Backup.Count", Backups.Count);
+    }
+
+    private void RefreshFindings()
+    {
+        IReadOnlyCollection<string> systemPorts;
+        try
+        {
+            systemPorts = System.IO.Ports.SerialPort.GetPortNames();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+        {
+            systemPorts = [];
+        }
+
+        var findings = Findings.Build(new FindingsInput(
+            _settings,
+            _running,
+            _recentErrorCount,
+            port => Findings.IsPortPresent(port, systemPorts)));
+        FindingsText = string.Join(Environment.NewLine + Environment.NewLine, findings.Select(finding => finding.Display));
+    }
+
+    internal static string FormatWritten(SettingsBackup backup) =>
+        backup.WrittenLocal.ToString("g", CultureInfo.CurrentCulture);
+
     private void RefreshLog()
     {
+        _recentErrorCount = 0;
         var latest = LogFiles.FindLatest(TroubleshootPaths.LogFolder);
         if (latest is null)
         {
@@ -313,7 +436,9 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
         LatestLogText = Tr.Format("Log.Latest", latest.Name, latest.LastWriteTime.ToString("g", CultureInfo.CurrentCulture));
         try
         {
-            var problems = LogFiles.RecentProblems(LogFiles.ReadLines(latest.FullName));
+            var lines = LogFiles.ReadLines(latest.FullName);
+            _recentErrorCount = LogFiles.CountProblems(lines);
+            var problems = LogFiles.RecentProblems(lines);
             RecentErrorsText = problems.Count == 0
                 ? Tr.Get("Errors.None")
                 : string.Join(Environment.NewLine + Environment.NewLine, problems);

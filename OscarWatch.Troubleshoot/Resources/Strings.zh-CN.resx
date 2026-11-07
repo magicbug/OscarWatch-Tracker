@@ -243,7 +243,7 @@ GPS：{2}</value>
     <value>状态</value>
   </data>
   <data name="Tab.Gs232">
-    <value>GS-232 旋转器</value>
+    <value>旋转器</value>
   </data>
   <data name="Gs232.Hint">
     <value>直接测试兼容 Yaesu GS-232 的旋转器控制器，并记录收发的每个字节，包括 OscarWatch 通常忽略的应答。必须先关闭 OscarWatch，才能腾出 COM 端口。报告旋转器问题时，请保存此日志并附上。</value>
@@ -343,5 +343,170 @@ GPS：{2}</value>
   </data>
   <data name="Result.Gs232LogSaved">
     <value>会话日志已保存到 {0}。</value>
+  </data>
+  <data name="Section.Findings">
+    <value>故障排除工具的发现</value>
+  </data>
+  <data name="Findings.Hint">
+    <value>用通俗的话解读上方状态。只查询端口列表，从不打开端口，因此不会向电台发送任何内容。</value>
+  </data>
+  <data name="Findings.Level.Problem">
+    <value>问题</value>
+  </data>
+  <data name="Findings.Level.Check">
+    <value>检查</value>
+  </data>
+  <data name="Findings.Level.Note">
+    <value>提示</value>
+  </data>
+  <data name="Findings.NotResponding">
+    <value>OscarWatch 正在运行，但 Windows 报告其未响应。请在关闭前捕获冻结报告。</value>
+  </data>
+  <data name="Findings.SeveralRunning">
+    <value>有 {0} 个 OscarWatch 正在运行。请全部关闭，然后只启动一个。</value>
+  </data>
+  <data name="Findings.SettingsMissing">
+    <value>还没有 settings.json。OscarWatch 启动时会用默认设置创建它。</value>
+  </data>
+  <data name="Findings.SettingsUnreadable">
+    <value>无法读取 settings.json，OscarWatch 可能会以默认设置启动。请恢复备份或将设置移到一旁。</value>
+  </data>
+  <data name="Findings.NoPort">
+    <value>{0} 已开启，但设置中未选择端口。</value>
+  </data>
+  <data name="Findings.PortMissing">
+    <value>{0} 已开启并设为 {1}，但此计算机上当前没有 {1}。请检查线缆、电源和驱动程序，或在设置中重新选择端口。</value>
+  </data>
+  <data name="Findings.PortPresent">
+    <value>{0} 设为 {1}，此计算机上有该端口。这只说明端口存在，不说明设备会应答。</value>
+  </data>
+  <data name="Findings.PortPresentGs232">
+    <value>{0} 设为 {1}，此计算机上有该端口。这只说明端口存在，不说明控制器会应答。可在旋转器选项卡中测试。</value>
+  </data>
+  <data name="Findings.PortShared">
+    <value>{0} 和 {1} 都设为 {2}。每台设备需要自己的端口。</value>
+  </data>
+  <data name="Findings.RecentErrors">
+    <value>最新日志中有 {0} 个错误。最近的错误列在下方。</value>
+  </data>
+  <data name="Findings.NoneFound">
+    <value>设置和最新日志中没有发现明显问题。</value>
+  </data>
+  <data name="Hardware.Radio">
+    <value>电台</value>
+  </data>
+  <data name="Hardware.RadioDownlink">
+    <value>下行电台</value>
+  </data>
+  <data name="Hardware.RadioUplink">
+    <value>上行电台</value>
+  </data>
+  <data name="Hardware.Rotator">
+    <value>旋转器</value>
+  </data>
+  <data name="Hardware.RotatorElevation">
+    <value>旋转器仰角</value>
+  </data>
+  <data name="Hardware.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Freeze.Hint">
+    <value>如果 OscarWatch 卡住，请在关闭前捕获冻结报告。它会把 OscarWatch 当时状态的快照和最新日志保存到一个 zip 文件中，供技术支持使用。快照包含 OscarWatch 的部分内存，因此只发送给您信任的人。</value>
+  </data>
+  <data name="Action.CaptureFreezeReport">
+    <value>捕获冻结报告</value>
+  </data>
+  <data name="Result.FreezeCapturing">
+    <value>正在捕获冻结报告，可能需要一分钟…</value>
+  </data>
+  <data name="Result.FreezeSaved">
+    <value>冻结报告已保存到 {0}（{1} MB）。OscarWatch 仍在运行。</value>
+  </data>
+  <data name="Result.FreezeSavedNoDump">
+    <value>冻结报告已保存到 {0}（{1} MB），但没有完整快照：{2}</value>
+  </data>
+  <data name="Section.Restore">
+    <value>恢复设置</value>
+  </data>
+  <data name="Restore.Hint">
+    <value>放回 OscarWatch 或故障排除工具保存的设置文件。会先备份当前设置，因此可以撤销。</value>
+  </data>
+  <data name="Backup.None">
+    <value>未找到备份。</value>
+  </data>
+  <data name="Backup.Count">
+    <value>找到 {0} 个备份，最新的在前。</value>
+  </data>
+  <data name="Backup.Item">
+    <value>{0}，保存于 {1}，{2}</value>
+  </data>
+  <data name="Backup.ItemNoCallsign">
+    <value>{0}，保存于 {1}</value>
+  </data>
+  <data name="Action.RestoreBackup">
+    <value>恢复所选备份</value>
+  </data>
+  <data name="Confirm.RestoreBackup">
+    <value>用 {0}（保存于 {1}）替换 settings.json？会先备份当前设置。</value>
+  </data>
+  <data name="Result.BackupRestored">
+    <value>已恢复 {0}。之前的设置已备份。启动 OscarWatch 即可使用。</value>
+  </data>
+  <data name="Result.BackupMissing">
+    <value>该备份已不存在。</value>
+  </data>
+  <data name="Result.BackupUnreadable">
+    <value>无法读取该备份，因此未恢复。</value>
+  </data>
+  <data name="Trace.Heading">
+    <value>记录 OscarWatch 的旋转器通信</value>
+  </data>
+  <data name="Trace.Hint">
+    <value>让 OscarWatch 在您正常使用的 30 分钟内记录每条旋转器命令、回复、超时和重发，例如待机时转动或一次过境。需要 OscarWatch 1.1.7 或更高版本。OscarWatch 下次与旋转器通信时开始记录。</value>
+  </data>
+  <data name="Trace.Label.Status">
+    <value>记录</value>
+  </data>
+  <data name="Trace.Label.File">
+    <value>最新文件</value>
+  </data>
+  <data name="Trace.Recording">
+    <value>开启至 {0}</value>
+  </data>
+  <data name="Trace.NotRecording">
+    <value>关闭</value>
+  </data>
+  <data name="Trace.NoFile">
+    <value>暂无</value>
+  </data>
+  <data name="Trace.LatestFile">
+    <value>{0}，写入于 {1}，{2} KB</value>
+  </data>
+  <data name="Trace.TailHeading">
+    <value>最新记录的结尾</value>
+  </data>
+  <data name="Trace.TailEmpty">
+    <value>暂无记录。</value>
+  </data>
+  <data name="Action.TraceStart">
+    <value>开始记录</value>
+  </data>
+  <data name="Action.TraceStop">
+    <value>停止记录</value>
+  </data>
+  <data name="Action.TraceCopy">
+    <value>复制记录</value>
+  </data>
+  <data name="Result.TraceStarted">
+    <value>已请求记录 {0} 分钟。请正常使用 OscarWatch，然后在此停止记录。</value>
+  </data>
+  <data name="Result.TraceStopped">
+    <value>记录已停止。</value>
+  </data>
+  <data name="Result.TraceCopied">
+    <value>{0} 已复制到剪贴板。</value>
+  </data>
+  <data name="Gs232.Heading">
+    <value>GS-232 控制器测试</value>
   </data>
 </root>

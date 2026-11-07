@@ -2,7 +2,8 @@ using System.Diagnostics;
 
 namespace OscarWatch.Troubleshoot;
 
-internal sealed record RunningTracker(int Id, DateTime? StartedLocal);
+/// <summary><see cref="Responding"/> is null where it cannot be told (other platforms, or no window yet).</summary>
+internal sealed record RunningTracker(int Id, DateTime? StartedLocal, bool? Responding = null);
 
 /// <summary>Finds, closes, and starts the OscarWatch executable that ships beside this one.</summary>
 internal static class TrackerProcess
@@ -32,11 +33,26 @@ internal static class TrackerProcess
                     // another user's process, or it exited
                 }
 
-                result.Add(new RunningTracker(process.Id, started));
+                result.Add(new RunningTracker(process.Id, started, ReadResponding(process)));
             }
         }
 
         return result;
+    }
+
+    private static bool? ReadResponding(Process process)
+    {
+        if (!OperatingSystem.IsWindows())
+            return null;
+
+        try
+        {
+            return process.MainWindowHandle == IntPtr.Zero ? null : process.Responding;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     /// <summary>Product version of the sibling OscarWatch, without the source revision suffix.</summary>

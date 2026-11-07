@@ -243,7 +243,7 @@ GPS: {2}</value>
     <value>สถานะ</value>
   </data>
   <data name="Tab.Gs232">
-    <value>โรเตเตอร์ GS-232</value>
+    <value>โรเตเตอร์</value>
   </data>
   <data name="Gs232.Hint">
     <value>ทดสอบตัวควบคุมโรเตเตอร์ที่เข้ากันได้กับ Yaesu GS-232 โดยตรง และบันทึกทุกไบต์ที่ส่งและรับ รวมถึงคำตอบที่ OscarWatch มักไม่สนใจ ต้องปิด OscarWatch ก่อนเพื่อให้พอร์ต COM ว่าง เมื่อรายงานปัญหาโรเตเตอร์ ให้บันทึกล็อกนี้และแนบไปด้วย</value>
@@ -343,5 +343,170 @@ GPS: {2}</value>
   </data>
   <data name="Result.Gs232LogSaved">
     <value>บันทึกล็อกของเซสชันไว้ที่ {0} แล้ว</value>
+  </data>
+  <data name="Section.Findings">
+    <value>สิ่งที่ตัวแก้ปัญหาพบ</value>
+  </data>
+  <data name="Findings.Hint">
+    <value>คำอธิบายสถานะด้านบนแบบเข้าใจง่าย พอร์ตจะถูกตรวจดูเท่านั้น ไม่มีการเปิด จึงไม่มีอะไรถูกส่งไปยังวิทยุของคุณ</value>
+  </data>
+  <data name="Findings.Level.Problem">
+    <value>ปัญหา</value>
+  </data>
+  <data name="Findings.Level.Check">
+    <value>ตรวจสอบ</value>
+  </data>
+  <data name="Findings.Level.Note">
+    <value>หมายเหตุ</value>
+  </data>
+  <data name="Findings.NotResponding">
+    <value>OscarWatch กำลังทำงาน แต่ Windows รายงานว่าไม่ตอบสนอง ให้บันทึกรายงานการค้างก่อนปิด</value>
+  </data>
+  <data name="Findings.SeveralRunning">
+    <value>มี OscarWatch ทำงานอยู่ {0} ชุด ให้ปิดทั้งหมดแล้วเปิดเพียงชุดเดียว</value>
+  </data>
+  <data name="Findings.SettingsMissing">
+    <value>ยังไม่มี settings.json OscarWatch จะสร้างไฟล์นี้ด้วยค่าเริ่มต้นเมื่อเริ่มทำงาน</value>
+  </data>
+  <data name="Findings.SettingsUnreadable">
+    <value>อ่าน settings.json ไม่ได้ OscarWatch อาจเริ่มด้วยค่าเริ่มต้น ให้กู้คืนข้อมูลสำรองหรือย้ายการตั้งค่าออกไปก่อน</value>
+  </data>
+  <data name="Findings.NoPort">
+    <value>{0} เปิดอยู่ แต่ยังไม่ได้เลือกพอร์ตในการตั้งค่า</value>
+  </data>
+  <data name="Findings.PortMissing">
+    <value>{0} เปิดอยู่และตั้งไว้ที่ {1} แต่ตอนนี้ไม่มี {1} ในคอมพิวเตอร์เครื่องนี้ ให้ตรวจสายเคเบิล ไฟเลี้ยง และไดรเวอร์ หรือเลือกพอร์ตใหม่ในการตั้งค่า</value>
+  </data>
+  <data name="Findings.PortPresent">
+    <value>{0} ตั้งไว้ที่ {1} ซึ่งมีอยู่ในคอมพิวเตอร์เครื่องนี้ ข้อนี้แสดงเพียงว่าพอร์ตมีอยู่ ไม่ได้แสดงว่าอุปกรณ์ตอบกลับ</value>
+  </data>
+  <data name="Findings.PortPresentGs232">
+    <value>{0} ตั้งไว้ที่ {1} ซึ่งมีอยู่ในคอมพิวเตอร์เครื่องนี้ ข้อนี้แสดงเพียงว่าพอร์ตมีอยู่ ไม่ได้แสดงว่าตัวควบคุมตอบกลับ แท็บโรเตเตอร์สามารถทดสอบได้</value>
+  </data>
+  <data name="Findings.PortShared">
+    <value>{0} และ {1} ตั้งไว้ที่ {2} ทั้งคู่ อุปกรณ์แต่ละตัวต้องใช้พอร์ตของตัวเอง</value>
+  </data>
+  <data name="Findings.RecentErrors">
+    <value>บันทึกล่าสุดมีข้อผิดพลาด {0} รายการ รายการล่าสุดแสดงอยู่ด้านล่าง</value>
+  </data>
+  <data name="Findings.NoneFound">
+    <value>ไม่พบสิ่งผิดปกติที่ชัดเจนในการตั้งค่าหรือบันทึกล่าสุด</value>
+  </data>
+  <data name="Hardware.Radio">
+    <value>วิทยุ</value>
+  </data>
+  <data name="Hardware.RadioDownlink">
+    <value>วิทยุดาวน์ลิงก์</value>
+  </data>
+  <data name="Hardware.RadioUplink">
+    <value>วิทยุอัปลิงก์</value>
+  </data>
+  <data name="Hardware.Rotator">
+    <value>โรเตเตอร์</value>
+  </data>
+  <data name="Hardware.RotatorElevation">
+    <value>มุมเงยของโรเตเตอร์</value>
+  </data>
+  <data name="Hardware.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Freeze.Hint">
+    <value>หาก OscarWatch ค้าง ให้บันทึกรายงานการค้างก่อนปิด รายงานจะบันทึกภาพรวมของสิ่งที่ OscarWatch กำลังทำ พร้อมบันทึกล่าสุด ลงในไฟล์ zip สำหรับฝ่ายสนับสนุน ภาพรวมนี้มีหน่วยความจำบางส่วนของ OscarWatch จึงควรส่งให้เฉพาะคนที่คุณไว้ใจ</value>
+  </data>
+  <data name="Action.CaptureFreezeReport">
+    <value>บันทึกรายงานการค้าง</value>
+  </data>
+  <data name="Result.FreezeCapturing">
+    <value>กำลังบันทึกรายงานการค้าง อาจใช้เวลาประมาณหนึ่งนาที…</value>
+  </data>
+  <data name="Result.FreezeSaved">
+    <value>บันทึกรายงานการค้างไว้ที่ {0} ({1} MB) แล้ว OscarWatch ยังทำงานอยู่</value>
+  </data>
+  <data name="Result.FreezeSavedNoDump">
+    <value>บันทึกรายงานการค้างไว้ที่ {0} ({1} MB) แล้ว แต่ไม่มีภาพรวมฉบับเต็ม: {2}</value>
+  </data>
+  <data name="Section.Restore">
+    <value>กู้คืนการตั้งค่า</value>
+  </data>
+  <data name="Restore.Hint">
+    <value>นำไฟล์การตั้งค่าที่ OscarWatch หรือตัวแก้ปัญหาเก็บไว้กลับมาใช้ การตั้งค่าปัจจุบันจะถูกสำรองก่อน จึงย้อนกลับได้</value>
+  </data>
+  <data name="Backup.None">
+    <value>ไม่พบข้อมูลสำรอง</value>
+  </data>
+  <data name="Backup.Count">
+    <value>พบข้อมูลสำรอง {0} รายการ เรียงจากใหม่สุด</value>
+  </data>
+  <data name="Backup.Item">
+    <value>{0} บันทึกเมื่อ {1} {2}</value>
+  </data>
+  <data name="Backup.ItemNoCallsign">
+    <value>{0} บันทึกเมื่อ {1}</value>
+  </data>
+  <data name="Action.RestoreBackup">
+    <value>กู้คืนข้อมูลสำรองที่เลือก</value>
+  </data>
+  <data name="Confirm.RestoreBackup">
+    <value>แทนที่ settings.json ด้วย {0} ที่บันทึกเมื่อ {1} หรือไม่ การตั้งค่าปัจจุบันจะถูกสำรองก่อน</value>
+  </data>
+  <data name="Result.BackupRestored">
+    <value>กู้คืน {0} แล้ว การตั้งค่าก่อนหน้าถูกสำรองไว้ เริ่ม OscarWatch เพื่อใช้งาน</value>
+  </data>
+  <data name="Result.BackupMissing">
+    <value>ไม่มีข้อมูลสำรองนั้นแล้ว</value>
+  </data>
+  <data name="Result.BackupUnreadable">
+    <value>อ่านข้อมูลสำรองนั้นไม่ได้ จึงไม่ได้กู้คืน</value>
+  </data>
+  <data name="Trace.Heading">
+    <value>บันทึกการสื่อสารกับโรเตเตอร์ของ OscarWatch</value>
+  </data>
+  <data name="Trace.Hint">
+    <value>ขอให้ OscarWatch บันทึกทุกคำสั่ง การตอบกลับ การหมดเวลา และการส่งซ้ำของโรเตเตอร์เป็นเวลา 30 นาที ขณะที่คุณใช้งานตามปกติ เช่น หมุนในโหมดสแตนด์บายหรือระหว่างดาวเทียมผ่าน ต้องใช้ OscarWatch 1.1.7 ขึ้นไป การบันทึกจะเริ่มเมื่อ OscarWatch สื่อสารกับโรเตเตอร์ครั้งถัดไป</value>
+  </data>
+  <data name="Trace.Label.Status">
+    <value>การบันทึก</value>
+  </data>
+  <data name="Trace.Label.File">
+    <value>ไฟล์ล่าสุด</value>
+  </data>
+  <data name="Trace.Recording">
+    <value>เปิดจนถึง {0}</value>
+  </data>
+  <data name="Trace.NotRecording">
+    <value>ปิด</value>
+  </data>
+  <data name="Trace.NoFile">
+    <value>ยังไม่มี</value>
+  </data>
+  <data name="Trace.LatestFile">
+    <value>{0} เขียนเมื่อ {1} ขนาด {2} KB</value>
+  </data>
+  <data name="Trace.TailHeading">
+    <value>ส่วนท้ายของการบันทึกล่าสุด</value>
+  </data>
+  <data name="Trace.TailEmpty">
+    <value>ยังไม่มีการบันทึก</value>
+  </data>
+  <data name="Action.TraceStart">
+    <value>เริ่มบันทึก</value>
+  </data>
+  <data name="Action.TraceStop">
+    <value>หยุดบันทึก</value>
+  </data>
+  <data name="Action.TraceCopy">
+    <value>คัดลอกการบันทึก</value>
+  </data>
+  <data name="Result.TraceStarted">
+    <value>ขอให้บันทึกเป็นเวลา {0} นาทีแล้ว ใช้ OscarWatch ตามปกติ แล้วกลับมาหยุดการบันทึกที่นี่</value>
+  </data>
+  <data name="Result.TraceStopped">
+    <value>หยุดการบันทึกแล้ว</value>
+  </data>
+  <data name="Result.TraceCopied">
+    <value>คัดลอก {0} ไปยังคลิปบอร์ดแล้ว</value>
+  </data>
+  <data name="Gs232.Heading">
+    <value>ทดสอบตัวควบคุม GS-232</value>
   </data>
 </root>

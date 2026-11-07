@@ -7,6 +7,7 @@ namespace OscarWatch.Troubleshoot;
 internal static class DiagnosticsReport
 {
     private const int LogTailLineCount = 200;
+    private const int RotatorTraceTailLineCount = 400;
 
     public static string Build()
     {
@@ -74,7 +75,36 @@ internal static class DiagnosticsReport
 
         builder.AppendLine("== Log tail ==");
         builder.AppendLine(lines.Count == 0 ? "(empty)" : string.Join(Environment.NewLine, LogFiles.Tail(lines, LogTailLineCount)));
+
+        AppendRotatorRecording(builder);
         return builder.ToString();
+    }
+
+    private static void AppendRotatorRecording(StringBuilder builder)
+    {
+        var trace = RotatorTraceRequest.FindLatest(TroubleshootPaths.LogFolder);
+        var until = RotatorTraceRequest.ReadUntilUtc(TroubleshootPaths.DataFolder, DateTime.UtcNow);
+        if (trace is null && until is null)
+            return;
+
+        builder.AppendLine();
+        builder.AppendLine("== Latest rotator recording ==");
+        builder.AppendLine(until is { } end ? $"Recording until {end:O} (UTC)" : "Not recording now");
+        if (trace is null)
+        {
+            builder.AppendLine("(no recording file yet)");
+            return;
+        }
+
+        builder.AppendLine($"{trace.FullName} (written {trace.LastWriteTime:O})");
+        try
+        {
+            builder.AppendLine(string.Join(Environment.NewLine, LogFiles.Tail(LogFiles.ReadLines(trace.FullName), RotatorTraceTailLineCount)));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            builder.AppendLine($"(could not read recording: {ex.Message})");
+        }
     }
 
     private static string Describe(DeviceState device)

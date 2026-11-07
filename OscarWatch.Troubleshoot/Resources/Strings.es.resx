@@ -243,7 +243,7 @@ GPS: {2}</value>
     <value>Estado</value>
   </data>
   <data name="Tab.Gs232">
-    <value>Rotor GS-232</value>
+    <value>Rotor</value>
   </data>
   <data name="Gs232.Hint">
     <value>Prueba directamente un controlador de rotor compatible con Yaesu GS-232 y registra cada byte enviado y recibido, incluidas las respuestas que OscarWatch normalmente ignora. OscarWatch debe estar cerrado para que el puerto COM quede libre. Guarde este registro y adjúntelo cuando informe de un problema con el rotor.</value>
@@ -343,5 +343,170 @@ GPS: {2}</value>
   </data>
   <data name="Result.Gs232LogSaved">
     <value>Registro de la sesión guardado en {0}.</value>
+  </data>
+  <data name="Section.Findings">
+    <value>Lo que ha encontrado el solucionador</value>
+  </data>
+  <data name="Findings.Hint">
+    <value>Una lectura sencilla del estado de arriba. Los puertos solo se consultan, nunca se abren, así que no se envía nada a su radio.</value>
+  </data>
+  <data name="Findings.Level.Problem">
+    <value>Problema</value>
+  </data>
+  <data name="Findings.Level.Check">
+    <value>Revisar</value>
+  </data>
+  <data name="Findings.Level.Note">
+    <value>Nota</value>
+  </data>
+  <data name="Findings.NotResponding">
+    <value>OscarWatch se está ejecutando, pero Windows indica que no responde. Capture un informe de bloqueo antes de cerrarlo.</value>
+  </data>
+  <data name="Findings.SeveralRunning">
+    <value>Hay {0} copias de OscarWatch en ejecución. Ciérrelas todas y abra solo una.</value>
+  </data>
+  <data name="Findings.SettingsMissing">
+    <value>Todavía no existe settings.json. OscarWatch crea uno con la configuración predeterminada al iniciarse.</value>
+  </data>
+  <data name="Findings.SettingsUnreadable">
+    <value>No se puede leer settings.json, así que OscarWatch podría iniciarse con la configuración predeterminada. Restaure una copia de seguridad o aparte la configuración.</value>
+  </data>
+  <data name="Findings.NoPort">
+    <value>{0} está activado, pero no tiene ningún puerto elegido en Configuración.</value>
+  </data>
+  <data name="Findings.PortMissing">
+    <value>{0} está activado y configurado en {1}, pero {1} no está ahora en este equipo. Revise el cable, la alimentación y el controlador, o vuelva a elegir el puerto en Configuración.</value>
+  </data>
+  <data name="Findings.PortPresent">
+    <value>{0} está configurado en {1}, que está en este equipo. Eso solo demuestra que el puerto existe, no que el dispositivo responda.</value>
+  </data>
+  <data name="Findings.PortPresentGs232">
+    <value>{0} está configurado en {1}, que está en este equipo. Eso solo demuestra que el puerto existe, no que el controlador responda. La pestaña Rotor puede probarlo.</value>
+  </data>
+  <data name="Findings.PortShared">
+    <value>{0} y {1} están configurados en {2}. Cada dispositivo necesita su propio puerto.</value>
+  </data>
+  <data name="Findings.RecentErrors">
+    <value>El registro más reciente tiene {0} errores. Los últimos aparecen más abajo.</value>
+  </data>
+  <data name="Findings.NoneFound">
+    <value>No hay nada claramente mal en la configuración ni en el registro más reciente.</value>
+  </data>
+  <data name="Hardware.Radio">
+    <value>Radio</value>
+  </data>
+  <data name="Hardware.RadioDownlink">
+    <value>Radio de bajada</value>
+  </data>
+  <data name="Hardware.RadioUplink">
+    <value>Radio de subida</value>
+  </data>
+  <data name="Hardware.Rotator">
+    <value>Rotor</value>
+  </data>
+  <data name="Hardware.RotatorElevation">
+    <value>Elevación del rotor</value>
+  </data>
+  <data name="Hardware.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Freeze.Hint">
+    <value>Si OscarWatch se queda bloqueado, capture un informe de bloqueo antes de cerrarlo. Guarda una instantánea de lo que estaba haciendo OscarWatch, junto con los registros más recientes, en un archivo zip para el soporte. La instantánea contiene parte de la memoria de OscarWatch, así que envíela solo a alguien de confianza.</value>
+  </data>
+  <data name="Action.CaptureFreezeReport">
+    <value>Capturar informe de bloqueo</value>
+  </data>
+  <data name="Result.FreezeCapturing">
+    <value>Capturando un informe de bloqueo. Puede tardar un minuto…</value>
+  </data>
+  <data name="Result.FreezeSaved">
+    <value>Informe de bloqueo guardado en {0} ({1} MB). OscarWatch sigue en ejecución.</value>
+  </data>
+  <data name="Result.FreezeSavedNoDump">
+    <value>Informe de bloqueo guardado en {0} ({1} MB), pero sin una instantánea completa: {2}</value>
+  </data>
+  <data name="Section.Restore">
+    <value>Restaurar configuración</value>
+  </data>
+  <data name="Restore.Hint">
+    <value>Recupere un archivo de configuración que OscarWatch o el solucionador guardaron. Primero se hace una copia de la configuración actual, así que se puede deshacer.</value>
+  </data>
+  <data name="Backup.None">
+    <value>No se han encontrado copias de seguridad.</value>
+  </data>
+  <data name="Backup.Count">
+    <value>{0} copias de seguridad encontradas, la más reciente primero.</value>
+  </data>
+  <data name="Backup.Item">
+    <value>{0}, guardada {1}, {2}</value>
+  </data>
+  <data name="Backup.ItemNoCallsign">
+    <value>{0}, guardada {1}</value>
+  </data>
+  <data name="Action.RestoreBackup">
+    <value>Restaurar la copia seleccionada</value>
+  </data>
+  <data name="Confirm.RestoreBackup">
+    <value>¿Sustituir settings.json por {0}, guardada {1}? Primero se hace una copia de la configuración actual.</value>
+  </data>
+  <data name="Result.BackupRestored">
+    <value>{0} restaurada. Se ha guardado una copia de la configuración anterior. Inicie OscarWatch para usarla.</value>
+  </data>
+  <data name="Result.BackupMissing">
+    <value>Esa copia de seguridad ya no existe.</value>
+  </data>
+  <data name="Result.BackupUnreadable">
+    <value>Esa copia de seguridad no se puede leer, así que no se ha restaurado.</value>
+  </data>
+  <data name="Trace.Heading">
+    <value>Grabar el tráfico del rotor de OscarWatch</value>
+  </data>
+  <data name="Trace.Hint">
+    <value>Pide a OscarWatch que grabe cada orden, respuesta, tiempo de espera agotado y reintento del rotor durante 30 minutos mientras lo usa con normalidad, por ejemplo un Girar en espera o un pase. Necesita OscarWatch 1.1.7 o posterior. La grabación empieza la próxima vez que OscarWatch se comunique con el rotor.</value>
+  </data>
+  <data name="Trace.Label.Status">
+    <value>Grabación</value>
+  </data>
+  <data name="Trace.Label.File">
+    <value>Último archivo</value>
+  </data>
+  <data name="Trace.Recording">
+    <value>Activa hasta las {0}</value>
+  </data>
+  <data name="Trace.NotRecording">
+    <value>Desactivada</value>
+  </data>
+  <data name="Trace.NoFile">
+    <value>Ninguno todavía</value>
+  </data>
+  <data name="Trace.LatestFile">
+    <value>{0}, escrito {1}, {2} KB</value>
+  </data>
+  <data name="Trace.TailHeading">
+    <value>Final de la última grabación</value>
+  </data>
+  <data name="Trace.TailEmpty">
+    <value>Aún no hay grabación.</value>
+  </data>
+  <data name="Action.TraceStart">
+    <value>Iniciar grabación</value>
+  </data>
+  <data name="Action.TraceStop">
+    <value>Detener grabación</value>
+  </data>
+  <data name="Action.TraceCopy">
+    <value>Copiar grabación</value>
+  </data>
+  <data name="Result.TraceStarted">
+    <value>Grabación solicitada durante {0} minutos. Use OscarWatch con normalidad y luego detenga la grabación aquí.</value>
+  </data>
+  <data name="Result.TraceStopped">
+    <value>Grabación detenida.</value>
+  </data>
+  <data name="Result.TraceCopied">
+    <value>{0} copiado al portapapeles.</value>
+  </data>
+  <data name="Gs232.Heading">
+    <value>Prueba del controlador GS-232</value>
   </data>
 </root>

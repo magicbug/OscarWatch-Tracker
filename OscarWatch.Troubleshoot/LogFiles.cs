@@ -39,6 +39,10 @@ internal static partial class LogFiles
     public static IReadOnlyList<string> Tail(IReadOnlyList<string> lines, int count) =>
         lines.Skip(Math.Max(0, lines.Count - count)).ToList();
 
+    public static int CountProblems(IReadOnlyList<string> lines) => lines.Count(line =>
+        EntryStart().IsMatch(line)
+        && (line.Contains(" [ERR] ", StringComparison.Ordinal) || line.Contains(" [FTL] ", StringComparison.Ordinal)));
+
     /// <summary>The last <paramref name="maxEntries"/> ERR and FTL entries, each with its exception lines.</summary>
     public static IReadOnlyList<string> RecentProblems(IReadOnlyList<string> lines, int maxEntries = 5)
     {

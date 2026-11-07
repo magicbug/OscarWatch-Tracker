@@ -32,21 +32,21 @@ internal static class RotatorSerialTransportFactory
         if (settings.TransportKind == RotatorTransportKind.Tcp
             && settings.Type != RotatorType.GreenHeronRt21)
         {
-            return new TcpRotatorTransport(
-                settings.NetworkHost,
-                settings.NetworkPort > 0 ? settings.NetworkPort : RotatorSettings.DefaultNetworkPort,
-                readTimeoutMs,
-                writeTimeoutMs,
-                newLine);
+            var port = settings.NetworkPort > 0 ? settings.NetworkPort : RotatorSettings.DefaultNetworkPort;
+            return new TracingRotatorTransport(
+                new TcpRotatorTransport(settings.NetworkHost, port, readTimeoutMs, writeTimeoutMs, newLine),
+                $"{settings.NetworkHost}:{port}");
         }
 
-        return new SerialRotatorTransport(
-            portName,
-            settings.BaudRate,
-            readTimeoutMs,
-            writeTimeoutMs,
-            newLine,
-            dtrEnable,
-            rtsEnable);
+        return new TracingRotatorTransport(
+            new SerialRotatorTransport(
+                portName,
+                settings.BaudRate,
+                readTimeoutMs,
+                writeTimeoutMs,
+                newLine,
+                dtrEnable,
+                rtsEnable),
+            $"{portName} {settings.BaudRate}");
     }
 }

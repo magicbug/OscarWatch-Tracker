@@ -243,7 +243,7 @@ GPS: {2}</value>
     <value>Состояние</value>
   </data>
   <data name="Tab.Gs232">
-    <value>Поворотное устройство GS-232</value>
+    <value>Поворотное устройство</value>
   </data>
   <data name="Gs232.Hint">
     <value>Напрямую проверяет контроллер поворотного устройства, совместимый с Yaesu GS-232, и записывает каждый отправленный и полученный байт, включая ответы, которые OscarWatch обычно игнорирует. OscarWatch должен быть закрыт, чтобы COM-порт был свободен. Сохраните этот журнал и приложите его, когда сообщаете о проблеме с поворотным устройством.</value>
@@ -343,5 +343,170 @@ GPS: {2}</value>
   </data>
   <data name="Result.Gs232LogSaved">
     <value>Журнал сеанса сохранён в {0}.</value>
+  </data>
+  <data name="Section.Findings">
+    <value>Что нашла программа диагностики</value>
+  </data>
+  <data name="Findings.Hint">
+    <value>Понятное описание состояния выше. Порты только проверяются по списку и никогда не открываются, поэтому на радиостанцию ничего не отправляется.</value>
+  </data>
+  <data name="Findings.Level.Problem">
+    <value>Проблема</value>
+  </data>
+  <data name="Findings.Level.Check">
+    <value>Проверьте</value>
+  </data>
+  <data name="Findings.Level.Note">
+    <value>Примечание</value>
+  </data>
+  <data name="Findings.NotResponding">
+    <value>OscarWatch запущен, но Windows сообщает, что он не отвечает. Перед закрытием создайте отчёт о зависании.</value>
+  </data>
+  <data name="Findings.SeveralRunning">
+    <value>Запущено копий OscarWatch: {0}. Закройте все и запустите одну.</value>
+  </data>
+  <data name="Findings.SettingsMissing">
+    <value>Файла settings.json пока нет. OscarWatch создаст его с настройками по умолчанию при запуске.</value>
+  </data>
+  <data name="Findings.SettingsUnreadable">
+    <value>Не удаётся прочитать settings.json, поэтому OscarWatch может запуститься с настройками по умолчанию. Восстановите резервную копию или отложите настройки.</value>
+  </data>
+  <data name="Findings.NoPort">
+    <value>{0}: включено, но в настройках не выбран порт.</value>
+  </data>
+  <data name="Findings.PortMissing">
+    <value>{0}: включено и настроено на {1}, но {1} сейчас нет на этом компьютере. Проверьте кабель, питание и драйвер или заново выберите порт в настройках.</value>
+  </data>
+  <data name="Findings.PortPresent">
+    <value>{0}: настроено на {1}, этот порт есть на компьютере. Это показывает только, что порт существует, но не что устройство отвечает.</value>
+  </data>
+  <data name="Findings.PortPresentGs232">
+    <value>{0}: настроено на {1}, этот порт есть на компьютере. Это показывает только, что порт существует, но не что контроллер отвечает. Проверить его можно на вкладке «Поворотное устройство».</value>
+  </data>
+  <data name="Findings.PortShared">
+    <value>{0} и {1} настроены на один порт {2}. Каждому устройству нужен свой порт.</value>
+  </data>
+  <data name="Findings.RecentErrors">
+    <value>В последнем журнале ошибок: {0}. Самые свежие показаны ниже.</value>
+  </data>
+  <data name="Findings.NoneFound">
+    <value>В настройках и последнем журнале явных проблем не найдено.</value>
+  </data>
+  <data name="Hardware.Radio">
+    <value>Радиостанция</value>
+  </data>
+  <data name="Hardware.RadioDownlink">
+    <value>Радиостанция приёма</value>
+  </data>
+  <data name="Hardware.RadioUplink">
+    <value>Радиостанция передачи</value>
+  </data>
+  <data name="Hardware.Rotator">
+    <value>Поворотное устройство</value>
+  </data>
+  <data name="Hardware.RotatorElevation">
+    <value>Поворотное устройство (угол места)</value>
+  </data>
+  <data name="Hardware.Gps">
+    <value>GPS</value>
+  </data>
+  <data name="Freeze.Hint">
+    <value>Если OscarWatch завис, перед закрытием создайте отчёт о зависании. Он сохраняет снимок того, чем был занят OscarWatch, вместе с последними журналами в zip-файл для поддержки. Снимок содержит часть памяти OscarWatch, поэтому отправляйте его только тем, кому доверяете.</value>
+  </data>
+  <data name="Action.CaptureFreezeReport">
+    <value>Создать отчёт о зависании</value>
+  </data>
+  <data name="Result.FreezeCapturing">
+    <value>Создаётся отчёт о зависании. Это может занять минуту…</value>
+  </data>
+  <data name="Result.FreezeSaved">
+    <value>Отчёт о зависании сохранён в {0} ({1} МБ). OscarWatch продолжает работать.</value>
+  </data>
+  <data name="Result.FreezeSavedNoDump">
+    <value>Отчёт о зависании сохранён в {0} ({1} МБ), но без полного снимка: {2}</value>
+  </data>
+  <data name="Section.Restore">
+    <value>Восстановление настроек</value>
+  </data>
+  <data name="Restore.Hint">
+    <value>Верните файл настроек, сохранённый OscarWatch или программой диагностики. Текущие настройки сначала копируются, поэтому действие можно отменить.</value>
+  </data>
+  <data name="Backup.None">
+    <value>Резервные копии не найдены.</value>
+  </data>
+  <data name="Backup.Count">
+    <value>Найдено резервных копий: {0}, сначала новые.</value>
+  </data>
+  <data name="Backup.Item">
+    <value>{0}, сохранено {1}, {2}</value>
+  </data>
+  <data name="Backup.ItemNoCallsign">
+    <value>{0}, сохранено {1}</value>
+  </data>
+  <data name="Action.RestoreBackup">
+    <value>Восстановить выбранную копию</value>
+  </data>
+  <data name="Confirm.RestoreBackup">
+    <value>Заменить settings.json файлом {0} (сохранён {1})? Текущие настройки сначала будут скопированы.</value>
+  </data>
+  <data name="Result.BackupRestored">
+    <value>{0} восстановлен. Предыдущие настройки сохранены в резервной копии. Запустите OscarWatch, чтобы их использовать.</value>
+  </data>
+  <data name="Result.BackupMissing">
+    <value>Этой резервной копии больше нет.</value>
+  </data>
+  <data name="Result.BackupUnreadable">
+    <value>Эту резервную копию не удаётся прочитать, поэтому она не восстановлена.</value>
+  </data>
+  <data name="Trace.Heading">
+    <value>Запись обмена OscarWatch с поворотным устройством</value>
+  </data>
+  <data name="Trace.Hint">
+    <value>Просит OscarWatch 30 минут записывать каждую команду, ответ, тайм-аут и повтор для поворотного устройства, пока вы работаете как обычно, например поворот в режиме ожидания или пролёт. Нужен OscarWatch 1.1.7 или новее. Запись начнётся, когда OscarWatch в следующий раз обратится к поворотному устройству.</value>
+  </data>
+  <data name="Trace.Label.Status">
+    <value>Запись</value>
+  </data>
+  <data name="Trace.Label.File">
+    <value>Последний файл</value>
+  </data>
+  <data name="Trace.Recording">
+    <value>Включена до {0}</value>
+  </data>
+  <data name="Trace.NotRecording">
+    <value>Выключена</value>
+  </data>
+  <data name="Trace.NoFile">
+    <value>Пока нет</value>
+  </data>
+  <data name="Trace.LatestFile">
+    <value>{0}, записан {1}, {2} КБ</value>
+  </data>
+  <data name="Trace.TailHeading">
+    <value>Конец последней записи</value>
+  </data>
+  <data name="Trace.TailEmpty">
+    <value>Записи пока нет.</value>
+  </data>
+  <data name="Action.TraceStart">
+    <value>Начать запись</value>
+  </data>
+  <data name="Action.TraceStop">
+    <value>Остановить запись</value>
+  </data>
+  <data name="Action.TraceCopy">
+    <value>Скопировать запись</value>
+  </data>
+  <data name="Result.TraceStarted">
+    <value>Запрошена запись на {0} мин. Работайте с OscarWatch как обычно, затем остановите запись здесь.</value>
+  </data>
+  <data name="Result.TraceStopped">
+    <value>Запись остановлена.</value>
+  </data>
+  <data name="Result.TraceCopied">
+    <value>{0} скопирован в буфер обмена.</value>
+  </data>
+  <data name="Gs232.Heading">
+    <value>Проверка контроллера GS-232</value>
   </data>
 </root>

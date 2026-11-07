@@ -26,6 +26,19 @@ internal sealed record Gs232Target(
     int MaxAzimuthDeg,
     int MaxElevationDeg);
 
+internal enum HardwareDevice
+{
+    Radio,
+    RadioDownlink,
+    RadioUplink,
+    Rotator,
+    RotatorElevation,
+    Gps
+}
+
+/// <summary>A local serial port a device uses. <see cref="Port"/> is empty when the device has none chosen.</summary>
+internal sealed record SerialPortUse(HardwareDevice Device, string Port, bool Enabled, bool IsGs232 = false);
+
 internal sealed record SettingsSnapshot(
     SettingsFileState State,
     DateTime? LastWriteLocal,
@@ -34,7 +47,21 @@ internal sealed record SettingsSnapshot(
     DeviceState Rotator,
     DeviceState Gps,
     int EchoCalibrationCount = 0,
-    Gs232Target? Gs232 = null);
+    Gs232Target? Gs232 = null,
+    IReadOnlyList<SerialPortUse>? SerialPorts = null)
+{
+    public IReadOnlyList<SerialPortUse> SerialPortUses => SerialPorts ?? [];
+}
+
+/// <summary>A settings file OscarWatch or the troubleshooter kept, which can be put back as settings.json.</summary>
+internal sealed record SettingsBackup(string Path, string Name, DateTime WrittenLocal, string Callsign);
+
+internal enum RestoreBackupResult
+{
+    Restored,
+    Unreadable,
+    Missing
+}
 
 internal enum DisableHardwareResult
 {
@@ -110,7 +137,62 @@ internal static class SettingsFile
             ReadRotator(GetChild(root, "rotator") as JsonObject),
             ReadGps(GetChild(root, "gps") as JsonObject),
             EchoCalibrations(root)?.Count ?? 0,
-            ReadGs232(GetChild(root, "rotator") as JsonObject));
+            ReadGs232(GetChild(root, "rotator") as JsonObject),
+            ReadSerialPorts(root));
+    }
+
+    /// <summary>
+    /// Every backup beside settings.json, plus settings.json in each <c>settings-aside-*</c> folder,
+    /// newest first. Files that are not readable JSON are left out, because they cannot be restored.
+    /// </summary>
+    public static IReadOnlyList<SettingsBackup> ListBackups(string path)
+    {
+        var directory = Path.GetDirectoryName(path);
+        if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+            return [];
+
+        var candidates = EnumerateSettingsFiles(path).Skip(1).ToList();
+        try
+        {
+            foreach (var folder in Directory.EnumerateDirectories(directory, "settings-aside-*"))
+                candidates.Add(Path.Combine(folder, Path.GetFileName(path)));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // list what we have
+        }
+
+        var backups = new List<SettingsBackup>();
+        foreach (var candidate in candidates.Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            if (!File.Exists(candidate) || !TryLoad(candidate, out var root, out _))
+                continue;
+
+            var callsign = GetChild(root, "groundStation") is JsonObject station ? ReadString(station, "callsign") : "";
+            backups.Add(new SettingsBackup(
+                candidate,
+                Path.GetRelativePath(directory, candidate),
+                File.GetLastWriteTime(candidate),
+                callsign));
+        }
+
+        return backups.OrderByDescending(backup => backup.WrittenLocal).ToList();
+    }
+
+    /// <summary>Copies a backup over settings.json. The current settings.json is backed up first.</summary>
+    public static RestoreBackupResult RestoreBackup(string path, string backupPath)
+    {
+        if (!File.Exists(backupPath))
+            return RestoreBackupResult.Missing;
+
+        if (!TryLoad(backupPath, out _, out _))
+            return RestoreBackupResult.Unreadable;
+
+        var contents = File.ReadAllText(backupPath);
+        if (File.Exists(path))
+            BackUp(path);
+        WriteAtomic(path, contents);
+        return RestoreBackupResult.Restored;
     }
 
     /// <summary>
@@ -296,6 +378,61 @@ internal static class SettingsFile
 
         return new DeviceState(ReadBool(rotator, "enabled"), target);
     }
+
+    /// <summary>Local serial ports for the radio legs, rotator axes and GPS. Network connections are left out.</summary>
+    private static List<SerialPortUse> ReadSerialPorts(JsonObject root)
+    {
+        var ports = new List<SerialPortUse>();
+
+        if (GetChild(root, "rig") is JsonObject rig)
+        {
+            var enabled = ReadBool(rig, "enabled") == true;
+            if (ReadBool(rig, "dualRadioEnabled") == true)
+            {
+                if (GetChild(rig, "downlink") is JsonObject downlink && RigEndpointUsesSerial(downlink))
+                    ports.Add(new SerialPortUse(HardwareDevice.RadioDownlink, ReadString(downlink, "port"), enabled));
+                if (GetChild(rig, "uplink") is JsonObject uplink && RigEndpointUsesSerial(uplink))
+                    ports.Add(new SerialPortUse(HardwareDevice.RadioUplink, ReadString(uplink, "port"), enabled));
+            }
+            else if (!IsAnyOf(ReadString(rig, "type"), "", "none", "dummy", "flexSmartSdr"))
+            {
+                ports.Add(new SerialPortUse(HardwareDevice.Radio, ReadString(rig, "port"), enabled));
+            }
+        }
+
+        if (GetChild(root, "rotator") is JsonObject rotator)
+        {
+            var enabled = ReadBool(rotator, "enabled") == true;
+            var type = ReadString(rotator, "type");
+            var gs232 = ReadGs232(rotator).IsSerialGs232;
+            if (IsAnyOf(type, "greenHeronRt21"))
+            {
+                ports.Add(new SerialPortUse(HardwareDevice.Rotator, ReadString(rotator, "port"), enabled));
+                ports.Add(new SerialPortUse(HardwareDevice.RotatorElevation, ReadString(rotator, "elevationPort"), enabled));
+            }
+            else if (!IsAnyOf(type, "urcTcp", "spidMd01")
+                     && IsAnyOf(ReadString(rotator, "transportKind"), "", "0", "serial"))
+            {
+                ports.Add(new SerialPortUse(HardwareDevice.Rotator, ReadString(rotator, "port"), enabled, gs232));
+            }
+        }
+
+        if (GetChild(root, "gps") is JsonObject gps && IsAnyOf(ReadString(gps, "connectionKind"), "", "0", "serial"))
+            ports.Add(new SerialPortUse(HardwareDevice.Gps, ReadString(gps, "port"), ReadBool(gps, "enabled") == true));
+
+        return ports;
+    }
+
+    private static bool RigEndpointUsesSerial(JsonObject endpoint)
+    {
+        var type = ReadString(endpoint, "type");
+        if (IsAnyOf(type, "", "none", "dummy", "sdrRigCtlTcp"))
+            return false;
+        return !(IsAnyOf(type, "kenwoodTs990s", "kenwoodTs890s") && IsAnyOf(ReadString(endpoint, "connection"), "lan", "1"));
+    }
+
+    private static bool IsAnyOf(string value, params string[] options) =>
+        options.Any(option => string.Equals(value, option, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>A missing section or property takes the tracker's default: GS-232 on serial at 4800 baud, 450° by 180°.</summary>
     private static Gs232Target ReadGs232(JsonObject? rotator)
