@@ -101,9 +101,9 @@ public partial class PassPlanningViewModel : ViewModelBase
         foreach (var station in _settings.Current.SavedStations)
             Stations.Add(station);
 
-        FilterMinElevationDeg = _settings.Current.MinimumElevationDeg;
+        FilterMinElevationDeg = _settings.Current.PassPlannerMinElevationDeg ?? _settings.Current.MinimumElevationDeg;
         FilterMinDurationMinutes = _settings.Current.PassFilterMinDurationMinutes;
-        FilterPredictionHours = _settings.Current.PassPredictionHours;
+        FilterPredictionHours = _settings.Current.PassPlannerPredictionHours;
         UseUtcTime = _settings.Current.PassPlannerUseUtcTime;
 
         SelectedStation = Stations.FirstOrDefault(s => s.Id == _settings.Current.ActiveStationId)
@@ -565,9 +565,9 @@ public partial class PassPlanningViewModel : ViewModelBase
     public async Task SaveFiltersAndStationsAsync()
     {
         ApplyEditableFieldsToSelectedStation();
-        _settings.Current.MinimumElevationDeg = FilterMinElevationDeg;
+        _settings.Current.PassPlannerMinElevationDeg = FilterMinElevationDeg;
         _settings.Current.PassFilterMinDurationMinutes = FilterMinDurationMinutes;
-        _settings.Current.PassPredictionHours = FilterPredictionHours;
+        _settings.Current.PassPlannerPredictionHours = FilterPredictionHours;
         _settings.Current.PassPlannerUseUtcTime = UseUtcTime;
         await _settings.SaveAsync();
     }
@@ -580,9 +580,9 @@ public partial class PassPlanningViewModel : ViewModelBase
         ApplyEditableFieldsToSelectedStation();
         _settings.Current.ActiveStationId = SelectedStation.Id;
         _settings.ApplyActiveStation();
-        _settings.Current.MinimumElevationDeg = FilterMinElevationDeg;
+        _settings.Current.PassPlannerMinElevationDeg = FilterMinElevationDeg;
         _settings.Current.PassFilterMinDurationMinutes = FilterMinDurationMinutes;
-        _settings.Current.PassPredictionHours = FilterPredictionHours;
+        _settings.Current.PassPlannerPredictionHours = FilterPredictionHours;
         _settings.Current.PassPlannerUseUtcTime = UseUtcTime;
         await _settings.SaveAsync();
     }

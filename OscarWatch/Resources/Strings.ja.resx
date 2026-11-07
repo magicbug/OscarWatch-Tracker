@@ -1420,7 +1420,13 @@
     <value>パス予測ウィンドウ (時間)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>今後のパス一覧とパスプランナーの既定値に使用されます。</value>
+    <value>Used for the upcoming pass list and pass elevation timeline.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Upcoming passes minimum duration (minutes)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 = show every pass above minimum elevation (and horizon mask). Pass planner has its own minimum duration filter.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>起動時にトランスポンダーDBの更新を確認</value>

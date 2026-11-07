@@ -2735,7 +2735,13 @@ LOS: {2}
     <value>Окно прогноза пролётов (часы)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Для списка ближайших пролётов и как значения по умолчанию в планировщике.</value>
+    <value>Used for the upcoming pass list and pass elevation timeline.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Upcoming passes minimum duration (minutes)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 = show every pass above minimum elevation (and horizon mask). Pass planner has its own minimum duration filter.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Проверять обновления базы транспондеров при запуске</value>

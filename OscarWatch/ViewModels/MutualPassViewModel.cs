@@ -137,7 +137,7 @@ public partial class MutualPassViewModel : ViewModelBase
         FilterMinElevationDeg = _settings.Current.MinimumElevationDeg;
         FilterMinPassDurationMinutes = _settings.Current.PassFilterMinDurationMinutes;
         FilterMinMutualDurationMinutes = Math.Max(1, FilterMinPassDurationMinutes / 2);
-        FilterPredictionHours = _settings.Current.PassPredictionHours;
+        FilterPredictionHours = _settings.Current.PassPlannerPredictionHours;
         UseUtcTime = _settings.Current.PassPlannerUseUtcTime;
         InitializeDateRangeDefaults();
         WizardStep = 0;

@@ -462,7 +462,7 @@ public sealed class TrackingOrchestrator
             s.GroundStation,
             s.MinimumElevationDeg,
             s.PassPredictionHours,
-            s.PassFilterMinDurationMinutes,
+            s.UpcomingPassesMinDurationMinutes,
             cancellationToken);
     }
 

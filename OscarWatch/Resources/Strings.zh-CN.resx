@@ -2731,7 +2731,13 @@
     <value>过境预测窗口（小时）</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>用于即将过境列表，并作为过境规划中的默认值。</value>
+    <value>Used for the upcoming pass list and pass elevation timeline.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Upcoming passes minimum duration (minutes)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 = show every pass above minimum elevation (and horizon mask). Pass planner has its own minimum duration filter.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>启动时检查转发器数据库更新</value>

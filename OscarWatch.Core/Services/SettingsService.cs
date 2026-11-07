@@ -440,6 +440,11 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.TransponderConflictAcknowledgments ??= [];
         settings.EnabledSatelliteNames ??= [];
         settings.EnabledSatelliteNoradIds ??= [];
+        settings.UpcomingPassesMinDurationMinutes = Math.Clamp(settings.UpcomingPassesMinDurationMinutes, 0, 120);
+        settings.PassFilterMinDurationMinutes = Math.Clamp(settings.PassFilterMinDurationMinutes, 0, 120);
+        settings.PassPlannerPredictionHours = Math.Clamp(settings.PassPlannerPredictionHours, 6, 168);
+        if (settings.PassPlannerMinElevationDeg is { } plannerMinEl)
+            settings.PassPlannerMinElevationDeg = Math.Clamp(plannerMinEl, 0, 90);
         MigrateGroundStationCallsignToSavedStations(settings);
     }
 

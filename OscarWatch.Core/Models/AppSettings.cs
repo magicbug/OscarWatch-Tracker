@@ -11,8 +11,21 @@ public sealed class AppSettings
     /// <summary>Catalogue IDs (NORAD / Alpha-5) for enabled satellites. Preferred over names when present.</summary>
     public List<string> EnabledSatelliteNoradIds { get; set; } = ["25544", "27607", "43017"];
     public double MinimumElevationDeg { get; set; } = 5.0;
+    /// <summary>Lookahead for the main-window upcoming passes list and pass elevation timeline.</summary>
     public int PassPredictionHours { get; set; } = 48;
+    /// <summary>
+    /// Minimum pass length for the main-window upcoming passes list (0 = no extra duration filter beyond elevation and horizon mask).
+    /// Independent of <see cref="PassFilterMinDurationMinutes"/>.
+    /// </summary>
+    public int UpcomingPassesMinDurationMinutes { get; set; }
+    /// <summary>Minimum pass length filter persisted for pass planner (and mutual pass defaults). Not used by the main-window list.</summary>
     public int PassFilterMinDurationMinutes { get; set; } = 2;
+    /// <summary>Lookahead hours persisted for pass planner. Not used by the main-window upcoming passes list.</summary>
+    public int PassPlannerPredictionHours { get; set; } = 48;
+    /// <summary>
+    /// Minimum elevation persisted for pass planner when set. When null, planner opens using <see cref="MinimumElevationDeg"/> until the operator saves planner filters.
+    /// </summary>
+    public double? PassPlannerMinElevationDeg { get; set; }
     /// <summary>When true, main UI times (status clock, sidebar passes, hams.at, sunlight) use UTC; otherwise local time.</summary>
     public bool DisplayTimesInUtc { get; set; }
 
