@@ -2353,8 +2353,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         }
         else if (value.Value == RotatorType.PstRotatorUdp)
         {
-            if (IsDefaultRotatorNetworkPort(RotatorNetworkPort))
-                RotatorNetworkPort = RotatorSettings.DefaultPstRotatorUdpPort;
+            // A port typed for a TCP rotator (e.g. 4533 for a GS-232 TCP serial tunnel) is never
+            // PstRotator's UDP port, so switching to this type always starts from the default.
+            RotatorNetworkPort = RotatorSettings.DefaultPstRotatorUdpPort;
         }
 
         RefreshComPortConflictIfReady();
