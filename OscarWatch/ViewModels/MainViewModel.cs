@@ -2049,12 +2049,13 @@ public partial class MainViewModel : ViewModelBase
             pass.IsScheduled = ScheduledPassReminder.IsScheduled(scheduled, pass.NoradId, pass.AosUtc);
     }
 
-    private void RematchScheduledPasses(IReadOnlyList<PassInfo> upcoming)
+    private void RematchScheduledPasses(IReadOnlyList<PassInfo> upcoming, DateTime coveredUntilUtc)
     {
         var rematched = ScheduledPassReminder.RematchAndPrune(
             _settings.Current.ScheduledPasses ?? [],
             upcoming,
-            DateTime.UtcNow);
+            DateTime.UtcNow,
+            coveredUntilUtc);
         var previous = _settings.Current.ScheduledPasses ?? [];
         if (ScheduledPassListsEqual(previous, rematched))
             return;
@@ -3529,7 +3530,19 @@ public partial class MainViewModel : ViewModelBase
             var selectedRow = SelectedListItem as PassRowViewModel;
             var selectedNorad = selectedRow?.NoradId;
             var selectedAos = selectedRow?.AosUtc;
-            var passes = await _tracking.GetUpcomingPassesAsync().ConfigureAwait(false);
+            var refreshUtc = DateTime.UtcNow;
+            var trackingSettings = _settings.Current;
+            var rematchHours = ScheduledPassHorizon.Hours(trackingSettings, refreshUtc);
+            var predicted = await _tracking.GetPassesAsync(
+                trackingSettings.GroundStation,
+                trackingSettings.MinimumElevationDeg,
+                rematchHours,
+                minimumDurationMinutes: 0).ConfigureAwait(false);
+            var passes = PassSidebarMerge.WithinPredictionWindow(
+                predicted,
+                refreshUtc,
+                trackingSettings.PassPredictionHours,
+                trackingSettings.UpcomingPassesMinDurationMinutes);
 
             void Apply()
             {
@@ -3539,6 +3552,9 @@ public partial class MainViewModel : ViewModelBase
                     .Select(p => p.Source)
                     .ToList();
                 var merged = PassSidebarMerge.MergeInProgressPasses(passes, inProgress, utcNow)
+                    .Where(p => PassUtc.Normalize(p.LosUtc) > utcNow)
+                    .ToList();
+                var rematchPasses = PassSidebarMerge.MergeInProgressPasses(predicted, inProgress, utcNow)
                     .Where(p => PassUtc.Normalize(p.LosUtc) > utcNow)
                     .ToList();
 
@@ -3564,7 +3580,7 @@ public partial class MainViewModel : ViewModelBase
                     items.Add(row);
                 }
 
-                RematchScheduledPasses(merged);
+                RematchScheduledPasses(rematchPasses, refreshUtc.AddHours(rematchHours));
                 ApplyPassListHighlights(items);
                 ReplacePassList(items);
                 ApplyScheduledFlagsToPassList();

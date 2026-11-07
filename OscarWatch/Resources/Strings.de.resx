@@ -2735,7 +2735,13 @@ Fortfahren?</value>
     <value>Überflug-Vorhersagefenster (Stunden)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Für die Liste der nächsten Überflüge und als Vorgabe im Überflugplaner.</value>
+    <value>Für die Liste der nächsten Überflüge und den Elevationsverlauf.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Mindestlänge der nächsten Überflüge (Minuten)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 zeigt jeden Überflug über der Mindesthöhe und der Horizontmaske. Der Überflugplaner hat eine eigene Mindestlänge.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Beim Start auf Updates der Transponderdatenbank prüfen</value>

@@ -2731,7 +2731,13 @@
     <value>Ventana de predicción de pases (horas)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Se utiliza para la lista de próximos pases y como valor predeterminado en el planificador.</value>
+    <value>Se utiliza para la lista de próximos pases y el cronograma de elevación de pases.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Duración mínima de los próximos pases (minutos)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 muestra cada pase por encima de la elevación mínima y la máscara del horizonte. El planificador de pases tiene su propia duración mínima.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Comprobar actualizaciones de la base de datos de transpondedores al iniciar</value>

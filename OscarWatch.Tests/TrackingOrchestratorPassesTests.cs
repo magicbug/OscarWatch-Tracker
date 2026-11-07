@@ -91,6 +91,43 @@ public sealed class TrackingOrchestratorPassesTests
         Assert.Equal(0, passes[2].PaletteIndex);
     }
 
+    [Fact]
+    public async Task GetUpcomingPassesAsync_uses_sidebar_duration_not_planner_duration()
+    {
+        var aos = DateTime.UtcNow.AddHours(2);
+        var shortPass = new PassInfo
+        {
+            NoradId = "25544",
+            SatelliteName = "ISS",
+            AosUtc = aos,
+            LosUtc = aos.AddMinutes(1.5),
+            MaxElevationUtc = aos.AddMinutes(0.75),
+            MaxElevationDeg = 70
+        };
+        var settings = new StubSettingsService();
+        settings.Current.UpcomingPassesMinDurationMinutes = 0;
+        settings.Current.PassFilterMinDurationMinutes = 10;
+        var orchestrator = new TrackingOrchestrator(
+            settings,
+            new StubTleService([new SatelliteCatalogEntry { NoradId = "25544", Name = "ISS", Line1 = "", Line2 = "" }]),
+            new NoOpPropagator(),
+            new NoOpGroundGeometry(),
+            new MappedPassPredictor(new Dictionary<string, PassInfo[]>(StringComparer.Ordinal)
+            {
+                ["25544"] = [shortPass]
+            }));
+
+        var upcoming = await orchestrator.GetUpcomingPassesAsync();
+        Assert.Single(upcoming);
+
+        var planner = await orchestrator.GetPassesAsync(
+            new GroundStation(),
+            minimumElevationDeg: 5,
+            predictionHours: 48,
+            minimumDurationMinutes: 10);
+        Assert.Empty(planner);
+    }
+
     private sealed class StubSettingsService : ISettingsService
     {
         public AppSettings Current { get; } = new();

@@ -2735,7 +2735,13 @@ Continuare?</value>
     <value>Intervallo di previsione dei passaggi (ore)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Usato per l'elenco dei prossimi passaggi e come valore predefinito nel pianificatore.</value>
+    <value>Usato per l'elenco dei prossimi passaggi e per la timeline di elevazione dei passaggi.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Durata minima dei prossimi passaggi (minuti)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 mostra ogni passaggio sopra l'elevazione minima e la maschera dell'orizzonte. Il pianificatore ha una propria durata minima.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Controlla all'avvio gli aggiornamenti del database dei transponder</value>

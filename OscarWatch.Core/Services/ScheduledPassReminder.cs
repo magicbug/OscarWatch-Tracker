@@ -101,6 +101,28 @@ public sealed class ScheduledPassReminder
         return best;
     }
 
+    private static PassInfo? FindPassContainingAos(List<PassInfo> candidates, DateTime aosUtc)
+    {
+        PassInfo? best = null;
+        var bestLength = TimeSpan.MaxValue;
+        foreach (var pass in candidates)
+        {
+            var aos = PassUtc.Normalize(pass.AosUtc);
+            var los = PassUtc.Normalize(pass.LosUtc);
+            if (aosUtc < aos || aosUtc > los)
+                continue;
+
+            var length = los - aos;
+            if (length < bestLength)
+            {
+                bestLength = length;
+                best = pass;
+            }
+        }
+
+        return best;
+    }
+
     public static string AlertKey(string noradId, DateTime aosUtc)
     {
         var aos = PassUtc.Normalize(aosUtc);
@@ -139,7 +161,8 @@ public sealed class ScheduledPassReminder
     public static List<ScheduledPassEntry> RematchAndPrune(
         IReadOnlyList<ScheduledPassEntry> scheduled,
         IReadOnlyList<PassInfo> upcomingPasses,
-        DateTime utcNow)
+        DateTime utcNow,
+        DateTime? coveredUntilUtc = null)
     {
         var now = PassUtc.Normalize(utcNow);
         var result = new List<ScheduledPassEntry>(scheduled.Count);
@@ -160,23 +183,50 @@ public sealed class ScheduledPassReminder
             passes.Add(pass);
         }
 
+        var coveredUntil = coveredUntilUtc is DateTime covered ? PassUtc.Normalize(covered) : (DateTime?)null;
+
         foreach (var entry in scheduled)
         {
             if (string.IsNullOrWhiteSpace(entry.NoradId))
                 continue;
 
-            if (!passesByNoradId.TryGetValue(entry.NoradId, out var candidatePasses))
-                continue;
+            var entryAos = PassUtc.Normalize(entry.AosUtc);
+            passesByNoradId.TryGetValue(entry.NoradId, out var candidatePasses);
 
-            var pass = FindBestMatchFromCandidates(candidatePasses, entry.AosUtc);
+            var pass = candidatePasses is null
+                ? null
+                : FindBestMatchFromCandidates(candidatePasses, entry.AosUtc);
+            var keepStoredAos = false;
+            if (pass is null && candidatePasses is not null)
+            {
+                // A higher elevation threshold moves AOS later, often by more than the 2-minute
+                // retarget window. The scheduled time still falls inside the same pass.
+                pass = FindPassContainingAos(candidatePasses, entryAos);
+                keepStoredAos = pass is not null;
+            }
+
             if (pass is null)
+            {
+                if (coveredUntil is DateTime until
+                    && entryAos > until
+                    && now <= entryAos
+                    && seen.Add(AlertKey(entry.NoradId, entryAos)))
+                {
+                    result.Add(new ScheduledPassEntry
+                    {
+                        NoradId = entry.NoradId,
+                        AosUtc = entryAos
+                    });
+                }
+
                 continue;
+            }
 
             var los = PassUtc.Normalize(pass.LosUtc);
             if (now > los)
                 continue;
 
-            var aos = PassUtc.Normalize(pass.AosUtc);
+            var aos = keepStoredAos ? entryAos : PassUtc.Normalize(pass.AosUtc);
             var key = AlertKey(pass.NoradId, aos);
             if (!seen.Add(key))
                 continue;

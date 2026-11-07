@@ -2735,7 +2735,13 @@ LOS: {2}
     <value>Окно прогноза пролётов (часы)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Для списка ближайших пролётов и как значения по умолчанию в планировщике.</value>
+    <value>Для списка ближайших пролётов и шкалы угла места пролётов.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Минимальная длительность ближайших пролётов (минуты)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 показывает каждый пролёт выше минимального угла места и маски горизонта. У планировщика пролётов своя минимальная длительность.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Проверять обновления базы транспондеров при запуске</value>

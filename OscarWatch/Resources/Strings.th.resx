@@ -2735,7 +2735,13 @@ LOS: {2}
     <value>หน้าต่างพยากรณ์พาส (ชั่วโมง)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>ใช้สำหรับรายการพาสที่กำลังจะมาถึง และเป็นค่าเริ่มต้นในตัววางแผนพาส</value>
+    <value>ใช้สำหรับรายการพาสที่กำลังจะมาถึง และไทม์ไลน์มุมเงยของพาส</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>ระยะเวลาขั้นต่ำของพาสที่กำลังจะมาถึง (นาที)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 แสดงทุกพาสที่สูงกว่ามุมเงยต่ำสุดและมาสก์ขอบฟ้า ตัววางแผนพาสมีระยะเวลาขั้นต่ำของตัวเอง</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>ตรวจการอัปเดตฐานข้อมูลทรานสปอนเดอร์เมื่อเริ่มต้น</value>

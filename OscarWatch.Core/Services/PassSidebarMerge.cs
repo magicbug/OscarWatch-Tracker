@@ -13,6 +13,23 @@ public static class PassSidebarMerge
     public static readonly TimeSpan RecordingEarlyStartGrace = TimeSpan.FromMinutes(2);
 
     /// <summary>
+    /// Passes the sidebar and timeline should show: AOS inside the tracking prediction window,
+    /// and at least the upcoming-pass minimum duration.
+    /// </summary>
+    public static IReadOnlyList<PassInfo> WithinPredictionWindow(
+        IReadOnlyList<PassInfo> passes,
+        DateTime utcNow,
+        int predictionHours,
+        int minimumDurationMinutes)
+    {
+        var end = PassUtc.Normalize(utcNow).AddHours(Math.Max(0, predictionHours));
+        var minDuration = TimeSpan.FromMinutes(Math.Max(0, minimumDurationMinutes));
+        return passes
+            .Where(p => PassUtc.Normalize(p.AosUtc) < end && p.Duration >= minDuration)
+            .ToList();
+    }
+
+    /// <summary>
     /// Re-adds passes that are still in progress when the predictor omits them (e.g. elevation dipped
     /// below the list threshold before the next 15-minute refresh).
     /// </summary>

@@ -80,6 +80,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private int _passPredictionHours = 48;
 
     [ObservableProperty]
+    private int _upcomingPassesMinDurationMinutes;
+
+    [ObservableProperty]
     private AppThemePreference _themePreference = AppThemePreference.System;
 
     [ObservableProperty]
@@ -1323,6 +1326,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         };
         _settings.Current.MinimumElevationDeg = MinimumElevationDeg;
         _settings.Current.PassPredictionHours = PassPredictionHours;
+        _settings.Current.UpcomingPassesMinDurationMinutes = UpcomingPassesMinDurationMinutes;
         _settings.Current.Theme = ThemePreference;
         _settings.Current.UiLanguage = newLanguage;
         _settings.Current.ShowFootprintMotionArrows = ShowFootprintMotionArrows;
@@ -1564,6 +1568,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
                 HorizonMaskPoints.Add(new HorizonMaskPoint(p.AzimuthDeg, p.ElevationDeg));
             MinimumElevationDeg = _settings.Current.MinimumElevationDeg;
             PassPredictionHours = _settings.Current.PassPredictionHours;
+            UpcomingPassesMinDurationMinutes = _settings.Current.UpcomingPassesMinDurationMinutes;
             ThemePreference = _settings.Current.Theme;
             SelectedThemeOption = ThemeOptions.FirstOrDefault(o => o.Value == ThemePreference)
                 ?? ThemeOptions[0];

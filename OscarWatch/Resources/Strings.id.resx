@@ -2735,7 +2735,13 @@ Lanjutkan?</value>
     <value>Jendela prediksi lintasan (jam)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Dipakai untuk daftar lintasan mendatang dan sebagai bawaan di perencana lintasan.</value>
+    <value>Dipakai untuk daftar lintasan mendatang dan timeline elevasi lintasan.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Durasi minimum lintasan mendatang (menit)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 menampilkan setiap lintasan di atas elevasi minimum dan masker horizon. Perencana lintasan punya durasi minimum sendiri.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Periksa pembaruan basis data transponder saat mulai</value>

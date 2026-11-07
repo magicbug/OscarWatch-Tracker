@@ -2731,7 +2731,13 @@ Continuar?</value>
     <value>Janela de previsão de passagens (horas)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>Usado para a lista de próximas passagens e como padrão na previsão de passagens.</value>
+    <value>Usado para a lista de próximas passagens e para a linha do tempo de elevação de passagens.</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>Duração mínima das próximas passagens (minutos)</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 mostra cada passagem acima da elevação mínima e da máscara do horizonte. O planejador de passagens tem a sua própria duração mínima.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Verificar atualizações do banco de dados de transmissores/transponders na inicialização</value>

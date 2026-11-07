@@ -1420,7 +1420,13 @@
     <value>パス予測ウィンドウ (時間)</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>今後のパス一覧とパスプランナーの既定値に使用されます。</value>
+    <value>今後のパス一覧とパス仰角タイムラインに使用します。</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>今後のパスの最短時間（分）</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 は最低仰角と地平マスクを超えるすべてのパスを表示します。パスプランナーには別の最短時間があります。</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>起動時にトランスポンダーDBの更新を確認</value>

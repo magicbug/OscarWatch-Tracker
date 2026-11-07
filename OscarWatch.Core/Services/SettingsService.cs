@@ -76,6 +76,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
             settings = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions) ?? new AppSettings();
             MigrateDisplayTimesInUtc(json, settings);
             MigrateMissingEnabledSatelliteNoradIds(json, settings);
+            MigratePassPlannerPredictionHours(json, settings);
         }
         catch (JsonException ex)
         {
@@ -440,6 +441,11 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.TransponderConflictAcknowledgments ??= [];
         settings.EnabledSatelliteNames ??= [];
         settings.EnabledSatelliteNoradIds ??= [];
+        settings.UpcomingPassesMinDurationMinutes = Math.Clamp(settings.UpcomingPassesMinDurationMinutes, 0, 120);
+        settings.PassFilterMinDurationMinutes = Math.Clamp(settings.PassFilterMinDurationMinutes, 0, 120);
+        settings.PassPlannerPredictionHours = Math.Clamp(settings.PassPlannerPredictionHours, 6, 168);
+        if (settings.PassPlannerMinElevationDeg is { } plannerMinElevation)
+            settings.PassPlannerMinElevationDeg = Math.Clamp(plannerMinElevation, 0, 90);
         MigrateGroundStationCallsignToSavedStations(settings);
     }
 
@@ -472,6 +478,25 @@ public sealed class SettingsService : ISettingsService, IDisposable
                 return;
 
             settings.EnabledSatelliteNoradIds = [];
+        }
+        catch (JsonException)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Planner lookahead used to share <see cref="AppSettings.PassPredictionHours"/> with the sidebar.
+    /// Copy that value once so an existing window is not reset to the new-install default.
+    /// </summary>
+    private static void MigratePassPlannerPredictionHours(string json, AppSettings settings)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.TryGetProperty("passPlannerPredictionHours", out _))
+                return;
+
+            settings.PassPlannerPredictionHours = settings.PassPredictionHours;
         }
         catch (JsonException)
         {

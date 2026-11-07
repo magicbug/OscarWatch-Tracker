@@ -170,4 +170,49 @@ public class ScheduledPassReminderTests
         Assert.Equal(60, PassScheduleSettings.ClampLeadMinutes(99));
         Assert.Equal(5, PassScheduleSettings.ClampLeadMinutes(5));
     }
+
+    [Fact]
+    public void RematchAndPrune_keeps_stored_aos_when_it_falls_inside_the_same_pass()
+    {
+        var storedAos = new DateTime(2026, 8, 24, 12, 6, 0, DateTimeKind.Utc);
+        var passAos = storedAos.AddMinutes(-6);
+        var pass = Pass("25544", "ISS", passAos, passAos.AddMinutes(20));
+
+        var rematched = ScheduledPassReminder.RematchAndPrune(
+            [Entry("25544", storedAos)],
+            [pass],
+            utcNow: storedAos.AddMinutes(-30));
+
+        Assert.Single(rematched);
+        Assert.Equal(storedAos, rematched[0].AosUtc);
+    }
+
+    [Fact]
+    public void RematchAndPrune_keeps_future_entry_beyond_the_covered_window()
+    {
+        var aos = new DateTime(2026, 8, 24, 12, 0, 0, DateTimeKind.Utc);
+
+        var rematched = ScheduledPassReminder.RematchAndPrune(
+            [Entry("25544", aos)],
+            [],
+            utcNow: aos.AddHours(-30),
+            coveredUntilUtc: aos.AddHours(-1));
+
+        Assert.Single(rematched);
+        Assert.Equal(aos, rematched[0].AosUtc);
+    }
+
+    [Fact]
+    public void RematchAndPrune_drops_unmatched_entry_inside_the_covered_window()
+    {
+        var aos = new DateTime(2026, 8, 24, 12, 0, 0, DateTimeKind.Utc);
+
+        var rematched = ScheduledPassReminder.RematchAndPrune(
+            [Entry("25544", aos)],
+            [],
+            utcNow: aos.AddHours(-2),
+            coveredUntilUtc: aos.AddHours(1));
+
+        Assert.Empty(rematched);
+    }
 }

@@ -101,9 +101,9 @@ public partial class PassPlanningViewModel : ViewModelBase
         foreach (var station in _settings.Current.SavedStations)
             Stations.Add(station);
 
-        FilterMinElevationDeg = _settings.Current.MinimumElevationDeg;
+        FilterMinElevationDeg = _settings.Current.PassPlannerMinElevationDeg ?? _settings.Current.MinimumElevationDeg;
         FilterMinDurationMinutes = _settings.Current.PassFilterMinDurationMinutes;
-        FilterPredictionHours = _settings.Current.PassPredictionHours;
+        FilterPredictionHours = _settings.Current.PassPlannerPredictionHours;
         UseUtcTime = _settings.Current.PassPlannerUseUtcTime;
 
         SelectedStation = Stations.FirstOrDefault(s => s.Id == _settings.Current.ActiveStationId)
@@ -394,7 +394,12 @@ public partial class PassPlanningViewModel : ViewModelBase
                 Passes.Add(row);
             }
 
-            RematchScheduledPasses(passes);
+            var now = DateTime.UtcNow;
+            var rematchHours = ScheduledPassHorizon.Hours(_settings.Current, now, FilterPredictionHours);
+            var rematchPasses = FilterMinDurationMinutes > 0 || rematchHours > FilterPredictionHours
+                ? await _tracking.GetPassesAsync(site, FilterMinElevationDeg, rematchHours, minimumDurationMinutes: 0)
+                : passes;
+            RematchScheduledPasses(rematchPasses, now.AddHours(rematchHours));
             ApplyScheduledFlags();
             RebuildSatelliteFilters();
             RebuildDisplayedPasses();
@@ -565,9 +570,9 @@ public partial class PassPlanningViewModel : ViewModelBase
     public async Task SaveFiltersAndStationsAsync()
     {
         ApplyEditableFieldsToSelectedStation();
-        _settings.Current.MinimumElevationDeg = FilterMinElevationDeg;
+        _settings.Current.PassPlannerMinElevationDeg = FilterMinElevationDeg;
         _settings.Current.PassFilterMinDurationMinutes = FilterMinDurationMinutes;
-        _settings.Current.PassPredictionHours = FilterPredictionHours;
+        _settings.Current.PassPlannerPredictionHours = FilterPredictionHours;
         _settings.Current.PassPlannerUseUtcTime = UseUtcTime;
         await _settings.SaveAsync();
     }
@@ -580,9 +585,9 @@ public partial class PassPlanningViewModel : ViewModelBase
         ApplyEditableFieldsToSelectedStation();
         _settings.Current.ActiveStationId = SelectedStation.Id;
         _settings.ApplyActiveStation();
-        _settings.Current.MinimumElevationDeg = FilterMinElevationDeg;
+        _settings.Current.PassPlannerMinElevationDeg = FilterMinElevationDeg;
         _settings.Current.PassFilterMinDurationMinutes = FilterMinDurationMinutes;
-        _settings.Current.PassPredictionHours = FilterPredictionHours;
+        _settings.Current.PassPlannerPredictionHours = FilterPredictionHours;
         _settings.Current.PassPlannerUseUtcTime = UseUtcTime;
         await _settings.SaveAsync();
     }
@@ -671,12 +676,13 @@ public partial class PassPlanningViewModel : ViewModelBase
             row.IsScheduled = ScheduledPassReminder.IsScheduled(scheduled, row.Source.NoradId, row.Source.AosUtc);
     }
 
-    private void RematchScheduledPasses(IReadOnlyList<PassInfo> upcoming)
+    private void RematchScheduledPasses(IReadOnlyList<PassInfo> upcoming, DateTime coveredUntilUtc)
     {
         var rematched = ScheduledPassReminder.RematchAndPrune(
             _settings.Current.ScheduledPasses ?? [],
             upcoming,
-            DateTime.UtcNow);
+            DateTime.UtcNow,
+            coveredUntilUtc);
         _settings.Current.ScheduledPasses = rematched;
         _settings.RequestSave();
     }

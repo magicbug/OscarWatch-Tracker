@@ -164,6 +164,13 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Tracking.PassWindowNote}" />
+            <TextBlock Text="{loc:Localize Key=Settings.Tracking.UpcomingPassesMinDuration}" />
+            <NumericUpDown Value="{Binding UpcomingPassesMinDurationMinutes, Mode=TwoWay}"
+                           Minimum="0" Maximum="120" FormatString="F0" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       Text="{loc:Localize Key=Settings.Tracking.UpcomingPassesMinDurationNote}" />
             <CheckBox Content="{loc:Localize Key=Settings.Tracking.TransponderCheck}"
                       IsChecked="{Binding TransponderDatabaseCheckOnStartup, Mode=TwoWay}"
                       Margin="0,8,0,0" />

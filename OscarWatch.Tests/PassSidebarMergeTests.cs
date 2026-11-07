@@ -166,6 +166,23 @@ public sealed class PassSidebarMergeTests
             isRecording: true));
     }
 
+    [Fact]
+    public void WithinPredictionWindow_hides_short_passes_and_passes_beyond_the_sidebar_window()
+    {
+        var soon = Pass("ISS", "25544", Base.AddHours(2), Base.AddHours(2).AddMinutes(1.5));
+        var longEnough = Pass("AO-91", "43017", Base.AddHours(3), Base.AddHours(3).AddMinutes(8));
+        var later = Pass("SO-50", "27607", Base.AddHours(50), Base.AddHours(50).AddMinutes(10));
+
+        var visible = PassSidebarMerge.WithinPredictionWindow(
+            [soon, longEnough, later],
+            Base,
+            predictionHours: 48,
+            minimumDurationMinutes: 2);
+
+        Assert.Single(visible);
+        Assert.Equal("43017", visible[0].NoradId);
+    }
+
     private static PassInfo Pass(string name, string norad, DateTime aos, DateTime los) => new()
     {
         SatelliteName = name,

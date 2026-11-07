@@ -2731,7 +2731,13 @@
     <value>过境预测窗口（小时）</value>
   </data>
   <data name="Settings.Tracking.PassWindowNote">
-    <value>用于即将过境列表，并作为过境规划中的默认值。</value>
+    <value>用于即将过境列表和过境仰角时间线。</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDuration">
+    <value>即将过境的最短时长（分钟）</value>
+  </data>
+  <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
+    <value>0 表示显示高于最低仰角和地平线遮挡的每一次过境。过境规划有自己的最短时长。</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>启动时检查转发器数据库更新</value>
