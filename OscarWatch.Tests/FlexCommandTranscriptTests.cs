@@ -7,6 +7,7 @@ namespace OscarWatch.Tests;
 /// <summary>
 /// Locks SmartSDR wire strings so we do not silently regress to bare tune / wiki RXA tokens.
 /// </summary>
+[Collection(NetworkRadioCollection.Name)]
 public class FlexCommandTranscriptTests
 {
     [Fact]

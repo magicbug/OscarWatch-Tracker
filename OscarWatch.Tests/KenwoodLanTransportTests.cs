@@ -8,6 +8,7 @@ using OscarWatch.Rig;
 
 namespace OscarWatch.Tests;
 
+[Collection(NetworkRadioCollection.Name)]
 public sealed class KenwoodLanTransportTests
 {
     [Fact]

@@ -4,6 +4,7 @@ using OscarWatch.Rig;
 
 namespace OscarWatch.Tests;
 
+[Collection(NetworkRadioCollection.Name)]
 public class RigControllerFlexTests
 {
     [Fact]

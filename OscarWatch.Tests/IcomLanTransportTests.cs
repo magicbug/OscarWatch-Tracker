@@ -9,6 +9,7 @@ using OscarWatch.Rig;
 
 namespace OscarWatch.Tests;
 
+[Collection(NetworkRadioCollection.Name)]
 public sealed class IcomLanTransportTests
 {
     private const int Ic9700Civ = 0xA2;
