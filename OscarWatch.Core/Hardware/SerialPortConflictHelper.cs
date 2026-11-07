@@ -78,16 +78,13 @@ public static class SerialPortConflictHelper
                 return false;
             }
 
-            if (TryDescribeGpsConflict(gpsPort, rig.Port?.Trim() ?? "", "radio", out message))
+            var rigPort = rig.SerialPortInUse;
+            if (TryDescribeGpsConflict(gpsPort, rigPort, "radio", out message))
                 return true;
 
             if (rotatorPorts.Count == 0)
                 return false;
 
-            if (rig.Type == RigType.Dummy)
-                return false;
-
-            var rigPort = rig.Port?.Trim() ?? "";
             if (rigPort.Length == 0)
                 return false;
 
@@ -227,9 +224,9 @@ public static class SerialPortConflictHelper
                 if (up.Length > 0)
                     yield return (up, "uplink radio");
             }
-            else if (rig.Type != RigType.Dummy)
+            else
             {
-                var port = rig.Port?.Trim() ?? "";
+                var port = rig.SerialPortInUse;
                 if (port.Length > 0)
                     yield return (port, "radio");
             }

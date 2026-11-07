@@ -3105,6 +3105,57 @@
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>Error de conexión LAN: {0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>Conexión</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / serie (puerto COM)</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>Red (LAN o Wi-Fi)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>Dirección IP o nombre de host de la radio</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>Puerto de control (UDP)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>Nombre de usuario de red (configurado en los ajustes de red de la radio)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>Contraseña de red</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>Active el control por red en la radio y añada un usuario de red. OscarWatch solo usa control CI-V (sin audio por red). La radio acepta un único cliente remoto a la vez, así que cierre antes RS-BA1 o wfview.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>Probar conexión de red</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>Probando conexión…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>Introduzca primero el host, el puerto, el nombre de usuario y la contraseña.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>Conectado a la {0} en {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>Conectado, pero la radio no se identificó como {0}. Compruebe el modelo de radio y la dirección CI-V.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>Inicio de sesión rechazado. Compruebe el nombre de usuario y la contraseña de red configurados en la radio.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>La radio ya está en uso por otro cliente remoto ({0}). Desconéctelo e inténtelo de nuevo.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>Sin respuesta de {0}. Compruebe la dirección IP y el puerto, y que el control por red esté activado.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>Error en la conexión de red: {0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590: una radio es un tramo. Para 10 m, deja el modo transverter desactivado. Para 2 m o 70 cm, activa el modo transverter y configura el desplazamiento en la radio; OscarWatch lo lee y sintoniza la FI por ti. Iguala la velocidad en baudios con el menú COM de la radio. LAN (solo TS-990S y TS-890S) requiere el ID de administrador o de usuario configurado en la radio, y solo una aplicación puede usar el puerto 60000 a la vez.</value>
   </data>

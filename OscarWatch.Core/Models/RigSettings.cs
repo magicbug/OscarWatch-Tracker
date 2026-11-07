@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace OscarWatch.Core.Models;
 
 public sealed class RigSettings
@@ -45,6 +47,23 @@ public sealed class RigSettings
     /// <summary>Kenwood HF radios with a built-in LAN CAT socket.</summary>
     public static bool IsKenwoodLanCapable(RigType type) =>
         type is RigType.KenwoodTs990s or RigType.KenwoodTs890s;
+
+    /// <summary>Icom network control port (RS-BA1 protocol). The CI-V stream is normally this port + 1.</summary>
+    public const int IcomLanDefaultPort = 50001;
+
+    /// <summary>Icom radios with built-in network control (LAN socket or Wi-Fi).</summary>
+    public static bool IsIcomLanCapable(RigType type) =>
+        IsIcomLanSingleRadio(type) || IsIcomLanEndpoint(type);
+
+    /// <summary>Single-radio Icom types that can use network control.</summary>
+    public static bool IsIcomLanSingleRadio(RigType type) => type == RigType.IcomIc9700;
+
+    /// <summary>
+    /// Dual-radio Icom leg types that can use network control.
+    /// The original IC-7300 is USB only; the IC-7300MK2 has a LAN socket.
+    /// </summary>
+    public static bool IsIcomLanEndpoint(RigType type) =>
+        type is RigType.IcomIc705 or RigType.IcomIc905 or RigType.IcomIc7300;
 
     public static bool IsYaesuNewCatDualEndpoint(RigType type) =>
         type is RigType.YaesuFt991 or RigType.YaesuFt991a or RigType.YaesuFtx1;
@@ -102,11 +121,46 @@ public sealed class RigSettings
     /// </summary>
     public bool KenwoodTraceEnabled { get; set; } = true;
 
-    /// <summary>TCP host when <see cref="Type"/> is <see cref="RigType.FlexSmartSdr"/>.</summary>
+    /// <summary>
+    /// COM or network for single-radio types that support both (IC-9700).
+    /// Ignored for other types.
+    /// </summary>
+    public RigConnectionKind Connection { get; set; } = RigConnectionKind.Serial;
+
+    /// <summary>
+    /// TCP host when <see cref="Type"/> is <see cref="RigType.FlexSmartSdr"/>, or the radio address for Icom network control.
+    /// </summary>
     public string NetworkHost { get; set; } = "";
 
-    /// <summary>TCP port when <see cref="Type"/> is <see cref="RigType.FlexSmartSdr"/> (default 4992).</summary>
+    /// <summary>TCP port for FlexRadio (default 4992), or the Icom network control port (default 50001).</summary>
     public int NetworkPort { get; set; } = FlexSmartSdrDefaultPort;
+
+    /// <summary>Network user name set in the Icom radio's network menu.</summary>
+    public string NetworkUser { get; set; } = "";
+
+    /// <summary>Network password set in the Icom radio's network menu.</summary>
+    public string NetworkPassword { get; set; } = "";
+
+    /// <summary>True when the single radio is an IC-9700 set to network control.</summary>
+    [JsonIgnore]
+    public bool UsesIcomLan => IsIcomLanSingleRadio(Type) && Connection == RigConnectionKind.Lan;
+
+    /// <summary>True when the single radio is reached over the network rather than a COM port.</summary>
+    [JsonIgnore]
+    public bool UsesNetwork => IsFlexNetworkRadio(Type) || UsesIcomLan;
+
+    /// <summary>The COM port the single radio holds open, or empty for network and dummy radios.</summary>
+    [JsonIgnore]
+    public string SerialPortInUse =>
+        UsesNetwork || Type == RigType.Dummy ? "" : Port?.Trim() ?? "";
+
+    [JsonIgnore]
+    public bool IsIcomLanConfigured =>
+        UsesIcomLan
+        && NetworkPort is > 0 and <= 65535
+        && !string.IsNullOrWhiteSpace(NetworkHost)
+        && !string.IsNullOrWhiteSpace(NetworkUser)
+        && !string.IsNullOrEmpty(NetworkPassword);
 
     /// <summary>Optional Flex radio serial from discovery, used to re-select the same radio.</summary>
     public string FlexRadioSerial { get; set; } = "";

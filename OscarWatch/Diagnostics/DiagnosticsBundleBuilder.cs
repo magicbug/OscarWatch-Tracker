@@ -82,8 +82,19 @@ public static class DiagnosticsBundleBuilder
         RedactApiKey(clone.SatelliteStatus);
         RedactQrz(clone.Qrz);
         RedactHamQth(clone.HamQth);
+        RedactRigPasswords(clone.Rig);
 
         return JsonSerializer.Serialize(clone, JsonOptions);
+    }
+
+    private static void RedactRigPasswords(RigSettings rig)
+    {
+        if (!string.IsNullOrEmpty(rig.NetworkPassword))
+            rig.NetworkPassword = "***";
+        if (!string.IsNullOrEmpty(rig.Downlink.NetworkPassword))
+            rig.Downlink.NetworkPassword = "***";
+        if (!string.IsNullOrEmpty(rig.Uplink.NetworkPassword))
+            rig.Uplink.NetworkPassword = "***";
     }
 
     private static void RedactApiKey(CloudlogSettings settings)

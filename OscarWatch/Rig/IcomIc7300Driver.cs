@@ -18,6 +18,12 @@ public sealed class IcomIc7300Driver : IcomCivDriverBase
     {
     }
 
+    internal IcomIc7300Driver(
+        Func<IIcomCivTransport> transportFactory, string endpointLabel, string civAddressHex, int catDelayMs = 50)
+        : base(RigType.IcomIc7300, transportFactory, endpointLabel, civAddressHex, catDelayMs)
+    {
+    }
+
     public override bool SupportsTracking => true;
 
     public override void SetSatelliteMode(bool on)

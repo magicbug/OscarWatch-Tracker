@@ -1797,6 +1797,57 @@
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>LAN接続に失敗しました: {0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>接続方法</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / シリアル (COM ポート)</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>ネットワーク (LAN または Wi-Fi)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>無線機の IP アドレスまたはホスト名</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>コントロールポート (UDP)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>ネットワークユーザー名 (無線機のネットワーク設定で登録)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>ネットワークパスワード</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>無線機でネットワークコントロールをオンにし、ネットワークユーザーを登録してください。OscarWatch は CI-V 制御のみを使用します (ネットワーク音声なし)。無線機は同時に 1 つのリモートクライアントしか受け付けないため、先に RS-BA1 や wfview を閉じてください。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>ネットワーク接続をテスト</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>接続をテスト中…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>先にホスト、ポート、ユーザー名、パスワードを入力してください。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>{0} に接続しました ({1} MHz)。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>接続しましたが、無線機が {0} として応答しませんでした。無線機の機種と CI-V アドレスを確認してください。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>ログインが拒否されました。無線機に設定したネットワークユーザー名とパスワードを確認してください。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>無線機は別のリモートクライアント ({0}) が使用中です。切断してから再試行してください。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>{0} から応答がありません。IP アドレスとポート、ネットワークコントロールがオンになっているか確認してください。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>ネットワーク接続に失敗しました: {0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590: 1台の無線機が1レッグです。10 mではトランスバーターモードをオフのままにします。2 mまたは70 cmではトランスバーターモードをオンにし、オフセットを無線機で設定してください。OscarWatchがそれを読み取り、IFを自動で合わせます。ボーレートは無線機のCOMメニューに合わせてください。LAN（TS-990SとTS-890Sのみ）には無線機で設定した管理者IDまたはユーザーIDが必要で、ポート60000を同時に使えるアプリケーションは1つだけです。</value>
   </data>

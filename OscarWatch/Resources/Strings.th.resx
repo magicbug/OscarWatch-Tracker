@@ -3109,6 +3109,57 @@ LOS: {2}
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>การเชื่อมต่อ LAN ล้มเหลว: {0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>การเชื่อมต่อ</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / ซีเรียล (พอร์ต COM)</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>เครือข่าย (LAN หรือ Wi-Fi)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>ที่อยู่ IP หรือชื่อโฮสต์ของวิทยุ</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>พอร์ตควบคุม (UDP)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>ชื่อผู้ใช้เครือข่าย (ตั้งค่าในการตั้งค่าเครือข่ายของวิทยุ)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>รหัสผ่านเครือข่าย</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>เปิด Network Control บนวิทยุและเพิ่มผู้ใช้เครือข่าย OscarWatch ใช้เฉพาะการควบคุม CI-V (ไม่มีเสียงผ่านเครือข่าย) วิทยุรับไคลเอนต์ระยะไกลได้ครั้งละหนึ่งราย ดังนั้นให้ปิด RS-BA1 หรือ wfview ก่อน</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>ทดสอบการเชื่อมต่อเครือข่าย</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>กำลังทดสอบการเชื่อมต่อ…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>ป้อนโฮสต์ พอร์ต ชื่อผู้ใช้ และรหัสผ่านก่อน</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>เชื่อมต่อกับ {0} ที่ {1} MHz แล้ว</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>เชื่อมต่อแล้ว แต่วิทยุไม่ได้ระบุตัวเป็น {0} ตรวจสอบรุ่นวิทยุและที่อยู่ CI-V</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>การเข้าสู่ระบบถูกปฏิเสธ ตรวจสอบชื่อผู้ใช้และรหัสผ่านเครือข่ายที่ตั้งไว้บนวิทยุ</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>วิทยุกำลังถูกใช้งานโดยไคลเอนต์ระยะไกลอื่น ({0}) ตัดการเชื่อมต่อแล้วลองอีกครั้ง</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>ไม่มีการตอบกลับจาก {0} ตรวจสอบที่อยู่ IP และพอร์ต และตรวจสอบว่าเปิด Network Control แล้ว</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>การเชื่อมต่อเครือข่ายล้มเหลว: {0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590: วิทยุหนึ่งเครื่องคือหนึ่งขา สำหรับ 10 m ให้ปิดโหมดทรานสเวอร์เตอร์ไว้ สำหรับ 2 m หรือ 70 cm ให้เปิดโหมดทรานสเวอร์เตอร์และตั้งค่าออฟเซ็ตที่วิทยุ OscarWatch จะอ่านค่าและปรับ IF ให้เอง ตั้งอัตราบอดให้ตรงกับเมนู COM ของวิทยุ LAN (เฉพาะ TS-990S และ TS-890S) ต้องใช้ ID ผู้ดูแลหรือผู้ใช้ที่ตั้งไว้ในวิทยุ และใช้พอร์ต 60000 ได้ทีละหนึ่งแอปพลิเคชันเท่านั้น</value>
   </data>

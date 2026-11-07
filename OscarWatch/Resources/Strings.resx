@@ -3105,6 +3105,57 @@ Continue?</value>
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>LAN connection failed: {0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>Connection</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / serial (COM port)</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>Network (LAN or Wi-Fi)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>Radio IP address or host name</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>Control port (UDP)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>Network user name (set in the radio's network settings)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>Network password</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>Turn on Network Control on the radio and add a network user. OscarWatch uses CI-V control only (no network audio). The radio accepts one remote client at a time, so close RS-BA1 or wfview first.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>Test network connection</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>Testing connection…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>Enter the host, port, user name and password first.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>Connected to the {0} at {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>Connected, but the radio did not identify as a {0}. Check the radio model and CI-V address.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>Login rejected. Check the network user name and password set on the radio.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>The radio is already in use by another remote client ({0}). Disconnect it and try again.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>No reply from {0}. Check the IP address and port, and that Network Control is on.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>Network connection failed: {0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590: one radio is one leg. For 10 m, leave transverter mode off. For 2 m or 70 cm, turn transverter mode on and set the offset on the radio; OscarWatch reads it and tunes the IF for you. Match the baud rate to the radio's COM menu. LAN (TS-990S and TS-890S only) needs the administrator or user ID set on the radio, and only one application can use port 60000 at a time.</value>
   </data>

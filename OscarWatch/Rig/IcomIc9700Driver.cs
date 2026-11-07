@@ -17,6 +17,12 @@ public sealed class IcomIc9700Driver : IcomCivDriverBase
     {
     }
 
+    internal IcomIc9700Driver(
+        Func<IIcomCivTransport> transportFactory, string endpointLabel, string civAddressHex, int catDelayMs = 50)
+        : base(RigType.IcomIc9700, transportFactory, endpointLabel, civAddressHex, catDelayMs)
+    {
+    }
+
     public override bool SupportsTracking => true;
 
     public override void SetSatelliteMode(bool on) =>

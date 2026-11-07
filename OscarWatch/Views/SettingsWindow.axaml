@@ -404,6 +404,45 @@
                            TextWrapping="Wrap"
                            Text="{loc:Localize Key=Settings.Radio.Ic9700PowerClassHint}" />
               </StackPanel>
+              <StackPanel Spacing="10"
+                          DataContext="{Binding RigIcomLan}"
+                          x:DataType="vm:IcomLanSettingsViewModel"
+                          IsVisible="{Binding ShowConnectionChoice}">
+                <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomConnection}" />
+                <ComboBox ItemsSource="{Binding ConnectionChoices}"
+                          SelectedItem="{Binding SelectedConnectionChoice, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RigConnectionOption">
+                      <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <StackPanel Spacing="10" IsVisible="{Binding ShowLanFields}">
+                  <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanHost}" />
+                  <TextBox Text="{Binding LanHost, Mode=TwoWay}"
+                           Watermark="192.168.1.60" />
+                  <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanPort}" />
+                  <NumericUpDown Value="{Binding LanPort, Mode=TwoWay}"
+                                 Minimum="1" Maximum="65535"
+                                 Increment="1" FormatString="F0" />
+                  <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanUser}" />
+                  <TextBox Text="{Binding LanUser, Mode=TwoWay}" />
+                  <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanPassword}" />
+                  <TextBox Text="{Binding LanPassword, Mode=TwoWay}"
+                           PasswordChar="•" />
+                  <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                             FontSize="11"
+                             TextWrapping="Wrap"
+                             Text="{loc:Localize Key=Settings.Radio.IcomLanHint}" />
+                  <Button Content="{loc:Localize Key=Settings.Radio.IcomLanTest}"
+                          Command="{Binding TestLanConnectionCommand}" />
+                  <TextBlock Text="{Binding TestStatus}"
+                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                             FontSize="11"
+                             TextWrapping="Wrap" />
+                </StackPanel>
+              </StackPanel>
               <StackPanel Spacing="10" IsVisible="{Binding ShowRigSerialFields}">
                 <TextBlock Text="{loc:Localize Key=Settings.Radio.SerialPort}" />
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
@@ -429,15 +468,15 @@
                 <ComboBox ItemsSource="{Binding RigBaudRateOptions}"
                           SelectedItem="{Binding RigBaudRate, Mode=TwoWay}"
                           HorizontalAlignment="Stretch" />
-                <StackPanel Spacing="4" IsVisible="{Binding ShowRigCivAddress}">
-                  <TextBlock Text="{loc:Localize Key=Settings.Radio.CivAddress}" />
-                  <TextBox Text="{Binding RigCivAddress, Mode=TwoWay}"
-                           Watermark="60" />
-                  <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                             FontSize="11"
-                             TextWrapping="Wrap"
-                             Text="{loc:Localize Key=Settings.Radio.CivHint}" />
-                </StackPanel>
+              </StackPanel>
+              <StackPanel Spacing="4" IsVisible="{Binding ShowRigCivAddress}">
+                <TextBlock Text="{loc:Localize Key=Settings.Radio.CivAddress}" />
+                <TextBox Text="{Binding RigCivAddress, Mode=TwoWay}"
+                         Watermark="60" />
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.CivHint}" />
               </StackPanel>
               <StackPanel Spacing="10" IsVisible="{Binding ShowRigFlexFields}">
                 <TextBlock Text="{loc:Localize Key=Settings.Radio.FlexDiscovered}" />
@@ -645,6 +684,45 @@
                                  TextWrapping="Wrap" />
                     </StackPanel>
                   </StackPanel>
+                  <StackPanel Spacing="8"
+                              DataContext="{Binding DownlinkIcomLan}"
+                              x:DataType="vm:IcomLanSettingsViewModel"
+                              IsVisible="{Binding ShowConnectionChoice}">
+                    <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomConnection}" />
+                    <ComboBox ItemsSource="{Binding ConnectionChoices}"
+                              SelectedItem="{Binding SelectedConnectionChoice, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:RigConnectionOption">
+                          <TextBlock Text="{Binding Label}" />
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <StackPanel Spacing="8" IsVisible="{Binding ShowLanFields}">
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanHost}" />
+                      <TextBox Text="{Binding LanHost, Mode=TwoWay}"
+                               Watermark="192.168.1.60" />
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanPort}" />
+                      <NumericUpDown Value="{Binding LanPort, Mode=TwoWay}"
+                                     Minimum="1" Maximum="65535"
+                                     Increment="1" FormatString="F0" />
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanUser}" />
+                      <TextBox Text="{Binding LanUser, Mode=TwoWay}" />
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanPassword}" />
+                      <TextBox Text="{Binding LanPassword, Mode=TwoWay}"
+                               PasswordChar="•" />
+                      <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                 FontSize="11"
+                                 TextWrapping="Wrap"
+                                 Text="{loc:Localize Key=Settings.Radio.IcomLanHint}" />
+                      <Button Content="{loc:Localize Key=Settings.Radio.IcomLanTest}"
+                              Command="{Binding TestLanConnectionCommand}" />
+                      <TextBlock Text="{Binding TestStatus}"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                 FontSize="11"
+                                 TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
                   <StackPanel Spacing="8" IsVisible="{Binding ShowDownlinkSerialFields}">
                   <TextBlock Text="{loc:Localize Key=Settings.Radio.SerialPort}" />
                   <ComboBox ItemsSource="{Binding AvailableComPorts}"
@@ -666,6 +744,7 @@
                   <CheckBox Content="{loc:Localize Key=Settings.Radio.Ts2000HardwareRts}"
                             IsChecked="{Binding DownlinkKenwood.HardwareRtsEnabled, Mode=TwoWay}"
                             IsVisible="{Binding DownlinkKenwood.ShowSerialOptions}" />
+                  </StackPanel>
                   <StackPanel Spacing="4" IsVisible="{Binding ShowDownlinkCivAddress}">
                     <TextBlock Text="{loc:Localize Key=Settings.Radio.CivAddress}" />
                     <TextBox Text="{Binding DownlinkCivAddress, Mode=TwoWay}"
@@ -705,7 +784,6 @@
                                TextWrapping="Wrap"
                                IsVisible="{Binding ShowDownlinkIc706MkiiGCivHint}"
                                Text="{loc:Localize Key=Settings.Radio.Ic706MkiiGCivHint}" />
-                  </StackPanel>
                   </StackPanel>
                   <StackPanel Spacing="8" IsVisible="{Binding ShowDownlinkRegion}">
                   <TextBlock Text="{loc:Localize Key=Settings.Radio.Region}" />
@@ -806,6 +884,45 @@
                                  TextWrapping="Wrap" />
                     </StackPanel>
                   </StackPanel>
+                  <StackPanel Spacing="8"
+                              DataContext="{Binding UplinkIcomLan}"
+                              x:DataType="vm:IcomLanSettingsViewModel"
+                              IsVisible="{Binding ShowConnectionChoice}">
+                    <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomConnection}" />
+                    <ComboBox ItemsSource="{Binding ConnectionChoices}"
+                              SelectedItem="{Binding SelectedConnectionChoice, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:RigConnectionOption">
+                          <TextBlock Text="{Binding Label}" />
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <StackPanel Spacing="8" IsVisible="{Binding ShowLanFields}">
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanHost}" />
+                      <TextBox Text="{Binding LanHost, Mode=TwoWay}"
+                               Watermark="192.168.1.60" />
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanPort}" />
+                      <NumericUpDown Value="{Binding LanPort, Mode=TwoWay}"
+                                     Minimum="1" Maximum="65535"
+                                     Increment="1" FormatString="F0" />
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanUser}" />
+                      <TextBox Text="{Binding LanUser, Mode=TwoWay}" />
+                      <TextBlock Text="{loc:Localize Key=Settings.Radio.IcomLanPassword}" />
+                      <TextBox Text="{Binding LanPassword, Mode=TwoWay}"
+                               PasswordChar="•" />
+                      <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                 FontSize="11"
+                                 TextWrapping="Wrap"
+                                 Text="{loc:Localize Key=Settings.Radio.IcomLanHint}" />
+                      <Button Content="{loc:Localize Key=Settings.Radio.IcomLanTest}"
+                              Command="{Binding TestLanConnectionCommand}" />
+                      <TextBlock Text="{Binding TestStatus}"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                 FontSize="11"
+                                 TextWrapping="Wrap" />
+                    </StackPanel>
+                  </StackPanel>
                   <StackPanel Spacing="8" IsVisible="{Binding ShowUplinkSerialFields}">
                     <TextBlock Text="{loc:Localize Key=Settings.Radio.SerialPort}" />
                     <ComboBox ItemsSource="{Binding AvailableComPorts}"
@@ -827,6 +944,7 @@
                     <CheckBox Content="{loc:Localize Key=Settings.Radio.Ts2000HardwareRts}"
                               IsChecked="{Binding UplinkKenwood.HardwareRtsEnabled, Mode=TwoWay}"
                               IsVisible="{Binding UplinkKenwood.ShowSerialOptions}" />
+                  </StackPanel>
                     <StackPanel Spacing="4" IsVisible="{Binding ShowUplinkCivAddress}">
                       <TextBlock Text="{loc:Localize Key=Settings.Radio.CivAddress}" />
                       <TextBox Text="{Binding UplinkCivAddress, Mode=TwoWay}"
@@ -867,7 +985,6 @@
                                  IsVisible="{Binding ShowUplinkIc706MkiiGCivHint}"
                                  Text="{loc:Localize Key=Settings.Radio.Ic706MkiiGCivHint}" />
                     </StackPanel>
-                  </StackPanel>
                   <TextBlock Text="{loc:Localize Key=Settings.Radio.Region}" />
                   <ComboBox ItemsSource="{Binding RigRegionChoices}"
                             SelectedItem="{Binding SelectedUplinkRegionChoice, Mode=TwoWay}"

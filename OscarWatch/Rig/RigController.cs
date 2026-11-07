@@ -1578,13 +1578,15 @@ public sealed class RigController : IRigController, IDisposable
 
         var key = RigSettings.IsFlexNetworkRadio(settings.Type)
             ? $"{settings.Type}|{settings.NetworkHost}|{settings.NetworkPort}|{settings.FlexRadioSerial}|{settings.CatDelayMs}"
-            : $"{settings.Type}|{settings.Port}|{settings.BaudRate}|{settings.CivAddress}";
+            : settings.UsesIcomLan
+                ? $"{settings.Type}|lan|{settings.NetworkHost}|{settings.NetworkPort}|{settings.NetworkUser}|{settings.NetworkPassword.GetHashCode()}|{settings.CivAddress}|{settings.CatDelayMs}"
+                : $"{settings.Type}|{settings.Port}|{settings.BaudRate}|{settings.CivAddress}";
         if (_forceIdentityRecheck)
         {
             _forceIdentityRecheck = false;
             if (_driver is not null && _connectedKey == key && _driver.IsConnected)
             {
-                if (ConfirmDriver(_driver, settings.Port, endpointLabel: null, settings.Type))
+                if (ConfirmDriver(_driver, FormatSingleEndpoint(settings), endpointLabel: null, settings.Type))
                     return true;
 
                 TearDownRig();
@@ -1602,7 +1604,7 @@ public sealed class RigController : IRigController, IDisposable
             _driver.Open();
             _connectedKey = key;
             ConfigureFlexPassInitCancellation(_driver);
-            if (ConfirmDriver(_driver, settings.Port, endpointLabel: null, settings.Type))
+            if (ConfirmDriver(_driver, FormatSingleEndpoint(settings), endpointLabel: null, settings.Type))
             {
                 Log.Information("Rig connected: type={RigType}, endpoint={Endpoint}", settings.Type, FormatSingleEndpoint(settings));
                 _connectFailureLog.Reset();
@@ -1623,7 +1625,7 @@ public sealed class RigController : IRigController, IDisposable
             var endpoint = FormatSingleEndpoint(settings);
             _lastConnectError = RigSettings.IsFlexNetworkRadio(settings.Type)
                 ? $"Opened {endpoint} but SmartSDR is not responding"
-                : $"Opened {settings.Port} but CI-V is not responding";
+                : $"Opened {endpoint} but CI-V is not responding";
             Log.Warning("Rig opened {Endpoint} for {RigType} but link is not active", endpoint, settings.Type);
             TearDownRig();
             RecordConnectFailure(
@@ -1830,7 +1832,9 @@ public sealed class RigController : IRigController, IDisposable
                 ? $"{endpoint.Type}|{endpoint.NetworkHost}|{endpoint.NetworkPort}|{endpoint.CatDelayMs}"
                 : endpoint.UsesKenwoodLan
                     ? $"{endpoint.Type}|lan|{endpoint.NetworkHost}|{endpoint.NetworkPort}|{endpoint.NetworkUser}|{endpoint.NetworkPassword.GetHashCode()}|{endpoint.NetworkUserIsAdministrator}|{endpoint.CatDelayMs}"
-                    : $"{endpoint.Type}|{endpoint.Port}|{endpoint.BaudRate}|{endpoint.CatDelayMs}|{endpoint.CivAddress}|{endpoint.KenwoodHardwareRtsEnabled}";
+                    : endpoint.UsesIcomLan
+                        ? $"{endpoint.Type}|lan|{endpoint.NetworkHost}|{endpoint.NetworkPort}|{endpoint.NetworkUser}|{endpoint.NetworkPassword.GetHashCode()}|{endpoint.CivAddress}|{endpoint.CatDelayMs}"
+                        : $"{endpoint.Type}|{endpoint.Port}|{endpoint.BaudRate}|{endpoint.CatDelayMs}|{endpoint.CivAddress}|{endpoint.KenwoodHardwareRtsEnabled}";
 
     private void RunPassInit(RigSettings settings, RigTrackingContext context)
     {
@@ -3143,7 +3147,7 @@ public sealed class RigController : IRigController, IDisposable
             : endpoint.Port;
 
     private static string FormatSingleEndpoint(RigSettings settings) =>
-        RigSettings.IsFlexNetworkRadio(settings.Type)
+        settings.UsesNetwork
             ? $"{settings.NetworkHost}:{settings.NetworkPort}"
             : settings.Port;
 
@@ -3157,6 +3161,9 @@ public sealed class RigController : IRigController, IDisposable
 
         if (RigSettings.IsFlexNetworkRadio(settings.Type))
             return settings.IsFlexNetworkConfigured;
+
+        if (settings.UsesIcomLan)
+            return settings.IsIcomLanConfigured;
 
         return !string.IsNullOrWhiteSpace(settings.Port) || settings.Type == RigType.Dummy;
     }
@@ -3386,7 +3393,7 @@ public sealed class RigController : IRigController, IDisposable
         if (settings.DualRadioEnabled)
             return (RigStatusKind.DualNotConnected, null, _lastConnectError);
 
-        if (RigSettings.IsFlexNetworkRadio(settings.Type))
+        if (settings.UsesNetwork)
         {
             var endpoint = FormatSingleEndpoint(settings);
             return string.IsNullOrWhiteSpace(settings.NetworkHost)

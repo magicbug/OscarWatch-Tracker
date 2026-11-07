@@ -695,10 +695,20 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public KenwoodHfLegSettingsViewModel UplinkKenwood { get; }
 
+    /// <summary>IC-9700 serial or network control (single radio).</summary>
+    public IcomLanSettingsViewModel RigIcomLan { get; }
+
+    /// <summary>IC-705, IC-905 or IC-7300 serial or network control (downlink leg).</summary>
+    public IcomLanSettingsViewModel DownlinkIcomLan { get; }
+
+    /// <summary>IC-705, IC-905 or IC-7300 serial or network control (uplink leg).</summary>
+    public IcomLanSettingsViewModel UplinkIcomLan { get; }
+
     public bool ShowDownlinkSerialFields =>
         DualRadioEnabled
         && SelectedDownlinkRigTypeChoice?.Value != RigType.SdrRigCtlTcp
-        && DownlinkKenwood?.UsesLan != true;
+        && DownlinkKenwood?.UsesLan != true
+        && DownlinkIcomLan?.UsesLan != true;
 
     public bool ShowDownlinkSdrFields =>
         DualRadioEnabled
@@ -711,7 +721,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     public bool ShowUplinkSerialFields =>
         DualRadioEnabled
         && SelectedUplinkRigTypeChoice?.Value != RigType.Dummy
-        && UplinkKenwood?.UsesLan != true;
+        && UplinkKenwood?.UsesLan != true
+        && UplinkIcomLan?.UsesLan != true;
 
     public bool ShowRigKenwoodHfHint =>
         DualRadioEnabled
@@ -724,14 +735,16 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public bool ShowRigSerialFields =>
         !DualRadioEnabled
-        && SelectedRigTypeChoice?.Value is not (RigType.FlexSmartSdr or RigType.Dummy);
+        && SelectedRigTypeChoice?.Value is not (RigType.FlexSmartSdr or RigType.Dummy)
+        && RigIcomLan?.UsesLan != true;
 
     public bool ShowRigFlexFields =>
         !DualRadioEnabled
         && SelectedRigTypeChoice?.Value == RigType.FlexSmartSdr;
 
     public bool ShowRigCivAddress =>
-        SelectedRigTypeChoice?.Value is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700
+        !DualRadioEnabled
+        && SelectedRigTypeChoice?.Value is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700
             or RigType.IcomIc821h;
 
     public bool ShowIc910PowerClass =>
@@ -900,6 +913,36 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         UplinkKenwood.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(KenwoodHfLegSettingsViewModel.UsesLan))
+            {
+                OnPropertyChanged(nameof(ShowUplinkSerialFields));
+                RefreshComPortConflictIfReady();
+            }
+        };
+        RigIcomLan = new IcomLanSettingsViewModel(
+            localization, () => !DualRadioEnabled, RigSettings.IsIcomLanSingleRadio, () => RigCivAddress);
+        DownlinkIcomLan = new IcomLanSettingsViewModel(
+            localization, () => DualRadioEnabled, RigSettings.IsIcomLanEndpoint, () => DownlinkCivAddress);
+        UplinkIcomLan = new IcomLanSettingsViewModel(
+            localization, () => DualRadioEnabled, RigSettings.IsIcomLanEndpoint, () => UplinkCivAddress);
+        RigIcomLan.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IcomLanSettingsViewModel.UsesLan))
+            {
+                OnPropertyChanged(nameof(ShowRigSerialFields));
+                RefreshComPortConflictIfReady();
+            }
+        };
+        DownlinkIcomLan.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IcomLanSettingsViewModel.UsesLan))
+            {
+                OnPropertyChanged(nameof(ShowDownlinkSerialFields));
+                RefreshComPortConflictIfReady();
+            }
+        };
+        UplinkIcomLan.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IcomLanSettingsViewModel.UsesLan))
             {
                 OnPropertyChanged(nameof(ShowUplinkSerialFields));
                 RefreshComPortConflictIfReady();
@@ -1415,6 +1458,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         };
         DownlinkKenwood.ApplyTo(_settings.Current.Rig.Downlink);
         UplinkKenwood.ApplyTo(_settings.Current.Rig.Uplink);
+        DownlinkIcomLan.ApplyTo(_settings.Current.Rig.Downlink);
+        UplinkIcomLan.ApplyTo(_settings.Current.Rig.Uplink);
+        RigIcomLan.ApplyTo(_settings.Current.Rig);
         _settings.Current.Cloudlog = new CloudlogSettings
         {
             Enabled = CloudlogEnabled,
@@ -1617,8 +1663,10 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             SelectedRigComPort = string.IsNullOrWhiteSpace(rig.Port) ? null : rig.Port;
             RigBaudRate = rig.BaudRate;
             RigCivAddress = rig.CivAddress;
-            RigNetworkHost = rig.NetworkHost ?? "";
-            RigNetworkPort = rig.NetworkPort > 0 ? rig.NetworkPort : RigSettings.FlexSmartSdrDefaultPort;
+            var singleIcomLan = RigSettings.IsIcomLanSingleRadio(rig.Type);
+            RigNetworkHost = singleIcomLan ? "" : rig.NetworkHost ?? "";
+            RigNetworkPort = rig.NetworkPort > 0 && !singleIcomLan ? rig.NetworkPort : RigSettings.FlexSmartSdrDefaultPort;
+            RigIcomLan.Load(rig);
             RigFlexRadioSerial = rig.FlexRadioSerial ?? "";
             RigFlexTestStatus = "";
             SelectedFlexVhfRxAnt = SelectFlexAntennaPortChoice(rig.FlexVhfRxAnt);
@@ -1643,12 +1691,16 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             SelectedUplinkComPort = string.IsNullOrWhiteSpace(up.Port) ? null : up.Port;
             DownlinkKenwood.Load(down);
             UplinkKenwood.Load(up);
-            DownlinkNetworkHost = RigSettings.IsKenwoodLanCapable(down.Type)
+            DownlinkIcomLan.Load(down);
+            UplinkIcomLan.Load(up);
+            var downOwnsNetworkFields = RigSettings.IsKenwoodLanCapable(down.Type)
+                || RigSettings.IsIcomLanEndpoint(down.Type);
+            DownlinkNetworkHost = downOwnsNetworkFields
                 ? RigEndpointSettings.SdrRigCtlDefaultHost
                 : string.IsNullOrWhiteSpace(down.NetworkHost)
                 ? RigEndpointSettings.SdrRigCtlDefaultHost
                 : down.NetworkHost;
-            DownlinkNetworkPort = down.NetworkPort > 0 && !RigSettings.IsKenwoodLanCapable(down.Type)
+            DownlinkNetworkPort = down.NetworkPort > 0 && !downOwnsNetworkFields
                 ? down.NetworkPort
                 : RigEndpointSettings.SdrRigCtlDefaultPort;
             DownlinkSdrTestStatus = "";
@@ -2467,6 +2519,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigDualConfig));
         OnPropertyChanged(nameof(ShowIc910PowerClass));
         OnPropertyChanged(nameof(ShowIc9700PowerClass));
+        OnPropertyChanged(nameof(ShowRigCivAddress));
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
         OnPropertyChanged(nameof(ShowDownlinkCivAddress));
         OnPropertyChanged(nameof(ShowDownlinkSerialFields));
@@ -2490,6 +2543,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowDownlinkRegion));
         DownlinkKenwood.NotifyDualRadioChanged();
         UplinkKenwood.NotifyDualRadioChanged();
+        RigIcomLan.NotifyContextChanged();
+        DownlinkIcomLan.NotifyContextChanged();
+        UplinkIcomLan.NotifyContextChanged();
         RefreshComPortConflictIfReady();
     }
 
@@ -2522,6 +2578,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     partial void OnSelectedRigTypeChoiceChanged(RigTypeOption? value)
     {
+        RigIcomLan.RigType = value?.Value ?? RigType.None;
         OnPropertyChanged(nameof(ShowRigCivAddress));
         OnPropertyChanged(nameof(ShowIc910PowerClass));
         OnPropertyChanged(nameof(ShowIc9700PowerClass));
@@ -2588,6 +2645,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt991CatHint));
         OnPropertyChanged(nameof(ShowRigFtx1CatHint));
         DownlinkKenwood.RigType = value?.Value ?? RigType.None;
+        DownlinkIcomLan.RigType = value?.Value ?? RigType.None;
         OnPropertyChanged(nameof(ShowDownlinkSerialFields));
         OnPropertyChanged(nameof(ShowDownlinkRegion));
         OnPropertyChanged(nameof(ShowRigKenwoodHfHint));
@@ -2670,6 +2728,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt991CatHint));
         OnPropertyChanged(nameof(ShowRigFtx1CatHint));
         UplinkKenwood.RigType = value?.Value ?? RigType.None;
+        UplinkIcomLan.RigType = value?.Value ?? RigType.None;
         OnPropertyChanged(nameof(ShowUplinkSerialFields));
         OnPropertyChanged(nameof(ShowRigKenwoodHfHint));
         if (_isSynchronizing || value is null)
@@ -2758,21 +2817,26 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         DualRadioEnabled = DualRadioEnabled,
         Type = SelectedRigTypeChoice?.Value ?? RigType.None,
         Port = SelectedRigComPort ?? "",
+        Connection = RigIcomLan.Connection,
         Downlink = new RigEndpointSettings
         {
             Type = SelectedDownlinkRigTypeChoice?.Value ?? RigType.YaesuFt817,
             Port = SelectedDownlinkComPort ?? "",
             NetworkHost = DownlinkNetworkHost.Trim(),
             NetworkPort = DownlinkNetworkPort,
-            Connection = DownlinkKenwood.Connection
+            Connection = LegConnection(SelectedDownlinkRigTypeChoice?.Value, DownlinkKenwood, DownlinkIcomLan)
         },
         Uplink = new RigEndpointSettings
         {
             Type = SelectedUplinkRigTypeChoice?.Value ?? RigType.YaesuFt818,
             Port = SelectedUplinkComPort ?? "",
-            Connection = UplinkKenwood.Connection
+            Connection = LegConnection(SelectedUplinkRigTypeChoice?.Value, UplinkKenwood, UplinkIcomLan)
         }
     };
+
+    private static RigConnectionKind LegConnection(
+        RigType? type, KenwoodHfLegSettingsViewModel kenwood, IcomLanSettingsViewModel icom) =>
+        RigSettings.IsIcomLanEndpoint(type ?? RigType.None) ? icom.Connection : kenwood.Connection;
 
     private void RefreshComPortConflictIfReady()
     {

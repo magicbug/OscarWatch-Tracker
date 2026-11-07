@@ -3109,6 +3109,57 @@ Fortfahren?</value>
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>LAN-Verbindung fehlgeschlagen: {0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>Verbindung</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / seriell (COM-Port)</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>Netzwerk (LAN oder WLAN)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>IP-Adresse oder Hostname des Funkgeräts</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>Steuerport (UDP)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>Netzwerk-Benutzername (in den Netzwerkeinstellungen des Funkgeräts festgelegt)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>Netzwerk-Passwort</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>Schalten Sie am Funkgerät die Netzwerksteuerung ein und legen Sie einen Netzwerkbenutzer an. OscarWatch nutzt nur die CI-V-Steuerung (kein Netzwerk-Audio). Das Funkgerät akzeptiert jeweils nur einen Remote-Client, schließen Sie daher zuerst RS-BA1 oder wfview.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>Netzwerkverbindung testen</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>Verbindung wird getestet…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>Geben Sie zuerst Host, Port, Benutzername und Passwort ein.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>Verbunden mit {0} auf {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>Verbunden, aber das Funkgerät meldete sich nicht als {0}. Prüfen Sie das Funkgerätemodell und die CI-V-Adresse.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>Anmeldung abgelehnt. Prüfen Sie den am Funkgerät festgelegten Netzwerk-Benutzernamen und das Passwort.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>Das Funkgerät wird bereits von einem anderen Remote-Client verwendet ({0}). Trennen Sie diesen und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>Keine Antwort von {0}. Prüfen Sie IP-Adresse und Port und ob die Netzwerksteuerung eingeschaltet ist.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>Netzwerkverbindung fehlgeschlagen: {0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590: ein Funkgerät ist eine Strecke. Für 10 m den Transvertermodus ausgeschaltet lassen. Für 2 m oder 70 cm den Transvertermodus einschalten und den Offset im Funkgerät einstellen; OscarWatch liest ihn aus und stimmt die ZF passend ab. Baudrate an das COM-Menü des Funkgeräts anpassen. LAN (nur TS-990S und TS-890S) benötigt die im Funkgerät eingestellte Administrator- oder Benutzer-ID, und nur eine Anwendung kann Port 60000 gleichzeitig nutzen.</value>
   </data>

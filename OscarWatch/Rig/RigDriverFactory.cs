@@ -18,6 +18,18 @@ public static class RigDriverFactory
                 settings.CatDelayMs);
         }
 
+        if (settings.UsesIcomLan)
+        {
+            return CreateIcomLan(
+                settings.Type,
+                settings.NetworkHost,
+                settings.NetworkPort,
+                settings.NetworkUser,
+                settings.NetworkPassword,
+                settings.CivAddress,
+                settings.CatDelayMs);
+        }
+
         return CreateSingle(
             settings.Type,
             settings.Port,
@@ -29,7 +41,47 @@ public static class RigDriverFactory
             settings.KenwoodTraceEnabled);
     }
 
-    public static IRigDriver Create(RigEndpointSettings endpoint) => endpoint.Type switch
+    public static IRigDriver Create(RigEndpointSettings endpoint) => endpoint.UsesIcomLan
+        ? CreateIcomLan(
+            endpoint.Type,
+            endpoint.NetworkHost,
+            endpoint.NetworkPort,
+            endpoint.NetworkUser,
+            endpoint.NetworkPassword,
+            ResolveEndpointCivAddress(endpoint),
+            endpoint.CatDelayMs)
+        : CreateEndpoint(endpoint);
+
+    /// <summary>Icom IC-9700, IC-705, IC-905 or IC-7300 over network control (CI-V only, no audio).</summary>
+    public static IRigDriver CreateIcomLan(
+        RigType type,
+        string host,
+        int port,
+        string user,
+        string password,
+        string civAddressHex,
+        int catDelayMs)
+    {
+        var controlPort = port is > 0 and <= 65535 ? port : RigSettings.IcomLanDefaultPort;
+        var civAddress = string.IsNullOrWhiteSpace(civAddressHex)
+            ? RigSettings.DefaultCivAddressFor(type)
+            : civAddressHex.Trim();
+        var civ = IcomCivCodec.ParseCivAddressHex(civAddress);
+        var label = $"{host?.Trim()}:{controlPort}";
+        Func<IIcomCivTransport> transport = () =>
+            new IcomLanTransport(host ?? "", controlPort, user ?? "", password ?? "", civ, catDelayMs);
+
+        return type switch
+        {
+            RigType.IcomIc9700 => new IcomIc9700Driver(transport, label, civAddress, catDelayMs),
+            RigType.IcomIc705 => new IcomIc705Driver(transport, label, civAddress, catDelayMs),
+            RigType.IcomIc905 => new IcomIc905Driver(transport, label, civAddress, catDelayMs),
+            RigType.IcomIc7300 => new IcomIc7300Driver(transport, label, civAddress, catDelayMs),
+            _ => throw new InvalidOperationException($"{type} does not support Icom network control.")
+        };
+    }
+
+    private static IRigDriver CreateEndpoint(RigEndpointSettings endpoint) => endpoint.Type switch
     {
         RigType.SdrRigCtlTcp => new RigCtlTcpDriver(
             endpoint.NetworkHost,

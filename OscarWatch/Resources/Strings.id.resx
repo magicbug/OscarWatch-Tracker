@@ -3109,6 +3109,57 @@ Lanjutkan?</value>
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>Koneksi LAN gagal: {0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>Koneksi</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / serial (port COM)</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>Jaringan (LAN atau Wi-Fi)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>Alamat IP atau nama host radio</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>Port kontrol (UDP)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>Nama pengguna jaringan (diatur di pengaturan jaringan radio)</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>Kata sandi jaringan</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>Aktifkan Network Control di radio dan tambahkan pengguna jaringan. OscarWatch hanya menggunakan kontrol CI-V (tanpa audio jaringan). Radio hanya menerima satu klien jarak jauh pada satu waktu, jadi tutup RS-BA1 atau wfview terlebih dahulu.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>Uji koneksi jaringan</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>Menguji koneksi…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>Masukkan host, port, nama pengguna, dan kata sandi terlebih dahulu.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>Terhubung ke {0} pada {1} MHz.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>Terhubung, tetapi radio tidak teridentifikasi sebagai {0}. Periksa model radio dan alamat CI-V.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>Login ditolak. Periksa nama pengguna dan kata sandi jaringan yang diatur di radio.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>Radio sedang digunakan oleh klien jarak jauh lain ({0}). Putuskan koneksinya lalu coba lagi.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>Tidak ada balasan dari {0}. Periksa alamat IP dan port, serta pastikan Network Control aktif.</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>Koneksi jaringan gagal: {0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590: satu radio adalah satu kaki. Untuk 10 m, biarkan mode transverter mati. Untuk 2 m atau 70 cm, nyalakan mode transverter dan atur offset di radio; OscarWatch membacanya dan menala IF untuk Anda. Samakan baud rate dengan menu COM radio. LAN (hanya TS-990S dan TS-890S) memerlukan ID administrator atau pengguna yang diatur di radio, dan hanya satu aplikasi yang dapat memakai port 60000 pada satu waktu.</value>
   </data>

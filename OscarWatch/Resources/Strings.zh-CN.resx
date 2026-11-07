@@ -3105,6 +3105,57 @@
   <data name="Settings.Radio.KenwoodLanFailed">
     <value>LAN 连接失败：{0}</value>
   </data>
+  <data name="Settings.Radio.IcomConnection">
+    <value>连接方式</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Serial">
+    <value>USB / 串口（COM 端口）</value>
+  </data>
+  <data name="Settings.Radio.IcomConnection.Lan">
+    <value>网络（LAN 或 Wi-Fi）</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHost">
+    <value>电台 IP 地址或主机名</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPort">
+    <value>控制端口（UDP）</value>
+  </data>
+  <data name="Settings.Radio.IcomLanUser">
+    <value>网络用户名（在电台的网络设置中配置）</value>
+  </data>
+  <data name="Settings.Radio.IcomLanPassword">
+    <value>网络密码</value>
+  </data>
+  <data name="Settings.Radio.IcomLanHint">
+    <value>请在电台上开启网络控制并添加网络用户。OscarWatch 仅使用 CI-V 控制（不传输网络音频）。电台同一时间只接受一个远程客户端，请先关闭 RS-BA1 或 wfview。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTest">
+    <value>测试网络连接</value>
+  </data>
+  <data name="Settings.Radio.IcomLanTesting">
+    <value>正在测试连接…</value>
+  </data>
+  <data name="Settings.Radio.IcomLanEnterDetails">
+    <value>请先输入主机、端口、用户名和密码。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanOk">
+    <value>已连接到 {0}，频率 {1} MHz。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanWrongRadio">
+    <value>已连接，但电台未识别为 {0}。请检查电台型号和 CI-V 地址。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanLoginRejected">
+    <value>登录被拒绝。请检查电台上设置的网络用户名和密码。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanBusy">
+    <value>电台正被另一个远程客户端（{0}）使用。请断开后重试。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanNoReply">
+    <value>{0} 无响应。请检查 IP 地址和端口，并确认已开启网络控制。</value>
+  </data>
+  <data name="Settings.Radio.IcomLanFailed">
+    <value>网络连接失败：{0}</value>
+  </data>
   <data name="Settings.Radio.KenwoodHfHint">
     <value>TS-990S / TS-890S / TS-590：一台电台对应一条链路。10 m 时请保持变频器（Transverter）模式关闭。2 m 或 70 cm 时请开启变频器模式，并在电台上设置偏移量；OscarWatch 会读取该值并自动调谐中频。波特率需与电台 COM 菜单一致。LAN（仅 TS-990S 和 TS-890S）需要电台中设置的管理员 ID 或用户 ID，且同一时间只能有一个应用程序使用端口 60000。</value>
   </data>
