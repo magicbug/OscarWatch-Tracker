@@ -13,6 +13,11 @@ public partial class MainWindow : Window, ITroubleshootHost
         DataContext = viewModel;
         viewModel.Refresh();
         Activated += (_, _) => viewModel.Refresh();
+        Gs232LogBox.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == TextBox.TextProperty)
+                Gs232LogBox.CaretIndex = Gs232LogBox.Text?.Length ?? 0;
+        };
     }
 
     public Task<bool> ConfirmAsync(string message) => ConfirmDialog.ShowAsync(this, message);

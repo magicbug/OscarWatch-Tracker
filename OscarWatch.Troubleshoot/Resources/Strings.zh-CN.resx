@@ -239,4 +239,109 @@ GPS：{2}</value>
   <data name="Save.Title">
     <value>保存诊断文件</value>
   </data>
+  <data name="Tab.Status">
+    <value>状态</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>GS-232 旋转器</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>直接测试兼容 Yaesu GS-232 的旋转器控制器，并记录收发的每个字节，包括 OscarWatch 通常忽略的应答。必须先关闭 OscarWatch，才能腾出 COM 端口。报告旋转器问题时，请保存此日志并附上。</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>测试</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>COM 端口</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>波特率</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>仅方位角</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>最近位置</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>是</value>
+  </data>
+  <data name="Gs232.No">
+    <value>否</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>不可用。settings.json 不存在或无法读取，因此不知道旋转器端口。</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>不可用。设置中的旋转器不是连接在 COM 端口上的 Yaesu GS-232。</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>不可用。设置中没有为旋转器指定 COM 端口。</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>就绪。使用 OscarWatch 中保存的旋转器设置。</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>尚未读取</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>方位角 {0}°，仰角 {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>方位角 {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>仰角 {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>未报告位置</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>读取位置</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>停止</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>转动 5 度</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>“转动 5 度”在确认后将天线方位角转动 5°，仰角保持不变。在“读取位置”返回方位角后可用（除仅方位角控制器外，还需要仰角）。</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>会话日志</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>尚未发送任何内容。每个按钮都会打开 COM 端口，记录每个字节，然后再次关闭端口。</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>复制日志</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>保存日志</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>向 {1} 上的旋转器发送 {0}？天线将从方位角 {2}° 转到 {3}°。请确认周围没有障碍物。</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>已读取位置：{0}。</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>控制器没有报告位置。会话日志显示了返回的内容。</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>已发送停止命令。如有应答，会显示在会话日志中。</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>已发送 {0}。之后的位置：{1}。</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>无法使用 {0}：{1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>会话日志已复制到剪贴板。</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>会话日志已保存到 {0}。</value>
+  </data>
 </root>

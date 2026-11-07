@@ -20,116 +20,174 @@
                            AutomationProperties.LiveSetting="Polite" />
     </Border>
 
-    <ScrollViewer AllowAutoHide="False">
-      <StackPanel Margin="20" Spacing="20">
-        <TextBlock Text="{t:Tr Intro}" TextWrapping="Wrap" />
+    <TabControl Padding="0">
+      <TabItem Header="{t:Tr Tab.Status}">
+        <ScrollViewer AllowAutoHide="False">
+          <StackPanel Margin="20" Spacing="20">
+            <TextBlock Text="{t:Tr Intro}" TextWrapping="Wrap" />
 
-        <Grid ColumnDefinitions="*,28,*">
-          <StackPanel Grid.Column="0" Spacing="20">
-            <StackPanel Spacing="8">
-              <DockPanel>
-                <Button DockPanel.Dock="Right"
-                        Content="{t:Tr Action.Refresh}"
-                        Command="{Binding RefreshCommand}" />
-                <TextBlock Classes="section" Text="{t:Tr Section.Status}" VerticalAlignment="Center" />
-              </DockPanel>
+            <Grid ColumnDefinitions="*,28,*">
+              <StackPanel Grid.Column="0" Spacing="20">
+                <StackPanel Spacing="8">
+                  <DockPanel>
+                    <Button DockPanel.Dock="Right"
+                            Content="{t:Tr Action.Refresh}"
+                            Command="{Binding RefreshCommand}" />
+                    <TextBlock Classes="section" Text="{t:Tr Section.Status}" VerticalAlignment="Center" />
+                  </DockPanel>
 
-              <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
-                <TextBlock Classes="label" Grid.Row="0" Text="{t:Tr Label.Process}" />
-                <SelectableTextBlock Classes="value" Grid.Row="0" Grid.Column="1" Text="{Binding ProcessText}" />
+                  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Classes="label" Grid.Row="0" Text="{t:Tr Label.Process}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="0" Grid.Column="1" Text="{Binding ProcessText}" />
 
-                <TextBlock Classes="label" Grid.Row="1" Text="{t:Tr Label.Application}" />
-                <SelectableTextBlock Classes="value" Grid.Row="1" Grid.Column="1" Text="{Binding ApplicationText}" />
+                    <TextBlock Classes="label" Grid.Row="1" Text="{t:Tr Label.Application}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="1" Grid.Column="1" Text="{Binding ApplicationText}" />
 
-                <TextBlock Classes="label" Grid.Row="2" Text="{t:Tr Label.System}" />
-                <SelectableTextBlock Classes="value" Grid.Row="2" Grid.Column="1" Text="{Binding SystemText}" />
+                    <TextBlock Classes="label" Grid.Row="2" Text="{t:Tr Label.System}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="2" Grid.Column="1" Text="{Binding SystemText}" />
 
-                <TextBlock Classes="label" Grid.Row="3" Text="{t:Tr Label.DataFolder}" />
-                <SelectableTextBlock Classes="value" Grid.Row="3" Grid.Column="1" Text="{Binding DataFolderText}" />
+                    <TextBlock Classes="label" Grid.Row="3" Text="{t:Tr Label.DataFolder}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="3" Grid.Column="1" Text="{Binding DataFolderText}" />
 
-                <TextBlock Classes="label" Grid.Row="4" Text="{t:Tr Label.LogFolder}" />
-                <SelectableTextBlock Classes="value" Grid.Row="4" Grid.Column="1" Text="{Binding LogFolderText}" />
+                    <TextBlock Classes="label" Grid.Row="4" Text="{t:Tr Label.LogFolder}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="4" Grid.Column="1" Text="{Binding LogFolderText}" />
 
-                <TextBlock Classes="label" Grid.Row="5" Text="{t:Tr Label.LatestLog}" />
-                <SelectableTextBlock Classes="value" Grid.Row="5" Grid.Column="1" Text="{Binding LatestLogText}" />
+                    <TextBlock Classes="label" Grid.Row="5" Text="{t:Tr Label.LatestLog}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="5" Grid.Column="1" Text="{Binding LatestLogText}" />
 
-                <TextBlock Classes="label" Grid.Row="6" Text="{t:Tr Label.Settings}" />
-                <SelectableTextBlock Classes="value" Grid.Row="6" Grid.Column="1" Text="{Binding SettingsText}" />
+                    <TextBlock Classes="label" Grid.Row="6" Text="{t:Tr Label.Settings}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="6" Grid.Column="1" Text="{Binding SettingsText}" />
 
-                <TextBlock Classes="label" Grid.Row="7" Text="{t:Tr Label.Radio}" />
-                <SelectableTextBlock Classes="value" Grid.Row="7" Grid.Column="1" Text="{Binding RadioText}" />
+                    <TextBlock Classes="label" Grid.Row="7" Text="{t:Tr Label.Radio}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="7" Grid.Column="1" Text="{Binding RadioText}" />
 
-                <TextBlock Classes="label" Grid.Row="8" Text="{t:Tr Label.Rotator}" />
-                <SelectableTextBlock Classes="value" Grid.Row="8" Grid.Column="1" Text="{Binding RotatorText}" />
+                    <TextBlock Classes="label" Grid.Row="8" Text="{t:Tr Label.Rotator}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="8" Grid.Column="1" Text="{Binding RotatorText}" />
 
-                <TextBlock Classes="label" Grid.Row="9" Text="{t:Tr Label.Gps}" />
-                <SelectableTextBlock Classes="value" Grid.Row="9" Grid.Column="1" Text="{Binding GpsText}" />
+                    <TextBlock Classes="label" Grid.Row="9" Text="{t:Tr Label.Gps}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="9" Grid.Column="1" Text="{Binding GpsText}" />
 
-                <TextBlock Classes="label" Grid.Row="10" Text="{t:Tr Label.EchoCalibrations}" />
-                <SelectableTextBlock Classes="value" Grid.Row="10" Grid.Column="1" Text="{Binding EchoCalibrationsText}" />
-              </Grid>
-            </StackPanel>
+                    <TextBlock Classes="label" Grid.Row="10" Text="{t:Tr Label.EchoCalibrations}" />
+                    <SelectableTextBlock Classes="value" Grid.Row="10" Grid.Column="1" Text="{Binding EchoCalibrationsText}" />
+                  </Grid>
+                </StackPanel>
 
-            <StackPanel Spacing="8">
-              <TextBlock Classes="section" Text="{t:Tr Section.RecentErrors}" />
-              <TextBox Text="{Binding RecentErrorsText}"
-                       IsReadOnly="True"
-                       AcceptsReturn="True"
-                       TextWrapping="NoWrap"
-                       Height="200"
-                       FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace"
-                       FontSize="12"
-                       AutomationProperties.Name="{t:Tr Section.RecentErrors}" />
-            </StackPanel>
+                <StackPanel Spacing="8">
+                  <TextBlock Classes="section" Text="{t:Tr Section.RecentErrors}" />
+                  <TextBox Text="{Binding RecentErrorsText}"
+                           IsReadOnly="True"
+                           AcceptsReturn="True"
+                           TextWrapping="NoWrap"
+                           Height="200"
+                           FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace"
+                           FontSize="12"
+                           AutomationProperties.Name="{t:Tr Section.RecentErrors}" />
+                </StackPanel>
+              </StackPanel>
+
+              <StackPanel Grid.Column="2" Spacing="20">
+                <StackPanel Spacing="8">
+                  <TextBlock Classes="section" Text="{t:Tr Section.Files}" />
+                  <TextBlock Classes="hint" Text="{t:Tr Files.Hint}" />
+                  <WrapPanel ItemSpacing="8" LineSpacing="8">
+                    <Button Content="{t:Tr Action.OpenDataFolder}" Command="{Binding OpenDataFolderCommand}" />
+                    <Button Content="{t:Tr Action.OpenLogFolder}" Command="{Binding OpenLogFolderCommand}" />
+                    <Button Content="{t:Tr Action.CopyDiagnostics}" Command="{Binding CopyDiagnosticsCommand}" />
+                    <Button Content="{t:Tr Action.SaveDiagnostics}" Command="{Binding SaveDiagnosticsCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                  <TextBlock Classes="section" Text="{t:Tr Section.Process}" />
+                  <TextBlock Classes="hint" Text="{t:Tr Process.Hint}" />
+                  <WrapPanel ItemSpacing="8" LineSpacing="8">
+                    <Button Content="{t:Tr Action.CloseOscarWatch}" Command="{Binding CloseOscarWatchCommand}" />
+                    <Button Content="{t:Tr Action.StartOscarWatch}" Command="{Binding StartOscarWatchCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                  <TextBlock Classes="section" Text="{t:Tr Section.Hardware}" />
+                  <TextBlock Classes="hint" Text="{t:Tr Hardware.Hint}" />
+                  <WrapPanel ItemSpacing="8" LineSpacing="8">
+                    <Button Content="{t:Tr Action.DisableHardware}" Command="{Binding DisableHardwareCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                  <TextBlock Classes="section" Text="{t:Tr Section.Echo}" />
+                  <TextBlock Classes="hint" Text="{t:Tr Echo.Hint}" />
+                  <WrapPanel ItemSpacing="8" LineSpacing="8">
+                    <Button Content="{t:Tr Action.ClearEchoCalibrations}" Command="{Binding ClearEchoCalibrationsCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                  <TextBlock Classes="section" Text="{t:Tr Section.Reset}" />
+                  <TextBlock Classes="hint" Text="{t:Tr Reset.Hint}" />
+                  <WrapPanel ItemSpacing="8" LineSpacing="8">
+                    <Button Content="{t:Tr Action.PutSettingsAside}" Command="{Binding PutSettingsAsideCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+              </StackPanel>
+            </Grid>
           </StackPanel>
+        </ScrollViewer>
+      </TabItem>
 
-          <StackPanel Grid.Column="2" Spacing="20">
-            <StackPanel Spacing="8">
-              <TextBlock Classes="section" Text="{t:Tr Section.Files}" />
-              <TextBlock Classes="hint" Text="{t:Tr Files.Hint}" />
-              <WrapPanel ItemSpacing="8" LineSpacing="8">
-                <Button Content="{t:Tr Action.OpenDataFolder}" Command="{Binding OpenDataFolderCommand}" />
-                <Button Content="{t:Tr Action.OpenLogFolder}" Command="{Binding OpenLogFolderCommand}" />
-                <Button Content="{t:Tr Action.CopyDiagnostics}" Command="{Binding CopyDiagnosticsCommand}" />
-                <Button Content="{t:Tr Action.SaveDiagnostics}" Command="{Binding SaveDiagnosticsCommand}" />
-              </WrapPanel>
-            </StackPanel>
+      <TabItem Header="{t:Tr Tab.Gs232}">
+        <Grid Margin="20" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" RowSpacing="12">
+          <TextBlock Grid.Row="0" Classes="hint" Text="{t:Tr Gs232.Hint}" />
 
-            <StackPanel Spacing="8">
-              <TextBlock Classes="section" Text="{t:Tr Section.Process}" />
-              <TextBlock Classes="hint" Text="{t:Tr Process.Hint}" />
-              <WrapPanel ItemSpacing="8" LineSpacing="8">
-                <Button Content="{t:Tr Action.CloseOscarWatch}" Command="{Binding CloseOscarWatchCommand}" />
-                <Button Content="{t:Tr Action.StartOscarWatch}" Command="{Binding StartOscarWatchCommand}" />
-              </WrapPanel>
-            </StackPanel>
+          <Grid Grid.Row="1" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+            <TextBlock Classes="label" Grid.Row="0" Text="{t:Tr Gs232.Label.Status}" />
+            <SelectableTextBlock Classes="value" Grid.Row="0" Grid.Column="1" Text="{Binding Gs232.AvailabilityText}" />
 
-            <StackPanel Spacing="8">
-              <TextBlock Classes="section" Text="{t:Tr Section.Hardware}" />
-              <TextBlock Classes="hint" Text="{t:Tr Hardware.Hint}" />
-              <WrapPanel ItemSpacing="8" LineSpacing="8">
-                <Button Content="{t:Tr Action.DisableHardware}" Command="{Binding DisableHardwareCommand}" />
-              </WrapPanel>
-            </StackPanel>
+            <TextBlock Classes="label" Grid.Row="1" Text="{t:Tr Gs232.Label.Port}" />
+            <SelectableTextBlock Classes="value" Grid.Row="1" Grid.Column="1" Text="{Binding Gs232.PortText}" />
 
-            <StackPanel Spacing="8">
-              <TextBlock Classes="section" Text="{t:Tr Section.Echo}" />
-              <TextBlock Classes="hint" Text="{t:Tr Echo.Hint}" />
-              <WrapPanel ItemSpacing="8" LineSpacing="8">
-                <Button Content="{t:Tr Action.ClearEchoCalibrations}" Command="{Binding ClearEchoCalibrationsCommand}" />
-              </WrapPanel>
-            </StackPanel>
+            <TextBlock Classes="label" Grid.Row="2" Text="{t:Tr Gs232.Label.Baud}" />
+            <SelectableTextBlock Classes="value" Grid.Row="2" Grid.Column="1" Text="{Binding Gs232.BaudText}" />
 
-            <StackPanel Spacing="8">
-              <TextBlock Classes="section" Text="{t:Tr Section.Reset}" />
-              <TextBlock Classes="hint" Text="{t:Tr Reset.Hint}" />
-              <WrapPanel ItemSpacing="8" LineSpacing="8">
-                <Button Content="{t:Tr Action.PutSettingsAside}" Command="{Binding PutSettingsAsideCommand}" />
-              </WrapPanel>
-            </StackPanel>
-          </StackPanel>
+            <TextBlock Classes="label" Grid.Row="3" Text="{t:Tr Gs232.Label.AzimuthOnly}" />
+            <SelectableTextBlock Classes="value" Grid.Row="3" Grid.Column="1" Text="{Binding Gs232.AzimuthOnlyText}" />
+
+            <TextBlock Classes="label" Grid.Row="4" Text="{t:Tr Gs232.Label.Position}" />
+            <SelectableTextBlock Classes="value" Grid.Row="4" Grid.Column="1" Text="{Binding Gs232.PositionText}" />
+          </Grid>
+
+          <WrapPanel Grid.Row="2" ItemSpacing="8" LineSpacing="8">
+            <Button Content="{t:Tr Action.Gs232Read}" Command="{Binding Gs232.ReadPositionCommand}" />
+            <Button Content="{t:Tr Action.Gs232Stop}" Command="{Binding Gs232.StopCommand}" />
+            <Button Content="{t:Tr Action.Gs232Move}" Command="{Binding Gs232.MoveCommand}" />
+          </WrapPanel>
+
+          <TextBlock Grid.Row="3" Classes="hint" Text="{t:Tr Gs232.MoveHint}" />
+
+          <DockPanel Grid.Row="4">
+            <WrapPanel DockPanel.Dock="Right" ItemSpacing="8" LineSpacing="8">
+              <Button Content="{t:Tr Action.Gs232CopyLog}" Command="{Binding Gs232.CopyLogCommand}" />
+              <Button Content="{t:Tr Action.Gs232SaveLog}" Command="{Binding Gs232.SaveLogCommand}" />
+            </WrapPanel>
+            <TextBlock Classes="section" Text="{t:Tr Gs232.LogHeading}" VerticalAlignment="Center" />
+          </DockPanel>
+
+          <TextBox Grid.Row="5"
+                   x:Name="Gs232LogBox"
+                   Text="{Binding Gs232.LogText}"
+                   Watermark="{t:Tr Gs232.LogEmpty}"
+                   IsReadOnly="True"
+                   AcceptsReturn="True"
+                   TextWrapping="NoWrap"
+                   MinHeight="160"
+                   VerticalContentAlignment="Top"
+                   FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace"
+                   FontSize="12"
+                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   AutomationProperties.Name="{t:Tr Gs232.LogHeading}" />
         </Grid>
-      </StackPanel>
-    </ScrollViewer>
+      </TabItem>
+    </TabControl>
   </DockPanel>
 </Window>

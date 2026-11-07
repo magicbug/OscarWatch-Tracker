@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>診断ファイルを保存</value>
   </data>
+  <data name="Tab.Status">
+    <value>状態</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>GS-232 ローテーター</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Yaesu GS-232 互換のローテーターコントローラーを直接テストし、送受信したすべてのバイトを記録します。OscarWatch が通常無視する応答も含まれます。COM ポートを空けるため、OscarWatch を閉じておく必要があります。ローテーターの問題を報告するときは、このログを保存して添付してください。</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>テスト</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>COM ポート</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>ボーレート</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>方位角のみ</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>最新の位置</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>はい</value>
+  </data>
+  <data name="Gs232.No">
+    <value>いいえ</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>利用できません。settings.json がないか読み取れないため、ローテーターのポートが不明です。</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>利用できません。設定のローテーターが COM ポート接続の Yaesu GS-232 ではありません。</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>利用できません。設定でローテーターの COM ポートが指定されていません。</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>準備完了。OscarWatch に保存されたローテーター設定を使います。</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>まだ読み取っていません</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>方位角 {0}°、仰角 {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>方位角 {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>仰角 {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>位置が報告されませんでした</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>位置を読み取る</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>停止</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>5 度回転</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>「5 度回転」は確認後にアンテナを方位角で 5° 回し、仰角はそのままです。「位置を読み取る」で方位角（方位角のみのコントローラー以外は仰角も）が取得できると使えます。</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>セッションログ</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>まだ何も送信していません。各ボタンは COM ポートを開き、すべてのバイトを記録してから閉じます。</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>ログをコピー</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>ログを保存</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>{1} のローテーターに {0} を送信しますか？アンテナは方位角 {2}° から {3}° へ回転します。周囲に障害物がないことを確認してください。</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>位置を読み取りました: {0}。</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>コントローラーが位置を報告しませんでした。返ってきた内容はセッションログで確認できます。</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>停止を送信しました。応答があればセッションログに表示されます。</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} を送信しました。送信後の位置: {1}。</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>{0} を使用できませんでした: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>セッションログをクリップボードにコピーしました。</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>セッションログを {0} に保存しました。</value>
+  </data>
 </root>

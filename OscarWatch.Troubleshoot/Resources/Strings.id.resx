@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>Simpan berkas diagnostik</value>
   </data>
+  <data name="Tab.Status">
+    <value>Status</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>Rotator GS-232</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Menguji pengendali rotator yang kompatibel dengan Yaesu GS-232 secara langsung dan mencatat setiap byte yang dikirim dan diterima, termasuk balasan yang biasanya diabaikan OscarWatch. OscarWatch harus ditutup agar port COM bebas. Simpan log ini dan lampirkan saat melaporkan masalah rotator.</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>Uji</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>Port COM</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>Baud rate</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>Hanya azimut</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>Posisi terakhir</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>Ya</value>
+  </data>
+  <data name="Gs232.No">
+    <value>Tidak</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>Tidak tersedia. settings.json tidak ada atau tidak dapat dibaca, sehingga port rotator tidak diketahui.</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>Tidak tersedia. Rotator di Pengaturan bukan Yaesu GS-232 pada port COM.</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>Tidak tersedia. Belum ada port COM untuk rotator di Pengaturan.</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>Siap. Menggunakan pengaturan rotator yang disimpan di OscarWatch.</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>Belum dibaca</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>Azimut {0}°, elevasi {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>Azimut {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>Elevasi {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>Tidak ada posisi yang dilaporkan</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>Baca posisi</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>Berhenti</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>Putar 5 derajat</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>Putar 5 derajat memutar antena 5° pada azimut setelah dikonfirmasi, dan elevasi tetap. Tombol ini tersedia setelah Baca posisi mengembalikan azimut (dan elevasi, kecuali pengendali hanya azimut).</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>Log sesi</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>Belum ada yang dikirim. Setiap tombol membuka port COM, mencatat setiap byte, lalu menutupnya kembali.</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>Salin log</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>Simpan log</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>Kirim {0} ke rotator di {1}? Antena akan berputar dari azimut {2}° ke {3}°. Pastikan tidak ada yang menghalangi.</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>Posisi terbaca: {0}.</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>Pengendali tidak melaporkan posisi. Log sesi menunjukkan apa yang diterima.</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>Perintah berhenti terkirim. Log sesi menunjukkan balasan jika ada.</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} terkirim. Posisi setelahnya: {1}.</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>{0} tidak dapat digunakan: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>Log sesi disalin ke papan klip.</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>Log sesi disimpan ke {0}.</value>
+  </data>
 </root>

@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>Save diagnostics file</value>
   </data>
+  <data name="Tab.Status">
+    <value>Status</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>GS-232 rotator</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Tests a Yaesu GS-232 compatible rotator controller directly and logs every byte sent and received, including replies OscarWatch normally ignores. OscarWatch has to be closed so the COM port is free. When you report a rotator problem, save this log and attach it.</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>Probe</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>COM port</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>Baud rate</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>Azimuth only</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>Last position</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>Yes</value>
+  </data>
+  <data name="Gs232.No">
+    <value>No</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>Not available. settings.json is missing or cannot be read, so the rotator port is not known.</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>Not available. The rotator in Settings is not a Yaesu GS-232 on a COM port.</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>Not available. No COM port is set for the rotator in Settings.</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>Ready. Uses the rotator settings saved in OscarWatch.</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>Not read yet</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>Azimuth {0}°, elevation {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>Azimuth {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>Elevation {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>No position reported</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>Read position</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>Stop</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>Move 5 degrees</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>Move 5 degrees turns the antenna 5° in azimuth after a confirm, and keeps the elevation. It is available once Read position has returned the azimuth (and the elevation, unless the controller is azimuth only).</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>Session log</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>Nothing sent yet. Each button opens the COM port, logs every byte, and closes it again.</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>Copy log</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>Save log</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>Send {0} to the rotator on {1}? The antenna will turn from azimuth {2}° to {3}°. Check nothing is in the way.</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>Position read: {0}.</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>The controller did not report a position. The session log shows what came back.</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>Stop sent. The session log shows any reply.</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} sent. Position afterwards: {1}.</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>{0} could not be used: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>Session log copied to the clipboard.</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>Session log saved to {0}.</value>
+  </data>
 </root>

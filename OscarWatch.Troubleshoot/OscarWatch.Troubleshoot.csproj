@@ -11,6 +11,7 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <!-- Windows packages are single-file: a compressed bundle keeps this second exe small. -->
     <EnableCompressionInSingleFile Condition="'$(PublishSingleFile)' == 'true'">true</EnableCompressionInSingleFile>
+    <DefineConstants>$(DefineConstants);OSCARWATCH_TROUBLESHOOT</DefineConstants>
   </PropertyGroup>
 
   <!-- Release packages publish this beside OscarWatch in one folder. Keep these versions identical to
@@ -22,6 +23,11 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.11" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\OscarWatch\Rotator\Gs232PositionParser.cs" Link="Rotator\Gs232PositionParser.cs" />
   </ItemGroup>
 
   <ItemGroup>

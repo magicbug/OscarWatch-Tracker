@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>Сохранить файл диагностики</value>
   </data>
+  <data name="Tab.Status">
+    <value>Состояние</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>Поворотное устройство GS-232</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Напрямую проверяет контроллер поворотного устройства, совместимый с Yaesu GS-232, и записывает каждый отправленный и полученный байт, включая ответы, которые OscarWatch обычно игнорирует. OscarWatch должен быть закрыт, чтобы COM-порт был свободен. Сохраните этот журнал и приложите его, когда сообщаете о проблеме с поворотным устройством.</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>Проверка</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>COM-порт</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>Скорость (бод)</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>Только азимут</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>Последнее положение</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>Да</value>
+  </data>
+  <data name="Gs232.No">
+    <value>Нет</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>Недоступно. Файл settings.json отсутствует или не читается, поэтому порт поворотного устройства неизвестен.</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>Недоступно. В настройках выбрано не Yaesu GS-232 на COM-порту.</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>Недоступно. В настройках не задан COM-порт поворотного устройства.</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>Готово. Используются настройки поворотного устройства, сохранённые в OscarWatch.</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>Ещё не считано</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>Азимут {0}°, угол места {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>Азимут {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>Угол места {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>Положение не сообщено</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>Считать положение</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>Стоп</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>Повернуть на 5 градусов</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>«Повернуть на 5 градусов» после подтверждения поворачивает антенну на 5° по азимуту, не меняя угол места. Кнопка доступна, когда «Считать положение» вернуло азимут (и угол места, кроме контроллеров только по азимуту).</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>Журнал сеанса</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>Пока ничего не отправлено. Каждая кнопка открывает COM-порт, записывает каждый байт и снова закрывает порт.</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>Копировать журнал</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>Сохранить журнал</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>Отправить {0} на поворотное устройство на {1}? Антенна повернётся с азимута {2}° на {3}°. Убедитесь, что ничто не мешает.</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>Положение считано: {0}.</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>Контроллер не сообщил положение. В журнале сеанса видно, что пришло в ответ.</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>Команда остановки отправлена. Ответ, если он был, есть в журнале сеанса.</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} отправлено. Положение после: {1}.</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>Не удалось использовать {0}: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>Журнал сеанса скопирован в буфер обмена.</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>Журнал сеанса сохранён в {0}.</value>
+  </data>
 </root>

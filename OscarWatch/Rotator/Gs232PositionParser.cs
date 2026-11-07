@@ -1,10 +1,21 @@
+// OscarWatch.Troubleshoot compiles this file too. Its own namespace keeps the two copies apart in the tests,
+// which reference both assemblies.
+#if OSCARWATCH_TROUBLESHOOT
+namespace OscarWatch.Troubleshoot;
+#else
 namespace OscarWatch.Rotator;
+#endif
 
 /// <summary>
 /// Parses Yaesu GS-232 position responses.
 /// GS-232B: <c>AZ=aaa EL=eee</c> (C2/C/B). GS-232A: <c>+0aaa+0eee</c> (C2) or <c>+0nnn</c> (C/B).
 /// </summary>
-public static class Gs232PositionParser
+#if OSCARWATCH_TROUBLESHOOT
+internal
+#else
+public
+#endif
+    static class Gs232PositionParser
 {
     /// <summary>Extract az/el from a C2 or single-line response (either format).</summary>
     public static void TryParseParts(string? response, out int? azimuth, out int? elevation)

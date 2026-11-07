@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>Diagnosedatei speichern</value>
   </data>
+  <data name="Tab.Status">
+    <value>Status</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>GS-232-Rotor</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Prüft einen Yaesu-GS-232-kompatiblen Rotorcontroller direkt und protokolliert jedes gesendete und empfangene Byte, auch Antworten, die OscarWatch sonst ignoriert. OscarWatch muss geschlossen sein, damit der COM-Port frei ist. Speichern Sie dieses Protokoll und hängen Sie es an, wenn Sie ein Rotorproblem melden.</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>Test</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>COM-Port</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>Baudrate</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>Nur Azimut</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>Letzte Position</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>Ja</value>
+  </data>
+  <data name="Gs232.No">
+    <value>Nein</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>Nicht verfügbar. settings.json fehlt oder kann nicht gelesen werden, daher ist der Rotor-Port unbekannt.</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>Nicht verfügbar. Der Rotor in den Einstellungen ist kein Yaesu GS-232 an einem COM-Port.</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>Nicht verfügbar. Für den Rotor ist in den Einstellungen kein COM-Port eingetragen.</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>Bereit. Verwendet die in OscarWatch gespeicherten Rotoreinstellungen.</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>Noch nicht gelesen</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>Azimut {0}°, Elevation {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>Azimut {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>Elevation {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>Keine Position gemeldet</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>Position lesen</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>Stopp</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>5 Grad drehen</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>„5 Grad drehen“ dreht die Antenne nach einer Bestätigung um 5° im Azimut und behält die Elevation bei. Die Schaltfläche ist verfügbar, sobald „Position lesen“ den Azimut geliefert hat (und die Elevation, außer bei Controllern nur für Azimut).</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>Sitzungsprotokoll</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>Noch nichts gesendet. Jede Schaltfläche öffnet den COM-Port, protokolliert jedes Byte und schließt ihn wieder.</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>Protokoll kopieren</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>Protokoll speichern</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>{0} an den Rotor an {1} senden? Die Antenne dreht von Azimut {2}° auf {3}°. Prüfen Sie, dass nichts im Weg ist.</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>Position gelesen: {0}.</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>Der Controller hat keine Position gemeldet. Das Sitzungsprotokoll zeigt, was zurückkam.</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>Stopp gesendet. Das Sitzungsprotokoll zeigt eine eventuelle Antwort.</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} gesendet. Position danach: {1}.</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>{0} konnte nicht verwendet werden: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>Sitzungsprotokoll in die Zwischenablage kopiert.</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>Sitzungsprotokoll gespeichert unter {0}.</value>
+  </data>
 </root>

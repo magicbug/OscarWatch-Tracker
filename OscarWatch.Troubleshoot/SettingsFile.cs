@@ -14,6 +14,18 @@ internal enum SettingsFileState
 /// <summary>A device switch in settings.json. <see cref="Enabled"/> is null when the section is absent.</summary>
 internal sealed record DeviceState(bool? Enabled, string Target);
 
+/// <summary>
+/// The saved rotator as the GS-232 probe sees it. <see cref="IsSerialGs232"/> is false for other rotator types
+/// and for GS-232 over TCP. <see cref="Port"/> is empty when no COM port is saved.
+/// </summary>
+internal sealed record Gs232Target(
+    bool IsSerialGs232,
+    string Port,
+    int BaudRate,
+    bool AzimuthOnly,
+    int MaxAzimuthDeg,
+    int MaxElevationDeg);
+
 internal sealed record SettingsSnapshot(
     SettingsFileState State,
     DateTime? LastWriteLocal,
@@ -21,7 +33,8 @@ internal sealed record SettingsSnapshot(
     DeviceState Radio,
     DeviceState Rotator,
     DeviceState Gps,
-    int EchoCalibrationCount = 0);
+    int EchoCalibrationCount = 0,
+    Gs232Target? Gs232 = null);
 
 internal enum DisableHardwareResult
 {
@@ -96,7 +109,8 @@ internal static class SettingsFile
             ReadRadio(GetChild(root, "rig") as JsonObject),
             ReadRotator(GetChild(root, "rotator") as JsonObject),
             ReadGps(GetChild(root, "gps") as JsonObject),
-            EchoCalibrations(root)?.Count ?? 0);
+            EchoCalibrations(root)?.Count ?? 0,
+            ReadGs232(GetChild(root, "rotator") as JsonObject));
     }
 
     /// <summary>
@@ -282,6 +296,43 @@ internal static class SettingsFile
 
         return new DeviceState(ReadBool(rotator, "enabled"), target);
     }
+
+    /// <summary>A missing section or property takes the tracker's default: GS-232 on serial at 4800 baud, 450° by 180°.</summary>
+    private static Gs232Target ReadGs232(JsonObject? rotator)
+    {
+        rotator ??= new JsonObject();
+
+        var type = ReadString(rotator, "type");
+        var isGs232 = type.Length == 0 || type == "0"
+            || string.Equals(type, "yaesuGs232", StringComparison.OrdinalIgnoreCase);
+        var transport = ReadString(rotator, "transportKind");
+        var serialTransport = transport.Length == 0 || transport == "0"
+            || string.Equals(transport, "serial", StringComparison.OrdinalIgnoreCase);
+
+        return new Gs232Target(
+            isGs232 && serialTransport,
+            ReadString(rotator, "port"),
+            ReadInt(rotator, "baudRate") is int baud and > 0 ? baud : 4800,
+            ReadBool(rotator, "azimuthOnly") == true,
+            ReadDegreeRange(rotator, "azimuthRange", 450),
+            ReadDegreeRange(rotator, "elevationRange", 180));
+    }
+
+    /// <summary>Range enums are saved as <c>"deg450"</c>, or as the number itself.</summary>
+    private static int ReadDegreeRange(JsonObject obj, string name, int fallback)
+    {
+        var text = ReadString(obj, name);
+        if (text.StartsWith("deg", StringComparison.OrdinalIgnoreCase))
+            text = text[3..];
+        return int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var degrees) && degrees > 0
+            ? degrees
+            : fallback;
+    }
+
+    private static int? ReadInt(JsonObject obj, string name) =>
+        int.TryParse(ReadString(obj, name), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
+            ? value
+            : null;
 
     private static DeviceState ReadGps(JsonObject? gps)
     {

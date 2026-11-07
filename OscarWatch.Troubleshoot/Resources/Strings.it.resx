@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>Salva file di diagnostica</value>
   </data>
+  <data name="Tab.Status">
+    <value>Stato</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>Rotore GS-232</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Verifica direttamente un controller di rotore compatibile Yaesu GS-232 e registra ogni byte inviato e ricevuto, comprese le risposte che OscarWatch di solito ignora. OscarWatch deve essere chiuso perché la porta COM sia libera. Salva questo registro e allegalo quando segnali un problema con il rotore.</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>Test</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>Porta COM</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>Velocità (baud)</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>Solo azimut</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>Ultima posizione</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>Sì</value>
+  </data>
+  <data name="Gs232.No">
+    <value>No</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>Non disponibile. settings.json manca o non è leggibile, quindi la porta del rotore non è nota.</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>Non disponibile. Il rotore nelle Impostazioni non è uno Yaesu GS-232 su porta COM.</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>Non disponibile. Nelle Impostazioni non è impostata una porta COM per il rotore.</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>Pronto. Usa le impostazioni del rotore salvate in OscarWatch.</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>Non ancora letta</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>Azimut {0}°, elevazione {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>Azimut {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>Elevazione {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>Nessuna posizione riportata</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>Leggi posizione</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>Ferma</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>Ruota di 5 gradi</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>Ruota di 5 gradi sposta l'antenna di 5° in azimut dopo una conferma e mantiene l'elevazione. È disponibile quando Leggi posizione ha restituito l'azimut (e l'elevazione, salvo controller solo azimut).</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>Registro della sessione</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>Nulla inviato finora. Ogni pulsante apre la porta COM, registra ogni byte e la richiude.</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>Copia registro</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>Salva registro</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>Inviare {0} al rotore su {1}? L'antenna ruoterà dall'azimut {2}° a {3}°. Controlla che non ci sia nulla d'intralcio.</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>Posizione letta: {0}.</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>Il controller non ha riportato una posizione. Il registro della sessione mostra cosa è tornato.</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>Comando di arresto inviato. Il registro della sessione mostra eventuali risposte.</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} inviato. Posizione successiva: {1}.</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>Impossibile usare {0}: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>Registro della sessione copiato negli appunti.</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>Registro della sessione salvato in {0}.</value>
+  </data>
 </root>

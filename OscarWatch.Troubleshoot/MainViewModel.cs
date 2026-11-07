@@ -41,6 +41,17 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
     private bool _isTrackerFound;
 
     private SettingsSnapshot _settings = SettingsFile.Read(TroubleshootPaths.SettingsPath);
+    private Gs232ProbeViewModel? _gs232;
+
+    public Gs232ProbeViewModel Gs232 => _gs232 ??= new Gs232ProbeViewModel(
+        host,
+        async () =>
+        {
+            var closed = await EnsureTrackerClosedAsync();
+            Refresh();
+            return closed;
+        },
+        text => ResultText = text);
 
     [RelayCommand]
     public void Refresh()
@@ -333,6 +344,7 @@ internal sealed partial class MainViewModel(ITroubleshootHost host) : Observable
             : _settings.EchoCalibrationCount == 0
                 ? Tr.Get("Echo.None")
                 : Tr.Format("Echo.Count", _settings.EchoCalibrationCount);
+        Gs232.Update(_settings);
     }
 
     private static string DescribeDevice(DeviceState device) => device.Enabled switch

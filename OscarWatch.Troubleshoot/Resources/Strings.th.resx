@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>บันทึกไฟล์วินิจฉัย</value>
   </data>
+  <data name="Tab.Status">
+    <value>สถานะ</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>โรเตเตอร์ GS-232</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>ทดสอบตัวควบคุมโรเตเตอร์ที่เข้ากันได้กับ Yaesu GS-232 โดยตรง และบันทึกทุกไบต์ที่ส่งและรับ รวมถึงคำตอบที่ OscarWatch มักไม่สนใจ ต้องปิด OscarWatch ก่อนเพื่อให้พอร์ต COM ว่าง เมื่อรายงานปัญหาโรเตเตอร์ ให้บันทึกล็อกนี้และแนบไปด้วย</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>การทดสอบ</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>พอร์ต COM</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>บอดเรต</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>แอซิมัทเท่านั้น</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>ตำแหน่งล่าสุด</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>ใช่</value>
+  </data>
+  <data name="Gs232.No">
+    <value>ไม่ใช่</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>ใช้ไม่ได้ ไม่พบ settings.json หรืออ่านไม่ได้ จึงไม่ทราบพอร์ตของโรเตเตอร์</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>ใช้ไม่ได้ โรเตเตอร์ในการตั้งค่าไม่ใช่ Yaesu GS-232 บนพอร์ต COM</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>ใช้ไม่ได้ ยังไม่ได้ตั้งพอร์ต COM ของโรเตเตอร์ในการตั้งค่า</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>พร้อม ใช้การตั้งค่าโรเตเตอร์ที่บันทึกไว้ใน OscarWatch</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>ยังไม่ได้อ่าน</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>แอซิมัท {0}° มุมเงย {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>แอซิมัท {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>มุมเงย {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>ไม่มีการรายงานตำแหน่ง</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>อ่านตำแหน่ง</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>หยุด</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>หมุน 5 องศา</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>"หมุน 5 องศา" จะหมุนสายอากาศ 5° ในแนวแอซิมัทหลังยืนยัน โดยคงมุมเงยไว้ ใช้ได้เมื่อ "อ่านตำแหน่ง" ได้ค่าแอซิมัทแล้ว (และมุมเงย ยกเว้นตัวควบคุมแบบแอซิมัทเท่านั้น)</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>ล็อกของเซสชัน</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>ยังไม่ได้ส่งอะไร แต่ละปุ่มจะเปิดพอร์ต COM บันทึกทุกไบต์ แล้วปิดพอร์ตอีกครั้ง</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>คัดลอกล็อก</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>บันทึกล็อก</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>ส่ง {0} ไปยังโรเตเตอร์ที่ {1} หรือไม่ สายอากาศจะหมุนจากแอซิมัท {2}° ไปที่ {3}° ตรวจสอบว่าไม่มีสิ่งกีดขวาง</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>อ่านตำแหน่งได้: {0}</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>ตัวควบคุมไม่ได้รายงานตำแหน่ง ดูสิ่งที่ได้รับกลับมาในล็อกของเซสชัน</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>ส่งคำสั่งหยุดแล้ว คำตอบ (ถ้ามี) อยู่ในล็อกของเซสชัน</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>ส่ง {0} แล้ว ตำแหน่งหลังจากนั้น: {1}</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>ใช้ {0} ไม่ได้: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>คัดลอกล็อกของเซสชันไปยังคลิปบอร์ดแล้ว</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>บันทึกล็อกของเซสชันไว้ที่ {0} แล้ว</value>
+  </data>
 </root>

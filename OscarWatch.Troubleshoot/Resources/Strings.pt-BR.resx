@@ -239,4 +239,109 @@ GPS: {2}</value>
   <data name="Save.Title">
     <value>Salvar arquivo de diagnóstico</value>
   </data>
+  <data name="Tab.Status">
+    <value>Status</value>
+  </data>
+  <data name="Tab.Gs232">
+    <value>Rotor GS-232</value>
+  </data>
+  <data name="Gs232.Hint">
+    <value>Testa diretamente um controlador de rotor compatível com Yaesu GS-232 e registra cada byte enviado e recebido, incluindo respostas que o OscarWatch normalmente ignora. O OscarWatch precisa estar fechado para liberar a porta COM. Salve este registro e anexe-o ao relatar um problema no rotor.</value>
+  </data>
+  <data name="Gs232.Label.Status">
+    <value>Teste</value>
+  </data>
+  <data name="Gs232.Label.Port">
+    <value>Porta COM</value>
+  </data>
+  <data name="Gs232.Label.Baud">
+    <value>Taxa de transmissão (baud)</value>
+  </data>
+  <data name="Gs232.Label.AzimuthOnly">
+    <value>Somente azimute</value>
+  </data>
+  <data name="Gs232.Label.Position">
+    <value>Última posição</value>
+  </data>
+  <data name="Gs232.Yes">
+    <value>Sim</value>
+  </data>
+  <data name="Gs232.No">
+    <value>Não</value>
+  </data>
+  <data name="Gs232.SettingsUnavailable">
+    <value>Indisponível. O settings.json não existe ou não pode ser lido, então a porta do rotor é desconhecida.</value>
+  </data>
+  <data name="Gs232.NotGs232">
+    <value>Indisponível. O rotor nas Configurações não é um Yaesu GS-232 em porta COM.</value>
+  </data>
+  <data name="Gs232.NoPort">
+    <value>Indisponível. Nenhuma porta COM está definida para o rotor nas Configurações.</value>
+  </data>
+  <data name="Gs232.Ready">
+    <value>Pronto. Usa as configurações do rotor salvas no OscarWatch.</value>
+  </data>
+  <data name="Gs232.PositionUnknown">
+    <value>Ainda não lida</value>
+  </data>
+  <data name="Gs232.Position">
+    <value>Azimute {0}°, elevação {1}°</value>
+  </data>
+  <data name="Gs232.PositionAzimuth">
+    <value>Azimute {0}°</value>
+  </data>
+  <data name="Gs232.PositionElevation">
+    <value>Elevação {0}°</value>
+  </data>
+  <data name="Gs232.PositionNone">
+    <value>Nenhuma posição informada</value>
+  </data>
+  <data name="Action.Gs232Read">
+    <value>Ler posição</value>
+  </data>
+  <data name="Action.Gs232Stop">
+    <value>Parar</value>
+  </data>
+  <data name="Action.Gs232Move">
+    <value>Girar 5 graus</value>
+  </data>
+  <data name="Gs232.MoveHint">
+    <value>Girar 5 graus move a antena 5° em azimute após uma confirmação e mantém a elevação. Fica disponível depois que Ler posição retornar o azimute (e a elevação, exceto em controladores só de azimute).</value>
+  </data>
+  <data name="Gs232.LogHeading">
+    <value>Registro da sessão</value>
+  </data>
+  <data name="Gs232.LogEmpty">
+    <value>Nada enviado ainda. Cada botão abre a porta COM, registra cada byte e a fecha de novo.</value>
+  </data>
+  <data name="Action.Gs232CopyLog">
+    <value>Copiar registro</value>
+  </data>
+  <data name="Action.Gs232SaveLog">
+    <value>Salvar registro</value>
+  </data>
+  <data name="Confirm.Gs232Move">
+    <value>Enviar {0} ao rotor em {1}? A antena vai girar do azimute {2}° para {3}°. Verifique se não há nada no caminho.</value>
+  </data>
+  <data name="Result.Gs232Position">
+    <value>Posição lida: {0}.</value>
+  </data>
+  <data name="Result.Gs232NoPosition">
+    <value>O controlador não informou uma posição. O registro da sessão mostra o que voltou.</value>
+  </data>
+  <data name="Result.Gs232Stopped">
+    <value>Comando de parada enviado. O registro da sessão mostra qualquer resposta.</value>
+  </data>
+  <data name="Result.Gs232Moved">
+    <value>{0} enviado. Posição depois: {1}.</value>
+  </data>
+  <data name="Result.Gs232PortFailed">
+    <value>Não foi possível usar {0}: {1}</value>
+  </data>
+  <data name="Result.Gs232LogCopied">
+    <value>Registro da sessão copiado para a área de transferência.</value>
+  </data>
+  <data name="Result.Gs232LogSaved">
+    <value>Registro da sessão salvo em {0}.</value>
+  </data>
 </root>
