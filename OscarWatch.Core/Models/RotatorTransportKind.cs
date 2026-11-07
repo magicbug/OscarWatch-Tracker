@@ -8,7 +8,8 @@ public enum RotatorTransportKind
 
     /// <summary>
     /// Raw TCP serial tunnel (e.g. ser2net).
-    /// Ignored for <see cref="RotatorType.UrcTcp"/> and <see cref="RotatorType.SpidMd01"/>.
+    /// Ignored for <see cref="RotatorType.UrcTcp"/>, <see cref="RotatorType.SpidMd01"/>
+    /// and <see cref="RotatorType.PstRotatorUdp"/>.
     /// </summary>
     Tcp = 1
 }

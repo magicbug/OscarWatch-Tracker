@@ -20,5 +20,10 @@ public enum RotatorType
     /// <summary>
     /// MuseLab AntRunner: GRBL 1.1 on ESP32 over serial (115200). X azimuth, Y elevation, 360° = 40 mm.
     /// </summary>
-    AntRunner
+    AntRunner,
+    /// <summary>
+    /// PstRotator (YO3DMU) remote control over UDP (default port 12000, replies on port + 1).
+    /// PstRotator drives the real controller; OscarWatch only sends az/el and reads position.
+    /// </summary>
+    PstRotatorUdp
 }

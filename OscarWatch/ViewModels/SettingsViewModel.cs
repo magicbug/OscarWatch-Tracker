@@ -327,6 +327,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         RotatorType.UrcTcp => _l.Get("Settings.Rotator.TypeNote.Urc"),
         RotatorType.GreenHeronRt21 => _l.Get("Settings.Rotator.TypeNote.GreenHeron"),
         RotatorType.AntRunner => _l.Get("Settings.Rotator.TypeNote.AntRunner"),
+        RotatorType.PstRotatorUdp => _l.Get("Settings.Rotator.TypeNote.PstRotator"),
         _ => _l.Get("Settings.Rotator.TypeNote.Gs232")
     };
 
@@ -340,7 +341,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public bool ShowRotatorTransportFields =>
         SelectedRotatorTypeChoice?.Value is not (
-            RotatorType.UrcTcp or RotatorType.SpidMd01 or RotatorType.GreenHeronRt21);
+            RotatorType.UrcTcp or RotatorType.SpidMd01 or RotatorType.GreenHeronRt21
+            or RotatorType.PstRotatorUdp);
 
     public bool ShowRotatorSerialFields =>
         ShowRotatorTransportFields
@@ -351,6 +353,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public bool ShowRotatorNetworkFields =>
         SelectedRotatorTypeChoice?.Value is RotatorType.UrcTcp or RotatorType.SpidMd01
+            or RotatorType.PstRotatorUdp
         || (ShowRotatorTransportFields
             && SelectedRotatorTransportChoice?.Value == RotatorTransportKind.Tcp);
 
@@ -359,6 +362,15 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     public bool ShowRotatorSpidMd01NetworkNote =>
         SelectedRotatorTypeChoice?.Value == RotatorType.SpidMd01;
+
+    /// <summary>Port label: UDP for PstRotator, TCP for every other network rotator type.</summary>
+    public string RotatorNetworkPortLabel =>
+        SelectedRotatorTypeChoice?.Value == RotatorType.PstRotatorUdp
+            ? _l.Get("Settings.Rotator.NetworkPortUdp")
+            : _l.Get("Settings.Rotator.NetworkPort");
+
+    public bool ShowRotatorPstRotatorNetworkNote =>
+        SelectedRotatorTypeChoice?.Value == RotatorType.PstRotatorUdp;
 
     public bool ShowRotatorTcpSerialNetworkNote =>
         ShowRotatorTransportFields
@@ -937,7 +949,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             new(RotatorType.Saebrt, "SAEBRTrack"),
             new(RotatorType.UrcTcp, "OZ9AAR URC (TCP)"),
             new(RotatorType.GreenHeronRt21, "Green Heron RT-21 Az-El"),
-            new(RotatorType.AntRunner, "AntRunner (GRBL)")
+            new(RotatorType.AntRunner, "AntRunner (GRBL)"),
+            new(RotatorType.PstRotatorUdp, "PstRotator (UDP)")
         ];
         RotatorTransportChoices =
         [
@@ -1292,6 +1305,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             Type = SelectedRotatorTypeChoice?.Value ?? RotatorType.YaesuGs232,
             TransportKind = SelectedRotatorTypeChoice?.Value is
                 RotatorType.UrcTcp or RotatorType.SpidMd01 or RotatorType.GreenHeronRt21
+                    or RotatorType.PstRotatorUdp
                 ? RotatorTransportKind.Serial
                 : SelectedRotatorTransportChoice?.Value ?? RotatorTransportKind.Serial,
             Port = SelectedComPort ?? "",
@@ -2286,6 +2300,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             Type = SelectedRotatorTypeChoice?.Value ?? RotatorType.YaesuGs232,
             TransportKind = SelectedRotatorTypeChoice?.Value is
                 RotatorType.UrcTcp or RotatorType.SpidMd01 or RotatorType.GreenHeronRt21
+                    or RotatorType.PstRotatorUdp
                 ? RotatorTransportKind.Serial
                 : SelectedRotatorTransportChoice?.Value ?? RotatorTransportKind.Serial,
             Port = SelectedComPort ?? "",
@@ -2328,13 +2343,19 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         }
         else if (value.Value == RotatorType.SpidMd01)
         {
-            if (RotatorNetworkPort == RotatorSettings.DefaultNetworkPort || RotatorNetworkPort <= 0)
+            if (IsDefaultRotatorNetworkPort(RotatorNetworkPort))
                 RotatorNetworkPort = RotatorSettings.DefaultSpidMd01NetworkPort;
         }
         else if (value.Value == RotatorType.UrcTcp)
         {
-            if (RotatorNetworkPort == RotatorSettings.DefaultSpidMd01NetworkPort || RotatorNetworkPort <= 0)
+            if (IsDefaultRotatorNetworkPort(RotatorNetworkPort))
                 RotatorNetworkPort = RotatorSettings.DefaultNetworkPort;
+        }
+        else if (value.Value == RotatorType.PstRotatorUdp)
+        {
+            // A port typed for a TCP rotator (e.g. 4533 for a GS-232 TCP serial tunnel) is never
+            // PstRotator's UDP port, so switching to this type always starts from the default.
+            RotatorNetworkPort = RotatorSettings.DefaultPstRotatorUdpPort;
         }
 
         RefreshComPortConflictIfReady();
@@ -2356,6 +2377,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRotatorUrcNetworkNote));
         OnPropertyChanged(nameof(ShowRotatorSpidMd01NetworkNote));
         OnPropertyChanged(nameof(ShowRotatorTcpSerialNetworkNote));
+        OnPropertyChanged(nameof(ShowRotatorPstRotatorNetworkNote));
+        OnPropertyChanged(nameof(RotatorNetworkPortLabel));
         OnPropertyChanged(nameof(RotatorTypeNote));
         NotifyRotatorAzimuthOnlyVisibility();
     }
@@ -2375,10 +2398,20 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         if (port is > 0 and <= 65535)
             return port;
 
-        return type == RotatorType.SpidMd01
-            ? RotatorSettings.DefaultSpidMd01NetworkPort
-            : RotatorSettings.DefaultNetworkPort;
+        return type switch
+        {
+            RotatorType.SpidMd01 => RotatorSettings.DefaultSpidMd01NetworkPort,
+            RotatorType.PstRotatorUdp => RotatorSettings.DefaultPstRotatorUdpPort,
+            _ => RotatorSettings.DefaultNetworkPort
+        };
     }
+
+    /// <summary>True when the port is unset or still one of the per-type defaults (safe to replace on type change).</summary>
+    private static bool IsDefaultRotatorNetworkPort(int port) =>
+        port <= 0
+        || port is RotatorSettings.DefaultNetworkPort
+            or RotatorSettings.DefaultSpidMd01NetworkPort
+            or RotatorSettings.DefaultPstRotatorUdpPort;
 
     partial void OnSelectedAzimuthRangeChoiceChanged(RotatorAzimuthOption? value)
     {

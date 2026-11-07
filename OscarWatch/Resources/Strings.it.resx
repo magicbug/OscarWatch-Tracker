@@ -3160,6 +3160,9 @@ Continuare?</value>
   <data name="Settings.Rotator.TypeNote.AntRunner">
     <value>MuseLab AntRunner via USB. Orientarlo a nord e metterlo in bolla prima di accenderlo.</value>
   </data>
+  <data name="Settings.Rotator.TypeNote.PstRotator">
+    <value>PstRotator (YO3DMU) muove il rotore. Abilitare il controllo UDP in PstRotator.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Solo azimut</value>
   </data>
@@ -3190,11 +3193,17 @@ Continuare?</value>
   <data name="Settings.Rotator.NetworkPort">
     <value>Porta TCP</value>
   </data>
+  <data name="Settings.Rotator.NetworkPortUdp">
+    <value>Porta UDP</value>
+  </data>
   <data name="Settings.Rotator.NetworkNote">
     <value>OscarWatch si connette come client TCP. Sul controller URC, abilita il server socket e seleziona la modalità di inseguimento remota (REM), così i comandi GOTO muoveranno le antenne. Porta predefinita: 1111.</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteTcpSerial">
     <value>OscarWatch si connette come client TCP a un tunnel seriale trasparente (ad esempio ser2net). Configura velocità in baud e opzioni seriali sul server. È preferibile usarlo in una rete locale: una latenza elevata può causare timeout.</value>
+  </data>
+  <data name="Settings.Rotator.NetworkNotePstRotator">
+    <value>OscarWatch invia comandi UDP a PstRotator (porta predefinita 12000) e riceve la posizione sulla porta successiva (12001). Inserire l'indirizzo del PC con PstRotator e consentire entrambe le porte nel firewall.</value>
   </data>
   <data name="Settings.Rotator.NetworkNoteSpidMd01">
     <value>OscarWatch si connette come client TCP alla porta Ethernet dell'MD-01 / MD-02. Sul controller, imposta MOTOR CONFIGURATION su ETH e il protocollo su SPID ROT2. La porta TCP predefinita è 23. È possibile collegare un solo client alla volta. Si consiglia il firmware 1.2507 o successivo.</value>

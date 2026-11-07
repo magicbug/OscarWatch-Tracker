@@ -21,6 +21,11 @@ public static class RotatorDriverFactory
                 CreateTransport(settings, settings.Port, 1000, 1000, ";"),
                 CreateTransport(settings, settings.ElevationPort, 1000, 1000, ";")),
             RotatorType.AntRunner => new GrblRotator(CreateTransport(settings, 500, 500, "\n")),
+            RotatorType.PstRotatorUdp => new PstRotatorUdpRotator(
+                string.IsNullOrWhiteSpace(settings.NetworkHost)
+                    ? RotatorSettings.DefaultNetworkHost
+                    : settings.NetworkHost.Trim(),
+                settings.NetworkPort > 0 ? settings.NetworkPort : RotatorSettings.DefaultPstRotatorUdpPort),
             _ => new Gs232Rotator(CreateTransport(settings, 1000, 1000, "\r"), settings.IsAzimuthOnly)
         };
 
