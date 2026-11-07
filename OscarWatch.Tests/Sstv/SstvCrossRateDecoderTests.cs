@@ -55,6 +55,7 @@ public sealed class SstvCrossRateDecoderTests
 
         Assert.True(result.LockPercent > 55, $"lock {result.LockPercent:0.0}% at {rate} Hz");
         Assert.InRange(result.ClockPpm, -400, 400);
+        Assert.Contains(result.LineQuality.Skip(mode.TransmittedLines / 2), quality => quality == SstvLineQuality.Locked);
     }
 
     [Theory]
@@ -119,7 +120,8 @@ public sealed class SstvCrossRateDecoderTests
 
         Assert.True(first >= 0, "no energy in resampler output");
         var expectedStart = leadInInput * (double)outputRate / inputRate + documentedDelay;
-        Assert.InRange(first, (int)Math.Floor(expectedStart - 120), (int)Math.Ceiling(expectedStart + 120));
+        var expectedSample = (int)Math.Round(expectedStart);
+        Assert.InRange(first, expectedSample - 2, expectedSample + 2);
     }
 
     [Fact]
@@ -133,5 +135,6 @@ public sealed class SstvCrossRateDecoderTests
         var output = new List<float>();
         resampler.Process(input.AsSpan(), output);
         Assert.Equal(input.Length, output.Count);
+        Assert.Equal(input, output);
     }
 }
