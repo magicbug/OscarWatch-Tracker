@@ -14,7 +14,7 @@ public sealed class PassPlannerSettingsPersistenceTests
         var path = Path.Combine(Path.GetTempPath(), $"ow-planner-{Guid.NewGuid():N}", "settings.json");
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
-        await using var settings = new SettingsService(path);
+        using var settings = new SettingsService(path);
         settings.Load();
         settings.Current.MinimumElevationDeg = 12;
         settings.Current.PassPredictionHours = 36;

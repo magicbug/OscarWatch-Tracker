@@ -2,7 +2,6 @@ using OscarWatch.Core.Models;
 using OscarWatch.Core.Orbit;
 using OscarWatch.Core.Services;
 using OscarWatch.Core.Tle;
-using OscarWatch.Orbit;
 
 namespace OscarWatch.Tests;
 
@@ -65,35 +64,33 @@ public sealed class UpcomingPassesFilterDecouplingTests
         Assert.Single(plannerPasses);
     }
 
+    /// <summary>
+    /// When tracking minimum elevation is high, predicted passes can be short above the horizon even with a
+    /// high peak (e.g. a few minutes above 45° while TCA is still high relative to an open horizon).
+    /// Sidebar duration is controlled independently via <see cref="AppSettings.UpcomingPassesMinDurationMinutes"/>.
+    /// </summary>
     [Fact]
-    public async Task BruteForce_predictor_high_peak_pass_can_drop_when_duration_filter_matches_short_window()
+    public async Task Sidebar_duration_can_hide_short_high_peak_pass_while_zero_duration_shows_it()
     {
-        var predictor = new BruteForcePassPredictor();
-        var site = new GroundStation
-        {
-            LatitudeDeg = 44.1202,
-            LongitudeDeg = 27.2626,
-            AltitudeMetersAsl = 20
-        };
-        var utcStart = new DateTime(2026, 11, 7, 20, 30, 0, DateTimeKind.Utc);
-        var utcEnd = utcStart.AddDays(2);
+        var shortHighPeak = MakePass(durationMinutes: 1.4, maxEl: 68);
+        var lenientSidebar = CreateOrchestrator(
+            upcomingMinDurationMinutes: 0,
+            plannerMinDurationMinutes: 2,
+            passesByNorad: new Dictionary<string, PassInfo[]>(StringComparer.Ordinal)
+            {
+                [Iss.NoradId] = [shortHighPeak]
+            });
 
-        var at35 = await predictor.GetPassesAsync(Iss, site, utcStart, utcEnd, minimumElevationDeg: 35);
-        var iss35 = at35.FirstOrDefault(p => p.MaxElevationDeg >= 65);
-        Assert.NotNull(iss35);
+        var strictSidebar = CreateOrchestrator(
+            upcomingMinDurationMinutes: 2,
+            plannerMinDurationMinutes: 2,
+            passesByNorad: new Dictionary<string, PassInfo[]>(StringComparer.Ordinal)
+            {
+                [Iss.NoradId] = [shortHighPeak]
+            });
 
-        var at45 = await predictor.GetPassesAsync(Iss, site, utcStart, utcEnd, minimumElevationDeg: 45);
-        var samePass45 = at45.FirstOrDefault(p =>
-            Math.Abs((p.MaxElevationUtc - iss35.MaxElevationUtc).TotalMinutes) < 5);
-        if (samePass45 is null)
-        {
-            // TLE epoch drift can move timings; still assert generic behaviour when a high peak exists.
-            Assert.All(at45, p => Assert.True(p.MaxElevationDeg >= 45));
-            return;
-        }
-
-        Assert.True(samePass45.Duration < TimeSpan.FromMinutes(2));
-        Assert.True(samePass45.MaxElevationDeg >= 45);
+        Assert.Single(await lenientSidebar.GetUpcomingPassesAsync());
+        Assert.Empty(await strictSidebar.GetUpcomingPassesAsync());
     }
 
     private static PassInfo MakePass(double durationMinutes, double maxEl)
