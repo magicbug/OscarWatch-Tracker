@@ -93,6 +93,30 @@ public sealed class UpcomingPassesFilterDecouplingTests
         Assert.Empty(await strictSidebar.GetUpcomingPassesAsync());
     }
 
+    [Fact]
+    public void RematchAndPrune_retains_short_scheduled_pass_when_upcoming_includes_it()
+    {
+        var aos = new DateTime(2026, 8, 24, 12, 0, 0, DateTimeKind.Utc);
+        var los = aos.AddMinutes(1.5);
+        var shortPass = new PassInfo
+        {
+            NoradId = Iss.NoradId,
+            SatelliteName = Iss.Name,
+            AosUtc = aos,
+            LosUtc = los,
+            MaxElevationUtc = aos.AddMinutes(0.75),
+            MaxElevationDeg = 70
+        };
+
+        var rematched = ScheduledPassReminder.RematchAndPrune(
+            [new ScheduledPassEntry { NoradId = Iss.NoradId, AosUtc = aos }],
+            [shortPass],
+            utcNow: aos.AddMinutes(-30));
+
+        Assert.Single(rematched);
+        Assert.Equal(aos, rematched[0].AosUtc);
+    }
+
     private static PassInfo MakePass(double durationMinutes, double maxEl)
     {
         var aos = DateTime.UtcNow.AddHours(2);

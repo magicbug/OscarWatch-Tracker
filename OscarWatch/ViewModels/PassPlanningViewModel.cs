@@ -394,7 +394,13 @@ public partial class PassPlanningViewModel : ViewModelBase
                 Passes.Add(row);
             }
 
-            RematchScheduledPasses(passes);
+            // Scheduled reminders follow global upcoming-pass criteria, not the planner display duration filter.
+            var passesForRematch = await _tracking.GetPassesAsync(
+                site,
+                _settings.Current.MinimumElevationDeg,
+                _settings.Current.PassPredictionHours,
+                _settings.Current.UpcomingPassesMinDurationMinutes);
+            RematchScheduledPasses(passesForRematch);
             ApplyScheduledFlags();
             RebuildSatelliteFilters();
             RebuildDisplayedPasses();
