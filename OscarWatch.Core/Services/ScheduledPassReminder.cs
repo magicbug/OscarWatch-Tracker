@@ -165,12 +165,20 @@ public sealed class ScheduledPassReminder
             if (string.IsNullOrWhiteSpace(entry.NoradId))
                 continue;
 
-            if (!passesByNoradId.TryGetValue(entry.NoradId, out var candidatePasses))
-                continue;
-
-            var pass = FindBestMatchFromCandidates(candidatePasses, entry.AosUtc);
+            var pass = passesByNoradId.TryGetValue(entry.NoradId, out var candidatePasses)
+                ? FindBestMatchFromCandidates(candidatePasses, entry.AosUtc)
+                : null;
             if (pass is null)
+            {
+                var entryAos = PassUtc.Normalize(entry.AosUtc);
+                if (now > entryAos)
+                    continue;
+
+                var entryKey = AlertKey(entry.NoradId, entryAos);
+                if (seen.Add(entryKey))
+                    result.Add(new ScheduledPassEntry { NoradId = entry.NoradId, AosUtc = entryAos });
                 continue;
+            }
 
             var los = PassUtc.Normalize(pass.LosUtc);
             if (now > los)

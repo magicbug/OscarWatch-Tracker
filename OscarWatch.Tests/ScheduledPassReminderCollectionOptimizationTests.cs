@@ -206,9 +206,10 @@ public class ScheduledPassReminderCollectionOptimizationTests
 
         var result = ScheduledPassReminder.RematchAndPrune(scheduled, upcomingPasses, TestTime);
 
-        Assert.Equal(2, result.Count); // Should drop entry with no matching pass
+        Assert.Equal(3, result.Count); // Should preserve future entries with no matching pass
         Assert.Contains(result, e => e.NoradId == "25544" && e.AosUtc == TestTime.AddMinutes(6));
         Assert.Contains(result, e => e.NoradId == "07530" && e.AosUtc == TestTime.AddMinutes(11));
+        Assert.Contains(result, e => e.NoradId == "99999" && e.AosUtc == TestTime.AddMinutes(15));
     }
 
     [Fact]

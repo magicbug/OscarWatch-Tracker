@@ -115,14 +115,29 @@ public class ScheduledPassReminderTests
     }
 
     [Fact]
-    public void RematchAndPrune_drops_unmatched_entries()
+    public void RematchAndPrune_preserves_unmatched_future_entries()
     {
         var aos = new DateTime(2026, 8, 24, 12, 0, 0, DateTimeKind.Utc);
 
         var rematched = ScheduledPassReminder.RematchAndPrune(
             [Entry("25544", aos)],
-            [Pass("43017", "AO-91", aos)],
+            [],
             utcNow: aos.AddMinutes(-30));
+
+        Assert.Single(rematched);
+        Assert.Equal("25544", rematched[0].NoradId);
+        Assert.Equal(aos, rematched[0].AosUtc);
+    }
+
+    [Fact]
+    public void RematchAndPrune_drops_unmatched_entries_past_aos()
+    {
+        var aos = new DateTime(2026, 8, 24, 12, 0, 0, DateTimeKind.Utc);
+
+        var rematched = ScheduledPassReminder.RematchAndPrune(
+            [Entry("25544", aos)],
+            [],
+            utcNow: aos.AddSeconds(1));
 
         Assert.Empty(rematched);
     }
