@@ -474,13 +474,15 @@ public class RigControllerTests
     public void Ts2000_tracking_loop_sends_link_hold_poll_on_interval()
     {
         var transport = new RecordingKenwoodCatTransport();
+        var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var driver = new KenwoodTs2000Driver(
             transport,
             catDelayMs: 0,
             satModeSettlingDelayMs: 0,
             satModeRetryCount: 1,
             satModeRetryDelayMs: 0,
-            linkHoldPollIntervalMs: 100);
+            linkHoldPollIntervalMs: 1000,
+            utcNow: () => now);
         var controller = new RigController(_ => driver);
         var settings = new RigSettings
         {
@@ -516,9 +518,11 @@ public class RigControllerTests
 
         controller.Update(settings, ctx);
         controller.DrainCommandQueueForTests();
-        Thread.Sleep(150);
         transport.SentCommands.Clear();
 
+        // Pass setup already sent the first poll. Advance the clock instead of sleeping:
+        // a 100 ms wall-clock gap was long enough for a slow Ubuntu runner to send a second FA;.
+        now = now.AddSeconds(1);
         controller.RunTrackingLoopOnce();
         controller.DrainCommandQueueForTests();
         Assert.Equal(1, transport.SentCommands.Count(c => c == "FA;"));
@@ -528,7 +532,7 @@ public class RigControllerTests
         controller.DrainCommandQueueForTests();
         Assert.Empty(transport.SentCommands);
 
-        Thread.Sleep(110);
+        now = now.AddSeconds(1);
         controller.RunTrackingLoopOnce();
         controller.DrainCommandQueueForTests();
         Assert.Equal(1, transport.SentCommands.Count(c => c == "FA;"));

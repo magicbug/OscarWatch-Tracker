@@ -40,17 +40,19 @@ public class Ts2000LinkHoldTests : Ts2000TestBase
     public void LinkHoldPollIfDue_sends_again_after_interval_elapses()
     {
         var transport = Ts2000TransportFactory.CreateRecordingTransport();
+        var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var driver = new KenwoodTs2000Driver(
             transport,
             catDelayMs: 0,
             satModeSettlingDelayMs: 0,
-            linkHoldPollIntervalMs: 50);
+            linkHoldPollIntervalMs: 50,
+            utcNow: () => now);
         driver.Open();
         driver.SetSatelliteMode(true);
         transport.SentCommands.Clear();
 
         driver.SendSatelliteLinkHoldPollIfDue();
-        Thread.Sleep(60);
+        now = now.AddMilliseconds(50);
         driver.SendSatelliteLinkHoldPollIfDue();
 
         Assert.Equal(2, transport.SentCommands.Count(c => c == "FA;"));
