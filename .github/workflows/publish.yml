@@ -1,5 +1,8 @@
 # Build, test, and publish release packages on version tags (v*).
 # A version tag also runs the WA8LMF TNC benchmark before packages are built.
+# Package archives are uploaded as Actions artifacts only so the release job can
+# attach them. That job then deletes the copies. A manual run keeps them for one
+# day, which is the shortest retention upload-artifact allows.
 # Manual run: Actions → Publish → Run workflow (skips the TNC benchmark).
 
 name: Publish
@@ -12,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 env:
   DOTNET_VERSION: "10.0.x"
@@ -339,7 +343,7 @@ jobs:
           name: OscarWatch-${{ matrix.rid }}
           path: ${{ steps.archive.outputs.path }}
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1
 
   release:
     name: GitHub Release
@@ -357,3 +361,15 @@ jobs:
         with:
           files: artifacts/**
           generate_release_notes: true
+
+      - name: Delete Actions copies of the release packages
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ids=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" --jq '.artifacts[].id')
+          for id in $ids; do
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}"
+            echo "Deleted artifact ${id}"
+          done
