@@ -1,7 +1,7 @@
 # Build and test on pull requests and pushes to main.
-# Complements publish.yml, which only builds/tests on a version-tag push or
-# manual dispatch. Windows compiles System.IO.Ports / System.Speech paths that
-# Linux CI does not exercise.
+# Complements publish.yml, which builds, tests, and (on a version tag) runs the
+# WA8LMF TNC benchmark before publishing. Windows compiles System.IO.Ports /
+# System.Speech paths that Linux CI does not exercise.
 
 name: CI
 
@@ -40,31 +40,3 @@ jobs:
       - run: dotnet build OscarWatch.slnx -c Release
 
       - run: dotnet test OscarWatch.slnx -c Release --no-build
-
-  # Built-in packet modem against the WA8LMF TNC Test CD. The 250 MB ISO is cached, so it is only
-  # downloaded once rather than on every PR build.
-  modem-benchmark:
-    name: Packet modem benchmark (WA8LMF TNC Test CD)
-    runs-on: ubuntu-latest
-    env:
-      OSCARWATCH_TNC_TEST_CD: ${{ github.workspace }}/testdata/wa8lmf
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - uses: actions/cache@v4
-        with:
-          path: testdata/wa8lmf
-          key: wa8lmf-tnc-test-cd-v2
-
-      - name: Install ffmpeg and 7-Zip
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg p7zip-full
-
-      - name: Fetch the TNC Test CD
-        shell: pwsh
-        run: ./tools/fetch-tnc-test-cd.ps1
-
-      - run: dotnet test OscarWatch.Tests/OscarWatch.Tests.csproj -c Release --filter "FullyQualifiedName~Wa8lmfBenchmarkTests" --logger "console;verbosity=detailed"

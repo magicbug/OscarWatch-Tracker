@@ -1,5 +1,6 @@
 # Build, test, and publish release packages on version tags (v*).
-# Manual run: Actions → Publish → Run workflow.
+# A version tag also runs the WA8LMF TNC benchmark before packages are built.
+# Manual run: Actions → Publish → Run workflow (skips the TNC benchmark).
 
 name: Publish
 
@@ -31,9 +32,43 @@ jobs:
 
       - run: dotnet test OscarWatch.slnx -c Release --no-build
 
+  # Built-in packet modem against the WA8LMF TNC Test CD. Release tags only:
+  # the tracks take minutes to decode, and installing ffmpeg has taken half an
+  # hour on a slow apt mirror. The 250 MB ISO is cached across runs.
+  modem-benchmark:
+    name: Packet modem benchmark (WA8LMF TNC Test CD)
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    env:
+      OSCARWATCH_TNC_TEST_CD: ${{ github.workspace }}/testdata/wa8lmf
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - uses: actions/cache@v4
+        with:
+          path: testdata/wa8lmf
+          key: wa8lmf-tnc-test-cd-v2
+
+      - name: Install ffmpeg and 7-Zip
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg p7zip-full
+
+      - name: Fetch the TNC Test CD
+        shell: pwsh
+        run: ./tools/fetch-tnc-test-cd.ps1
+
+      - run: dotnet test OscarWatch.Tests/OscarWatch.Tests.csproj -c Release --filter "FullyQualifiedName~Wa8lmfBenchmarkTests" --logger "console;verbosity=detailed"
+
   publish:
     name: ${{ matrix.display_name }}
-    needs: validate
+    needs: [validate, modem-benchmark]
+    if: >-
+      always() &&
+      needs.validate.result == 'success' &&
+      (needs.modem-benchmark.result == 'success' || needs.modem-benchmark.result == 'skipped')
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
