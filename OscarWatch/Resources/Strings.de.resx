@@ -733,6 +733,12 @@ Fortfahren?</value>
   <data name="Sstv.AutoStart.Tip">
     <value>Beginnt mit dem Empfang, wenn der im Hauptfenster gewählte Satellit über die unten angegebene Elevation steigt, und stoppt, wenn er untergeht. Ein negativer Wert wie −5° startet etwas vor AOS, damit sich Funkgerät und Audio einpendeln können. Funktioniert nur bei geöffnetem Fenster. Mit „Automatisch speichern“ bleiben die Bilder erhalten, wenn Sie das Fenster schließen.</value>
   </data>
+  <data name="Sstv.KeepAwake">
+    <value>Computer während des Empfangs wach halten</value>
+  </data>
+  <data name="Sstv.KeepAwake.Tip">
+    <value>Solange SSTV empfängt, bleiben Computer und Bildschirm wach. Sie können den Bildschirm weiterhin sperren, und beim Zuklappen geht der Computer weiterhin in den Ruhezustand.</value>
+  </data>
   <data name="Sstv.AutoStart.Elevation">
     <value>Start-Elevation (Grad)</value>
   </data>

@@ -733,6 +733,12 @@ Lanjutkan?</value>
   <data name="Sstv.AutoStart.Tip">
     <value>Mulai mendengarkan saat satelit yang dipilih di jendela utama naik di atas elevasi di bawah, dan berhenti saat satelit terbenam. Gunakan nilai negatif, misalnya −5°, agar mulai sedikit sebelum AOS sehingga radio dan audio sempat stabil. Hanya berfungsi saat jendela ini terbuka. Simpan otomatis menjaga gambar jika Anda menutup jendela.</value>
   </data>
+  <data name="Sstv.KeepAwake">
+    <value>Jaga komputer tetap aktif saat mendengarkan</value>
+  </data>
+  <data name="Sstv.KeepAwake.Tip">
+    <value>Selama SSTV mendengarkan, komputer dan layar tetap aktif. Anda tetap dapat mengunci layar, dan menutup laptop tetap membuat komputer tidur.</value>
+  </data>
   <data name="Sstv.AutoStart.Elevation">
     <value>Elevasi mulai (derajat)</value>
   </data>

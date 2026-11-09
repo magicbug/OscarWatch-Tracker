@@ -1188,6 +1188,12 @@
   <data name="Sstv.AutoStart.Tip">
     <value>当主窗口中选定的卫星升到下方仰角以上时开始接收，卫星落下时停止。可设为负值（例如 −5°），在 AOS 稍前开始，以便电台和音频稳定。仅在此窗口打开时工作。开启自动保存后，关闭窗口也会保留图片。</value>
   </data>
+  <data name="Sstv.KeepAwake">
+    <value>收听时保持电脑唤醒</value>
+  </data>
+  <data name="Sstv.KeepAwake.Tip">
+    <value>SSTV 收听期间，电脑和显示器不会进入睡眠。您仍可锁定屏幕，合上盖子仍会使电脑睡眠。</value>
+  </data>
   <data name="Sstv.AutoStart.Elevation">
     <value>开始仰角（度）</value>
   </data>

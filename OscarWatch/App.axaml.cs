@@ -135,6 +135,7 @@ public partial class App : Application
         services.AddSingleton(CreateSstvPictureUploader);
         services.AddSingleton<OscarWatch.Sstv.SstvAudioService>();
         services.AddSingleton<OscarWatch.Sstv.SstvReceiverService>();
+        services.AddSingleton<IKeepAwake, KeepAwakeService>();
         services.AddSingleton<SstvViewModel>();
         services.AddSingleton<TerminalViewModel>();
         services.AddTransient<TerminalSettingsViewModel>();

@@ -1188,6 +1188,12 @@ Continuar?</value>
   <data name="Sstv.AutoStart.Tip">
     <value>Começa a ouvir quando o satélite selecionado na janela principal sobe acima da elevação abaixo, e para quando ele se põe. Use um valor negativo, como −5°, para começar um pouco antes do AOS e dar tempo de o rádio e o áudio se estabilizarem. Só funciona com esta janela aberta. O salvamento automático mantém as imagens se você fechar a janela.</value>
   </data>
+  <data name="Sstv.KeepAwake">
+    <value>Manter o computador ativo durante a escuta</value>
+  </data>
+  <data name="Sstv.KeepAwake.Tip">
+    <value>Enquanto o SSTV estiver escutando, o computador e a tela permanecem ativos. Você ainda pode bloquear a tela, e fechar a tampa ainda coloca o computador em suspensão.</value>
+  </data>
   <data name="Sstv.AutoStart.Elevation">
     <value>Elevação de início (graus)</value>
   </data>

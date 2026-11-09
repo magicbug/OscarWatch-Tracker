@@ -729,6 +729,12 @@ Continue?</value>
   <data name="Sstv.AutoStart.Tip">
     <value>Starts listening when the satellite selected in the main window climbs above the elevation below, and stops when it sets. Use a negative value such as −5° to start a little before AOS so the radio and audio can settle. Only works while this window is open. Auto-save keeps the pictures if you close the window.</value>
   </data>
+  <data name="Sstv.KeepAwake">
+    <value>Keep the computer awake while listening</value>
+  </data>
+  <data name="Sstv.KeepAwake.Tip">
+    <value>While SSTV is listening, the computer and the display stay awake. You can still lock the screen, and closing the lid still sleeps the computer.</value>
+  </data>
   <data name="Sstv.AutoStart.Elevation">
     <value>Start elevation (degrees)</value>
   </data>

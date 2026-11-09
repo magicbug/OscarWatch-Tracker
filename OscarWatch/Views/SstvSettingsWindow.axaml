@@ -71,6 +71,8 @@
                          Width="140"
                          AutomationProperties.Name="{loc:Localize Key=Sstv.AutoStart.Elevation}" />
         </StackPanel>
+        <CheckBox Content="{loc:Localize Key=Sstv.KeepAwake}" IsChecked="{Binding KeepAwakeWhileListening}" />
+        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.KeepAwake.Tip}" />
 
         <Separator Classes="sstv-rule" />
         <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.Decoding}" />

@@ -86,6 +86,16 @@ public sealed class SstvSettings
     /// </summary>
     public double AutoStartElevationDeg { get; set; } = DefaultAutoStartElevationDeg;
 
+    /// <summary>
+    /// When true, the computer and display are kept out of idle sleep while SSTV is listening
+    /// live. Decoding a saved recording does not. Default off.
+    /// </summary>
+    public bool KeepAwakeWhileListening { get; set; }
+
+    /// <summary>Whether to hold the keep-awake request: only for a live session with the option on.</summary>
+    public static bool ShouldKeepAwake(bool keepAwakeWhileListening, bool isRunning, bool isDecodingFile) =>
+        keepAwakeWhileListening && isRunning && !isDecodingFile;
+
     public static double ClampAutoStartElevationDeg(double value) =>
         double.IsFinite(value)
             ? Math.Clamp(value, MinAutoStartElevationDeg, MaxAutoStartElevationDeg)

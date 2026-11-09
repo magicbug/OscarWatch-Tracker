@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using OscarWatch.Core.Services;
 using OscarWatch.Core.Sstv;
 using OscarWatch.Localization;
+using OscarWatch.Services;
 using OscarWatch.Sstv;
 using Serilog;
 
@@ -30,6 +31,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     private readonly ILocalizationService _l;
     private readonly SstvReceiverService _receiver;
     private readonly SstvPictureUploader _shareQueue;
+    private readonly KeepAwakeHold _keepAwake;
     private readonly SstvRecordingLoader _loader = new();
     private readonly DispatcherTimer _uiTimer;
     private WriteableBitmap? _liveA;
@@ -56,9 +58,11 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         ILocalizationService localization,
         SstvReceiverService receiver,
         SstvPictureUploader shareQueue,
-        ISatelliteDatabaseService satelliteDatabase)
+        ISatelliteDatabaseService satelliteDatabase,
+        IKeepAwake keepAwake)
     {
         _settings = settings;
+        _keepAwake = new KeepAwakeHold(keepAwake, "OscarWatch SSTV is listening for pictures");
         _satelliteDatabase = satelliteDatabase;
         _frequencyOverlay = frequencyOverlay;
         _tracker = tracker;
@@ -93,6 +97,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         }
         _autoStartEnabled = s.AutoStartEnabled;
         _autoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(s.AutoStartElevationDeg);
+        _keepAwakeWhileListening = s.KeepAwakeWhileListening;
 
         ModeOptions.Add(new SstvModeOption(null, _l.Get("Sstv.Mode.Auto")));
         foreach (var mode in SstvModeTable.All)
@@ -190,6 +195,10 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private double _autoStartElevationDeg;
+
+    /// <summary>Keep the computer and display awake while listening live.</summary>
+    [ObservableProperty]
+    private bool _keepAwakeWhileListening;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanStart), nameof(CanDecodeRecording))]
@@ -749,6 +758,18 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
     }
 
+    partial void OnKeepAwakeWhileListeningChanged(bool value)
+    {
+        _settings.Current.Sstv.KeepAwakeWhileListening = value;
+        _settings.RequestSave();
+        UpdateKeepAwake();
+    }
+
+    partial void OnIsRunningChanged(bool value) => UpdateKeepAwake();
+
+    private void UpdateKeepAwake() =>
+        _keepAwake.Set(!_disposed && SstvSettings.ShouldKeepAwake(KeepAwakeWhileListening, IsRunning, _receiver.IsDecodingFile));
+
     partial void OnSelectedGalleryItemChanged(SstvGalleryItem? value)
     {
         if (!_keepSlantPrompt)
@@ -1075,6 +1096,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         _receiver.Stopped -= OnReceiverStopped;
         _shareQueue.StatusChanged -= OnShareStatusChanged;
         _receiver.Stop();
+        _keepAwake.Dispose();
     }
 }
 

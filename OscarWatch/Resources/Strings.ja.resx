@@ -2658,6 +2658,12 @@
   <data name="Sstv.AutoStart.Tip">
     <value>メインウィンドウで選択中の衛星が下の仰角を超えると受信を開始し、沈むと停止します。−5° のような負の値にすると、AOS の少し前から開始し、無線機と音声が安定する時間を確保できます。この画面を開いているときだけ動作します。ウィンドウを閉じても、自動保存がオンであればピクチャは保存されます。</value>
   </data>
+  <data name="Sstv.KeepAwake">
+    <value>受信中はコンピューターをスリープさせない</value>
+  </data>
+  <data name="Sstv.KeepAwake.Tip">
+    <value>SSTV の受信中は、コンピューターとディスプレイがスリープしません。画面のロックは引き続き可能で、ふたを閉じるとコンピューターはスリープします。</value>
+  </data>
   <data name="Sstv.AutoStart.Elevation">
     <value>開始する仰角（度）</value>
   </data>
