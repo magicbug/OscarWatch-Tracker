@@ -2775,6 +2775,12 @@
   <data name="Sstv.Settings.Saving">
     <value>保存</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>全般</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>フェードとノイズ</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>OscarWatch SSTV 画像ライブラリ</value>
   </data>

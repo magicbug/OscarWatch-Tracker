@@ -850,6 +850,12 @@ Lanjutkan?</value>
   <data name="Sstv.Settings.Saving">
     <value>Penyimpanan</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>Umum</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>Fading dan derau</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>Pustaka gambar OscarWatch SSTV</value>
   </data>

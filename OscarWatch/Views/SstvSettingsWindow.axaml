@@ -5,28 +5,12 @@
         x:Class="OscarWatch.Views.SstvSettingsWindow"
         x:DataType="vm:SstvViewModel"
         Title="{loc:Localize Key=Window.SstvSettings.Title}"
-        Width="560"
-        Height="600"
-        MinWidth="480"
+        Width="600"
+        Height="560"
+        MinWidth="520"
         MinHeight="420"
         WindowStartupLocation="CenterOwner"
         CanResize="True">
-  <Window.Styles>
-    <Style Selector="TextBlock.sstv-section">
-      <Setter Property="FontSize" Value="13" />
-      <Setter Property="FontWeight" Value="SemiBold" />
-    </Style>
-    <Style Selector="TextBlock.sstv-note">
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="TextWrapping" Value="Wrap" />
-      <Setter Property="Margin" Value="28,0,0,0" />
-      <Setter Property="Foreground" Value="{DynamicResource ThemeSecondaryForegroundBrush}" />
-    </Style>
-    <Style Selector="Separator.sstv-rule">
-      <Setter Property="Margin" Value="0,6,0,2" />
-    </Style>
-  </Window.Styles>
-
   <DockPanel Margin="14">
     <StackPanel DockPanel.Dock="Bottom"
                 Orientation="Horizontal"
@@ -40,105 +24,146 @@
               MinWidth="100" />
     </StackPanel>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-      <StackPanel Spacing="8" Margin="0,0,6,0">
-        <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.Audio}" />
-        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-          <TextBlock Grid.Column="0"
-                     Text="{loc:Localize Key=Sstv.Input}"
-                     VerticalAlignment="Center" />
-          <ComboBox Grid.Column="1"
-                    ItemsSource="{Binding InputDeviceOptions}"
-                    SelectedItem="{Binding SelectedInputDevice}"
-                    HorizontalAlignment="Stretch"
-                    AutomationProperties.Name="{loc:Localize Key=Sstv.Input}" />
-          <Button Grid.Column="2"
-                  Content="{loc:Localize Key=Sstv.Refresh}"
-                  Command="{Binding RefreshInputDevicesCommand}"
-                  IsEnabled="{Binding CanStart}" />
-        </Grid>
+    <TabControl>
+      <TabControl.Styles>
+        <Style Selector="TabItem">
+          <Setter Property="FontSize" Value="13" />
+          <Setter Property="Padding" Value="12,6" />
+        </Style>
+        <Style Selector="TextBlock.sstv-section">
+          <Setter Property="FontSize" Value="13" />
+          <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="TextBlock.sstv-note">
+          <Setter Property="FontSize" Value="12" />
+          <Setter Property="TextWrapping" Value="Wrap" />
+          <Setter Property="Margin" Value="28,0,0,0" />
+          <Setter Property="Foreground" Value="{DynamicResource ThemeSecondaryForegroundBrush}" />
+        </Style>
+        <Style Selector="Separator.sstv-rule">
+          <Setter Property="Margin" Value="0,6,0,2" />
+        </Style>
+      </TabControl.Styles>
 
-        <Separator Classes="sstv-rule" />
-        <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.AutoStart}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.AutoStart}" IsChecked="{Binding AutoStartEnabled}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AutoStart.Tip}" />
-        <StackPanel Orientation="Horizontal" Spacing="10" Margin="28,0,0,0">
-          <TextBlock Text="{loc:Localize Key=Sstv.AutoStart.Elevation}" VerticalAlignment="Center" />
-          <NumericUpDown Value="{Binding AutoStartElevationDeg}"
-                         IsEnabled="{Binding AutoStartEnabled}"
-                         Minimum="-15" Maximum="30" Increment="1"
-                         FormatString="0"
-                         Width="140"
-                         AutomationProperties.Name="{loc:Localize Key=Sstv.AutoStart.Elevation}" />
-        </StackPanel>
-        <CheckBox Content="{loc:Localize Key=Sstv.KeepAwake}" IsChecked="{Binding KeepAwakeWhileListening}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.KeepAwake.Tip}" />
+      <TabItem Header="{loc:Localize Key=Sstv.Settings.General}">
+        <ScrollViewer Margin="8,10,4,4" VerticalScrollBarVisibility="Auto">
+          <StackPanel Spacing="8" Margin="0,0,6,0">
+            <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.Audio}" />
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+              <TextBlock Grid.Column="0"
+                         Text="{loc:Localize Key=Sstv.Input}"
+                         VerticalAlignment="Center" />
+              <ComboBox Grid.Column="1"
+                        ItemsSource="{Binding InputDeviceOptions}"
+                        SelectedItem="{Binding SelectedInputDevice}"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{loc:Localize Key=Sstv.Input}" />
+              <Button Grid.Column="2"
+                      Content="{loc:Localize Key=Sstv.Refresh}"
+                      Command="{Binding RefreshInputDevicesCommand}"
+                      IsEnabled="{Binding CanStart}" />
+            </Grid>
 
-        <Separator Classes="sstv-rule" />
-        <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.Decoding}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.AutoSlant}" IsChecked="{Binding AutoSlant}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AutoSlant.Tip}" />
-        <StackPanel Orientation="Horizontal" Spacing="10" Margin="28,0,0,0">
-          <TextBlock Text="{loc:Localize Key=Sstv.SlantTrim}" VerticalAlignment="Center" />
-          <NumericUpDown Value="{Binding SlantTrimPpm}"
-                         IsEnabled="{Binding IsSlantTrimEnabled}"
-                         Minimum="-20000" Maximum="20000" Increment="50"
-                         FormatString="0"
-                         Width="140"
-                         AutomationProperties.Name="{loc:Localize Key=Sstv.SlantTrim}" />
-        </StackPanel>
-        <CheckBox Content="{loc:Localize Key=Sstv.Afc}" IsChecked="{Binding AutoTune}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.Afc.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.CatFeedForward}" IsChecked="{Binding CatDopplerFeedForward}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.CatFeedForward.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.DetectWithoutVis}" IsChecked="{Binding DetectWithoutVis}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.DetectWithoutVis.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.UseSatelliteModes}" IsChecked="{Binding UseSatelliteModes}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.UseSatelliteModes.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.AlignAosFragments}" IsChecked="{Binding AlignAosFragments}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AlignAosFragments.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.RepairBadLines}" IsChecked="{Binding RepairBadLines}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.RepairBadLines.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.SmoothAcrossLines}" IsChecked="{Binding SmoothAcrossLines}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.SmoothAcrossLines.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.HoldThroughFades}" IsChecked="{Binding HoldThroughFades}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.HoldThroughFades.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.AdaptiveBandwidth}" IsChecked="{Binding AdaptiveBandwidth}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AdaptiveBandwidth.Tip}" />
+            <Separator Classes="sstv-rule" />
+            <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.AutoStart}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.AutoStart}" IsChecked="{Binding AutoStartEnabled}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AutoStart.Tip}" />
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="28,0,0,0">
+              <TextBlock Text="{loc:Localize Key=Sstv.AutoStart.Elevation}" VerticalAlignment="Center" />
+              <NumericUpDown Value="{Binding AutoStartElevationDeg}"
+                             IsEnabled="{Binding AutoStartEnabled}"
+                             Minimum="-15" Maximum="30" Increment="1"
+                             FormatString="0"
+                             Width="140"
+                             AutomationProperties.Name="{loc:Localize Key=Sstv.AutoStart.Elevation}" />
+            </StackPanel>
+            <CheckBox Content="{loc:Localize Key=Sstv.KeepAwake}" IsChecked="{Binding KeepAwakeWhileListening}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.KeepAwake.Tip}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
 
-        <Separator Classes="sstv-rule" />
-        <TextBlock Classes="sstv-section" Text="{loc:Localize Key=Sstv.Settings.Saving}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.AutoSave}" IsChecked="{Binding AutoSavePictures}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.CombineRepeats}"
-                  IsChecked="{Binding CombineRepeats}"
-                  IsEnabled="{Binding AutoSavePictures}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.CombineRepeats.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.SaveSessionAudio}" IsChecked="{Binding SaveSessionAudio}" />
-        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.SaveSessionAudio.Tip}" />
-        <CheckBox Content="{loc:Localize Key=Sstv.Share}"
-                  IsChecked="{Binding SharePictures}"
-                  IsEnabled="{Binding CanSharePictures}" />
-        <TextBlock Classes="sstv-note" Text="{Binding ShareNote}" />
-        <TextBlock Text="{loc:Localize Key=Sstv.OutputFolder}" Margin="0,4,0,0" />
-        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-          <TextBox Grid.Column="0"
-                   Text="{Binding OutputFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                   Watermark="{Binding OutputFolderWatermark}"
-                   AutomationProperties.Name="{loc:Localize Key=Sstv.OutputFolder}" />
-          <Button Grid.Column="1"
-                  Content="{loc:Localize Key=Common.Browse}"
-                  Click="OnBrowseOutputFolderClick" />
-        </Grid>
-        <TextBlock Classes="sstv-note" Margin="0" Text="{loc:Localize Key=Sstv.OutputFolder.Tip}" />
-        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-          <Button Content="{loc:Localize Key=Sstv.OpenFolder}"
-                  Command="{Binding OpenPictureFolderCommand}" />
-          <TextBlock Text="{Binding PictureFolder}"
-                     Classes="sstv-note"
-                     Margin="0"
-                     VerticalAlignment="Center" />
-        </StackPanel>
-      </StackPanel>
-    </ScrollViewer>
+      <TabItem Header="{loc:Localize Key=Sstv.Settings.Decoding}">
+        <ScrollViewer Margin="8,10,4,4" VerticalScrollBarVisibility="Auto">
+          <StackPanel Spacing="8" Margin="0,0,6,0">
+            <CheckBox Content="{loc:Localize Key=Sstv.AutoSlant}" IsChecked="{Binding AutoSlant}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AutoSlant.Tip}" />
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="28,0,0,0">
+              <TextBlock Text="{loc:Localize Key=Sstv.SlantTrim}" VerticalAlignment="Center" />
+              <NumericUpDown Value="{Binding SlantTrimPpm}"
+                             IsEnabled="{Binding IsSlantTrimEnabled}"
+                             Minimum="-20000" Maximum="20000" Increment="50"
+                             FormatString="0"
+                             Width="140"
+                             AutomationProperties.Name="{loc:Localize Key=Sstv.SlantTrim}" />
+            </StackPanel>
+            <CheckBox Content="{loc:Localize Key=Sstv.Afc}" IsChecked="{Binding AutoTune}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.Afc.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.CatFeedForward}" IsChecked="{Binding CatDopplerFeedForward}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.CatFeedForward.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.DetectWithoutVis}" IsChecked="{Binding DetectWithoutVis}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.DetectWithoutVis.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.UseSatelliteModes}" IsChecked="{Binding UseSatelliteModes}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.UseSatelliteModes.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.AlignAosFragments}" IsChecked="{Binding AlignAosFragments}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AlignAosFragments.Tip}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <TabItem Header="{loc:Localize Key=Sstv.Settings.FadesAndNoise}">
+        <ScrollViewer Margin="8,10,4,4" VerticalScrollBarVisibility="Auto">
+          <StackPanel Spacing="8" Margin="0,0,6,0">
+            <CheckBox Content="{loc:Localize Key=Sstv.HoldThroughFades}" IsChecked="{Binding HoldThroughFades}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.HoldThroughFades.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.AdaptiveBandwidth}" IsChecked="{Binding AdaptiveBandwidth}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AdaptiveBandwidth.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.RepairBadLines}" IsChecked="{Binding RepairBadLines}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.RepairBadLines.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.SmoothAcrossLines}" IsChecked="{Binding SmoothAcrossLines}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.SmoothAcrossLines.Tip}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <TabItem Header="{loc:Localize Key=Sstv.Settings.Saving}">
+        <ScrollViewer Margin="8,10,4,4" VerticalScrollBarVisibility="Auto">
+          <StackPanel Spacing="8" Margin="0,0,6,0">
+            <CheckBox Content="{loc:Localize Key=Sstv.AutoSave}" IsChecked="{Binding AutoSavePictures}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.CombineRepeats}"
+                      IsChecked="{Binding CombineRepeats}"
+                      IsEnabled="{Binding AutoSavePictures}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.CombineRepeats.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.SaveSessionAudio}" IsChecked="{Binding SaveSessionAudio}" />
+            <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.SaveSessionAudio.Tip}" />
+            <CheckBox Content="{loc:Localize Key=Sstv.Share}"
+                      IsChecked="{Binding SharePictures}"
+                      IsEnabled="{Binding CanSharePictures}" />
+            <TextBlock Classes="sstv-note" Text="{Binding ShareNote}" />
+
+            <Separator Classes="sstv-rule" />
+            <TextBlock Text="{loc:Localize Key=Sstv.OutputFolder}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <TextBox Grid.Column="0"
+                       Text="{Binding OutputFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       Watermark="{Binding OutputFolderWatermark}"
+                       AutomationProperties.Name="{loc:Localize Key=Sstv.OutputFolder}" />
+              <Button Grid.Column="1"
+                      Content="{loc:Localize Key=Common.Browse}"
+                      Click="OnBrowseOutputFolderClick" />
+            </Grid>
+            <TextBlock Classes="sstv-note" Margin="0" Text="{loc:Localize Key=Sstv.OutputFolder.Tip}" />
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+              <Button Content="{loc:Localize Key=Sstv.OpenFolder}"
+                      Command="{Binding OpenPictureFolderCommand}" />
+              <TextBlock Text="{Binding PictureFolder}"
+                         Classes="sstv-note"
+                         Margin="0"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
   </DockPanel>
 </Window>

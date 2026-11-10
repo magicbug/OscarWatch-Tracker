@@ -850,6 +850,12 @@ LOS: {2}
   <data name="Sstv.Settings.Saving">
     <value>Сохранение</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>Общие</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>Замирания и шум</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>Библиотека изображений OscarWatch SSTV</value>
   </data>

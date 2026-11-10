@@ -850,6 +850,12 @@ LOS: {2}
   <data name="Sstv.Settings.Saving">
     <value>การบันทึก</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>ทั่วไป</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>การจางหายและสัญญาณรบกวน</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>คลังภาพ OscarWatch SSTV</value>
   </data>

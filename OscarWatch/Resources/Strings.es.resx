@@ -1305,6 +1305,12 @@
   <data name="Sstv.Settings.Saving">
     <value>Guardado</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>General</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>Desvanecimientos y ruido</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>Biblioteca de imágenes de OscarWatch SSTV</value>
   </data>

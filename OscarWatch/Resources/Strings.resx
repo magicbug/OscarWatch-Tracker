@@ -846,6 +846,12 @@ Continue?</value>
   <data name="Sstv.Settings.Saving">
     <value>Saving</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>General</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>Fades and noise</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>OscarWatch SSTV picture library</value>
   </data>

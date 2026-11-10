@@ -850,6 +850,12 @@ Fortfahren?</value>
   <data name="Sstv.Settings.Saving">
     <value>Speichern</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>Allgemein</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>Fading und Rauschen</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>OscarWatch SSTV-Bildarchiv</value>
   </data>

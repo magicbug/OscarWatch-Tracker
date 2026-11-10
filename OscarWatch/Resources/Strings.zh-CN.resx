@@ -1305,6 +1305,12 @@
   <data name="Sstv.Settings.Saving">
     <value>保存</value>
   </data>
+  <data name="Sstv.Settings.General">
+    <value>常规</value>
+  </data>
+  <data name="Sstv.Settings.FadesAndNoise">
+    <value>衰落与噪声</value>
+  </data>
   <data name="Window.SstvLibrary.Title">
     <value>OscarWatch SSTV 图像库</value>
   </data>
