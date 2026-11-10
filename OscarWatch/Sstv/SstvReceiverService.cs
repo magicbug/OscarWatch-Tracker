@@ -49,9 +49,8 @@ public sealed class SstvReceiverService : IDisposable
     private volatile bool _inputSilent;
     private double _feedForwardHz;
     private double _timeCompressionPpm;
-    private readonly object _spectrumGate = new();
-    private float[]? _spectrum;
-    private long _spectrumVersion;
+    private const int MaxQueuedSpectrumRows = 50;
+    private readonly Queue<float[]> _spectrumRows = new();
 
     private readonly SstvPictureUploader? _shareQueue;
 
@@ -147,15 +146,20 @@ public sealed class SstvReceiverService : IDisposable
         }
     }
 
-    /// <summary>Latest spectrum row (dB, <see cref="SstvSpectrumTap.MinHz"/> to <see cref="SstvSpectrumTap.MaxHz"/>) if new since <paramref name="version"/>.</summary>
-    public float[]? TryGetSpectrum(ref long version)
+    /// <summary>
+    /// Spectrum rows (dB, <see cref="SstvSpectrumTap.MinHz"/> to <see cref="SstvSpectrumTap.MaxHz"/>)
+    /// produced since the last call, oldest first. Every row is kept so the waterfall scrolls evenly
+    /// whether the UI tick lands just before or just after a row.
+    /// </summary>
+    public float[][] TakeSpectrumRows()
     {
-        lock (_spectrumGate)
+        lock (_spectrumRows)
         {
-            if (_spectrumVersion == version || _spectrum is null)
-                return null;
-            version = _spectrumVersion;
-            return (float[])_spectrum.Clone();
+            if (_spectrumRows.Count == 0)
+                return [];
+            var rows = _spectrumRows.ToArray();
+            _spectrumRows.Clear();
+            return rows;
         }
     }
 
@@ -347,7 +351,7 @@ public sealed class SstvReceiverService : IDisposable
                 if (wavPath is not null && decoder.Options.ExpectedModes is { } expected)
                     LastSessionExpectedModes = expected;
                 decoder.Process(buffer.AsSpan(0, n));
-                PublishSpectrum(tap.Add(buffer.AsSpan(0, n)));
+                PublishSpectrum(tap, buffer.AsSpan(0, n));
 
                 if (wav is not null && wavResampler is not null)
                 {
@@ -416,7 +420,7 @@ public sealed class SstvReceiverService : IDisposable
                 RunCommands(decoder);
                 var chunk = samples.AsSpan(i, Math.Min(ChunkSamples, samples.Length - i));
                 decoder.Process(chunk);
-                PublishSpectrum(tap.Add(chunk));
+                PublishSpectrum(tap, chunk);
                 FileProgress = (double)Math.Min(samples.Length, i + ChunkSamples) / samples.Length;
                 PublishStatus(decoder, ref lastPreview, force: false);
             }
@@ -562,14 +566,18 @@ public sealed class SstvReceiverService : IDisposable
         }
     }
 
-    private void PublishSpectrum(float[]? row)
+    private void PublishSpectrum(SstvSpectrumTap tap, ReadOnlySpan<float> samples)
     {
-        if (row is null)
+        var rows = new List<float[]>(2);
+        tap.Add(samples, rows);
+        if (rows.Count == 0)
             return;
-        lock (_spectrumGate)
+        lock (_spectrumRows)
         {
-            _spectrum = row;
-            _spectrumVersion++;
+            foreach (var row in rows)
+                _spectrumRows.Enqueue(row);
+            while (_spectrumRows.Count > MaxQueuedSpectrumRows)
+                _spectrumRows.Dequeue();
         }
     }
 

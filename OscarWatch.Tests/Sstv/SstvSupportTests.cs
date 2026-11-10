@@ -28,18 +28,59 @@ public sealed class SstvSupportTests
 
         var rows = new List<float[]>();
         for (var i = 0; i < audio.Length; i += 1000)
-        {
-            if (tap.Add(audio.AsSpan(i, Math.Min(1000, audio.Length - i))) is { } row)
-                rows.Add(row);
-        }
+            tap.Add(audio.AsSpan(i, Math.Min(1000, audio.Length - i)), rows);
 
         Assert.InRange(rows.Count, 9, 10);
         var last = rows[^1];
         var peak = Array.IndexOf(last, last.Max());
-        var peakHz = OscarWatch.Sstv.SstvSpectrumTap.MinHz
-            + (OscarWatch.Sstv.SstvSpectrumTap.MaxHz - OscarWatch.Sstv.SstvSpectrumTap.MinHz) * peak / (last.Length - 1);
-        Assert.InRange(peakHz, 1170, 1230);
+        Assert.InRange(SpectrumColumnHz(peak), 1170, 1230);
     }
+
+    [Fact]
+    public void Spectrum_tap_gives_every_due_row_from_one_large_block()
+    {
+        const int rate = 48000;
+        var tap = new OscarWatch.Sstv.SstvSpectrumTap(rate, rowsPerSecond: 10);
+        var audio = new float[rate];
+        for (var i = 0; i < audio.Length; i++)
+            audio[i] = (float)(0.5 * Math.Sin(2 * Math.PI * 1900 * i / rate));
+
+        var rows = new List<float[]>();
+        tap.Add(audio, rows);
+
+        Assert.InRange(rows.Count, 9, 10);
+    }
+
+    [Fact]
+    public void Spectrum_tap_rows_cover_all_their_audio_so_alternating_tones_do_not_flicker()
+    {
+        const int rate = 48000;
+        var tap = new OscarWatch.Sstv.SstvSpectrumTap(rate, rowsPerSecond: 10);
+        var audio = new float[rate * 2];
+        for (var i = 0; i < audio.Length; i++)
+        {
+            var hz = i / (rate / 20) % 2 == 0 ? 1500 : 2300;
+            audio[i] = (float)(0.5 * Math.Sin(2 * Math.PI * hz * i / rate));
+        }
+
+        var rows = new List<float[]>();
+        for (var i = 0; i < audio.Length; i += 2048)
+            tap.Add(audio.AsSpan(i, Math.Min(2048, audio.Length - i)), rows);
+
+        var low = SpectrumColumn(1500);
+        var high = SpectrumColumn(2300);
+        foreach (var row in rows.Skip(1))
+            Assert.InRange(row[low] - row[high], -4, 4);
+    }
+
+    private static int SpectrumColumn(double hz) =>
+        (int)Math.Round((hz - OscarWatch.Sstv.SstvSpectrumTap.MinHz)
+            / (OscarWatch.Sstv.SstvSpectrumTap.MaxHz - OscarWatch.Sstv.SstvSpectrumTap.MinHz)
+            * (OscarWatch.Sstv.SstvSpectrumTap.Columns - 1));
+
+    private static double SpectrumColumnHz(int column) =>
+        OscarWatch.Sstv.SstvSpectrumTap.MinHz
+        + (OscarWatch.Sstv.SstvSpectrumTap.MaxHz - OscarWatch.Sstv.SstvSpectrumTap.MinHz) * column / (OscarWatch.Sstv.SstvSpectrumTap.Columns - 1);
 
     [Theory]
     [InlineData("20261010_151943Z_ISS_Pd120.png", "ISS", SstvModeId.Pd120)]

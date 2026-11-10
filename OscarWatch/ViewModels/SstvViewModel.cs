@@ -38,7 +38,6 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     private WriteableBitmap? _liveB;
     private bool _useA;
     private long _previewVersion;
-    private long _spectrumVersion;
     private bool _loadingDevices;
     private bool _disposed;
     private string? _fileName;
@@ -887,7 +886,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        if (_receiver.TryGetSpectrum(ref _spectrumVersion) is { } row)
+        foreach (var row in _receiver.TakeSpectrumRows())
             Spectrum = row;
 
         if (!_receiver.IsDecodingFile)
