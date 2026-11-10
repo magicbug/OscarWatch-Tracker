@@ -14,8 +14,13 @@ public sealed class SstvAudioService : IDisposable
     private readonly object _gate = new();
     private readonly ConcurrentQueue<float> _captureRing = new();
     private PaStream? _input;
+    private const int FramesPerBuffer = 1024;
+    /// <summary>Host buffer, in callback buffers. A smaller one overruns on some ALSA devices.</summary>
+    private const int HostBuffers = 4;
     private int _captureSampleRate = 48000;
     private float _peak;
+    private int _overflows;
+    private long _droppedSamples;
 
     public bool IsAvailable => PortAudioRuntime.EnsureInitialized();
 
@@ -123,6 +128,13 @@ public sealed class SstvAudioService : IDisposable
             StopCaptureUnlocked();
     }
 
+    /// <summary>
+    /// Audio lost since the last call: callbacks where the soundcard reported an input overflow,
+    /// and samples dropped because decoding fell more than 30 s behind.
+    /// </summary>
+    public (int Overflows, long DroppedSamples) TakeLostAudio() =>
+        (Interlocked.Exchange(ref _overflows, 0), Interlocked.Exchange(ref _droppedSamples, 0));
+
     public int ReadCaptureSamples(Span<float> destination)
     {
         var n = 0;
@@ -147,9 +159,11 @@ public sealed class SstvAudioService : IDisposable
             device = deviceIndex,
             channelCount = 1,
             sampleFormat = SampleFormat.Float32,
-            suggestedLatency = info.defaultLowInputLatency,
+            suggestedLatency = Math.Max(info.defaultHighInputLatency, HostBuffers * FramesPerBuffer / (double)_captureSampleRate),
             hostApiSpecificStreamInfo = IntPtr.Zero,
         };
+        Interlocked.Exchange(ref _overflows, 0);
+        Interlocked.Exchange(ref _droppedSamples, 0);
 
         try
         {
@@ -157,7 +171,7 @@ public sealed class SstvAudioService : IDisposable
                 inParams: param,
                 outParams: null,
                 sampleRate: _captureSampleRate,
-                framesPerBuffer: 1024,
+                framesPerBuffer: FramesPerBuffer,
                 streamFlags: StreamFlags.ClipOff,
                 callback: OnInput,
                 userData: IntPtr.Zero);
@@ -171,7 +185,9 @@ public sealed class SstvAudioService : IDisposable
             throw;
         }
 
-        Log.Information("SSTV capture started on '{Device}' (index {Index}) at {Rate} Hz", info.name, deviceIndex, _captureSampleRate);
+        Log.Information(
+            "SSTV capture started on '{Device}' (index {Index}) at {Rate} Hz, latency asked {Latency:0} ms",
+            info.name, deviceIndex, _captureSampleRate, param.suggestedLatency * 1000);
     }
 
     private StreamCallbackResult OnInput(
@@ -182,6 +198,8 @@ public sealed class SstvAudioService : IDisposable
         StreamCallbackFlags statusFlags,
         IntPtr userData)
     {
+        if ((statusFlags & StreamCallbackFlags.InputOverflow) != 0)
+            Interlocked.Increment(ref _overflows);
         if (input == IntPtr.Zero)
             return StreamCallbackResult.Continue;
 
@@ -200,8 +218,11 @@ public sealed class SstvAudioService : IDisposable
 
             Volatile.Write(ref _peak, peak);
             // Bound memory if the decoder falls behind (30 s).
-            while (_captureRing.Count > _captureSampleRate * 30)
-                _captureRing.TryDequeue(out _);
+            var dropped = 0;
+            while (_captureRing.Count > _captureSampleRate * 30 && _captureRing.TryDequeue(out _))
+                dropped++;
+            if (dropped > 0)
+                Interlocked.Add(ref _droppedSamples, dropped);
         }
 
         return StreamCallbackResult.Continue;

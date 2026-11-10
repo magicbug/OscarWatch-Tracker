@@ -296,6 +296,9 @@ public sealed class SstvReceiverService : IDisposable
             var tap = new SstvSpectrumTap(rate, SpectrumRowsPerSecond);
             var stall = new CaptureStallWatch(DateTime.UtcNow);
             _captureHealth = new SstvCaptureHealth(true, false, 0);
+            var lostSince = DateTime.UtcNow;
+            var lostOverflows = 0;
+            var lostSamples = 0L;
             while (!token.IsCancellationRequested)
             {
                 RunCommands(decoder);
@@ -325,6 +328,7 @@ public sealed class SstvReceiverService : IDisposable
                     continue;
                 }
 
+                ReportLostAudio(device, rate, ref lostSince, ref lostOverflows, ref lostSamples);
                 silence.Add(buffer.AsSpan(0, n));
                 heardSound |= silence.HeardSound;
                 loudestPeak = Math.Max(loudestPeak, silence.LoudestPeak);
@@ -567,6 +571,30 @@ public sealed class SstvReceiverService : IDisposable
             _spectrum = row;
             _spectrumVersion++;
         }
+    }
+
+    /// <summary>
+    /// Warns, at most every 30 s, when the soundcard overran or decoding fell behind, so
+    /// pictures cut up by lost audio can be traced from the log.
+    /// </summary>
+    private void ReportLostAudio(string device, int rate, ref DateTime since, ref int overflows, ref long dropped)
+    {
+        var (o, d) = _audio.TakeLostAudio();
+        overflows += o;
+        dropped += d;
+        var now = DateTime.UtcNow;
+        if (now - since < TimeSpan.FromSeconds(30))
+            return;
+        if (overflows > 0 || dropped > 0)
+        {
+            Log.Warning(
+                "SSTV audio lost on '{Device}' in the last {Seconds:0} s: {Overflows} soundcard input overflows, {Dropped:0.0} s dropped because decoding fell behind. Pictures will be cut up",
+                device, (now - since).TotalSeconds, overflows, (double)dropped / rate);
+        }
+
+        since = now;
+        overflows = 0;
+        dropped = 0;
     }
 
     private void RunCommands(SstvDecoder decoder)
