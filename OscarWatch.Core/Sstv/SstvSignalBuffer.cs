@@ -33,6 +33,19 @@ public sealed class SstvSignalBuffer
     /// <summary>Weight of a sample: 1 when weighting is off.</summary>
     public float Weight(long index) => Weighted ? _weight[index - Start] : 1f;
 
+    /// <summary>Stored weight of a sample, whether or not <see cref="Weighted"/> is set.</summary>
+    public float StoredWeight(long index) => _weight[index - Start];
+
+    /// <summary>Mean stored weight over [start, end), whether or not <see cref="Weighted"/> is set.</summary>
+    public double MeanStoredWeight(long start, long end)
+    {
+        var a = Math.Max(start, Start) - Start;
+        var b = Math.Min(end, End) - Start;
+        if (b <= a)
+            return double.NaN;
+        return (_cumulativeWeight[b] - _cumulativeWeight[a]) / (b - a);
+    }
+
     public bool Contains(long start, long end) => start >= Start && end <= End && end >= start;
 
     public void Append(IReadOnlyList<float> samples) => Append(samples, null);

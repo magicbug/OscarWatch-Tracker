@@ -41,7 +41,22 @@ public sealed class SstvSyncTrainDetector
     /// </summary>
     private const double HalfModeMinPulseFraction = 0.12;
 
+    /// <summary>Most and fewest lines the stacked search adds up.</summary>
+    private const int StackLines = 12;
+    private const int MinStackLines = 6;
+    /// <summary>Average sync contrast (sync score inside the pulse against the line either side) the stacked peak needs.</summary>
+    private const double StackMinContrast = 0.4;
+    /// <summary>How far the stacked peak must stand above the other line positions, in robust standard deviations.</summary>
+    private const double StackMinPeakSigmas = 8;
+    /// <summary>Contrast that makes one line's sync count as present.</summary>
+    private const double StackLineContrast = 0.3;
+    /// <summary>Share of the stacked lines that must each show the sync, so one strong burst cannot pass.</summary>
+    private const double StackMinLineShare = 0.5;
+
     private readonly int _rate;
+    private double[] _scoreSums = [];
+    private long _scoreOrigin;
+    private int _scoreSpan;
 
     public SstvSyncTrainDetector(int sampleRate) => _rate = sampleRate;
 
@@ -148,6 +163,156 @@ public sealed class SstvSyncTrainDetector
         var offset = double.IsNaN(measured) ? offsetHz : measured - SstvSyncDetector.SyncHz;
         result = new SstvSyncTrainResult(bestMode, bestStart, offset);
         return true;
+    }
+
+    /// <summary>
+    /// For fades that take out too many syncs for a regular run of pulses: at each candidate
+    /// mode's line period, add up the sync contrast of the last few lines at every position in
+    /// the line. Missing and noisy syncs average out while the rest add up, so the line position
+    /// shows as one clear peak. The demodulated frequency is used rather than tone power: it
+    /// only shows syncs where the signal is good enough to show the picture too, so a picture
+    /// is not started from syncs heard well before any of its rows can be seen.
+    /// </summary>
+    public bool TryFindStacked(
+        SstvSignalBuffer buffer,
+        long from,
+        double offsetHz,
+        IReadOnlyList<SstvMode> candidates,
+        out SstvSyncTrainResult result)
+    {
+        result = default;
+        from = Math.Max(from, buffer.Start);
+        var span = (int)(buffer.End - from);
+        if (span <= 0)
+            return false;
+        BuildScoreSums(buffer, from, span, SstvSyncDetector.SyncHz + offsetHz);
+
+        var found = new List<(SstvMode Mode, double Sigmas, double FirstSync, double Contrast)>();
+        foreach (var mode in candidates)
+        {
+            if (StackMode(mode, span) is { } hit)
+                found.Add(hit);
+        }
+
+        if (found.Count == 0)
+            return false;
+
+        var best = found.MaxBy(f => f.Sigmas);
+        // Robot 72 is twice Robot 36 with the same sync: when both stack up, the shorter line is the one sent.
+        var bestPeriod = best.Mode.LineMs;
+        var half = found.FirstOrDefault(f =>
+            Math.Abs(bestPeriod / f.Mode.LineMs - 2) <= 0.04 && f.Sigmas >= 0.7 * best.Sigmas
+            && IsHarmonicPeriod(bestPeriod, f.Mode.LineMs, best.Mode.SyncMs, f.Mode.SyncMs));
+        if (half.Mode is not null)
+            best = half;
+
+        var start = (long)Math.Round(best.FirstSync);
+        var len = (int)Math.Round(best.Mode.SyncMs * _rate / 1000.0);
+        var syncHz = SstvSyncDetector.SyncHz + offsetHz;
+        var measured = SstvSyncDetector.MeasureHz(buffer, start, len, syncHz);
+        var offset = double.IsNaN(measured) ? offsetHz : measured - SstvSyncDetector.SyncHz;
+        result = new SstvSyncTrainResult(best.Mode, start, offset);
+        return true;
+    }
+
+    /// <summary>Stacked peak for one mode over the newest lines, or null when it does not pass.</summary>
+    private (SstvMode Mode, double Sigmas, double FirstSync, double Contrast)? StackMode(SstvMode mode, int span)
+    {
+        var period = mode.LineMs * _rate / 1000.0;
+        var syncLen = (int)Math.Round(mode.SyncMs * _rate / 1000.0);
+        var side = Math.Max(1, syncLen / 2);
+        var lines = Math.Min(StackLines, (int)(span / period) - 1);
+        if (lines < MinStackLines)
+            return null;
+
+        // Line k's sync sits at origin + phase + k * period; the newest line ends inside the buffer.
+        var origin = span - (lines + 1) * period;
+        var step = Math.Max(1, syncLen / 6);
+        var phases = (int)(period / step);
+        var stacked = new double[phases];
+        for (var p = 0; p < phases; p++)
+        {
+            var sum = 0.0;
+            for (var k = 0; k < lines; k++)
+                sum += LineContrast(origin + p * step + k * period, syncLen, side);
+            stacked[p] = sum / lines;
+        }
+
+        var peak = 0;
+        for (var p = 1; p < phases; p++)
+        {
+            if (stacked[p] > stacked[peak])
+                peak = p;
+        }
+
+        var sorted = (double[])stacked.Clone();
+        Array.Sort(sorted);
+        var median = sorted[phases / 2];
+        for (var p = 0; p < phases; p++)
+            sorted[p] = Math.Abs(stacked[p] - median);
+        Array.Sort(sorted);
+        var sigma = 1.4826 * sorted[phases / 2] + 1e-6;
+
+        // Refine to the sample.
+        var bestPhase = (double)peak * step;
+        var bestValue = double.MinValue;
+        for (var d = -step; d <= step; d++)
+        {
+            var phase = peak * step + d;
+            var sum = 0.0;
+            for (var k = 0; k < lines; k++)
+                sum += LineContrast(origin + phase + k * period, syncLen, side);
+            if (sum > bestValue)
+            {
+                bestValue = sum;
+                bestPhase = phase;
+            }
+        }
+
+        var contrast = bestValue / lines - median;
+        var sigmas = (bestValue / lines - median) / sigma;
+        if (contrast < StackMinContrast || sigmas < StackMinPeakSigmas)
+            return null;
+
+        var present = 0;
+        for (var k = 0; k < lines; k++)
+        {
+            if (LineContrast(origin + bestPhase + k * period, syncLen, side) >= StackLineContrast)
+                present++;
+        }
+
+        if (present < StackMinLineShare * lines)
+            return null;
+
+        // Walk back to the first line whose sync still shows, so the picture is not cropped.
+        var first = origin + bestPhase;
+        while (first - period - side >= 0 && LineContrast(first - period, syncLen, side) >= StackLineContrast)
+            first -= period;
+
+        return (mode, sigmas, _scoreOrigin + first, contrast);
+    }
+
+    /// <summary>Mean sync score inside the pulse at <paramref name="position"/> (relative to the score sums) less that either side.</summary>
+    private double LineContrast(double position, int syncLen, int side)
+    {
+        var s = (int)Math.Round(position);
+        if (s - side < 0 || s + syncLen + side > _scoreSpan)
+            return 0;
+        var inside = (_scoreSums[s + syncLen] - _scoreSums[s]) / syncLen;
+        var before = (_scoreSums[s] - _scoreSums[s - side]) / side;
+        var after = (_scoreSums[s + syncLen + side] - _scoreSums[s + syncLen]) / side;
+        return inside - 0.5 * (before + after);
+    }
+
+    /// <summary>Running sums of the per-sample sync score from <paramref name="from"/>.</summary>
+    private void BuildScoreSums(SstvSignalBuffer buffer, long from, int span, double expectedHz)
+    {
+        if (_scoreSums.Length < span + 1)
+            _scoreSums = new double[span + 1];
+        _scoreOrigin = from;
+        for (var k = 0; k < span; k++)
+            _scoreSums[k + 1] = _scoreSums[k] + SstvSyncDetector.SampleScore(buffer[from + k], expectedHz);
+        _scoreSpan = span;
     }
 
     /// <summary>Sync-length pulses within <paramref name="tol"/> of each of the next <paramref name="steps"/> lines, and their summed timing error.</summary>

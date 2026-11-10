@@ -5,12 +5,14 @@ namespace OscarWatch.Core.Sstv;
 /// <param name="StartBitIndex">Sample where the 1200 Hz start bit begins.</param>
 /// <param name="ImageStartIndex">Sample just after the stop bit.</param>
 /// <param name="OffsetHz">Leader frequency minus 1900 Hz: the audio tuning error.</param>
+/// <param name="FromTonePower">True when the header was read from tone power because its leader was lost in noise.</param>
 public readonly record struct SstvVisResult(
     int Code,
     SstvMode? Mode,
     long StartBitIndex,
     long ImageStartIndex,
-    double OffsetHz);
+    double OffsetHz,
+    bool FromTonePower = false);
 
 /// <summary>
 /// Finds the VIS header: 1900 Hz leader, 1200 Hz start bit, seven data bits LSB first
@@ -30,6 +32,15 @@ public sealed class SstvVisDetector
     private const int MinSteadyLeaderSlices = 5;
     /// <summary>Spread allowed in one leader slice, and in each bit cell, after a faded leader.</summary>
     private const double FadedSliceSpreadHz = 250;
+
+    /// <summary>Share of the power the 1200 Hz start and stop bits need when read from tone power.</summary>
+    private const double ToneSyncBitFraction = 0.4;
+    /// <summary>Share of the power the winning tone of a data bit needs when read from tone power.</summary>
+    private const double ToneDataBitFraction = 0.3;
+    /// <summary>How many times the losing tone's power the winning tone of a data bit needs.</summary>
+    private const double ToneDataBitRatio = 2.5;
+    /// <summary>Tuning error searched either side of the expected offset when measuring a tone header's offset.</summary>
+    private const double ToneOffsetSearchHz = 60;
 
     private readonly int _rate;
     private readonly int _ms;
@@ -53,6 +64,21 @@ public sealed class SstvVisDetector
     /// </summary>
     public IReadOnlyCollection<SstvModeId>? ExpectedModes { get; set; }
 
+    /// <summary>
+    /// Search demodulator I/Q, same indices as the frequency buffer. When set, a header whose
+    /// leader is lost in noise can still be read from the power of each bit's tone.
+    /// </summary>
+    public SstvBasebandBuffer? Baseband { get; set; }
+
+    /// <summary>Audio tuning error expected while searching, in Hz (the last measured offset).</summary>
+    public double SearchOffsetHz { get; set; }
+
+    /// <summary>
+    /// Offset in Hz present in <see cref="Baseband"/> but already removed from the frequency
+    /// buffer (the rig-control feed-forward).
+    /// </summary>
+    public double BasebandShiftHz { get; set; }
+
     /// <summary>Forget scan progress, for example after the buffer was cleared.</summary>
     public void Reset(long fromIndex) => _cursor = fromIndex;
 
@@ -72,7 +98,12 @@ public sealed class SstvVisDetector
         for (var t = first; t <= last; t += step)
         {
             if (!LooksLikeEdge(buffer, t, out var leader, out var fadedLeader))
-                continue;
+            {
+                if (requireFullHeader || Baseband is null || !TryReadToneHeader(Baseband, t, out result))
+                    continue;
+                _cursor = result.ImageStartIndex;
+                return true;
+            }
             if (fadedLeader && requireFullHeader)
                 continue;
 
@@ -271,6 +302,149 @@ public sealed class SstvVisDetector
 
         result = new SstvVisResult(code, mode, edge, edge + 10 * _bit, leader - LeaderHz);
         return true;
+    }
+
+    /// <summary>
+    /// Header read from tone power alone, for when noise has buried the leader and the
+    /// discriminator. Every cell must be clearly its own tone, the parity must hold with no
+    /// bit guessed, and the mode must be one the station is known to send (when known).
+    /// Picture content never holds the 1100 and 1300 Hz tones, and noise does not keep one
+    /// tone for 30 ms, let alone ten cells in a row.
+    /// </summary>
+    private bool TryReadToneHeader(SstvBasebandBuffer bb, long t, out SstvVisResult result)
+    {
+        result = default;
+        var shift = Math.Clamp(SearchOffsetHz, -MaxOffsetHz, MaxOffsetHz) + BasebandShiftHz;
+        if (t + 10 * _bit > bb.End || t - _bit < bb.Start)
+            return false;
+
+        // Cheap tests first: a 1200 Hz start bit that did not start earlier, and a 1200 Hz stop bit.
+        var start = SyncBitFraction(bb, t, shift);
+        if (!(start >= ToneSyncBitFraction))
+            return false;
+        if (!(SyncBitFraction(bb, t + 9 * _bit, shift) >= ToneSyncBitFraction * 0.75))
+            return false;
+        if (!(SyncBitFraction(bb, t - _bit, shift) < 0.5 * start))
+            return false;
+
+        var edge = RefineToneEdge(bb, t, shift);
+        var guard = 3 * _ms;
+        if (!(SyncBitFraction(bb, edge, shift) >= ToneSyncBitFraction)
+            || !(SyncBitFraction(bb, edge + 9 * _bit, shift) >= ToneSyncBitFraction))
+            return false;
+
+        var code = 0;
+        var ones = 0;
+        for (var i = 0; i < 8; i++)
+        {
+            var a = edge + (i + 1) * _bit;
+            var one = SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, 1100 + shift);
+            var zero = SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, 1300 + shift);
+            var win = Math.Max(one, zero);
+            if (!(win >= ToneDataBitFraction) || win < ToneDataBitRatio * Math.Min(one, zero))
+                return false;
+            if (one > zero)
+            {
+                ones++;
+                if (i < 7)
+                    code |= 1 << i;
+            }
+        }
+
+        if ((ones & 1) != 0)
+            return false;
+        var mode = SstvModeTable.FromVis(code);
+        if (mode is null || (ExpectedModes is { } known && !known.Contains(mode.Id)))
+            return false;
+
+        var offset = MeasureToneOffset(bb, edge, shift) - BasebandShiftHz;
+        result = new SstvVisResult(code, mode, edge, edge + 10 * _bit, offset, FromTonePower: true);
+        return true;
+    }
+
+    /// <summary>1200 Hz share of a bit cell, or 0 when 1100 or 1300 Hz is stronger.</summary>
+    private double SyncBitFraction(SstvBasebandBuffer bb, long cell, double shift)
+    {
+        var guard = 3 * _ms;
+        var from = cell + guard;
+        var to = cell + _bit - guard;
+        var sync = SstvTonePower.Fraction(bb, from, to, SyncHz + shift);
+        if (!(sync > 0))
+            return 0;
+        // Too weak to pass any test: skip the comparison with the data tones.
+        if (sync < 0.25)
+            return sync;
+        var low = SstvTonePower.Fraction(bb, from, to, 1100 + shift);
+        var high = SstvTonePower.Fraction(bb, from, to, 1300 + shift);
+        return sync >= low && sync >= high ? sync : 0;
+    }
+
+    /// <summary>Edge position, near <paramref name="t"/>, where the ten cells are each most clearly one tone.</summary>
+    private long RefineToneEdge(SstvBasebandBuffer bb, long t, double shift)
+    {
+        var guard = 3 * _ms;
+        var best = t;
+        var bestScore = double.MinValue;
+        for (var e = t - 5 * _ms; e <= t + 12 * _ms; e += _ms)
+        {
+            if (e - _bit < bb.Start || e + 10 * _bit > bb.End)
+                continue;
+            var score = SyncBitFraction(bb, e, shift) + SyncBitFraction(bb, e + 9 * _bit, shift);
+            for (var i = 1; i <= 8; i++)
+            {
+                var a = e + i * _bit;
+                var one = SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, 1100 + shift);
+                var zero = SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, 1300 + shift);
+                score += Math.Abs(one - zero);
+            }
+
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = e;
+            }
+        }
+
+        return best;
+    }
+
+    /// <summary>
+    /// Tuning offset (relative to nominal tones, including <see cref="BasebandShiftHz"/>) at which
+    /// the header's tones are strongest, measured coherently over whole cells.
+    /// </summary>
+    private double MeasureToneOffset(SstvBasebandBuffer bb, long edge, double shift)
+    {
+        var guard = 3 * _ms;
+        var tones = new double[10];
+        for (var i = 0; i < 10; i++)
+        {
+            var a = edge + i * _bit;
+            tones[i] = i is 0 or 9
+                ? SyncHz
+                : SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, 1100 + shift) > SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, 1300 + shift)
+                    ? 1100
+                    : 1300;
+        }
+
+        var best = shift;
+        var bestPower = double.MinValue;
+        for (var d = -ToneOffsetSearchHz; d <= ToneOffsetSearchHz; d += 5)
+        {
+            var total = 0.0;
+            for (var i = 0; i < 10; i++)
+            {
+                var a = edge + i * _bit;
+                total += SstvTonePower.Fraction(bb, a + guard, a + _bit - guard, tones[i] + shift + d, blockMs: 24);
+            }
+
+            if (total > bestPower)
+            {
+                bestPower = total;
+                best = shift + d;
+            }
+        }
+
+        return best;
     }
 
     private bool HasFirstLeaderAndBreak(SstvSignalBuffer b, long edge, double leader)

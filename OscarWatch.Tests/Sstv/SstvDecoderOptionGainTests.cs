@@ -21,6 +21,9 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
             ToneSync = false,
             HoldThroughFades = false,
             DopplerLinePrior = false,
+            ToneVis = false,
+            StackedSyncSearch = false,
+            WeightedPixels = false,
         };
         enable?.Invoke(o);
         return o;
@@ -73,6 +76,54 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
 
         Assert.True(on.LockPercent >= off.LockPercent - 0.5);
         Assert.True(on.MeanError <= off.MeanError + 0.5, $"error {on.MeanError:0.00} on, {off.MeanError:0.00} off");
+    }
+
+    [Theory]
+    [InlineData(SstvModeId.Robot36)]
+    [InlineData(SstvModeId.MartinM1)]
+    [InlineData(SstvModeId.Pd120)]
+    public void Weighted_pixels_help_on_a_weak_fm_link(SstvModeId id)
+    {
+        var mode = SstvModeTable.Get(id);
+        var (off, on) = Compare(mode, o => o.WeightedPixels = true);
+
+        Assert.True(TotalError(on) < TotalError(off), $"error {TotalError(on):0.0} on, {TotalError(off):0.0} off");
+        Assert.True(on.Sum(p => p.LockPercent) >= off.Sum(p => p.LockPercent), "lock fell");
+    }
+
+    [Theory]
+    [InlineData(SstvModeId.Robot36)]
+    [InlineData(SstvModeId.Pd120)]
+    [InlineData(SstvModeId.MartinM1)]
+    public void Weighted_pixels_keep_clean_pictures(SstvModeId id)
+    {
+        var mode = SstvModeTable.Get(id);
+        var off = SstvChannelSimulationTests.Measure(mode, new SstvTestEncoder.Settings(), Plain());
+        var on = SstvChannelSimulationTests.Measure(mode, new SstvTestEncoder.Settings(), Plain(o => o.WeightedPixels = true));
+
+        Assert.Equal(off.LockPercent, on.LockPercent, 1);
+        Assert.True(on.MeanError <= off.MeanError + 0.5, $"error {on.MeanError:0.00} on, {off.MeanError:0.00} off");
+    }
+
+    [Fact]
+    public void Weighted_pixels_do_not_hurt_with_audio_clicks_and_bursts()
+    {
+        var mode = SstvModeTable.Pd120;
+        var settings = new SstvTestEncoder.Settings
+        {
+            NoiseRms = 0.1,
+            ClicksPerSecond = 80,
+            ClickAmplitude = 2,
+            BurstEveryMs = 1500,
+            BurstMs = 120,
+            BurstNoiseRms = 1.2,
+        };
+        var off = SstvChannelSimulationTests.Measure(mode, settings, Plain());
+        var on = SstvChannelSimulationTests.Measure(mode, settings, Plain(o => o.WeightedPixels = true));
+        output.WriteLine($"off lock {off.LockPercent:0.0}% error {off.MeanError:0.0}; on lock {on.LockPercent:0.0}% error {on.MeanError:0.0}");
+
+        Assert.True(on.MeanError <= off.MeanError * 1.05, $"error {on.MeanError:0.0} on, {off.MeanError:0.0} off");
+        Assert.Equal(off.LockPercent, on.LockPercent, 1);
     }
 
     [Theory]

@@ -26,6 +26,7 @@ internal sealed class SstvLineRenderer
     private readonly SstvMode _mode;
     private readonly SstvImage _image;
     private readonly bool _chromaSmoothing;
+    private readonly bool _weightPixels;
     private double[]? _robotBlend;
     /// <summary>Positive while clear separators say odd lines carry B-Y (the usual pattern).</summary>
     private double _robotParityVote;
@@ -42,11 +43,13 @@ internal sealed class SstvLineRenderer
     private readonly double[]?[]? _scratch;
 
     /// <param name="chromaSmoothing">Smooth colour-difference channels to reduce colour speckle.</param>
-    public SstvLineRenderer(SstvMode mode, SstvImage image, bool chromaSmoothing = false)
+    /// <param name="weightPixels">Weigh pixel samples by their stored weight even when the buffer is unweighted.</param>
+    public SstvLineRenderer(SstvMode mode, SstvImage image, bool chromaSmoothing = false, bool weightPixels = false)
     {
         _mode = mode;
         _image = image;
         _chromaSmoothing = chromaSmoothing && mode.ColourSpace == SstvColourSpace.YCbCr;
+        _weightPixels = weightPixels;
         if (mode.Id == SstvModeId.Robot36)
         {
             var lines = mode.TransmittedLines;
@@ -71,7 +74,9 @@ internal sealed class SstvLineRenderer
     {
         var oddIsBlue = line % 2 == 1;
         var hz = buffer.Mean(from, to) - offsetHz;
-        var weight = buffer.MeanWeight((long)Math.Floor(from), (long)Math.Ceiling(to));
+        var weight = _weightPixels
+            ? buffer.MeanStoredWeight((long)Math.Floor(from), (long)Math.Ceiling(to))
+            : buffer.MeanWeight((long)Math.Floor(from), (long)Math.Ceiling(to));
         if (double.IsNaN(hz) || Math.Abs(hz - 1900) <= RobotSeparatorDeadbandHz || !(weight >= RobotSeparatorMinWeight))
             return oddIsBlue == _robotParityVote >= 0;
 
@@ -207,7 +212,7 @@ internal sealed class SstvLineRenderer
         for (var x = 0; x < w; x++)
         {
             var a = start + x * px;
-            values[x] = MeanClamped(buffer, a, a + px, lo, hi) is var hz && double.IsNaN(hz)
+            values[x] = MeanClamped(buffer, a, a + px, lo, hi, _weightPixels) is var hz && double.IsNaN(hz)
                 ? 0
                 : (hz - lo) / SpanHz * 255;
         }
@@ -216,9 +221,9 @@ internal sealed class SstvLineRenderer
     /// <summary>
     /// Mean with every sample first limited to the picture range, so one noise click cannot
     /// swing a whole pixel. Samples cut by the pixel edges count by the part inside, and by
-    /// their weight when the buffer is weighted.
+    /// their weight when the buffer is weighted or <paramref name="weighted"/> is set.
     /// </summary>
-    private static double MeanClamped(SstvSignalBuffer buffer, double from, double to, double lo, double hi)
+    private static double MeanClamped(SstvSignalBuffer buffer, double from, double to, double lo, double hi, bool weighted)
     {
         if (to <= from)
             return double.NaN;
@@ -233,7 +238,9 @@ internal sealed class SstvLineRenderer
             var w = Math.Min(i + 1, to) - Math.Max(i, from);
             if (w <= 0)
                 continue;
-            if (buffer.Weighted)
+            if (weighted)
+                w *= buffer.StoredWeight(i);
+            else if (buffer.Weighted)
                 w *= buffer.Weight(i);
             sum += w * Math.Clamp(buffer[i], lo, hi);
             weight += w;

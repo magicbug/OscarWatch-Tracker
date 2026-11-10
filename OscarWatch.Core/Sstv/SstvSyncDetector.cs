@@ -23,13 +23,15 @@ public static class SstvSyncDetector
     /// When given, each position also scores by how much of the subcarrier power is the sync
     /// tone, and the two scores are averaged.
     /// </param>
+    /// <param name="basebandShiftHz">Offset present in <paramref name="baseband"/> but already removed from <paramref name="buffer"/>.</param>
     public static SstvSyncHit? Find(
         SstvSignalBuffer buffer,
         double centre,
         int halfWindow,
         int syncLength,
         double offsetHz,
-        SstvBasebandBuffer? baseband = null)
+        SstvBasebandBuffer? baseband = null,
+        double basebandShiftHz = 0)
     {
         var from = (long)Math.Round(centre) - halfWindow;
         var to = (long)Math.Round(centre) + halfWindow;
@@ -72,7 +74,7 @@ public static class SstvSyncDetector
             prefix[i + 1] = prefix[i] + score;
         }
 
-        var tone = baseband is null ? null : ToneSums(baseband, origin, span, expected);
+        var tone = baseband is null ? null : ToneSums(baseband, origin, span, expected + basebandShiftHz);
         var bestScore = double.MinValue;
         var bestStart = 0;
         var bestEnd = 0;
