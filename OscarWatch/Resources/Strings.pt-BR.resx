@@ -1137,6 +1137,12 @@ Continuar?</value>
   <data name="Sstv.RepairBadLines.Tip">
     <value>Redesenhar até três linhas ruidosas seguidas a partir das linhas boas de cada lado. Danos mais longos ficam como recebidos.</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>Suavizar os pontos de ruído em imagens fracas</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>Ao terminar uma imagem, substituir cada pixel pelo valor central dos vizinhos nas linhas acima e abaixo. Remove a maior parte dos pontos de ruído, mas suaviza detalhes finos e texto pequeno. Deixe desligado com sinais fortes.</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>Manter as imagens durante desvanecimentos longos</value>
   </data>

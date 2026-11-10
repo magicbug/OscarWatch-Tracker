@@ -682,6 +682,12 @@ Fortfahren?</value>
   <data name="Sstv.RepairBadLines.Tip">
     <value>Bis zu drei verrauschte Zeilen hintereinander aus den guten Nachbarzeilen neu zeichnen. Längere Schäden bleiben wie empfangen.</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>Rauschpunkte in schwachen Bildern glätten</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>Wenn ein Bild fertig ist, jedes Pixel durch den mittleren Wert seiner Nachbarn auf den Zeilen darüber und darunter ersetzen. Entfernt die meisten Rauschpunkte, macht aber feine Details und kleine Schrift weicher. Bei starken Signalen ausgeschaltet lassen.</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>Bilder über lange Signaleinbrüche fortsetzen</value>
   </data>

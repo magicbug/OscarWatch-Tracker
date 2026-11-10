@@ -79,6 +79,9 @@ public sealed class SstvSettings
     /// <summary>Redraw short runs of noisy lines from the lines either side. Default on.</summary>
     public bool RepairBadLines { get; set; } = true;
 
+    /// <summary>Remove speckle from finished pictures at the cost of fine detail. Default off.</summary>
+    public bool SmoothAcrossLines { get; set; }
+
     /// <summary>Merge repeat copies of a picture and save the merged picture as well. Default on.</summary>
     public bool CombineRepeats { get; set; } = true;
 

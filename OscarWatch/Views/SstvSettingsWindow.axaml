@@ -99,6 +99,8 @@
         <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.AlignAosFragments.Tip}" />
         <CheckBox Content="{loc:Localize Key=Sstv.RepairBadLines}" IsChecked="{Binding RepairBadLines}" />
         <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.RepairBadLines.Tip}" />
+        <CheckBox Content="{loc:Localize Key=Sstv.SmoothAcrossLines}" IsChecked="{Binding SmoothAcrossLines}" />
+        <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.SmoothAcrossLines.Tip}" />
         <CheckBox Content="{loc:Localize Key=Sstv.HoldThroughFades}" IsChecked="{Binding HoldThroughFades}" />
         <TextBlock Classes="sstv-note" Text="{loc:Localize Key=Sstv.HoldThroughFades.Tip}" />
         <CheckBox Content="{loc:Localize Key=Sstv.AdaptiveBandwidth}" IsChecked="{Binding AdaptiveBandwidth}" />

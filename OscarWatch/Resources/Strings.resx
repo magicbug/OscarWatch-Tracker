@@ -678,6 +678,12 @@ Continue?</value>
   <data name="Sstv.RepairBadLines.Tip">
     <value>Redraw up to three noisy lines in a row from the good lines either side. Longer damage is left as received.</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>Smooth out speckle on weak pictures</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>When a picture finishes, replace each pixel with the middle value of its neighbours on the lines above and below. Removes most noise speckle but softens fine detail and small text, so leave it off for strong signals.</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>Keep pictures going through long fades</value>
   </data>

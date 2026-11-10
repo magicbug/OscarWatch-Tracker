@@ -1137,6 +1137,12 @@
   <data name="Sstv.RepairBadLines.Tip">
     <value>Redibujar hasta tres líneas con ruido seguidas a partir de las líneas buenas de cada lado. Los daños más largos se dejan tal como se recibieron.</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>Suavizar el moteado en imágenes débiles</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>Al terminar una imagen, sustituir cada píxel por el valor central de sus vecinos en las líneas de arriba y de abajo. Elimina la mayor parte del moteado por ruido, pero suaviza los detalles finos y el texto pequeño. Déjelo desactivado con señales fuertes.</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>Mantener las imágenes durante desvanecimientos largos</value>
   </data>

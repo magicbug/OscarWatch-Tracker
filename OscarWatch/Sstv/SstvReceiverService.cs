@@ -623,6 +623,7 @@ public sealed class SstvReceiverService : IDisposable
         options.AdaptiveBandwidth = settings.AdaptiveBandwidth;
         options.AlignAosFragments = settings.AlignAosFragments;
         options.RepairBadLines = settings.RepairBadLines;
+        options.SmoothAcrossLines = settings.SmoothAcrossLines;
     }
 
     public void Dispose() => Stop();

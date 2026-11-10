@@ -100,6 +100,13 @@ public sealed class SstvDecoderOptions
     /// <see cref="SstvDecoder.MaxRepairedRun"/>) by blending the good lines either side.
     /// </summary>
     public bool RepairBadLines { get; set; }
+
+    /// <summary>
+    /// When the picture is finished, take each pixel from its neighbours on the rows above and
+    /// below as well as along the row (a 3 × 3 median). Less speckle on weak pictures, less
+    /// fine detail on all.
+    /// </summary>
+    public bool SmoothAcrossLines { get; set; }
 }
 
 public sealed class SstvImageStartedEventArgs(SstvMode mode, bool fromVis, double offsetHz) : EventArgs
@@ -789,6 +796,8 @@ public sealed class SstvDecoder
         var noise = MeasureLineNoise();
         var lockPercent = LockPercent;
         var repaired = Options.RepairBadLines ? RepairBadLines(noise) : [];
+        if (Options.SmoothAcrossLines)
+            SstvPictureSmoother.Smooth(_image!, 0, _nextLine * mode.RowsPerLine);
         if (alignToBottom)
         {
             var shift = mode.TransmittedLines - _nextLine;

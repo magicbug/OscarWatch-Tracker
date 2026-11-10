@@ -2607,6 +2607,12 @@
   <data name="Sstv.RepairBadLines.Tip">
     <value>連続する最大 3 行のノイズの多い行を、両側の良好な行から描き直します。それより長い損傷は受信したままにします。</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>弱い画像のノイズの点を滑らかにする</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>画像の受信が終わったら、各ピクセルを上下の行を含む周囲のピクセルの中央値に置き換えます。ノイズの点の大部分が消えますが、細部や小さな文字がぼやけます。強い信号ではオフのままにしてください。</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>長いフェードの間も画像を続ける</value>
   </data>

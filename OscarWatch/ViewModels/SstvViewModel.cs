@@ -82,6 +82,7 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         _adaptiveBandwidth = s.AdaptiveBandwidth;
         _alignAosFragments = s.AlignAosFragments;
         _repairBadLines = s.RepairBadLines;
+        _smoothAcrossLines = s.SmoothAcrossLines;
         _combineRepeats = s.CombineRepeats;
         _receiver.CombineRepeats = s.CombineRepeats;
         _autoSavePictures = s.AutoSavePictures;
@@ -164,6 +165,9 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private bool _repairBadLines;
+
+    [ObservableProperty]
+    private bool _smoothAcrossLines;
 
     [ObservableProperty]
     private bool _combineRepeats;
@@ -652,6 +656,12 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
     partial void OnRepairBadLinesChanged(bool value)
     {
         _settings.Current.Sstv.RepairBadLines = value;
+        OptionsChanged();
+    }
+
+    partial void OnSmoothAcrossLinesChanged(bool value)
+    {
+        _settings.Current.Sstv.SmoothAcrossLines = value;
         OptionsChanged();
     }
 

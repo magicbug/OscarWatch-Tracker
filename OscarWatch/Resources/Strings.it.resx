@@ -682,6 +682,12 @@ Continuare?</value>
   <data name="Sstv.RepairBadLines.Tip">
     <value>Ridisegna fino a tre righe rumorose consecutive dalle righe buone ai lati. I danni più lunghi restano come ricevuti.</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>Attenua i puntini di rumore nelle immagini deboli</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>Al termine di un'immagine, sostituisce ogni pixel con il valore centrale dei vicini sulle righe sopra e sotto. Rimuove gran parte dei puntini di rumore ma ammorbidisce i dettagli fini e il testo piccolo. Lasciala disattivata con segnali forti.</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>Continua le immagini durante lunghe evanescenze</value>
   </data>

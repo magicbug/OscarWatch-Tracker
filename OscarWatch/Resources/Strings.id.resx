@@ -682,6 +682,12 @@ Lanjutkan?</value>
   <data name="Sstv.RepairBadLines.Tip">
     <value>Gambar ulang hingga tiga baris berderau berturut-turut dari baris baik di kedua sisinya. Kerusakan yang lebih panjang dibiarkan seperti diterima.</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>Haluskan bintik derau pada gambar lemah</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>Saat gambar selesai, ganti setiap piksel dengan nilai tengah dari tetangganya pada baris di atas dan di bawah. Menghapus sebagian besar bintik derau, tetapi melembutkan detail halus dan teks kecil. Biarkan mati untuk sinyal kuat.</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>Lanjutkan gambar melewati fading panjang</value>
   </data>

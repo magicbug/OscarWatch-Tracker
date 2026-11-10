@@ -1137,6 +1137,12 @@
   <data name="Sstv.RepairBadLines.Tip">
     <value>用两侧良好的行重画最多连续三行噪声行。更长的损坏保持接收原样。</value>
   </data>
+  <data name="Sstv.SmoothAcrossLines">
+    <value>平滑弱信号图片中的噪点</value>
+  </data>
+  <data name="Sstv.SmoothAcrossLines.Tip">
+    <value>图片完成后，用每个像素及其周围像素（包括上下行）的中值替换该像素。可去除大部分噪点，但会使细节和小字变模糊。信号较强时请保持关闭。</value>
+  </data>
   <data name="Sstv.HoldThroughFades">
     <value>在长时间衰落中继续图片</value>
   </data>

@@ -365,6 +365,70 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
         Assert.InRange(image.LineNoise.Where(float.IsFinite).Max(), 0, 2.5);
     }
 
+    [Theory]
+    [InlineData(SstvModeId.Robot36)]
+    [InlineData(SstvModeId.MartinM1)]
+    [InlineData(SstvModeId.Pd120)]
+    public void Smoothing_across_lines_cuts_speckle_on_a_weak_fm_link(SstvModeId id)
+    {
+        var mode = SstvModeTable.Get(id);
+        var (off, on) = Compare(mode, o => o.SmoothAcrossLines = true);
+
+        Assert.True(TotalError(on) < TotalError(off) * 0.85, $"error {TotalError(on):0.0} on, {TotalError(off):0.0} off");
+        Assert.Equal(off.Sum(p => p.LockPercent), on.Sum(p => p.LockPercent), 1);
+    }
+
+    [Theory]
+    [InlineData(SstvModeId.Robot36)]
+    [InlineData(SstvModeId.Pd120)]
+    public void Smoothing_across_lines_keeps_clean_pictures_close(SstvModeId id)
+    {
+        var mode = SstvModeTable.Get(id);
+        var off = SstvChannelSimulationTests.Measure(mode, new SstvTestEncoder.Settings(), Plain());
+        var on = SstvChannelSimulationTests.Measure(mode, new SstvTestEncoder.Settings(), Plain(o => o.SmoothAcrossLines = true));
+
+        Assert.Equal(off.LockPercent, on.LockPercent, 1);
+        Assert.True(on.MeanError <= off.MeanError + 1.5, $"error {on.MeanError:0.00} on, {off.MeanError:0.00} off");
+    }
+
+    [Fact]
+    public void Smoothing_removes_a_lone_click_and_keeps_a_straight_edge()
+    {
+        var image = new SstvImage(8, 6);
+        for (var y = 0; y < 6; y++)
+        {
+            for (var x = 0; x < 8; x++)
+                image.SetPixel(x, y, x < 4 ? 20 : 220, 100, 100);
+        }
+
+        image.SetPixel(1, 2, 255, 255, 255);
+        SstvPictureSmoother.Smooth(image, 0, 6);
+
+        Assert.Equal((byte)20, image.GetPixel(1, 2).R);
+        Assert.Equal((byte)100, image.GetPixel(1, 2).G);
+        for (var y = 0; y < 6; y++)
+        {
+            Assert.Equal((byte)20, image.GetPixel(3, y).R);
+            Assert.Equal((byte)220, image.GetPixel(4, y).R);
+        }
+    }
+
+    [Fact]
+    public void Smoothing_leaves_rows_not_yet_received_black()
+    {
+        var image = new SstvImage(6, 6);
+        for (var y = 0; y < 3; y++)
+        {
+            for (var x = 0; x < 6; x++)
+                image.SetPixel(x, y, 200, 200, 200);
+        }
+
+        SstvPictureSmoother.Smooth(image, 0, 3);
+
+        Assert.Equal((byte)200, image.GetPixel(2, 2).R);
+        Assert.Equal((byte)0, image.GetPixel(2, 3).R);
+    }
+
     [Fact]
     public void Picture_bandwidth_follows_the_pixel_rate()
     {
