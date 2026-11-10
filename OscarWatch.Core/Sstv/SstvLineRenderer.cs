@@ -16,10 +16,19 @@ internal sealed class SstvLineRenderer
     /// </summary>
     private const double RobotPartnerShare = 0.75;
 
+    /// <summary>Robot 36 separators within this of 1900 Hz (where noise averages) say nothing.</summary>
+    private const double RobotSeparatorDeadbandHz = 200;
+    private const double RobotSeparatorMaxSpreadHz = 250;
+    /// <summary>Mean sample weight below which the separator sat in an envelope dip and is unreadable.</summary>
+    private const double RobotSeparatorMinWeight = 0.3;
+    private const double RobotParityVoteLimit = 8;
+
     private readonly SstvMode _mode;
     private readonly SstvImage _image;
     private readonly bool _chromaSmoothing;
     private double[]? _robotBlend;
+    /// <summary>Positive while clear separators say odd lines carry B-Y (the usual pattern).</summary>
+    private double _robotParityVote;
 
     // Robot 36: Y and the single chroma channel of every line, kept for pairing.
     private readonly double[][]? _robotY;
@@ -51,6 +60,30 @@ internal sealed class SstvLineRenderer
             // One buffer per SstvChannel value, allocated lazily per channel the mode uses.
             _scratch = new double[Enum.GetValues<SstvChannel>().Length][];
         }
+    }
+
+    /// <summary>
+    /// Whether a Robot 36 line carries B-Y. The separator before the chroma is 1500 Hz ahead of
+    /// R-Y and 2300 Hz ahead of B-Y. A clear separator decides the line on its own; in a fade
+    /// it is noise, so the line follows the odd/even pattern the clear separators agreed on.
+    /// </summary>
+    private bool RobotChromaIsBlue(SstvSignalBuffer buffer, double from, double to, double offsetHz, int line)
+    {
+        var oddIsBlue = line % 2 == 1;
+        var hz = buffer.Mean(from, to) - offsetHz;
+        var weight = buffer.MeanWeight((long)Math.Floor(from), (long)Math.Ceiling(to));
+        if (double.IsNaN(hz) || Math.Abs(hz - 1900) <= RobotSeparatorDeadbandHz || !(weight >= RobotSeparatorMinWeight))
+            return oddIsBlue == _robotParityVote >= 0;
+
+        var saysBlue = hz > 1900;
+        var spread = buffer.StdDev((long)Math.Floor(from), (long)Math.Ceiling(to));
+        var confidence = Math.Clamp((Math.Abs(hz - 1900) - RobotSeparatorDeadbandHz) / RobotSeparatorDeadbandHz, 0, 1)
+            * (spread <= RobotSeparatorMaxSpreadHz ? 1 : 0.25);
+        _robotParityVote = Math.Clamp(
+            _robotParityVote + (saysBlue == oddIsBlue ? confidence : -confidence),
+            -RobotParityVoteLimit,
+            RobotParityVoteLimit);
+        return confidence >= 0.5 ? saysBlue : oddIsBlue == _robotParityVote >= 0;
     }
 
     /// <summary>Reusable scratch for a channel's pixel means (Robot 36 keeps its own arrays).</summary>
@@ -94,11 +127,8 @@ internal sealed class SstvLineRenderer
             }
             else if (_mode.Id == SstvModeId.Robot36 && seg.Channel == SstvChannel.Gap && seg.Ms == 4.5)
             {
-                // The separator before the chroma is 1500 Hz ahead of R-Y and 2300 Hz ahead of B-Y.
                 var a = lineStart + t * samplesPerMs;
-                var hz = buffer.Mean(a + 0.5 * samplesPerMs, a + (seg.Ms - 0.5) * samplesPerMs) - offsetHz;
-                if (!double.IsNaN(hz) && Math.Abs(hz - 1900) > 200)
-                    robotBlue = hz > 1900;
+                robotBlue = RobotChromaIsBlue(buffer, a + 0.5 * samplesPerMs, a + (seg.Ms - 0.5) * samplesPerMs, offsetHz, line);
             }
 
             t += seg.Ms;

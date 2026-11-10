@@ -980,6 +980,10 @@ public partial class SstvViewModel : ViewModelBase, IDisposable
         }
 
         _receiver.FeedForwardHz = feedForward;
+        _receiver.TimeCompressionPpm = IsRunning && !_receiver.IsDecodingFile
+            && _tracker.GetCurrent().RangeRateKmPerSec is { } rangeRate
+                ? SstvReceiverService.TimeCompressionPpmFromRangeRate(rangeRate)
+                : 0;
         // The pass Doppler says nothing about a recording being decoded.
         if (doppler is not { } kHz || IsDecodingFile)
         {

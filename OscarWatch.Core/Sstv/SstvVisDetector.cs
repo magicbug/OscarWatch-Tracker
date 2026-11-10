@@ -24,6 +24,13 @@ public sealed class SstvVisDetector
     private const double MaxLeaderSpreadHz = 330;
     private const double MinStartBitDropHz = 280;
 
+    /// <summary>20 ms slices in the 200 ms of leader before the start bit.</summary>
+    private const int LeaderSlices = 10;
+    /// <summary>Steady slices needed when part of the leader faded.</summary>
+    private const int MinSteadyLeaderSlices = 5;
+    /// <summary>Spread allowed in one leader slice, and in each bit cell, after a faded leader.</summary>
+    private const double FadedSliceSpreadHz = 250;
+
     private readonly int _rate;
     private readonly int _ms;
     private readonly int _bit;
@@ -64,11 +71,13 @@ public sealed class SstvVisDetector
 
         for (var t = first; t <= last; t += step)
         {
-            if (!LooksLikeEdge(buffer, t, out var leader))
+            if (!LooksLikeEdge(buffer, t, out var leader, out var fadedLeader))
+                continue;
+            if (fadedLeader && requireFullHeader)
                 continue;
 
             var edge = RefineEdge(buffer, t);
-            if (!TryReadHeader(buffer, edge, leader, requireFullHeader, out result))
+            if (!TryReadHeader(buffer, edge, leader, requireFullHeader, fadedLeader, out result))
                 continue;
 
             _cursor = result.ImageStartIndex;
@@ -85,7 +94,24 @@ public sealed class SstvVisDetector
     /// header tones closer to the leader. So the tests below compare tones with each other
     /// rather than with their nominal frequencies.
     /// </summary>
-    private bool LooksLikeEdge(SstvSignalBuffer b, long t, out double leader)
+    private bool LooksLikeEdge(SstvSignalBuffer b, long t, out double leader, out bool fadedLeader)
+    {
+        fadedLeader = false;
+        if (!SteadyLeader(b, t, out leader))
+        {
+            if (!PartLeader(b, t, out leader))
+                return false;
+            fadedLeader = true;
+        }
+
+        if (Math.Abs(leader - LeaderHz) > MaxOffsetHz)
+            return false;
+
+        var start = b.Mean(t + 5 * _ms, t + 25 * _ms);
+        return leader - start > MinStartBitDropHz;
+    }
+
+    private bool SteadyLeader(SstvSignalBuffer b, long t, out double leader)
     {
         leader = 0;
         var leadA = b.Mean(t - 210 * _ms, t - 110 * _ms);
@@ -94,15 +120,37 @@ public sealed class SstvVisDetector
             return false;
 
         leader = (leadA + leadB) / 2;
-        if (Math.Abs(leader - LeaderHz) > MaxOffsetHz)
-            return false;
-
         // A real leader is one steady tone; noise averages to the band centre but spreads widely.
-        if (b.StdDev(t - 210 * _ms, t - 10 * _ms) > MaxLeaderSpreadHz)
+        return b.StdDev(t - 210 * _ms, t - 10 * _ms) <= MaxLeaderSpreadHz;
+    }
+
+    /// <summary>
+    /// A fade across part of the leader spreads the whole window. Accept a leader when most of
+    /// its 20 ms slices are each a steady tone and agree with one another.
+    /// </summary>
+    private bool PartLeader(SstvSignalBuffer b, long t, out double leader)
+    {
+        leader = 0;
+        var means = new List<double>(LeaderSlices);
+        for (var k = 0; k < LeaderSlices; k++)
+        {
+            var from = t - 210 * _ms + k * 20 * _ms;
+            var mean = b.Mean(from, from + 20 * _ms);
+            if (!double.IsNaN(mean) && b.StdDev(from, from + 20 * _ms) <= FadedSliceSpreadHz)
+                means.Add(mean);
+        }
+
+        if (means.Count < MinSteadyLeaderSlices)
             return false;
 
-        var start = b.Mean(t + 5 * _ms, t + 25 * _ms);
-        return leader - start > MinStartBitDropHz;
+        means.Sort();
+        var median = means[means.Count / 2];
+        var agreeing = means.Where(m => Math.Abs(m - median) <= 80).ToList();
+        if (agreeing.Count < MinSteadyLeaderSlices)
+            return false;
+
+        leader = agreeing.Average();
+        return true;
     }
 
     /// <summary>Place the edge where the step from leader to start bit is steepest.</summary>
@@ -126,7 +174,8 @@ public sealed class SstvVisDetector
         return best;
     }
 
-    private bool TryReadHeader(SstvSignalBuffer b, long edge, double leader, bool requireFullHeader, out SstvVisResult result)
+    private bool TryReadHeader(
+        SstvSignalBuffer b, long edge, double leader, bool requireFullHeader, bool fadedLeader, out SstvVisResult result)
     {
         result = default;
         var guard = 5 * _ms;
@@ -137,11 +186,23 @@ public sealed class SstvVisDetector
         if (leader - startBit < MinStartBitDropHz)
             return false;
 
+        // With less leader to go on, every cell has to be a steady tone, as picture
+        // content and noise are not, and no bit may be guessed.
+        if (fadedLeader)
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                var a = edge + i * _bit;
+                if (b.StdDev(a + guard, a + _bit - guard) > FadedSliceSpreadHz)
+                    return false;
+            }
+        }
+
         var code = 0;
         var ones = 0;
         var compression = Math.Clamp((leader - startBit) / (LeaderHz - SyncHz), 0.3, 1.2);
         var minSeparation = 25 * compression;
-        var expected = ExpectedModes;
+        var expected = fadedLeader ? null : ExpectedModes;
         var doubtful = -1;
         var weakest = -1;
         var weakestMargin = double.MaxValue;
@@ -201,6 +262,8 @@ public sealed class SstvVisDetector
 
         var mode = SstvModeTable.FromVis(code);
         if (mode is null)
+            return false;
+        if (fadedLeader && ExpectedModes is { } known && !known.Contains(mode.Id))
             return false;
         if (expected is not null && !softened && !expected.Contains(mode.Id)
             && !requireFullHeader && !HasFirstLeaderAndBreak(b, edge, leader))

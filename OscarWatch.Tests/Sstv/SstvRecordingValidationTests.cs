@@ -259,7 +259,8 @@ public sealed class SstvRecordingValidationTests(ITestOutputHelper output)
 
     /// <summary>
     /// Decoder options with the switches named in OSCARWATCH_SSTV_OPTIONS (comma separated,
-    /// for example "ImpulseSuppression,HoldThroughFades") turned on.
+    /// for example "ImpulseSuppression,HoldThroughFades") turned on. A name starting with "!"
+    /// turns that option off, for example "!ToneSync".
     /// </summary>
     private static SstvDecoderOptions OptionsFromEnvironment()
     {
@@ -269,9 +270,11 @@ public sealed class SstvRecordingValidationTests(ITestOutputHelper output)
             return options;
         foreach (var name in names.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
-            var property = typeof(SstvDecoderOptions).GetProperty(name)
-                ?? throw new ArgumentException($"OSCARWATCH_SSTV_OPTIONS: no option called {name}");
-            property.SetValue(options, true);
+            var on = !name.StartsWith('!');
+            var key = name.TrimStart('!');
+            var property = typeof(SstvDecoderOptions).GetProperty(key)
+                ?? throw new ArgumentException($"OSCARWATCH_SSTV_OPTIONS: no option called {key}");
+            property.SetValue(options, on);
         }
 
         return options;

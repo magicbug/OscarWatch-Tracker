@@ -106,18 +106,37 @@ public static class SstvSyncDetector
         return new SstvSyncHit(pos, normalised, MeasureHz(buffer, pos, syncLength, expected));
     }
 
+    /// <summary>
+    /// Tone power is summed coherently over blocks this long and the blocks added by power, so
+    /// a phase jump in the sender's audio does not cancel a pulse. 3 ms still puts a 1500 Hz
+    /// porch almost a whole cycle off the tone.
+    /// </summary>
+    private const double ToneBlockMs = 3;
+
     /// <summary>Running sums for the fraction of subcarrier power at the sync tone.</summary>
     private sealed class ToneWindow(double[] re, double[] im, double[] power)
     {
+        private static readonly int BlockLength = (int)Math.Round(ToneBlockMs * SstvDecoder.InternalRate / 1000);
+
         /// <summary>Share of the power in [offset, offset + length) at the tone: 1 for a clean tone.</summary>
         public double Fraction(int offset, int length)
         {
             var p = power[offset + length] - power[offset];
             if (p <= 1e-12 || length <= 0)
                 return 0;
-            var r = re[offset + length] - re[offset];
-            var m = im[offset + length] - im[offset];
-            return (r * r + m * m) / (length * p);
+
+            var blocks = Math.Max(1, (int)Math.Round(length / (double)BlockLength));
+            var coherent = 0.0;
+            for (var b = 0; b < blocks; b++)
+            {
+                var from = offset + length * b / blocks;
+                var to = offset + length * (b + 1) / blocks;
+                var r = re[to] - re[from];
+                var m = im[to] - im[from];
+                coherent += (r * r + m * m) / Math.Max(1, to - from);
+            }
+
+            return coherent / p;
         }
     }
 

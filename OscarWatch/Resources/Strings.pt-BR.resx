@@ -1141,7 +1141,7 @@ Continuar?</value>
     <value>Manter as imagens durante desvanecimentos longos</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>Quando a imagem está bem travada, continuar desenhando durante um desvanecimento de até 20 segundos em vez de encerrá-la. Pode juntar dois fragmentos de uma mesma imagem.</value>
+    <value>Quando a imagem está bem travada, continuar desenhando durante um desvanecimento de até 45 segundos em vez de encerrá-la. Pode juntar dois fragmentos de uma mesma imagem.</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>Ajustar o filtro ao modo</value>

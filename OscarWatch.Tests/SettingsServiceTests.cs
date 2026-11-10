@@ -568,6 +568,37 @@ public sealed class SettingsServiceTests
     }
 
     [Fact]
+    public void TryParse_turns_on_sstv_fade_defences_saved_under_the_old_defaults()
+    {
+        const string json = """
+            {
+              "sstv": { "holdThroughFades": false, "adaptiveBandwidth": false }
+            }
+            """;
+
+        Assert.True(SettingsService.TryParse(json, out var parsed, out var error));
+        Assert.Null(error);
+        Assert.True(parsed.Sstv.HoldThroughFades);
+        Assert.True(parsed.Sstv.AdaptiveBandwidth);
+        Assert.Equal(OscarWatch.Core.Sstv.SstvSettings.CurrentFadeDefaultsVersion, parsed.Sstv.FadeDefaultsVersion);
+    }
+
+    [Fact]
+    public void TryParse_keeps_sstv_fade_defences_turned_off_after_the_new_defaults()
+    {
+        const string json = """
+            {
+              "sstv": { "holdThroughFades": false, "adaptiveBandwidth": false, "fadeDefaultsVersion": 1 }
+            }
+            """;
+
+        Assert.True(SettingsService.TryParse(json, out var parsed, out var error));
+        Assert.Null(error);
+        Assert.False(parsed.Sstv.HoldThroughFades);
+        Assert.False(parsed.Sstv.AdaptiveBandwidth);
+    }
+
+    [Fact]
     public void TryParse_keeps_an_explicit_planner_prediction_window()
     {
         const string json = """

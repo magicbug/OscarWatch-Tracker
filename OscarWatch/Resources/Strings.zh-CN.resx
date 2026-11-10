@@ -1141,7 +1141,7 @@
     <value>在长时间衰落中继续图片</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>图片锁定良好后，在最长 20 秒的衰落期间继续绘制，而不是结束图片。这可以把同一张图片的两个片段连接起来。</value>
+    <value>图片锁定良好后，在最长 45 秒的衰落期间继续绘制，而不是结束图片。这可以把同一张图片的两个片段连接起来。</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>使滤波器匹配模式</value>

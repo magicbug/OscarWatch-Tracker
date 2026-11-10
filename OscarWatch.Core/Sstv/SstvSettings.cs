@@ -59,11 +59,19 @@ public sealed class SstvSettings
     /// </summary>
     public bool UseSatelliteModes { get; set; } = true;
 
-    /// <summary>Keep a picture going through a long fade once its line timing is known. Default off.</summary>
-    public bool HoldThroughFades { get; set; }
+    /// <summary>Keep a picture going through a long fade once its line timing is known. Default on.</summary>
+    public bool HoldThroughFades { get; set; } = true;
 
-    /// <summary>Demodulate slower modes through a narrower filter to let less noise in. Default off.</summary>
-    public bool AdaptiveBandwidth { get; set; }
+    /// <summary>Demodulate slower modes through a narrower filter to let less noise in. Default on.</summary>
+    public bool AdaptiveBandwidth { get; set; } = true;
+
+    /// <summary>
+    /// Version of the fade defaults the saved settings were written with. Files saved before
+    /// version 1 had <see cref="HoldThroughFades"/> and <see cref="AdaptiveBandwidth"/> off by default.
+    /// </summary>
+    public int FadeDefaultsVersion { get; set; } = CurrentFadeDefaultsVersion;
+
+    public const int CurrentFadeDefaultsVersion = 1;
 
     /// <summary>Move a picture caught part way through at AOS down to the rows it belongs on. Default on.</summary>
     public bool AlignAosFragments { get; set; } = true;

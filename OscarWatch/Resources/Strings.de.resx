@@ -686,7 +686,7 @@ Fortfahren?</value>
     <value>Bilder über lange Signaleinbrüche fortsetzen</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>Ist ein Bild gut eingerastet, wird bei einem Signaleinbruch von bis zu 20 Sekunden weitergezeichnet statt das Bild zu beenden. So können zwei Teile eines Bildes zusammengefügt werden.</value>
+    <value>Ist ein Bild gut eingerastet, wird bei einem Signaleinbruch von bis zu 45 Sekunden weitergezeichnet statt das Bild zu beenden. So können zwei Teile eines Bildes zusammengefügt werden.</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>Filter an den Modus anpassen</value>

@@ -77,6 +77,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
             MigrateDisplayTimesInUtc(json, settings);
             MigrateMissingEnabledSatelliteNoradIds(json, settings);
             MigratePassPlannerPredictionHours(json, settings);
+            MigrateSstvFadeDefaults(json, settings);
         }
         catch (JsonException ex)
         {
@@ -497,6 +498,33 @@ public sealed class SettingsService : ISettingsService, IDisposable
                 return;
 
             settings.PassPlannerPredictionHours = settings.PassPredictionHours;
+        }
+        catch (JsonException)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Hold through fades and adaptive bandwidth used to default off, so older files saved them as
+    /// false without the operator choosing that. Turn them on once for files from before the change.
+    /// </summary>
+    private static void MigrateSstvFadeDefaults(string json, AppSettings settings)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            if (!doc.RootElement.TryGetProperty("sstv", out var sstv) || sstv.ValueKind != JsonValueKind.Object)
+                return;
+
+            if (sstv.TryGetProperty("fadeDefaultsVersion", out var version)
+                && version.ValueKind == JsonValueKind.Number
+                && version.TryGetInt32(out var v)
+                && v >= OscarWatch.Core.Sstv.SstvSettings.CurrentFadeDefaultsVersion)
+                return;
+
+            settings.Sstv.HoldThroughFades = true;
+            settings.Sstv.AdaptiveBandwidth = true;
+            settings.Sstv.FadeDefaultsVersion = OscarWatch.Core.Sstv.SstvSettings.CurrentFadeDefaultsVersion;
         }
         catch (JsonException)
         {

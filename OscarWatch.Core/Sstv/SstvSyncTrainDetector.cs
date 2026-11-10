@@ -16,6 +16,13 @@ public sealed class SstvSyncTrainDetector
     private const int HitsNeeded = 4;
 
     /// <summary>
+    /// Longer run checked when the short one misses too many syncs. For a pulse that lands on
+    /// the grid by chance with probability p, 7 of 10 (about 120p⁷) is rarer than 4 of 5 (5p⁴).
+    /// </summary>
+    private const int LongStepsChecked = 10;
+    private const int LongHitsNeeded = 7;
+
+    /// <summary>
     /// A noisy sync can dip for a couple of milliseconds and be seen as two short pulses.
     /// Fragments closer than this are one pulse. Distinct lines are much further apart.
     /// </summary>
@@ -52,7 +59,7 @@ public sealed class SstvSyncTrainDetector
 
         SstvMode? bestMode = null;
         var bestStart = 0L;
-        var bestHits = 0;
+        var bestHits = 0.0;
         var bestError = double.MaxValue;
         var bestPeriod = 0.0;
         var bestSync = 0.0;
@@ -73,21 +80,20 @@ public sealed class SstvSyncTrainDetector
                 if (p.Start + period * StepsChecked > buffer.End)
                     break;
 
-                var hits = 0;
-                var error = 0.0;
-                for (var k = 1; k <= StepsChecked; k++)
+                var (hits, error) = CountOnGrid(pulses, p.Start, period, syncLen, tol, StepsChecked);
+                var steps = StepsChecked;
+                // In a fade whole runs of syncs go missing. A longer run that still lines up
+                // mostly on the grid is less likely from noise than the short test.
+                if (hits < HitsNeeded && p.Start + period * LongStepsChecked <= buffer.End)
                 {
-                    var expected = p.Start + k * period;
-                    var q = Nearest(pulses, expected);
-                    if (q is { } hit && Math.Abs(hit.Start - expected) <= tol && LengthMatches(hit.Length, syncLen))
-                    {
-                        hits++;
-                        error += Math.Abs(hit.Start - expected);
-                    }
+                    (hits, error) = CountOnGrid(pulses, p.Start, period, syncLen, tol, LongStepsChecked);
+                    steps = LongStepsChecked;
+                    if (hits < LongHitsNeeded)
+                        continue;
                 }
-
-                if (hits < HitsNeeded)
+                else if (hits < HitsNeeded)
                     continue;
+                var hitShare = hits / (double)steps;
 
                 // Robot 72 is twice Robot 36 and uses the same sync, so every other
                 // Robot 36 pulse sits on the Robot 72 grid. Syncs in the gaps mean
@@ -117,11 +123,11 @@ public sealed class SstvSyncTrainDetector
                     break;
 
                 var shorterFits = bestMode is not null && IsHarmonicPeriod(bestPeriod, foundPeriod, bestSync, foundSync);
-                if (shorterFits || hits > bestHits || (hits == bestHits && error < bestError))
+                if (shorterFits || hitShare > bestHits || (hitShare == bestHits && error < bestError))
                 {
                     bestMode = found;
                     bestStart = p.Start;
-                    bestHits = hits;
+                    bestHits = hitShare;
                     bestError = error;
                     bestPeriod = foundPeriod;
                     bestSync = foundSync;
@@ -142,6 +148,31 @@ public sealed class SstvSyncTrainDetector
         var offset = double.IsNaN(measured) ? offsetHz : measured - SstvSyncDetector.SyncHz;
         result = new SstvSyncTrainResult(bestMode, bestStart, offset);
         return true;
+    }
+
+    /// <summary>Sync-length pulses within <paramref name="tol"/> of each of the next <paramref name="steps"/> lines, and their summed timing error.</summary>
+    private static (int Hits, double Error) CountOnGrid(
+        List<(long Start, double Length)> pulses,
+        long start,
+        double period,
+        double syncLen,
+        double tol,
+        int steps)
+    {
+        var hits = 0;
+        var error = 0.0;
+        for (var k = 1; k <= steps; k++)
+        {
+            var expected = start + k * period;
+            var q = Nearest(pulses, expected);
+            if (q is { } hit && Math.Abs(hit.Start - expected) <= tol && LengthMatches(hit.Length, syncLen))
+            {
+                hits++;
+                error += Math.Abs(hit.Start - expected);
+            }
+        }
+
+        return (hits, error);
     }
 
     /// <summary>

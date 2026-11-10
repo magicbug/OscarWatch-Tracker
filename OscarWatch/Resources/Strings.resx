@@ -682,7 +682,7 @@ Continue?</value>
     <value>Keep pictures going through long fades</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>Once a picture is well locked, keep drawing through a fade of up to 20 seconds instead of ending it. This can join two fragments of one picture.</value>
+    <value>Once a picture is well locked, keep drawing through a fade of up to 45 seconds instead of ending it. This can join two fragments of one picture.</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>Match the filter to the mode</value>

@@ -1141,7 +1141,7 @@
     <value>Mantener las imágenes durante desvanecimientos largos</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>Cuando una imagen está bien enganchada, seguir dibujando durante un desvanecimiento de hasta 20 segundos en lugar de terminarla. Puede unir dos fragmentos de una misma imagen.</value>
+    <value>Cuando una imagen está bien enganchada, seguir dibujando durante un desvanecimiento de hasta 45 segundos en lugar de terminarla. Puede unir dos fragmentos de una misma imagen.</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>Ajustar el filtro al modo</value>

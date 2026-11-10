@@ -686,7 +686,7 @@ Lanjutkan?</value>
     <value>Lanjutkan gambar melewati fading panjang</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>Setelah gambar terkunci dengan baik, terus menggambar selama fading hingga 20 detik alih-alih mengakhirinya. Ini dapat menyatukan dua potongan dari satu gambar.</value>
+    <value>Setelah gambar terkunci dengan baik, terus menggambar selama fading hingga 45 detik alih-alih mengakhirinya. Ini dapat menyatukan dua potongan dari satu gambar.</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>Sesuaikan filter dengan mode</value>

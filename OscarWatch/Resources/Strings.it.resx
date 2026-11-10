@@ -686,7 +686,7 @@ Continuare?</value>
     <value>Continua le immagini durante lunghe evanescenze</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>Quando un'immagine è ben agganciata, continua a disegnare durante un'evanescenza fino a 20 secondi invece di terminarla. Può unire due frammenti della stessa immagine.</value>
+    <value>Quando un'immagine è ben agganciata, continua a disegnare durante un'evanescenza fino a 45 secondi invece di terminarla. Può unire due frammenti della stessa immagine.</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>Adatta il filtro al modo</value>

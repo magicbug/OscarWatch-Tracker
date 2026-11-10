@@ -48,6 +48,7 @@ public sealed class SstvReceiverService : IDisposable
     private SstvCaptureHealth _captureHealth = new(true, false, 0);
     private volatile bool _inputSilent;
     private double _feedForwardHz;
+    private double _timeCompressionPpm;
     private readonly object _spectrumGate = new();
     private float[]? _spectrum;
     private long _spectrumVersion;
@@ -110,6 +111,20 @@ public sealed class SstvReceiverService : IDisposable
         get => Volatile.Read(ref _feedForwardHz);
         set => Volatile.Write(ref _feedForwardHz, double.IsFinite(value) ? value : 0);
     }
+
+    /// <summary>
+    /// Doppler time compression of the received audio in ppm (range rate over the speed of light,
+    /// positive while the satellite moves away), applied to the live decoder's line timing.
+    /// </summary>
+    public double TimeCompressionPpm
+    {
+        get => Volatile.Read(ref _timeCompressionPpm);
+        set => Volatile.Write(ref _timeCompressionPpm, double.IsFinite(value) ? value : 0);
+    }
+
+    /// <summary>Time compression in ppm for a range rate in km/s (positive when receding).</summary>
+    public static double TimeCompressionPpmFromRangeRate(double rangeRateKmPerSec) =>
+        double.IsFinite(rangeRateKmPerSec) ? rangeRateKmPerSec / 299792.458 * 1e6 : 0;
 
     public event EventHandler<SstvReceivedPicture>? PictureReceived;
     public event EventHandler<SstvImageStartedEventArgs>? PictureStarted;
@@ -323,6 +338,7 @@ public sealed class SstvReceiverService : IDisposable
                 }
 
                 decoder.FeedForwardHz = FeedForwardHz;
+                decoder.TimeCompressionPpm = TimeCompressionPpm;
                 decoder.Options.ExpectedModes = ExpectedModesProvider?.Invoke();
                 if (wavPath is not null && decoder.Options.ExpectedModes is { } expected)
                     LastSessionExpectedModes = expected;

@@ -2611,7 +2611,7 @@
     <value>長いフェードの間も画像を続ける</value>
   </data>
   <data name="Sstv.HoldThroughFades.Tip">
-    <value>画像がしっかりロックされた後は、最大 20 秒のフェードの間も画像を終了せずに描画を続けます。1 枚の画像の 2 つの断片をつなげることがあります。</value>
+    <value>画像がしっかりロックされた後は、最大 45 秒のフェードの間も画像を終了せずに描画を続けます。1 枚の画像の 2 つの断片をつなげることがあります。</value>
   </data>
   <data name="Sstv.AdaptiveBandwidth">
     <value>フィルターをモードに合わせる</value>
