@@ -46,6 +46,8 @@ public sealed class SstvSignalBuffer
         return (_cumulativeWeight[b] - _cumulativeWeight[a]) / (b - a);
     }
 
+    internal int Capacity => _data.Length;
+
     public bool Contains(long start, long end) => start >= Start && end <= End && end >= start;
 
     public void Append(IReadOnlyList<float> samples) => Append(samples, null);
@@ -127,19 +129,37 @@ public sealed class SstvSignalBuffer
             return;
 
         var keep = _count - drop;
-        Array.Copy(_data, drop, _data, 0, keep);
-        Array.Copy(_weight, drop, _weight, 0, keep);
         var baseSum = _cumulative[drop];
         var baseSquares = _cumulativeSquares[drop];
         var baseWeight = _cumulativeWeight[drop];
         var baseWeighted = _cumulativeWeighted[drop];
+
+        // A buffer that was grown for a long picture and is now mostly empty is rebuilt smaller, so the
+        // decoder does not hold the memory of its longest picture for as long as it lives.
+        var capacity = SstvBufferCapacity.After(keep, _data.Length);
+        var data = capacity == _data.Length ? _data : new float[capacity];
+        var weight = capacity == _data.Length ? _weight : new float[capacity];
+        var cumulative = capacity == _data.Length ? _cumulative : new double[capacity + 1];
+        var squares = capacity == _data.Length ? _cumulativeSquares : new double[capacity + 1];
+        var cumulativeWeight = capacity == _data.Length ? _cumulativeWeight : new double[capacity + 1];
+        var weighted = capacity == _data.Length ? _cumulativeWeighted : new double[capacity + 1];
+
+        Array.Copy(_data, drop, data, 0, keep);
+        Array.Copy(_weight, drop, weight, 0, keep);
         for (var i = 0; i <= keep; i++)
         {
-            _cumulative[i] = _cumulative[i + drop] - baseSum;
-            _cumulativeSquares[i] = _cumulativeSquares[i + drop] - baseSquares;
-            _cumulativeWeight[i] = _cumulativeWeight[i + drop] - baseWeight;
-            _cumulativeWeighted[i] = _cumulativeWeighted[i + drop] - baseWeighted;
+            cumulative[i] = _cumulative[i + drop] - baseSum;
+            squares[i] = _cumulativeSquares[i + drop] - baseSquares;
+            cumulativeWeight[i] = _cumulativeWeight[i + drop] - baseWeight;
+            weighted[i] = _cumulativeWeighted[i + drop] - baseWeighted;
         }
+
+        _data = data;
+        _weight = weight;
+        _cumulative = cumulative;
+        _cumulativeSquares = squares;
+        _cumulativeWeight = cumulativeWeight;
+        _cumulativeWeighted = weighted;
         _count = keep;
         Start += drop;
     }

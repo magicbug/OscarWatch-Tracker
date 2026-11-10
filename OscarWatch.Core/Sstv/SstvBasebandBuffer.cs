@@ -14,6 +14,8 @@ public sealed class SstvBasebandBuffer
 
     public long End => Start + _count;
 
+    internal int Capacity => _i.Length;
+
     public float I(long index) => _i[index - Start];
 
     public float Q(long index) => _q[index - Start];
@@ -37,8 +39,20 @@ public sealed class SstvBasebandBuffer
         if (drop == 0)
             return;
         _count -= drop;
-        Array.Copy(_i, drop, _i, 0, _count);
-        Array.Copy(_q, drop, _q, 0, _count);
         Start += drop;
+        var capacity = SstvBufferCapacity.After(_count, _i.Length);
+        if (capacity == _i.Length)
+        {
+            Array.Copy(_i, drop, _i, 0, _count);
+            Array.Copy(_q, drop, _q, 0, _count);
+            return;
+        }
+
+        var smallerI = new float[capacity];
+        var smallerQ = new float[capacity];
+        Array.Copy(_i, drop, smallerI, 0, _count);
+        Array.Copy(_q, drop, smallerQ, 0, _count);
+        _i = smallerI;
+        _q = smallerQ;
     }
 }
