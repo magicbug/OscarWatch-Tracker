@@ -20,6 +20,13 @@ public sealed class SstvLineTracker
     private double _anchor;
     private bool _hasAnchor;
 
+    /// <summary>
+    /// Lines at which the line timing stepped (a dropout in the recording, a pause in the sender's audio). A
+    /// line is fitted only from the lines of its own stretch between two steps, so the old timing does not
+    /// pull the new one back, and the new one does not bend the old.
+    /// </summary>
+    private readonly List<int> _stepLines = new();
+
     public SstvLineTracker(double nominalSamplesPerLine)
     {
         _nominal = nominalSamplesPerLine;
@@ -40,6 +47,47 @@ public sealed class SstvLineTracker
     {
         _anchor = line0SyncPosition;
         _hasAnchor = true;
+    }
+
+    /// <summary>
+    /// The line timing stepped at <paramref name="line"/>: lines from here on are fitted from their own stretch
+    /// only. Lines before it keep their own fit.
+    /// </summary>
+    public void StartSegment(int line)
+    {
+        if (_stepLines.Contains(line))
+            return;
+        _stepLines.Add(line);
+        _stepLines.Sort();
+    }
+
+    /// <summary>
+    /// Takes back <see cref="StartSegment"/> for <paramref name="line"/> and drops the sync points from that
+    /// line on, for a step that did not hold up.
+    /// </summary>
+    public void UndoSegment(int line)
+    {
+        _stepLines.Remove(line);
+        _points.RemoveAll(p => p.Line >= line);
+    }
+
+    /// <summary>The lines [first, end) that share a stretch of line timing with <paramref name="line"/>.</summary>
+    private (int First, int End) SegmentOf(int line)
+    {
+        var first = int.MinValue;
+        var end = int.MaxValue;
+        foreach (var start in _stepLines)
+        {
+            if (start <= line)
+                first = start;
+            else
+            {
+                end = start;
+                break;
+            }
+        }
+
+        return (first, end);
     }
 
     /// <summary>
@@ -95,10 +143,12 @@ public sealed class SstvLineTracker
     {
         var lo = centred ? line - FitWindowLines / 2 : line - FitWindowLines;
         var hi = centred ? line + FitWindowLines / 2 : line;
-        var selected = _points.Where(p => p.Line >= lo && p.Line <= hi).ToList();
+        var (first, end) = SegmentOf(line);
+        var selected = _points.Where(p => p.Line >= lo && p.Line <= hi && p.Line >= first && p.Line < end).ToList();
         if (selected.Count < MinFitPoints)
         {
             selected = _points
+                .Where(p => p.Line >= first && p.Line < end)
                 .OrderBy(p => Math.Abs(p.Line - line))
                 .Take(FitWindowLines)
                 .ToList();
