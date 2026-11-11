@@ -64,6 +64,26 @@ public sealed class SstvLineTimingStepTests(ITestOutputHelper output)
     }
 
     [Fact]
+    public void A_new_stretch_keeps_the_measured_clock_error_until_it_has_points_of_its_own()
+    {
+        // The clock runs 0.5% slow, so the real line period is 1005 and the nominal one is 1000.
+        const double nominal = 1000;
+        const double period = 1005;
+        var tracker = new SstvLineTracker(nominal);
+        tracker.SetAnchor(100);
+        for (var line = 0; line < 30; line++)
+            tracker.Accept(line, 100 + line * period, 0.9);
+
+        tracker.StartSegment(30);
+        tracker.Accept(30, 100 + 30 * period + 165, 0.9);
+
+        // One point in the stretch: the period must still be the measured one, not the nominal one.
+        Assert.Equal(100 + 31 * period + 165, tracker.Predict(31), precision: 0);
+        tracker.Accept(31, 100 + 31 * period + 165, 0.9);
+        Assert.Equal(100 + 32 * period + 165, tracker.Predict(32), precision: 0);
+    }
+
+    [Fact]
     public void Tracker_goes_back_to_the_old_grid_when_a_step_is_undone()
     {
         const double period = 1000;
@@ -94,6 +114,48 @@ public sealed class SstvLineTimingStepTests(ITestOutputHelper output)
         Assert.NotNull(image);
         output.WriteLine($"step {step} samples, CNR {cnrDb?.ToString() ?? "clean"}: lock {image!.LockPercent:0.0}%");
         Assert.True(image.LockPercent >= 96, $"lock {image.LockPercent:0.0}%");
+    }
+
+    [Theory]
+    [InlineData(0.99)]
+    [InlineData(0.985)]
+    public void Decoder_keeps_a_real_step_when_the_clock_is_off_too(double ratio)
+    {
+        // A clock 1% out moves each line by about 60 samples at 12 kHz, more than the 24 samples a step is confirmed
+        // within, so a step whose first lines are predicted with the nominal period is wrongly taken back and the
+        // grid is lost (lock 56% and 68% without the measured period; 0.5% is within the tolerance).
+        var mode = SstvModeTable.Pd120;
+        var audio = SstvTestEncoder.Encode(mode, Rate, new SstvTestEncoder.Settings { ClockRatio = ratio });
+
+        var image = Decode(mode, Step(audio, 330));
+
+        Assert.NotNull(image);
+        output.WriteLine($"clock {ratio} off with a +330 step: lock {image!.LockPercent:0.0}%");
+        Assert.True(image.LockPercent >= 96, $"lock {image.LockPercent:0.0}%");
+    }
+
+    [Fact]
+    public void A_lone_pulse_off_the_grid_on_the_last_line_is_not_kept()
+    {
+        // The last lines drop out, then the final line arrives 10 ms late. Nothing follows it to confirm a step,
+        // so the picture must not be redrawn on that grid.
+        var mode = SstvModeTable.Pd120;
+        var last = mode.TransmittedLines - 1;
+        var audio = SstvTestEncoder.Encode(mode, Rate).ToList();
+        var a = LineStart(mode, last);
+        var b = LineStart(mode, last + 1);
+        const int late = 240;
+        audio.RemoveRange(b - late, late);
+        audio.InsertRange(a, new float[late]);
+        for (var i = LineStart(mode, last - 7); i < a; i++)
+            audio[i] = 0;
+
+        var image = Decode(mode, audio.ToArray());
+
+        Assert.NotNull(image);
+        output.WriteLine($"lone late pulse on the last line: quality {image!.LineQuality[last]}");
+        Assert.NotEqual(SstvLineQuality.Locked, image.LineQuality[last]);
+        Assert.True(image.LineQuality.Take(last - 7).All(q => q == SstvLineQuality.Locked), "lines before the dropout should be untouched");
     }
 
     [Fact]

@@ -158,7 +158,7 @@ public sealed class SstvLineTracker
             return FixedSlope(ManualPeriod, selected);
 
         if (selected.Count < MinFitPoints || Span(selected) < MinFitPoints)
-            return FixedSlope(_nominal, selected);
+            return FixedSlope(SparseSlope(first), selected);
 
         // A least squares fit is pulled off by a single false sync (noise as a fade recovers),
         // so first drop points far from a median based line, which ignores up to ~29% outliers.
@@ -189,6 +189,14 @@ public sealed class SstvLineTracker
             return FixedSlope(_nominal, selected);
         return fit;
     }
+
+    /// <summary>
+    /// Line period to use while a stretch has too few points to fit its own. A step in the timing does not change
+    /// the clock, so a stretch after a step keeps the period fitted just before it; the nominal period would lose
+    /// the measured clock error and put the next line's prediction off by that error times the line length.
+    /// </summary>
+    private double SparseSlope(int segmentFirst) =>
+        segmentFirst == int.MinValue ? _nominal : Fit(segmentFirst - 1, centred: false).Slope;
 
     private (double Slope, double Intercept) FixedSlope(double slope, List<(int Line, double Position, double Weight)> points)
     {

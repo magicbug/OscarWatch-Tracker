@@ -460,6 +460,7 @@ public sealed class SstvDecoder
     /// </summary>
     private void EndAfterLastLock()
     {
+        RollBackOpenStep();
         var mode = _mode!;
         var keep = _lastLockedLine + 1;
         for (var i = keep; i < _nextLine; i++)
@@ -727,6 +728,18 @@ public sealed class SstvDecoder
         tracker.StartSegment(_stepStartLine);
     }
 
+    /// <summary>
+    /// A trial step still waiting for its next line when the picture ends can no longer be confirmed, and the final
+    /// redraw would put the lines since the step on its grid. Take it back, as a lone pulse is taken back.
+    /// </summary>
+    private void RollBackOpenStep()
+    {
+        if (_stepCheckLine < 0 || _stepStartLine < 0)
+            return;
+        _stepCheckLine = -1;
+        UndoStep();
+    }
+
     private void UndoStep()
     {
         _tracker!.UndoSegment(_stepStartLine);
@@ -846,6 +859,7 @@ public sealed class SstvDecoder
 
     private void FinishImage(bool complete, bool alignToBottom = false)
     {
+        RollBackOpenStep();
         var mode = _mode!;
         ReSync();
         var tracker = _tracker!;
