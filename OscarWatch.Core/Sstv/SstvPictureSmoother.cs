@@ -70,37 +70,76 @@ internal static class SstvPictureSmoother
     /// <summary>A row with a regional noise measure at or over this takes the full median.</summary>
     internal const double NoiseHigh = 9.0;
 
+    /// <summary>
+    /// The same two limits for the along-the-row measure, which only has to rule out coherent detail, so it sits
+    /// well under the noise levels the picture measure is tuned on (about 2 at 14 dB carrier to noise).
+    /// </summary>
+    internal const double AlongRowLow = 1.0;
+
+    internal const double AlongRowHigh = 2.0;
+
     /// <summary>Rows each side of a row whose measures are combined, so one line of text does not count as noise.</summary>
     internal const int NoiseRegionRows = 8;
 
-    /// <summary>How far each row should move towards its median, from 0 (not at all) to 1 (all the way).</summary>
+    /// <summary>
+    /// How far each row should move towards its median, from 0 (not at all) to 1 (all the way). Two measures have
+    /// to agree that a row is noisy. The 3 × 3 residual alone cannot tell noise from sustained fine horizontal
+    /// detail, such as lines one row apart, which sit as far from their 3 × 3 median as noise does. Noise is also
+    /// uncorrelated along a row and horizontal lines are not, so the residual from each row's own 3 pixel median
+    /// has to be above <see cref="AlongRowLow"/> as well.
+    /// </summary>
     internal static float[] RowWeights(byte[] src, byte[] med, int rows, int stride)
     {
         var own = new double[rows];
+        var along = new double[rows];
+        Span<byte> window = stackalloc byte[3];
+        var width = stride / 3;
         for (var y = 0; y < rows; y++)
         {
             long sum = 0;
+            long alongSum = 0;
             var at = y * stride;
             for (var i = 0; i < stride; i++)
+            {
                 sum += Math.Abs(src[at + i] - med[at + i]);
+                var x = i / 3;
+                window[0] = src[at + Math.Max(0, x - 1) * 3 + i % 3];
+                window[1] = src[at + i];
+                window[2] = src[at + Math.Min(width - 1, x + 1) * 3 + i % 3];
+                window.Sort();
+                alongSum += Math.Abs(src[at + i] - window[1]);
+            }
+
             own[y] = (double)sum / stride;
+            along[y] = (double)alongSum / stride;
         }
 
         var weights = new float[rows];
-        var window = new double[2 * NoiseRegionRows + 1];
+        var scratch = new double[2 * NoiseRegionRows + 1];
         for (var y = 0; y < rows; y++)
         {
             var from = Math.Max(0, y - NoiseRegionRows);
             var to = Math.Min(rows - 1, y + NoiseRegionRows);
-            var n = to - from + 1;
-            Array.Copy(own, from, window, 0, n);
-            Array.Sort(window, 0, n);
-            var regional = n % 2 == 1 ? window[n / 2] : 0.5 * (window[n / 2 - 1] + window[n / 2]);
-            var t = Math.Clamp((regional - NoiseLow) / (NoiseHigh - NoiseLow), 0.0, 1.0);
-            weights[y] = (float)(t * t * (3 - 2 * t));
+            var picture = Smoothstep(RegionalMedian(own, from, to, scratch), NoiseLow, NoiseHigh);
+            var row = Smoothstep(RegionalMedian(along, from, to, scratch), AlongRowLow, AlongRowHigh);
+            weights[y] = (float)Math.Min(picture, row);
         }
 
         return weights;
+    }
+
+    private static double RegionalMedian(double[] values, int from, int to, double[] scratch)
+    {
+        var n = to - from + 1;
+        Array.Copy(values, from, scratch, 0, n);
+        Array.Sort(scratch, 0, n);
+        return n % 2 == 1 ? scratch[n / 2] : 0.5 * (scratch[n / 2 - 1] + scratch[n / 2]);
+    }
+
+    private static double Smoothstep(double value, double low, double high)
+    {
+        var t = Math.Clamp((value - low) / (high - low), 0.0, 1.0);
+        return t * t * (3 - 2 * t);
     }
 
     /// <summary>Each colour of each pixel becomes the middle of itself and its eight neighbours (edges repeat).</summary>

@@ -510,14 +510,26 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
     public void Adaptive_smoothing_weights_rise_with_noise_and_stay_in_range()
     {
         const int rows = 30;
-        const int stride = 30;
-        var weights = new float[5];
-        for (var level = 0; level < 5; level++)
+        const int width = 10;
+        const int stride = width * 3;
+        // Pixels alternate either side of 100 along each row, which is what noise looks like: far from the 3 x 3
+        // median and from the row's own 3 pixel median.
+        var spread = new[] { 0, 3, 6, 8, 12 };
+        var weights = new float[spread.Length];
+        for (var level = 0; level < spread.Length; level++)
         {
             var src = new byte[rows * stride];
             var med = new byte[rows * stride];
             Array.Fill<byte>(med, 100);
-            Array.Fill<byte>(src, (byte)(100 + level * 4));
+            for (var y = 0; y < rows; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
+                    for (var c = 0; c < 3; c++)
+                        src[y * stride + x * 3 + c] = (byte)(100 + (x % 2 == 0 ? spread[level] : -spread[level]));
+                }
+            }
+
             weights[level] = SstvPictureSmoother.RowWeights(src, med, rows, stride)[rows / 2];
         }
 
@@ -527,6 +539,26 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
         for (var i = 1; i < weights.Length; i++)
             Assert.True(weights[i] >= weights[i - 1]);
         Assert.InRange(weights[2], 0.01f, 0.99f);
+    }
+
+    [Fact]
+    public void Adaptive_smoothing_leaves_fine_horizontal_lines_alone()
+    {
+        // Lines one row apart are as far from their 3 x 3 median as noise is, but they are the same along the row.
+        var image = new SstvImage(32, 40);
+        for (var y = 0; y < 40; y++)
+        {
+            for (var x = 0; x < 32; x++)
+            {
+                var v = (byte)(y % 2 == 0 ? 20 : 220);
+                image.SetPixel(x, y, v, v, v);
+            }
+        }
+
+        var before = image.Rgb.ToArray();
+        SstvPictureSmoother.SmoothAdaptive(image, 0, 40);
+
+        Assert.Equal(before, image.Rgb);
     }
 
     [Fact]
