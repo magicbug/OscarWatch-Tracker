@@ -6545,4 +6545,136 @@ LOS: {2}
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>KISS TNC терминала и отдельный PTT FT4 используют {0}. Выберите разные COM-порты или отключите одно из устройств.</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>Скорость CW в словах в минуту</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>Стоп</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>Прервать передачу (Esc)</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: сообщение не задано. Добавьте его в настройках журнала.</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>Передача CW прервана.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>В {0} нечего передавать.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>Передаётся {0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>Передаётся {0}: {1}. Пропущены неизвестные макросы: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>{0} передано.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>Радиостанция не приняла CW. Проверьте, что она подключена и в режиме CW.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>Для манипуляции CW через радиостанцию нужно управление трансивером. Включите его или используйте отдельный COM-порт.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>Это подключение к радиостанции не может управлять DTR или RTS. Выберите отдельный COM-порт в настройках журнала.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>RTS на CAT-порту этой радиостанции служит для управления потоком. Используйте DTR или отдельный COM-порт.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>Выберите COM-порт для манипуляции CW в настройках журнала.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} уже занят радиостанцией, ОПУ, GPS или портом PTT. Выберите другой порт для манипуляции CW.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} используется другим приложением.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>{0} не найден. Проверьте кабель и обновите список портов.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>Не удалось открыть {0} для манипуляции CW.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>CW-манипулятор</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>CW-манипулятор</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>Двенадцать кнопок сообщений появляются между вводом QSO и журналом, когда аплинк в режиме CW. Нажмите кнопку или клавиши F1–F12, чтобы передать. Esc или «Стоп» прерывает передачу.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>Показывать CW-манипулятор в журнале</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>Манипуляция</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>Управление трансивером выключено. Манипулировать CW может только отдельный COM-порт.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>Радиостанция аплинка: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>Передаёт текст командой Kenwood KY.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>Передаёт текст командой CI-V Icom 0x17.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>Манипулирует {0} на CAT-порту радиостанции.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>Манипулирует {0} на собственном COM-порту.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Радиостанции Kenwood сами формируют морзянку из текста, поэтому линия манипуляции не нужна. Переведите радиостанцию в CW с включённым break-in. Изменения скорости передаются командой KS.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>Эта радиостанция сама формирует морзянку из текста, переданного по CI-V. Переведите её в CW с включённым break-in. Скорость Icom от 6 до 48 WPM.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>Использовать линию манипуляции COM вместо текста CI-V</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>Линия манипуляции</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>Использовать отдельный COM-порт для линии манипуляции</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>COM-порт манипуляции CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>Обновить</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch сам отсчитывает каждую точку и тире на линии. Подключите её ко входу ключа радиостанции через интерфейс манипуляции и переведите радиостанцию в CW с включённым break-in.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>Сообщения</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>Название кнопки</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>Сообщение</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} или * ваш позывной, {CALL} или ! позывной корреспондента, {SENTRST} переданный рапорт, {SENTRSTCUT} переданный рапорт с сокращёнными цифрами (599 как 5NN), {RCVDRST} принятый рапорт, {GRID} локатор корреспондента, {MYGRID} ваш локатор, {NAME} имя корреспондента, {SAT} спутник. Служебные знаки: {AR} {SK} {BT} {KN}.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>Справка по CW-манипулятору</value>
+  </data>
 </root>

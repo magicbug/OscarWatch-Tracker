@@ -1,3 +1,4 @@
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 
 namespace OscarWatch.Core.Services;
@@ -61,6 +62,21 @@ public interface IRigController
     /// disconnected, or the radio did not accept the command.
     /// </summary>
     bool TrySetUplinkRfPowerWatts(double watts);
+
+    /// <summary>
+    /// Send one piece of CW text that the uplink radio keys itself (Kenwood <c>KY</c>, Icom <c>0x17</c>).
+    /// Returns false when the radio cannot, is not connected, or did not accept it within <paramref name="timeout"/>.
+    /// </summary>
+    bool TrySendCwText(CwMessage piece, TimeSpan timeout) => false;
+
+    /// <summary>Stop CW text the uplink radio is sending.</summary>
+    bool TryStopCwText() => false;
+
+    /// <summary>Set the uplink radio's keyer speed for CW text.</summary>
+    bool TrySetCwSpeed(int wpm) => false;
+
+    /// <summary>Raise or drop RTS or DTR on the uplink CAT port as a CW key line.</summary>
+    bool TrySetCwKeyLine(bool useRts, bool assert) => false;
 
     /// <summary>
     /// The next connect must read the radio identity again, even if the port is already open.

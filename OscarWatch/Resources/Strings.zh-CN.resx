@@ -6541,4 +6541,136 @@
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>Terminal KISS TNC 与FT4 独立 PTT都使用 {0}。请使用不同的 COM 端口或停用其中一个设备。</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>CW 速度（每分钟字数）</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>停止</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>停止发送（Esc）</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}：未设置消息。请在日志设置中添加。</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}：{1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>已停止 CW。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} 没有可发送的内容。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>正在发送 {0}：{1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>正在发送 {0}：{1}。已略过未知宏：{2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>已发送 {0}。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>电台未接受 CW。请检查电台已连接并处于 CW 模式。</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>通过电台键控 CW 需要电台控制。请启用它，或使用独立的 COM 端口。</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>此电台连接无法控制 DTR 或 RTS。请在日志设置中选择独立的 COM 端口。</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>此电台 CAT 端口上的 RTS 用于流控。请使用 DTR 或独立的 COM 端口。</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>请在日志设置中选择 CW 键控 COM 端口。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} 已被电台、转台、GPS 或 PTT 端口占用。请选择其他 CW 键控端口。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} 正被其他应用程序使用。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>未找到 {0}。请检查线缆并刷新端口列表。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>无法打开 {0} 用于 CW 键控。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>CW 键控器</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>CW 键控器</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>上行为 CW 时，QSO 输入区和日志之间会显示十二个消息按钮。点击按钮或按 F1 至 F12 发送。按 Esc 或“停止”中止。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>在日志中显示 CW 键控器</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>键控</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>电台控制已关闭。只有独立的 COM 端口能键控 CW。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>上行电台：{0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>使用 Kenwood KY 命令发送文本。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>使用 Icom CI-V 命令 0x17 发送文本。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>在电台 CAT 端口上键控 {0}。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>在独立的 COM 端口上键控 {0}。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Kenwood 电台会根据文本自行生成莫尔斯码，因此不需要键控线。请将电台设为 CW 模式并打开插入（break-in）。速度变化通过 KS 发送。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>此电台会根据通过 CI-V 发送的文本自行生成莫尔斯码。请设为 CW 模式并打开插入（break-in）。Icom 速度范围为 6 至 48 WPM。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>使用 COM 键控线代替 CI-V 文本</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>键控线</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>为键控线使用独立的 COM 端口</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>CW 键控 COM 端口</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>刷新</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch 会在线上为每个点和划计时。请通过键控接口将其连接到电台的电键输入，并将电台设为 CW 模式且打开插入（break-in）。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>消息</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>按钮名称</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>消息</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} 或 * 本台呼号，{CALL} 或 ! 对方呼号，{SENTRST} 发出的报告，{SENTRSTCUT} 使用缩写数字发出的报告（599 写作 5NN），{RCVDRST} 收到的报告，{GRID} 对方网格，{MYGRID} 本台网格，{NAME} 对方姓名，{SAT} 卫星。程序信号：{AR} {SK} {BT} {KN}。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>CW 键控器帮助</value>
+  </data>
 </root>

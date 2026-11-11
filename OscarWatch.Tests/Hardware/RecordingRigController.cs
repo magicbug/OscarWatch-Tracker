@@ -1,3 +1,4 @@
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Services;
 
@@ -53,6 +54,33 @@ internal sealed class RecordingRigController : IRigController
         return false;
     }
     public bool TrySetUplinkRfPowerWatts(double watts) => false;
+
+    /// <summary>Result of the CW text and key line calls.</summary>
+    public bool CwResult { get; set; } = true;
+
+    public bool TrySendCwText(CwMessage piece, TimeSpan timeout)
+    {
+        Record("cwtext:" + piece.DisplayText);
+        return CwResult;
+    }
+
+    public bool TryStopCwText()
+    {
+        Record("cwstop");
+        return CwResult;
+    }
+
+    public bool TrySetCwSpeed(int wpm)
+    {
+        Record($"cwspeed:{wpm}");
+        return CwResult;
+    }
+
+    public bool TrySetCwKeyLine(bool useRts, bool assert)
+    {
+        Record($"cwkey:{(useRts ? "rts" : "dtr")}:{(assert ? "on" : "off")}");
+        return CwResult;
+    }
     public void RequireIdentityRecheck() { }
     public void Disconnect() { }
     public void DisconnectAndWait() { }

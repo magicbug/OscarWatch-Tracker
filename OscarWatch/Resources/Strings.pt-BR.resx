@@ -6540,4 +6540,136 @@ Mais recente: {1} ({2})</value>
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>O TNC KISS do Terminal e o PTT separado do FT4 usam ambos {0}. Use portas COM diferentes ou desative um dispositivo.</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>PPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>Velocidade do CW em palavras por minuto</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>Parar</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>Parar o envio (Esc)</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: nenhuma mensagem definida. Adicione uma nas configurações do logbook.</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>CW interrompido.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} não tem nada para enviar.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>Enviando {0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>Enviando {0}: {1}. Macros desconhecidas omitidas: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>{0} enviado.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>O rádio não aceitou o CW. Verifique se está conectado e em modo CW.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>Manipular CW pelo rádio exige o controle do rádio. Ative-o ou use uma porta COM separada.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>Esta conexão com o rádio não consegue acionar DTR ou RTS. Escolha uma porta COM separada nas configurações do logbook.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>O RTS na porta CAT deste rádio é controle de fluxo. Use DTR ou uma porta COM separada.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>Escolha a porta COM de manipulação CW nas configurações do logbook.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} já é usada pelo rádio, rotor, GPS ou uma porta PTT. Escolha outra porta para manipular CW.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} está em uso por outro aplicativo.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>{0} não foi encontrada. Verifique o cabo e atualize a lista de portas.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>Não foi possível abrir {0} para manipular CW.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>Manipulador CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>Manipulador CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>Doze botões de mensagem aparecem entre a entrada do QSO e o log quando o uplink é CW. Clique em um botão ou pressione F1 a F12 para enviá-lo. Esc ou Parar interrompe.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>Mostrar o manipulador CW no logbook</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>Manipulação</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>O controle do rádio está desligado. Só uma porta COM separada pode manipular CW.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>Rádio de uplink: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>Envia texto com o comando Kenwood KY.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>Envia texto com o comando CI-V Icom 0x17.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>Aciona {0} na porta CAT do rádio.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>Aciona {0} em uma porta COM própria.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Rádios Kenwood geram o Morse sozinhos a partir do texto, então nenhuma linha de manipulação é necessária. Coloque o rádio em CW com break-in ligado. Mudanças de velocidade são enviadas com KS.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>Este rádio gera o Morse sozinho a partir do texto enviado por CI-V. Coloque-o em CW com break-in ligado. As velocidades Icom vão de 6 a 48 PPM.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>Usar uma linha COM de manipulação em vez de texto CI-V</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>Linha de manipulação</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>Usar uma porta COM separada para a linha de manipulação</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>Porta COM de manipulação CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>Atualizar</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>O OscarWatch temporiza cada ponto e traço na linha. Ligue-a à entrada de manipulador do rádio por meio de uma interface e coloque o rádio em CW com break-in ligado.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>Mensagens</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>Nome do botão</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>Mensagem</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} ou * seu indicativo, {CALL} ou ! indicativo do correspondente, {SENTRST} reporte enviado, {SENTRSTCUT} reporte enviado com números cortados (599 como 5NN), {RCVDRST} reporte recebido, {GRID} grid do correspondente, {MYGRID} seu grid, {NAME} nome do correspondente, {SAT} satélite. Prosinais: {AR} {SK} {BT} {KN}.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>Ajuda do manipulador CW</value>
+  </data>
 </root>

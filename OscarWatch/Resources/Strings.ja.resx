@@ -6541,4 +6541,136 @@
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>Terminal の KISS TNC とFT4 の個別 PTTが両方とも {0} を使用しています。別の COM ポートを使うか、どちらかの機器を無効にしてください。</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>CW の速度（WPM）</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>停止</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>送信を止める（Esc）</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: メッセージ未設定。ログブック設定で追加してください。</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>CW を停止しました。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} には送る内容がありません。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>{0} を送信中: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>{0} を送信中: {1}。不明なマクロは省きました: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>{0} を送信しました。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>無線機が CW を受け付けませんでした。接続と CW モードを確認してください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>無線機経由で CW をキーイングするにはリグ制御が必要です。有効にするか、別の COM ポートを使ってください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>この無線機接続では DTR や RTS を操作できません。ログブック設定で別の COM ポートを選んでください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>この無線機の CAT ポートの RTS はフロー制御に使われています。DTR か別の COM ポートを使ってください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>ログブック設定で CW キーイング用の COM ポートを選んでください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} は無線機、ローテーター、GPS または PTT ポートで使用中です。別の CW キーイング用ポートを選んでください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} は別のアプリケーションで使用中です。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>{0} が見つかりません。ケーブルを確認し、ポート一覧を更新してください。</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>CW キーイング用に {0} を開けませんでした。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>CW キーヤー</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>CW キーヤー</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>アップリンクが CW のとき、QSO 入力欄とログの間に 12 個のメッセージボタンが表示されます。ボタンをクリックするか F1 から F12 を押すと送信します。Esc か停止で中止します。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>ログブックに CW キーヤーを表示する</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>キーイング</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>リグ制御がオフです。CW をキーイングできるのは別の COM ポートだけです。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>アップリンク無線機: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>Kenwood の KY コマンドでテキストを送ります。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>Icom の CI-V コマンド 0x17 でテキストを送ります。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>無線機の CAT ポートの {0} でキーイングします。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>専用の COM ポートの {0} でキーイングします。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Kenwood の無線機はテキストから自分でモールスを作るため、キーイング線は不要です。無線機を CW モードにしてブレークインをオンにしてください。速度の変更は KS で送ります。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>この無線機は CI-V で送られたテキストから自分でモールスを作ります。CW モードにしてブレークインをオンにしてください。Icom の速度は 6 から 48 WPM です。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>CI-V テキストの代わりに COM のキーイング線を使う</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>キーイング線</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>キーイング線に別の COM ポートを使う</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>CW キーイング用 COM ポート</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>更新</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch が線上の短点と長点をすべて計時します。キーイングインターフェース経由で無線機のキー入力に接続し、無線機を CW モードにしてブレークインをオンにしてください。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>メッセージ</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>ボタン名</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>メッセージ</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} または * 自局コール、{CALL} または ! 相手局コール、{SENTRST} 送ったレポート、{SENTRSTCUT} カットナンバーで送るレポート（599 を 5NN）、{RCVDRST} 受けたレポート、{GRID} 相手局グリッド、{MYGRID} 自局グリッド、{NAME} 相手局の名前、{SAT} 衛星。略符号: {AR} {SK} {BT} {KN}。</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>CW キーヤーのヘルプ</value>
+  </data>
 </root>

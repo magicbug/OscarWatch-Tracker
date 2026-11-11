@@ -23,6 +23,24 @@ public partial class QsoLogbookWindow : Window
         QsoLogbookWindowBounds.Apply(this, settings.Current.QsoLogbook);
         Opened += OnOpened;
         Closed += OnClosed;
+        // Tunnel so a focused text box or combo box (F4 opens its list) cannot take the macro keys first.
+        AddHandler(KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel);
+    }
+
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (DataContext is not QsoLogbookViewModel vm || e.KeyModifiers != KeyModifiers.None)
+            return;
+
+        if (e.Key is >= Key.F1 and <= Key.F12)
+        {
+            if (vm.TryHandleCwFunctionKey(e.Key - Key.F1))
+                e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Key.Escape && vm.TryHandleCwEscape())
+            e.Handled = true;
     }
 
     private async void OnOpened(object? sender, EventArgs e)
@@ -157,6 +175,7 @@ public partial class QsoLogbookWindow : Window
             .ShowDialog<QsoLogbookCloudlogSettingsRequest?>(this)
             .ConfigureAwait(true);
 
+        vm.ReloadCwKeyer();
         if (result is null)
             return;
 

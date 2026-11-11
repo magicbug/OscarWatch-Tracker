@@ -6545,4 +6545,136 @@ Aktuell: {1} ({2})</value>
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>Terminal-KISS-TNC und separater FT4-PTT verwenden beide {0}. Verwenden Sie verschiedene COM-Ports oder deaktivieren Sie ein Gerät.</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WpM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>CW-Geschwindigkeit in Wörtern pro Minute</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>Stopp</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>Senden abbrechen (Esc)</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: keine Nachricht festgelegt. Legen Sie eine in den Logbuch-Einstellungen an.</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>CW abgebrochen.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} hat nichts zu senden.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>Sende {0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>Sende {0}: {1}. Unbekannte Makros ausgelassen: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>{0} gesendet.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>Das Funkgerät hat das CW nicht angenommen. Prüfen Sie, ob es verbunden ist und in CW steht.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>CW über das Funkgerät zu tasten erfordert die Rig-Steuerung. Schalten Sie sie ein oder verwenden Sie einen separaten COM-Port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>Diese Funkgeräteverbindung kann DTR oder RTS nicht schalten. Wählen Sie in den Logbuch-Einstellungen einen separaten COM-Port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>RTS am CAT-Port dieses Funkgeräts dient der Flusskontrolle. Verwenden Sie DTR oder einen separaten COM-Port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>Wählen Sie den COM-Port für die CW-Tastung in den Logbuch-Einstellungen.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} wird bereits von Funkgerät, Rotor, GPS oder einem PTT-Port verwendet. Wählen Sie einen anderen Port für die CW-Tastung.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} wird von einer anderen Anwendung verwendet.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>{0} wurde nicht gefunden. Prüfen Sie das Kabel und aktualisieren Sie die Portliste.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>{0} konnte für die CW-Tastung nicht geöffnet werden.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>CW-Keyer</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>CW-Keyer</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>Zwölf Nachrichtentasten erscheinen zwischen QSO-Eingabe und Log, wenn der Uplink CW ist. Klicken Sie eine Taste oder drücken Sie F1 bis F12, um zu senden. Esc oder Stopp bricht ab.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>CW-Keyer im Logbuch anzeigen</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>Tastung</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>Die Rig-Steuerung ist aus. Nur ein separater COM-Port kann CW tasten.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>Uplink-Funkgerät: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>Sendet Text mit dem Kenwood-Befehl KY.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>Sendet Text mit dem Icom-CI-V-Befehl 0x17.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>Tastet {0} am CAT-Port des Funkgeräts.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>Tastet {0} an einem eigenen COM-Port.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Kenwood-Funkgeräte erzeugen das Morse selbst aus Text, daher ist keine Tastleitung nötig. Stellen Sie das Funkgerät auf CW mit eingeschaltetem Break-in. Geschwindigkeitsänderungen werden mit KS gesendet.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>Dieses Funkgerät erzeugt das Morse selbst aus Text, der über CI-V gesendet wird. Stellen Sie es auf CW mit eingeschaltetem Break-in. Icom-Geschwindigkeiten reichen von 6 bis 48 WpM.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>COM-Tastleitung statt CI-V-Text verwenden</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>Tastleitung</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>Separaten COM-Port für die Tastleitung verwenden</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>COM-Port für die CW-Tastung</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch erzeugt jeden Punkt und Strich auf der Leitung. Verbinden Sie sie über ein Tastinterface mit dem Tasteingang des Funkgeräts und stellen Sie das Funkgerät auf CW mit eingeschaltetem Break-in.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>Nachrichten</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>Tastenname</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>Nachricht</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} oder * Ihr Rufzeichen, {CALL} oder ! Rufzeichen der Gegenstation, {SENTRST} gesendeter Rapport, {SENTRSTCUT} gesendeter Rapport mit Kurzziffern (599 als 5NN), {RCVDRST} empfangener Rapport, {GRID} Locator der Gegenstation, {MYGRID} Ihr Locator, {NAME} Name der Gegenstation, {SAT} Satellit. Betriebszeichen: {AR} {SK} {BT} {KN}.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>Hilfe zum CW-Keyer</value>
+  </data>
 </root>

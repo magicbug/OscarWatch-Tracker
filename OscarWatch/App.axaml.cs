@@ -115,6 +115,7 @@ public partial class App : Application
         services.AddTransient<SunlightPredictionViewModel>();
         services.AddTransient<SatelliteDatabaseEditorViewModel>();
         services.AddTransient<RotatorManualViewModel>();
+        services.AddSingleton<OscarWatch.Hardware.CwKeyerService>();
         services.AddTransient<QsoLogbookViewModel>();
         services.AddTransient<CreateLogbookViewModel>();
         services.AddTransient<LogbookSettingsViewModel>();

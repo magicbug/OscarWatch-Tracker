@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using OscarWatch.Diagnostics;
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Radio;
 using Serilog;
@@ -412,6 +413,41 @@ public abstract class IcomCivDriverBase : IRigDriver
             return false;
         _transport.SetHandshakeLine(useRts, assert);
         return true;
+    }
+
+    public bool SupportsCwText => IcomCwCodec.SupportsTextKeying(RigType);
+
+    public bool TrySendCwText(CwMessage piece)
+    {
+        if (!SupportsCwText || _transport is null || !IsConnected || piece.IsEmpty)
+            return false;
+
+        // Sent once: a retry after a lost ACK would key the text twice.
+        var response = _transport.WriteCommand(IcomCwCodec.BuildSendCommand(piece), _catDelayMs);
+        if (IsCivNak(response))
+        {
+            Log.Warning("CI-V CW text rejected (0xFA); is the radio in CW mode?");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool TryStopCwText()
+    {
+        if (!SupportsCwText || _transport is null || !IsConnected)
+            return false;
+
+        var response = _transport.WriteCommand(IcomCwCodec.BuildStopCommand(), _catDelayMs);
+        return !IsCivNak(response);
+    }
+
+    public bool TrySetCwSpeed(int wpm)
+    {
+        if (!SupportsCwText || _transport is null || !IsConnected)
+            return false;
+
+        return SendWithAckRetry(IcomCwCodec.BuildSpeedCommand(wpm), "set key speed");
     }
 
     protected void WriteWithRetry(ReadOnlySpan<byte> body) =>

@@ -6545,4 +6545,136 @@ Terbaru: {1} ({2})</value>
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>TNC KISS Terminal dan PTT terpisah FT4 sama-sama memakai {0}. Gunakan port COM berbeda atau nonaktifkan salah satu perangkat.</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>Kecepatan CW dalam kata per menit</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>Berhenti</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>Hentikan pengiriman (Esc)</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: belum ada pesan. Tambahkan di pengaturan logbook.</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>CW dihentikan.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} tidak punya isi untuk dikirim.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>Mengirim {0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>Mengirim {0}: {1}. Makro tak dikenal dilewati: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>{0} terkirim.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>Radio tidak menerima CW. Periksa radio terhubung dan dalam mode CW.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>Keying CW melalui radio memerlukan kontrol rig. Aktifkan, atau gunakan port COM terpisah.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>Koneksi radio ini tidak dapat mengendalikan DTR atau RTS. Pilih port COM terpisah di pengaturan logbook.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>RTS pada port CAT radio ini adalah kontrol aliran. Gunakan DTR atau port COM terpisah.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>Pilih port COM keying CW di pengaturan logbook.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} sudah dipakai radio, rotator, GPS, atau port PTT. Pilih port lain untuk keying CW.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} sedang dipakai aplikasi lain.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>{0} tidak ditemukan. Periksa kabel dan segarkan daftar port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>Tidak dapat membuka {0} untuk keying CW.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>Keyer CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>Keyer CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>Dua belas tombol pesan muncul di antara isian QSO dan log saat uplink dalam CW. Klik tombol atau tekan F1 sampai F12 untuk mengirim. Esc atau Berhenti membatalkan.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>Tampilkan keyer CW di logbook</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>Keying</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>Kontrol rig mati. Hanya port COM terpisah yang dapat melakukan keying CW.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>Radio uplink: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>Mengirim teks dengan perintah Kenwood KY.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>Mengirim teks dengan perintah CI-V Icom 0x17.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>Keying {0} pada port CAT radio.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>Keying {0} pada port COM tersendiri.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Radio Kenwood membentuk Morse sendiri dari teks, jadi tidak perlu jalur keying. Atur radio ke mode CW dengan break-in aktif. Perubahan kecepatan dikirim dengan KS.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>Radio ini membentuk Morse sendiri dari teks yang dikirim lewat CI-V. Atur ke mode CW dengan break-in aktif. Kecepatan Icom dari 6 sampai 48 WPM.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>Gunakan jalur keying COM, bukan teks CI-V</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>Jalur keying</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>Gunakan port COM terpisah untuk jalur keying</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>Port COM keying CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>Segarkan</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch mengatur waktu setiap titik dan garis pada jalur. Hubungkan ke input key radio melalui antarmuka keying, dan atur radio ke mode CW dengan break-in aktif.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>Pesan</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>Nama tombol</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>Pesan</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} atau * callsign Anda, {CALL} atau ! callsign lawan, {SENTRST} laporan terkirim, {SENTRSTCUT} laporan terkirim dengan angka singkat (599 menjadi 5NN), {RCVDRST} laporan diterima, {GRID} grid lawan, {MYGRID} grid Anda, {NAME} nama lawan, {SAT} satelit. Prosign: {AR} {SK} {BT} {KN}.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>Bantuan keyer CW</value>
+  </data>
 </root>

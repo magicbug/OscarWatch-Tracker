@@ -6545,4 +6545,136 @@ LOS: {2}
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>TNC KISS ของ Terminal และPTT แยกของ FT4ใช้ {0} เหมือนกัน ให้ใช้พอร์ต COM ต่างกันหรือปิดอุปกรณ์หนึ่ง</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>ความเร็ว CW เป็นคำต่อนาที</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>หยุด</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>หยุดส่ง (Esc)</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: ยังไม่ได้ตั้งข้อความ เพิ่มได้ในการตั้งค่าล็อกบุ๊ก</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>หยุด CW แล้ว</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} ไม่มีข้อความให้ส่ง</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>กำลังส่ง {0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>กำลังส่ง {0}: {1} ข้ามแมโครที่ไม่รู้จัก: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>ส่ง {0} แล้ว</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>วิทยุไม่รับ CW ตรวจสอบว่าเชื่อมต่ออยู่และอยู่ในโหมด CW</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>การคีย์ CW ผ่านวิทยุต้องเปิดการควบคุมวิทยุ เปิดใช้งาน หรือใช้พอร์ต COM แยก</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>การเชื่อมต่อวิทยุนี้คีย์ DTR หรือ RTS ไม่ได้ เลือกพอร์ต COM แยกในการตั้งค่าล็อกบุ๊ก</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>RTS บนพอร์ต CAT ของวิทยุนี้ใช้ควบคุมการไหลของข้อมูล ให้ใช้ DTR หรือพอร์ต COM แยก</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>เลือกพอร์ต COM สำหรับคีย์ CW ในการตั้งค่าล็อกบุ๊ก</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} ถูกใช้โดยวิทยุ โรเตเตอร์ GPS หรือพอร์ต PTT อยู่แล้ว เลือกพอร์ตอื่นสำหรับคีย์ CW</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} ถูกใช้โดยแอปพลิเคชันอื่น</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>ไม่พบ {0} ตรวจสอบสายและรีเฟรชรายการพอร์ต</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>เปิด {0} สำหรับคีย์ CW ไม่ได้</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>คีย์เยอร์ CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>คีย์เยอร์ CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>ปุ่มข้อความสิบสองปุ่มจะแสดงระหว่างช่องกรอก QSO กับล็อกเมื่ออัปลิงก์เป็น CW คลิกปุ่มหรือกด F1 ถึง F12 เพื่อส่ง กด Esc หรือหยุดเพื่อยกเลิก</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>แสดงคีย์เยอร์ CW ในล็อกบุ๊ก</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>การคีย์</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>การควบคุมวิทยุปิดอยู่ คีย์ CW ได้เฉพาะผ่านพอร์ต COM แยก</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>วิทยุอัปลิงก์: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>ส่งข้อความด้วยคำสั่ง KY ของ Kenwood</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>ส่งข้อความด้วยคำสั่ง CI-V 0x17 ของ Icom</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>คีย์ {0} บนพอร์ต CAT ของวิทยุ</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>คีย์ {0} บนพอร์ต COM ของตัวเอง</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>วิทยุ Kenwood สร้างรหัสมอร์สเองจากข้อความ จึงไม่ต้องใช้สายคีย์ ตั้งวิทยุเป็นโหมด CW และเปิด break-in การเปลี่ยนความเร็วส่งด้วยคำสั่ง KS</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>วิทยุนี้สร้างรหัสมอร์สเองจากข้อความที่ส่งผ่าน CI-V ตั้งเป็นโหมด CW และเปิด break-in ความเร็วของ Icom อยู่ระหว่าง 6 ถึง 48 WPM</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>ใช้สายคีย์ COM แทนข้อความ CI-V</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>สายคีย์</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>ใช้พอร์ต COM แยกสำหรับสายคีย์</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>พอร์ต COM สำหรับคีย์ CW</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>รีเฟรช</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch จับเวลาทุกจุดและขีดบนสาย ต่อสายเข้ากับช่องคีย์ของวิทยุผ่านอินเทอร์เฟซคีย์ แล้วตั้งวิทยุเป็นโหมด CW และเปิด break-in</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>ข้อความ</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>ชื่อปุ่ม</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>ข้อความ</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} หรือ * คอลซายน์ของคุณ, {CALL} หรือ ! คอลซายน์คู่สถานี, {SENTRST} รายงานที่ส่ง, {SENTRSTCUT} รายงานที่ส่งแบบตัวเลขย่อ (599 เป็น 5NN), {RCVDRST} รายงานที่รับ, {GRID} กริดคู่สถานี, {MYGRID} กริดของคุณ, {NAME} ชื่อคู่สถานี, {SAT} ดาวเทียม เครื่องหมายพิเศษ: {AR} {SK} {BT} {KN}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>วิธีใช้คีย์เยอร์ CW</value>
+  </data>
 </root>

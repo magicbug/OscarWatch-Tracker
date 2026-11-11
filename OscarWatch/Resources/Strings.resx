@@ -6540,4 +6540,136 @@ Latest: {1} ({2})</value>
   <data name="ComPort.TerminalKissAndFt4Ptt" xml:space="preserve">
     <value>Terminal KISS TNC and FT4 separate PTT both use {0}. Use different COM ports or disable one device.</value>
   </data>
+  <data name="Logbook.Cw.Wpm">
+    <value>WPM</value>
+  </data>
+  <data name="Logbook.Cw.WpmToolTip">
+    <value>CW speed in words per minute</value>
+  </data>
+  <data name="Logbook.Cw.Stop">
+    <value>Stop</value>
+  </data>
+  <data name="Logbook.Cw.StopToolTip">
+    <value>Stop sending (Esc)</value>
+  </data>
+  <data name="Logbook.Cw.ButtonEmpty">
+    <value>{0}: no message set. Add one in Logbook settings.</value>
+  </data>
+  <data name="Logbook.Cw.ButtonToolTip">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Stopped">
+    <value>CW stopped.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Empty">
+    <value>{0} has nothing to send.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sending">
+    <value>Sending {0}: {1}</value>
+  </data>
+  <data name="Logbook.Cw.Status.SendingUnknown">
+    <value>Sending {0}: {1}. Left out unknown macros: {2}</value>
+  </data>
+  <data name="Logbook.Cw.Status.Sent">
+    <value>Sent {0}.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Rejected">
+    <value>The radio did not accept the CW. Check it is connected and in CW mode.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RigNotConnected">
+    <value>Keying CW through the radio needs rig control. Turn it on, or use a separate COM port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyLineUnavailable">
+    <value>This radio connection cannot key DTR or RTS. Choose a separate COM port in Logbook settings.</value>
+  </data>
+  <data name="Logbook.Cw.Status.RtsBlocked">
+    <value>RTS on this radio's CAT port is flow control. Use DTR or a separate COM port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NoPort">
+    <value>Choose the CW key COM port in Logbook settings.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortConflict">
+    <value>{0} is already used by the radio, rotator, GPS or a PTT port. Choose a different CW key port.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortBusy">
+    <value>{0} is in use by another application.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortNotFound">
+    <value>{0} was not found. Check the cable and refresh the port list.</value>
+  </data>
+  <data name="Logbook.Cw.Status.PortFailed">
+    <value>Could not open {0} for the CW key.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tab">
+    <value>CW keyer</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Section">
+    <value>CW keyer</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Intro">
+    <value>Twelve message buttons appear between the QSO entry and the log when the uplink is CW. Click a button or press F1 to F12 to send it. Escape or Stop aborts.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Enable">
+    <value>Show the CW keyer in the logbook</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Keying">
+    <value>Keying</value>
+  </data>
+  <data name="Logbook.Settings.Cw.NoRig">
+    <value>Rig control is off. Only a separate COM port can key CW.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Uplink">
+    <value>Uplink radio: {0}</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Kenwood">
+    <value>Sends text with the Kenwood KY command.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.Icom">
+    <value>Sends text with Icom CI-V command 0x17.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.CatLine">
+    <value>Keys {0} on the radio's CAT port.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Route.SeparateLine">
+    <value>Keys {0} on its own COM port.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KenwoodNote">
+    <value>Kenwood radios form the Morse themselves from text, so no key line is needed. Put the radio in CW mode with break-in on. Speed changes are sent with KS.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomNote">
+    <value>This radio forms the Morse itself from text sent over CI-V. Put it in CW mode with break-in on. Icom speeds run from 6 to 48 WPM.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.IcomUseLine">
+    <value>Use a COM key line instead of CI-V text</value>
+  </data>
+  <data name="Logbook.Settings.Cw.KeyLine">
+    <value>Key line</value>
+  </data>
+  <data name="Logbook.Settings.Cw.UseSeparatePort">
+    <value>Use a separate COM port for the key line</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Port">
+    <value>CW key COM port</value>
+  </data>
+  <data name="Logbook.Settings.Cw.RefreshPorts">
+    <value>Refresh</value>
+  </data>
+  <data name="Logbook.Settings.Cw.LineNote">
+    <value>OscarWatch times every dot and dash on the line. Connect it to the radio's key input through a keying interface, and put the radio in CW mode with break-in on.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Messages">
+    <value>Messages</value>
+  </data>
+  <data name="Logbook.Settings.Cw.ButtonName">
+    <value>Button name</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Message">
+    <value>Message</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Tokens">
+    <value>{MYCALL} or * your call, {CALL} or ! their call, {SENTRST} report sent, {SENTRSTCUT} report sent with cut numbers (599 as 5NN), {RCVDRST} report received, {GRID} their grid, {MYGRID} your grid, {NAME} their name, {SAT} satellite. Prosigns: {AR} {SK} {BT} {KN}.</value>
+  </data>
+  <data name="Logbook.Settings.Cw.Help">
+    <value>CW keyer help</value>
+  </data>
 </root>

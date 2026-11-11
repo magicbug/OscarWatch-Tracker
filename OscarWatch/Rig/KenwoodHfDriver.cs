@@ -1,3 +1,4 @@
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Radio;
 using Serilog;
@@ -132,6 +133,18 @@ public sealed class KenwoodHfDriver : IRigDriver
     public void SetToneOn(bool on) { }
     public void SetToneSquelchOn(bool on) { }
     public void SetToneHz(double hz, bool squelchTone) { }
+
+    public bool SupportsCwText => true;
+
+    public bool TrySendCwText(CwMessage piece) =>
+        _transport.IsOpen && !piece.IsEmpty
+        && _transport.SendCommand(KenwoodCwCodec.BuildSendCommand(piece), _catDelayMs);
+
+    public bool TryStopCwText() =>
+        _transport.IsOpen && _transport.SendCommand(KenwoodCwCodec.BuildStopCommand(ts2000: false), _catDelayMs);
+
+    public bool TrySetCwSpeed(int wpm) =>
+        _transport.IsOpen && _transport.SendCommand(KenwoodCwCodec.BuildSpeedCommand(wpm, ts2000: false), _catDelayMs);
 
     public void Dispose() => _transport.Dispose();
 

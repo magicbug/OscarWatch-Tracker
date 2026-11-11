@@ -340,130 +340,208 @@
         </StackPanel>
       </Border>
 
-      <Grid Grid.Row="1" ColumnDefinitions="*,260" ColumnSpacing="10">
-        <Border Grid.Column="0"
+      <DockPanel Grid.Row="1">
+        <Border DockPanel.Dock="Top"
                 Classes="logbook-panel"
-                Padding="4,4,4,6">
-          <DockPanel>
-            <TextBlock DockPanel.Dock="Top"
-                       Text="{loc:Localize Key=Logbook.History}"
-                       Margin="8,4,8,8"
-                       FontWeight="SemiBold" />
-            <DataGrid x:Name="QsoHistoryGrid"
-                      Background="Transparent"
-                      ItemsSource="{Binding QsoRows}"
-                      SelectedItem="{Binding SelectedQso, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      CanUserReorderColumns="False"
-                      CanUserResizeColumns="True"
-                      GridLinesVisibility="Horizontal"
-                      HeadersVisibility="Column"
-                      PointerPressed="OnQsoHistoryPointerPressed">
-              <DataGrid.Styles>
-                <Style Selector="TextBlock.cloudlog-sent">
-                  <Setter Property="Foreground" Value="{DynamicResource GpsOkBrush}" />
-                </Style>
-                <Style Selector="TextBlock.cloudlog-pending">
-                  <Setter Property="Foreground" Value="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                </Style>
-                <Style Selector="TextBlock.cloudlog-failed">
-                  <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeBackgroundBrush}" />
-                </Style>
-              </DataGrid.Styles>
-              <DataGrid.ContextMenu>
-                <ContextMenu>
-                  <MenuItem Header="{loc:Localize Key=Logbook.EditQso}"
-                            Command="{Binding BeginEditSelectedQsoCommand}" />
-                  <MenuItem Header="{loc:Localize Key=Logbook.ReuploadCloudlog}"
-                            Command="{Binding ReuploadSelectedQsoCommand}" />
-                  <MenuItem Header="{loc:Localize Key=Logbook.DeleteQso}"
-                            Click="OnDeleteQsoClick" />
-                </ContextMenu>
-              </DataGrid.ContextMenu>
-              <DataGrid.Columns>
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.DateTime}"
-                                    Binding="{Binding DateTimeText}"
-                                    Width="168" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Call}"
-                                    Binding="{Binding Call}"
-                                    Width="90" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Country}"
-                                    Binding="{Binding Country}"
-                                    Width="110" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Grid}"
-                                    Binding="{Binding Grid}"
-                                    Width="70" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Satellite}"
-                                    Binding="{Binding Satellite}"
-                                    Width="80" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Mode}"
-                                    Binding="{Binding Mode}"
-                                    Width="70" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.RstSent}"
-                                    Binding="{Binding RstSent}"
-                                    Width="52" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.RstRcvd}"
-                                    Binding="{Binding RstRcvd}"
-                                    Width="52" />
-                <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Comment}"
-                                    Binding="{Binding Comment}"
-                                    Width="*" />
-                <DataGridTemplateColumn Header="{loc:Localize Key=Logbook.Column.Cloudlog}"
-                                        Width="40">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate DataType="vm:QsoRowViewModel">
-                      <Border MinWidth="20"
-                              HorizontalAlignment="Center"
-                              ToolTip.Tip="{Binding CloudlogStatusToolTip}">
-                        <TextBlock Text="{Binding CloudlogStatusGlyph}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Classes.cloudlog-sent="{Binding CloudlogStatusIsSent}"
-                                   Classes.cloudlog-pending="{Binding CloudlogStatusIsPending}"
-                                   Classes.cloudlog-failed="{Binding CloudlogStatusIsFailed}" />
-                      </Border>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-              </DataGrid.Columns>
-            </DataGrid>
-          </DockPanel>
+                Padding="6"
+                Margin="0,0,0,10"
+                IsVisible="{Binding ShowCwKeyer}">
+          <Border.Styles>
+            <Style Selector="Button.cw-macro">
+              <Setter Property="HorizontalAlignment" Value="Stretch" />
+              <Setter Property="HorizontalContentAlignment" Value="Center" />
+              <Setter Property="Padding" Value="4,3" />
+              <Setter Property="Margin" Value="2,0" />
+            </Style>
+            <Style Selector="Button.cw-macro.cw-active">
+              <Setter Property="Background" Value="{DynamicResource PassRecordingBadgeBackgroundBrush}" />
+            </Style>
+            <Style Selector="Button.cw-macro.cw-active TextBlock">
+              <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeForegroundBrush}" />
+            </Style>
+          </Border.Styles>
+          <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+            <ItemsControl Grid.Column="0" ItemsSource="{Binding CwButtons}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="vm:CwMacroButtonViewModel">
+                  <Button Classes="cw-macro"
+                          Classes.cw-active="{Binding IsActive}"
+                          Command="{Binding SendCommand}"
+                          Focusable="False"
+                          ToolTip.Tip="{Binding ToolTip}"
+                          ToolTip.ShowOnDisabled="True"
+                          AutomationProperties.Name="{Binding ToolTip}">
+                    <StackPanel>
+                      <TextBlock Text="{Binding KeyName}"
+                                 FontSize="10"
+                                 HorizontalAlignment="Center"
+                                 Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                      <TextBlock Text="{Binding Label}"
+                                 FontSize="12"
+                                 FontWeight="SemiBold"
+                                 MinHeight="16"
+                                 HorizontalAlignment="Center"
+                                 TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Grid.Column="1"
+                    Content="{loc:Localize Key=Logbook.Cw.Stop}"
+                    Command="{Binding StopCwCommand}"
+                    Focusable="False"
+                    VerticalAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    MinWidth="64"
+                    ToolTip.Tip="{loc:Localize Key=Logbook.Cw.StopToolTip}" />
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Spacing="6"
+                        VerticalAlignment="Center"
+                        ToolTip.Tip="{loc:Localize Key=Logbook.Cw.WpmToolTip}">
+              <NumericUpDown Value="{Binding CwWpm, Mode=TwoWay}"
+                             Minimum="5" Maximum="60" Increment="1"
+                             FormatString="0"
+                             Width="110"
+                             AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.WpmToolTip}" />
+              <TextBlock Text="{loc:Localize Key=Logbook.Cw.Wpm}"
+                         VerticalAlignment="Center"
+                         FontWeight="SemiBold" />
+            </StackPanel>
+          </Grid>
         </Border>
 
-        <Border Grid.Column="1"
-                Classes="logbook-panel logbook-station"
-                Classes.station-live="{Binding StationAvailable}"
-                Padding="12">
-          <StackPanel Spacing="10">
-            <TextBlock Text="{loc:Localize Key=Logbook.StationControl}"
-                       FontWeight="SemiBold" />
-            <StackPanel Spacing="4">
-              <TextBlock Text="{loc:Localize Key=Logbook.Station.Satellite}" FontSize="12"
+        <Grid ColumnDefinitions="*,260" ColumnSpacing="10">
+          <Border Grid.Column="0"
+                  Classes="logbook-panel"
+                  Padding="4,4,4,6">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top"
+                         Text="{loc:Localize Key=Logbook.History}"
+                         Margin="8,4,8,8"
+                         FontWeight="SemiBold" />
+              <DataGrid x:Name="QsoHistoryGrid"
+                        Background="Transparent"
+                        ItemsSource="{Binding QsoRows}"
+                        SelectedItem="{Binding SelectedQso, Mode=TwoWay}"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="True"
+                        GridLinesVisibility="Horizontal"
+                        HeadersVisibility="Column"
+                        PointerPressed="OnQsoHistoryPointerPressed">
+                <DataGrid.Styles>
+                  <Style Selector="TextBlock.cloudlog-sent">
+                    <Setter Property="Foreground" Value="{DynamicResource GpsOkBrush}" />
+                  </Style>
+                  <Style Selector="TextBlock.cloudlog-pending">
+                    <Setter Property="Foreground" Value="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                  </Style>
+                  <Style Selector="TextBlock.cloudlog-failed">
+                    <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeBackgroundBrush}" />
+                  </Style>
+                </DataGrid.Styles>
+                <DataGrid.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="{loc:Localize Key=Logbook.EditQso}"
+                              Command="{Binding BeginEditSelectedQsoCommand}" />
+                    <MenuItem Header="{loc:Localize Key=Logbook.ReuploadCloudlog}"
+                              Command="{Binding ReuploadSelectedQsoCommand}" />
+                    <MenuItem Header="{loc:Localize Key=Logbook.DeleteQso}"
+                              Click="OnDeleteQsoClick" />
+                  </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.DateTime}"
+                                      Binding="{Binding DateTimeText}"
+                                      Width="168" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Call}"
+                                      Binding="{Binding Call}"
+                                      Width="90" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Country}"
+                                      Binding="{Binding Country}"
+                                      Width="110" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Grid}"
+                                      Binding="{Binding Grid}"
+                                      Width="70" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Satellite}"
+                                      Binding="{Binding Satellite}"
+                                      Width="80" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Mode}"
+                                      Binding="{Binding Mode}"
+                                      Width="70" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.RstSent}"
+                                      Binding="{Binding RstSent}"
+                                      Width="52" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.RstRcvd}"
+                                      Binding="{Binding RstRcvd}"
+                                      Width="52" />
+                  <DataGridTextColumn Header="{loc:Localize Key=Logbook.Column.Comment}"
+                                      Binding="{Binding Comment}"
+                                      Width="*" />
+                  <DataGridTemplateColumn Header="{loc:Localize Key=Logbook.Column.Cloudlog}"
+                                          Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate DataType="vm:QsoRowViewModel">
+                        <Border MinWidth="20"
+                                HorizontalAlignment="Center"
+                                ToolTip.Tip="{Binding CloudlogStatusToolTip}">
+                          <TextBlock Text="{Binding CloudlogStatusGlyph}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     FontSize="14"
+                                     FontWeight="SemiBold"
+                                     Classes.cloudlog-sent="{Binding CloudlogStatusIsSent}"
+                                     Classes.cloudlog-pending="{Binding CloudlogStatusIsPending}"
+                                     Classes.cloudlog-failed="{Binding CloudlogStatusIsFailed}" />
+                        </Border>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+            </DockPanel>
+          </Border>
+
+          <Border Grid.Column="1"
+                  Classes="logbook-panel logbook-station"
+                  Classes.station-live="{Binding StationAvailable}"
+                  Padding="12">
+            <StackPanel Spacing="10">
+              <TextBlock Text="{loc:Localize Key=Logbook.StationControl}"
+                         FontWeight="SemiBold" />
+              <StackPanel Spacing="4">
+                <TextBlock Text="{loc:Localize Key=Logbook.Station.Satellite}" FontSize="12"
+                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                <TextBlock Text="{Binding StationSatellite}"
+                           FontWeight="SemiBold"
+                           FontFamily="Consolas,Courier New,monospace" />
+              </StackPanel>
+              <StackPanel Spacing="4">
+                <TextBlock Text="{loc:Localize Key=Logbook.Station.Mode}" FontSize="12"
+                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                <TextBlock Text="{Binding StationMode}" FontFamily="Consolas,Courier New,monospace" />
+              </StackPanel>
+              <StackPanel Spacing="4">
+                <TextBlock Text="{loc:Localize Key=Logbook.Station.Frequencies}" FontSize="12"
+                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                <TextBlock Text="{Binding StationFrequencies}" FontFamily="Consolas,Courier New,monospace" />
+              </StackPanel>
+              <TextBlock Text="{loc:Localize Key=Logbook.Station.Note}"
+                         TextWrapping="Wrap"
+                         FontSize="11"
                          Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-              <TextBlock Text="{Binding StationSatellite}"
-                         FontWeight="SemiBold"
-                         FontFamily="Consolas,Courier New,monospace" />
             </StackPanel>
-            <StackPanel Spacing="4">
-              <TextBlock Text="{loc:Localize Key=Logbook.Station.Mode}" FontSize="12"
-                         Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-              <TextBlock Text="{Binding StationMode}" FontFamily="Consolas,Courier New,monospace" />
-            </StackPanel>
-            <StackPanel Spacing="4">
-              <TextBlock Text="{loc:Localize Key=Logbook.Station.Frequencies}" FontSize="12"
-                         Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-              <TextBlock Text="{Binding StationFrequencies}" FontFamily="Consolas,Courier New,monospace" />
-            </StackPanel>
-            <TextBlock Text="{loc:Localize Key=Logbook.Station.Note}"
-                       TextWrapping="Wrap"
-                       FontSize="11"
-                       Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-          </StackPanel>
-        </Border>
-      </Grid>
+          </Border>
+        </Grid>
+      </DockPanel>
     </Grid>
   </DockPanel>
 </Window>

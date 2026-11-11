@@ -6,9 +6,10 @@
         x:Class="OscarWatch.Views.LogbookSettingsWindow"
         x:DataType="vm:LogbookSettingsViewModel"
         Title="{loc:Localize Key=Window.LogbookSettings.Title}"
-        Width="520"
+        Width="600"
         SizeToContent="Height"
         MinWidth="480"
+        MaxHeight="760"
         WindowStartupLocation="CenterOwner">
   <DockPanel Margin="12">
     <StackPanel DockPanel.Dock="Bottom" Spacing="8" Margin="0,16,0,0">
@@ -185,6 +186,130 @@
                        MinHeight="20"
                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                        IsVisible="{Binding HasHamQthStatus}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="{loc:Localize Key=Logbook.Settings.Cw.Tab}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="4,8,4,0">
+          <StackPanel Spacing="14" MaxWidth="560">
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Section}"
+                       FontWeight="SemiBold"
+                       FontSize="13" />
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Intro}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <CheckBox Content="{loc:Localize Key=Logbook.Settings.Cw.Enable}"
+                      IsChecked="{Binding CwEnabled, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <NumericUpDown Value="{Binding CwWpm, Mode=TwoWay}"
+                             Minimum="5" Maximum="60" Increment="1"
+                             FormatString="0"
+                             Width="120"
+                             AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.WpmToolTip}" />
+              <TextBlock Text="{loc:Localize Key=Logbook.Cw.Wpm}"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Keying}"
+                       FontWeight="SemiBold"
+                       FontSize="13" />
+            <StackPanel Spacing="4">
+              <TextBlock Text="{Binding CwUplinkText}" />
+              <TextBlock Text="{Binding CwRouteText}"
+                         TextWrapping="Wrap"
+                         FontSize="11"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.KenwoodNote}"
+                       IsVisible="{Binding CwIsKenwoodUplink}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <StackPanel Spacing="4" IsVisible="{Binding CwIsIcomTextUplink}">
+              <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.IcomNote}"
+                         TextWrapping="Wrap"
+                         FontSize="11"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+              <CheckBox Content="{loc:Localize Key=Logbook.Settings.Cw.IcomUseLine}"
+                        IsChecked="{Binding CwUseComLineOnTextRadios, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Spacing="10" IsVisible="{Binding CwShowLineOptions}">
+              <StackPanel Spacing="4">
+                <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.KeyLine}" />
+                <ComboBox ItemsSource="{Binding CwKeyLineOptions}"
+                          SelectedIndex="{Binding CwKeyLineIndex, Mode=TwoWay}"
+                          Width="120"
+                          AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Cw.KeyLine}" />
+              </StackPanel>
+              <CheckBox Content="{loc:Localize Key=Logbook.Settings.Cw.UseSeparatePort}"
+                        IsChecked="{Binding CwUseSeparatePort, Mode=TwoWay}" />
+              <StackPanel Spacing="4" IsVisible="{Binding CwUseSeparatePort}">
+                <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Port}" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <ComboBox Grid.Column="0"
+                            ItemsSource="{Binding CwPortOptions}"
+                            SelectedItem="{Binding CwSeparatePort, Mode=TwoWay}"
+                            HorizontalAlignment="Stretch"
+                            AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Cw.Port}" />
+                  <Button Grid.Column="1"
+                          Content="{loc:Localize Key=Logbook.Settings.Cw.RefreshPorts}"
+                          Command="{Binding RefreshCwPortsCommand}" />
+                </Grid>
+              </StackPanel>
+              <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.LineNote}"
+                         TextWrapping="Wrap"
+                         FontSize="11"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
+            <TextBlock Text="{Binding CwWarningText}"
+                       IsVisible="{Binding CwShowWarning}"
+                       TextWrapping="Wrap"
+                       FontSize="12"
+                       Foreground="#FFC07070" />
+
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Messages}"
+                       FontWeight="SemiBold"
+                       FontSize="13" />
+            <Grid ColumnDefinitions="36,120,*" ColumnSpacing="8">
+              <TextBlock Grid.Column="1"
+                         Text="{loc:Localize Key=Logbook.Settings.Cw.ButtonName}"
+                         FontSize="11"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+              <TextBlock Grid.Column="2"
+                         Text="{loc:Localize Key=Logbook.Settings.Cw.Message}"
+                         FontSize="11"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </Grid>
+            <ItemsControl ItemsSource="{Binding CwMessages}" Margin="0,-8,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="vm:CwMessageRowViewModel">
+                  <Grid ColumnDefinitions="36,120,*" ColumnSpacing="8" Margin="0,0,0,6">
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding KeyName}"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <TextBox Grid.Column="1"
+                             Text="{Binding Label, Mode=TwoWay}"
+                             MaxLength="{Binding MaxLabelLength}"
+                             AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Cw.ButtonName}" />
+                    <TextBox Grid.Column="2"
+                             Text="{Binding Text, Mode=TwoWay}"
+                             MaxLength="{Binding MaxMessageLength}"
+                             FontFamily="Consolas,Courier New,monospace"
+                             AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Cw.Message}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Tokens}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       FontFamily="Consolas,Courier New,monospace"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <Button Content="{loc:Localize Key=Logbook.Settings.Cw.Help}"
+                    Command="{Binding OpenCwHelpCommand}"
+                    HorizontalAlignment="Left" />
           </StackPanel>
         </ScrollViewer>
       </TabItem>

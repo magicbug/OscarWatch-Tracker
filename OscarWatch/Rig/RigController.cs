@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using OscarWatch.Diagnostics;
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Hardware;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Orbit;
@@ -333,6 +334,48 @@ public sealed class RigController : IRigController, IDisposable
         return command.Succeeded;
     }
 
+    public bool TrySendCwText(CwMessage piece, TimeSpan timeout) =>
+        RunCwCommand(new RigCommand(RigCommandKind.SendCwText) { CwPiece = piece }, timeout);
+
+    public bool TryStopCwText() =>
+        RunCwCommand(new RigCommand(RigCommandKind.StopCwText), TimeSpan.FromSeconds(2));
+
+    public bool TrySetCwSpeed(int wpm) =>
+        RunCwCommand(new RigCommand(RigCommandKind.SetCwSpeed) { CwWpm = wpm }, TimeSpan.FromSeconds(2));
+
+    /// <summary>
+    /// Runs on the keyer thread so an element edge does not wait behind a Doppler write.
+    /// The serial transports change RTS and DTR without taking their command lock.
+    /// </summary>
+    public bool TrySetCwKeyLine(bool useRts, bool assert)
+    {
+        try
+        {
+            var driver = TxDriver();
+            return driver is { IsConnected: true } && driver.TrySetHandshakeLine(useRts, assert);
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "CW key line change failed");
+            return false;
+        }
+    }
+
+    private bool RunCwCommand(RigCommand command, TimeSpan timeout)
+    {
+        try
+        {
+            EnqueueAndWait(command, timeout);
+        }
+        catch (Exception ex) when (ex is TimeoutException or ObjectDisposedException)
+        {
+            Log.Debug(ex, "CW {Kind} did not finish in time", command.Kind);
+            return false;
+        }
+
+        return command.Succeeded;
+    }
+
     public void RequireIdentityRecheck()
     {
         _forceIdentityRecheck = true;
@@ -542,6 +585,12 @@ public sealed class RigController : IRigController, IDisposable
                 case RigCommandKind.SetUplinkRfPower:
                     command.Succeeded = command.RfPowerWatts is { } target
                         && TrySetUplinkRfPowerWattsOnWorker(target);
+                    break;
+
+                case RigCommandKind.SendCwText:
+                case RigCommandKind.StopCwText:
+                case RigCommandKind.SetCwSpeed:
+                    command.Succeeded = ApplyCwTextCommandOnWorker(command);
                     break;
 
                 case RigCommandKind.Disconnect:
@@ -3272,6 +3321,29 @@ public sealed class RigController : IRigController, IDisposable
         }
     }
 
+    private bool ApplyCwTextCommandOnWorker(RigCommand command)
+    {
+        try
+        {
+            var driver = TxDriver();
+            if (driver is null || !driver.IsConnected || !driver.SupportsCwText)
+                return false;
+
+            return command.Kind switch
+            {
+                RigCommandKind.SendCwText => command.CwPiece is { } piece && driver.TrySendCwText(piece),
+                RigCommandKind.StopCwText => driver.TryStopCwText(),
+                RigCommandKind.SetCwSpeed => driver.TrySetCwSpeed(command.CwWpm),
+                _ => false
+            };
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "CW {Kind} failed", command.Kind);
+            return false;
+        }
+    }
+
     private double? TryReadUplinkRfPowerWattsOnWorker()
     {
         try
@@ -3420,6 +3492,9 @@ public sealed class RigController : IRigController, IDisposable
         HoldSameBandTransmit,
         ReadUplinkRfPower,
         SetUplinkRfPower,
+        SendCwText,
+        StopCwText,
+        SetCwSpeed,
         Disconnect,
         Drain,
         Shutdown
@@ -3462,6 +3537,8 @@ public sealed class RigController : IRigController, IDisposable
         public DateTime? DopplerAtUtc { get; set; }
         public double? RfPowerWatts { get; set; }
         public TimeSpan Hold { get; set; }
+        public CwMessage? CwPiece { get; set; }
+        public int CwWpm { get; set; }
         public bool Succeeded { get; set; }
         public ManualResetEventSlim? Completed { get; set; }
     }

@@ -207,6 +207,28 @@ public static class SerialPortConflictHelper
         return false;
     }
 
+    /// <summary>
+    /// True when the CW keyer's own COM port is the radio, rotator or GPS port, or a separate PTT
+    /// port that FT4 or Terminal key on.
+    /// </summary>
+    public static bool IsCwKeyPortOccupied(AppSettings settings, string? cwPort)
+    {
+        var port = cwPort?.Trim() ?? "";
+        if (port.Length == 0)
+            return false;
+
+        if (EnumerateOccupiedPorts(settings.Rig, settings.Rotator, settings.Gps)
+            .Any(p => string.Equals(p.Port, port, StringComparison.OrdinalIgnoreCase)))
+            return true;
+
+        var ft4 = Ft4SeparatePttPort(settings)?.Trim() ?? "";
+        var terminal = settings.Terminal.BuiltIn.PttMethod == PttMethod.SeparateComPort
+            ? settings.Terminal.BuiltIn.SeparatePttPort?.Trim() ?? ""
+            : "";
+        return string.Equals(port, ft4, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(port, terminal, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static IEnumerable<(string Port, string Label)> EnumerateOccupiedPorts(
         RigSettings rig,
         RotatorSettings rotator,

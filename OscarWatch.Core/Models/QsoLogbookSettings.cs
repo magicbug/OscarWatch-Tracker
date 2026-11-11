@@ -1,7 +1,11 @@
+using OscarWatch.Core.Cw;
+
 namespace OscarWatch.Core.Models;
 
 public sealed class QsoLogbookSettings
 {
+    public CwKeyerSettings CwKeyer { get; set; } = new();
+
     /// <summary>
     /// Pixel widths for the Recent QSOs grid, keyed by <see cref="QsoLogbookHistoryColumns"/>.
     /// The comment column is omitted when it should fill remaining space (star width).

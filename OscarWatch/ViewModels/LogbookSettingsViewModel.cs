@@ -131,6 +131,8 @@ public partial class LogbookSettingsViewModel : ViewModelBase
         HamQthUsername = hamQth.Username;
         HamQthPassword = hamQth.Password;
         HamQthTestStatus = "";
+
+        LoadCwKeyer();
     }
 
     public async Task LoadStationProfilesAsync()
@@ -304,6 +306,7 @@ public partial class LogbookSettingsViewModel : ViewModelBase
             Username = HamQthUsername.Trim(),
             Password = HamQthPassword
         };
+        SaveCwKeyer();
         _settings.RequestSave();
         return true;
     }

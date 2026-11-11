@@ -1,3 +1,4 @@
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 
 namespace OscarWatch.Rig;
@@ -91,4 +92,16 @@ public interface IRigDriver : IDisposable
     /// expose handshake lines (e.g. network Flex, or RTS already used for flow control).
     /// </summary>
     bool TrySetHandshakeLine(bool useRts, bool assert) => false;
+
+    /// <summary>True when the radio keys CW itself from text sent over CAT (Kenwood <c>KY</c>, Icom <c>0x17</c>).</summary>
+    bool SupportsCwText => false;
+
+    /// <summary>Send one piece of a CW message that fits the radio's text buffer. Returns false when rejected.</summary>
+    bool TrySendCwText(CwMessage piece) => false;
+
+    /// <summary>Stop CW the radio is sending from text and clear its buffer.</summary>
+    bool TryStopCwText() => false;
+
+    /// <summary>Set the radio's internal keyer speed.</summary>
+    bool TrySetCwSpeed(int wpm) => false;
 }

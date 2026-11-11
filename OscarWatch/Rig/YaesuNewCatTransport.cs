@@ -131,6 +131,25 @@ internal sealed class YaesuNewCatTransport : IYaesuNewCatTransport
         }
     }
 
+    /// <summary>
+    /// Toggles DTR without the command gate so a CW element is not held up by a CAT read.
+    /// </summary>
+    public bool TrySetDtr(bool assert)
+    {
+        try
+        {
+            if (!_port.IsOpen)
+                return false;
+            _port.DtrEnable = assert;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "Yaesu newcat DTR change failed on {Port}", _port.PortName);
+            return false;
+        }
+    }
+
     private void DrainInputBuffer()
     {
         try

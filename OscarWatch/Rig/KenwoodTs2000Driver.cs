@@ -1,3 +1,4 @@
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Radio;
 using Serilog;
@@ -424,6 +425,18 @@ public sealed class KenwoodTs2000Driver : IRigDriver
             Thread.Sleep(_satModeSettlingDelayMs);
         RestoreMemoryVfoIfNeeded();
     }
+
+    public bool SupportsCwText => true;
+
+    public bool TrySendCwText(CwMessage piece) =>
+        _transport.IsOpen && !piece.IsEmpty
+        && _transport.SendFireAndForget(KenwoodCwCodec.BuildSendCommand(piece), _catDelayMs);
+
+    public bool TryStopCwText() =>
+        _transport.IsOpen && _transport.SendFireAndForget(KenwoodCwCodec.BuildStopCommand(ts2000: true), _catDelayMs);
+
+    public bool TrySetCwSpeed(int wpm) =>
+        _transport.IsOpen && _transport.SendFireAndForget(KenwoodCwCodec.BuildSpeedCommand(wpm, ts2000: true), _catDelayMs);
 
     /// <summary>
     /// Closes CAT only. <see cref="RigController"/> sends the satellite mode exit first when

@@ -47,7 +47,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         IDxccLookupService dxccLookup,
         IQrzCallbookService qrz,
         IHamQthCallbookService hamQth,
-        ILocalizationService localization)
+        ILocalizationService localization,
+        OscarWatch.Hardware.CwKeyerService? cwKeyer = null)
     {
         _repository = repository;
         _tracker = tracker;
@@ -67,6 +68,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         _liveTimer.Tick += (_, _) => RefreshStationPanel();
         _cloudlogUpload.UploadStateChanged += OnCloudlogUploadStateChanged;
         _repository.QsosChanged += OnRepositoryQsosChanged;
+        InitializeCwKeyer(cwKeyer);
     }
 
     [ObservableProperty]
@@ -1252,6 +1254,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
             : _l.Get("Logbook.Station.Unavailable");
 
         ApplyDefaultRstForMode(snapshot);
+        RefreshCwKeyer(snapshot);
     }
 
     private void ApplyDefaultRstForMode(LiveTrackerSnapshot snapshot)
@@ -1355,6 +1358,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         _cloudlogUpload.UploadStateChanged -= OnCloudlogUploadStateChanged;
         _repository.QsosChanged -= OnRepositoryQsosChanged;
         _liveTimer.Stop();
+        DisposeCwKeyer();
     }
 }
 

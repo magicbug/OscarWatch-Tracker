@@ -50,6 +50,10 @@ public class YaesuFt991Driver : IRigDriver
 
     public RigType RigType => _rigType;
 
+    /// <summary>DTR only: RTS on this port is hardware flow control.</summary>
+    public bool TrySetHandshakeLine(bool useRts, bool assert) =>
+        !useRts && _transport.IsOpen && _transport.TrySetDtr(assert);
+
     public bool TryConfirmIdentity()
     {
         if (!_transport.IsOpen)

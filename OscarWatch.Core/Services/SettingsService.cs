@@ -437,6 +437,8 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.QsoLogbook ??= new QsoLogbookSettings();
         settings.QsoLogbook.HistoryColumnWidthsPx ??=
             new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        settings.QsoLogbook.CwKeyer ??= new OscarWatch.Core.Cw.CwKeyerSettings();
+        settings.QsoLogbook.CwKeyer.Normalise();
         settings.TleSource ??= new TleSourceSettings();
         settings.TleSource = TleSourceResolver.NormalizeLegacyCustomUrl(settings.TleSource);
         settings.TransponderConflictAcknowledgments ??= [];
