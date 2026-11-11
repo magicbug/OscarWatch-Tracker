@@ -198,8 +198,8 @@ public sealed class SstvDecoder
     private readonly List<float> _envelope = new(4096);
     private readonly List<float> _weights = new(4096);
     private readonly SstvEnvelopeWeigher _weigher = new(InternalRate);
-    /// <summary>Resampled audio, kept alongside <see cref="_buffer"/> (same indices) for demodulating again.</summary>
-    private readonly SstvSignalBuffer _raw = new();
+    /// <summary>Resampled audio, kept alongside <see cref="_buffer"/> (same indices) for demodulating again. Read by index only.</summary>
+    private readonly SstvRawAudioBuffer _raw = new();
     /// <summary>Search demodulator I/Q for the tone power tests, same indices as <see cref="_buffer"/>.</summary>
     private readonly SstvBasebandBuffer _baseband = new();
     private readonly List<float> _pictureValues = new(4096);
