@@ -107,6 +107,14 @@ public sealed class SstvDecoderOptions
     /// fine detail on all.
     /// </summary>
     public bool SmoothAcrossLines { get; set; }
+
+    /// <summary>
+    /// When the picture is finished, smooth only the rows that are noisy: each row moves towards its 3 × 3 median
+    /// by how noisy its neighbourhood is, measured from the picture itself. Strong pictures are left alone and
+    /// weak ones get the speckle taken out, so unlike <see cref="SmoothAcrossLines"/> it can stay on. Not used
+    /// when <see cref="SmoothAcrossLines"/> is on, which smooths every row.
+    /// </summary>
+    public bool AdaptiveSmoothing { get; set; } = true;
 }
 
 public sealed class SstvImageStartedEventArgs(SstvMode mode, bool fromVis, double offsetHz) : EventArgs
@@ -798,6 +806,8 @@ public sealed class SstvDecoder
         var repaired = Options.RepairBadLines ? RepairBadLines(noise) : [];
         if (Options.SmoothAcrossLines)
             SstvPictureSmoother.Smooth(_image!, 0, _nextLine * mode.RowsPerLine);
+        else if (Options.AdaptiveSmoothing)
+            SstvPictureSmoother.SmoothAdaptive(_image!, 0, _nextLine * mode.RowsPerLine);
         if (alignToBottom)
         {
             var shift = mode.TransmittedLines - _nextLine;

@@ -24,6 +24,7 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
             ToneVis = false,
             StackedSyncSearch = false,
             WeightedPixels = false,
+            AdaptiveSmoothing = false,
         };
         enable?.Invoke(o);
         return o;
@@ -427,6 +428,105 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
 
         Assert.Equal((byte)200, image.GetPixel(2, 2).R);
         Assert.Equal((byte)0, image.GetPixel(2, 3).R);
+    }
+
+    [Theory]
+    [InlineData(SstvModeId.Robot36)]
+    [InlineData(SstvModeId.Pd120)]
+    public void Adaptive_smoothing_cuts_speckle_on_a_weak_fm_link(SstvModeId id)
+    {
+        var mode = SstvModeTable.Get(id);
+        var (off, on) = Compare(mode, o => o.AdaptiveSmoothing = true);
+
+        Assert.True(TotalError(on) < TotalError(off) * 0.95, $"error {TotalError(on):0.0} on, {TotalError(off):0.0} off");
+        Assert.Equal(off.Sum(p => p.LockPercent), on.Sum(p => p.LockPercent), 1);
+    }
+
+    [Theory]
+    [InlineData(SstvModeId.Robot36)]
+    [InlineData(SstvModeId.Pd120)]
+    public void Adaptive_smoothing_keeps_clean_pictures_close(SstvModeId id)
+    {
+        var mode = SstvModeTable.Get(id);
+        foreach (var cnr in new[] { 40.0, 30.0 })
+        {
+            var settings = new SstvTestEncoder.Settings { CnrDb = cnr };
+            var off = SstvChannelSimulationTests.Measure(mode, settings, Plain());
+            var on = SstvChannelSimulationTests.Measure(mode, settings, Plain(o => o.AdaptiveSmoothing = true));
+
+            Assert.Equal(off.LockPercent, on.LockPercent, 1);
+            Assert.True(on.MeanError <= off.MeanError + 0.3, $"{cnr} dB: error {on.MeanError:0.00} on, {off.MeanError:0.00} off");
+        }
+    }
+
+    [Fact]
+    public void Adaptive_smoothing_leaves_a_clean_picture_untouched()
+    {
+        var image = new SstvImage(32, 40);
+        for (var y = 0; y < 40; y++)
+        {
+            for (var x = 0; x < 32; x++)
+                image.SetPixel(x, y, (byte)(x < 16 ? 20 : 220), (byte)(y * 5), 100);
+        }
+
+        image.SetPixel(5, 20, 255, 255, 255);
+        var before = image.Rgb.ToArray();
+        SstvPictureSmoother.SmoothAdaptive(image, 0, 40);
+
+        Assert.Equal(before, image.Rgb);
+    }
+
+    [Fact]
+    public void Adaptive_smoothing_flattens_a_noisy_picture_and_not_rows_not_yet_received()
+    {
+        var random = new Random(7);
+        var image = new SstvImage(32, 40);
+        for (var y = 0; y < 30; y++)
+        {
+            for (var x = 0; x < 32; x++)
+                image.SetPixel(x, y, (byte)random.Next(60, 200), (byte)random.Next(60, 200), (byte)random.Next(60, 200));
+        }
+
+        static double Spread(SstvImage i)
+        {
+            double sum = 0;
+            for (var y = 5; y < 25; y++)
+            {
+                for (var x = 1; x < 31; x++)
+                    sum += Math.Abs(i.GetPixel(x, y).G - i.GetPixel(x + 1, y).G);
+            }
+
+            return sum;
+        }
+
+        var before = Spread(image);
+        SstvPictureSmoother.SmoothAdaptive(image, 0, 30);
+
+        Assert.True(Spread(image) < before * 0.7, $"{Spread(image):0} after, {before:0} before");
+        Assert.Equal((byte)0, image.GetPixel(3, 35).G);
+    }
+
+    [Fact]
+    public void Adaptive_smoothing_weights_rise_with_noise_and_stay_in_range()
+    {
+        const int rows = 30;
+        const int stride = 30;
+        var weights = new float[5];
+        for (var level = 0; level < 5; level++)
+        {
+            var src = new byte[rows * stride];
+            var med = new byte[rows * stride];
+            Array.Fill<byte>(med, 100);
+            Array.Fill<byte>(src, (byte)(100 + level * 4));
+            weights[level] = SstvPictureSmoother.RowWeights(src, med, rows, stride)[rows / 2];
+        }
+
+        Assert.Equal(0f, weights[0]);
+        Assert.Equal(0f, weights[1]);
+        Assert.Equal(1f, weights[4]);
+        for (var i = 1; i < weights.Length; i++)
+            Assert.True(weights[i] >= weights[i - 1]);
+        Assert.InRange(weights[2], 0.01f, 0.99f);
     }
 
     [Fact]
