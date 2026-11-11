@@ -362,6 +362,22 @@ jobs:
           files: artifacts/**
           generate_release_notes: true
 
+      # Operator notes live in the tagged commit. When that file is present it
+      # replaces the generated commit list. A tag without the file keeps the
+      # generated notes.
+      - uses: actions/checkout@v4
+
+      - name: Publish operator release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [[ -f .github/RELEASE_NOTES.md ]]; then
+            gh release edit "${GITHUB_REF_NAME}" --notes-file .github/RELEASE_NOTES.md
+          else
+            echo "No .github/RELEASE_NOTES.md on this tag. Keeping the generated notes."
+          fi
+
       - name: Delete Actions copies of the release packages
         if: success()
         env:
