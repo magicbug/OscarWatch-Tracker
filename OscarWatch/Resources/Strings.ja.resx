@@ -5629,6 +5629,9 @@
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: デジピーター付き衛星を選択してください</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: 衛星は地平線下です</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: レート制限中、まもなく再試行します</value>
   </data>

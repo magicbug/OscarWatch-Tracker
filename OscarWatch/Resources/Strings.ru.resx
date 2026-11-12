@@ -5633,6 +5633,9 @@ LOS: {2}
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: выберите спутник с дигипитером</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: спутник ниже горизонта</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: лимит запросов, скоро повтор</value>
   </data>

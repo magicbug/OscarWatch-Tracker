@@ -5633,6 +5633,9 @@ Terbaru: {1} ({2})</value>
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: pilih satelit yang memiliki digipeater</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: satelit di bawah horizon</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: batas permintaan, mencoba lagi sebentar</value>
   </data>

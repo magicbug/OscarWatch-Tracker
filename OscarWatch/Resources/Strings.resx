@@ -5628,6 +5628,9 @@ Latest: {1} ({2})</value>
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: focus a satellite with a digipeater</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: satellite below horizon</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: rate limited, retrying shortly</value>
   </data>

@@ -5628,6 +5628,9 @@ Está utilizando la versión {0}.
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: enfoca un satélite con digipeater</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: satélite bajo el horizonte</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: límite de peticiones, reintentando en breve</value>
   </data>
