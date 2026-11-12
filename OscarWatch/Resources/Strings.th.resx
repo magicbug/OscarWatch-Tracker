@@ -6869,4 +6869,28 @@ LOS: {2}
   <data name="Cw.CopyFontSize.Tip">
     <value>ในหน้าต่าง CW คุณยังกด Ctrl ค้างไว้แล้วหมุนล้อเมาส์เหนือข้อความ หรือกด Ctrl พร้อมบวกหรือลบได้ Ctrl+0 จะกลับไปใช้ขนาดเริ่มต้น</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>สัญญาณเรียกขานใหม่</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>กริดใหม่</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>เคยติดต่อแล้ว</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>สัญญาณเรียกขานของคุณ</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>สัญญาณเรียกขานใหม่: ไม่มีในสมุดบันทึกใดของคุณ</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>เคยติดต่อแล้ว: สัญญาณเรียกขานนี้อยู่ในสมุดบันทึกของคุณ</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>กริดใหม่: ยังไม่มี QSO ในช่องกริด 4 ตัวอักษรนี้</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>เคยติดต่อแล้ว: คุณมี QSO ในช่องกริดนี้</value>
+  </data>
 </root>

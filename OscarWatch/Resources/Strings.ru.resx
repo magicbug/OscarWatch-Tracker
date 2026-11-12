@@ -6869,4 +6869,28 @@ LOS: {2}
   <data name="Cw.CopyFontSize.Tip">
     <value>В окне CW можно также удерживать Ctrl и вращать колесо мыши над текстом или нажимать Ctrl с плюсом или минусом. Ctrl+0 возвращает размер по умолчанию.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Новый позывной</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Новый квадрат</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Уже проведена связь</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Ваш позывной</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Новый позывной: нет ни в одном из ваших журналов.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Уже проведена связь: этот позывной есть в вашем журнале.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Новый квадрат: в этом 4-символьном квадрате связей ещё нет.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Уже проведена связь: в этом квадрате у вас есть связь.</value>
+  </data>
 </root>

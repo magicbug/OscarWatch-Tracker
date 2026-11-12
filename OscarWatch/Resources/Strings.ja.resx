@@ -6865,4 +6865,28 @@
   <data name="Cw.CopyFontSize.Tip">
     <value>CW ウィンドウでは、テキストの上で Ctrl を押しながらマウスホイールを回すか、Ctrl とプラスまたはマイナスを押しても変更できます。Ctrl+0 で既定のサイズに戻ります。</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>新しいコール</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>新しいグリッド</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>交信済み</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>自局のコール</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>新しいコール: どのログブックにもありません。</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>交信済み: このコールはログブックにあります。</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>新しいグリッド: この 4 文字のグリッドではまだ交信がありません。</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>交信済み: このグリッドでの交信があります。</value>
+  </data>
 </root>

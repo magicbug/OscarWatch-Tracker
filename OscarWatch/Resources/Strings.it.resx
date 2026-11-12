@@ -6868,4 +6868,28 @@ Ultima versione: {1} ({2})</value>
   <data name="Cw.CopyFontSize.Tip">
     <value>Nella finestra CW puoi anche tenere premuto Ctrl e ruotare la rotellina del mouse sul testo, oppure premere Ctrl con più o meno. Ctrl+0 torna alla dimensione predefinita.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Nominativo nuovo</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Locatore nuovo</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Già collegato</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Il tuo nominativo</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Nominativo nuovo: non è in nessuno dei tuoi log.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Già collegato: questo nominativo è nel tuo log.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Locatore nuovo: ancora nessun QSO in questo quadrato di 4 caratteri.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Già collegato: hai un QSO in questo quadrato.</value>
+  </data>
 </root>

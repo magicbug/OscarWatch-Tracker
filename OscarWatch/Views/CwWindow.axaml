@@ -39,6 +39,19 @@
       <Setter Property="FontFamily" Value="Consolas,Menlo,DejaVu Sans Mono,Courier New,monospace" />
       <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
+    <Style Selector="Border.cw-chip">
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="4,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.cw-legend">
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="6,1" />
+      <Setter Property="Margin" Value="0,0,6,0" />
+    </Style>
+    <Style Selector="Border.cw-legend > TextBlock">
+      <Setter Property="FontSize" Value="12" />
+    </Style>
     <Style Selector="Button.cw-link">
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="BorderThickness" Value="0" />
@@ -159,7 +172,21 @@
                    Text="{loc:Localize Key=Cw.Copy.Hint}"
                    Classes="cw-label"
                    TextWrapping="Wrap"
-                   Margin="0,0,0,8" />
+                   Margin="0,0,0,6" />
+        <WrapPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+          <Border Classes="cw-legend" Background="{x:Static cw:CwCopyWord.NewCallBrush}">
+            <TextBlock Text="{loc:Localize Key=Cw.Legend.NewCall}" />
+          </Border>
+          <Border Classes="cw-legend" Background="{x:Static cw:CwCopyWord.NewGridBrush}">
+            <TextBlock Text="{loc:Localize Key=Cw.Legend.NewGrid}" />
+          </Border>
+          <Border Classes="cw-legend" Background="{x:Static cw:CwCopyWord.WorkedBrush}">
+            <TextBlock Text="{loc:Localize Key=Cw.Legend.Worked}" />
+          </Border>
+          <Border Classes="cw-legend" Background="{x:Static cw:CwCopyWord.YouBrush}">
+            <TextBlock Text="{loc:Localize Key=Cw.Legend.You}" />
+          </Border>
+        </WrapPanel>
         <ScrollViewer x:Name="CopyScroller"
                       FontSize="{Binding CopyFontSize}"
                       HorizontalScrollBarVisibility="Disabled"
@@ -185,17 +212,21 @@
                         <DataTemplate DataType="cw:CwCopyLink">
                           <Button Classes="cw-link"
                                   Click="OnLinkClick"
-                                  Margin="0,0,10,0"
+                                  Margin="0,0,6,0"
                                   ToolTip.Tip="{Binding Tip}"
                                   AutomationProperties.Name="{Binding Tip}">
-                            <TextBlock Text="{Binding Text}"
-                                       Classes="cw-copy"
-                                       TextDecorations="Underline"
-                                       FontWeight="{Binding IsCallsign, Converter={x:Static vm:CwViewModel.BoolToEmphasis}}" />
+                            <Border Classes="cw-chip" Background="{Binding Background}">
+                              <TextBlock Text="{Binding Text}"
+                                         Classes="cw-copy"
+                                         TextDecorations="Underline"
+                                         FontWeight="{Binding IsCallsign, Converter={x:Static vm:CwViewModel.BoolToEmphasis}}" />
+                            </Border>
                           </Button>
                         </DataTemplate>
                         <DataTemplate DataType="cw:CwCopyWord">
-                          <TextBlock Text="{Binding Text}" Classes="cw-copy" Margin="0,0,10,0" />
+                          <Border Classes="cw-chip" Background="{Binding Background}" Margin="0,0,6,0">
+                            <TextBlock Text="{Binding Text}" Classes="cw-copy" />
+                          </Border>
                         </DataTemplate>
                       </ItemsControl.DataTemplates>
                     </ItemsControl>

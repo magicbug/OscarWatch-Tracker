@@ -29,6 +29,11 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     private readonly ILocalizationService _l;
     private readonly CwReceiverService _receiver;
     private readonly QsoLogbookEntryBridge _logbook;
+    private readonly IQsoLogbookRepository _logbookRepository;
+    /// <summary>Null until the logbook has been read; words are left unshaded until then.</summary>
+    private IReadOnlySet<string>? _workedCalls;
+    private IReadOnlySet<string>? _workedGridFields;
+    private bool _watchingLogbook;
     private readonly DispatcherTimer _uiTimer;
     private readonly DispatcherTimer _waterfallTimer;
     private const int MaxWaterfallBacklog = 8;
@@ -58,8 +63,10 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         IRigController rig,
         ILocalizationService localization,
         CwReceiverService receiver,
-        QsoLogbookEntryBridge logbook)
+        QsoLogbookEntryBridge logbook,
+        IQsoLogbookRepository logbookRepository)
     {
+        _logbookRepository = logbookRepository;
         _settings = settings;
         _frequencyOverlay = frequencyOverlay;
         _tracker = tracker;
@@ -206,6 +213,13 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _lastAutoStartCheckUtc = DateTime.MinValue;
         UpdateOwnStation();
         ShowStoppedStatus();
+        if (!_watchingLogbook)
+        {
+            _watchingLogbook = true;
+            _logbookRepository.QsosChanged += OnLogbookQsosChanged;
+        }
+
+        _ = RefreshWorkedAsync();
         _uiTimer.Start();
         _waterfallTimer.Start();
     }
@@ -412,12 +426,79 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
     partial void OnPendingTextChanged(string value) => ClearCommand.NotifyCanExecuteChanged();
 
-    private CwCopyWord CreateWord(string text, CwToken token) => token.Kind switch
+    private CwCopyWord CreateWord(string text, CwToken token)
     {
-        CwTokenKind.Callsign => new CwCopyLink(text, token.Kind, token.Value, _l.Get("Cw.Logbook.CallTip", token.Value)),
-        CwTokenKind.Locator => new CwCopyLink(text, token.Kind, token.Value, _l.Get("Cw.Logbook.GridTip", token.Value)),
-        _ => new CwCopyWord(text),
+        switch (token.Kind)
+        {
+            case CwTokenKind.Callsign:
+            case CwTokenKind.Locator:
+                var link = new CwCopyLink(text, token.Kind, token.Value, "");
+                Mark(link);
+                return link;
+            case CwTokenKind.OwnCallsign:
+                return new CwCopyWord(text, CwCopyHighlight.You);
+            default:
+                return new CwCopyWord(text);
+        }
+    }
+
+    /// <summary>Shade a callsign or locator as new or worked before, and say so in its tip.</summary>
+    private void Mark(CwCopyLink link)
+    {
+        if (link.IsCallsign)
+        {
+            var status = CwWorkedLookup.ForCall(link.Value, _workedCalls);
+            link.Highlight = status switch
+            {
+                CwWorkedStatus.New => CwCopyHighlight.NewCall,
+                CwWorkedStatus.Worked => CwCopyHighlight.WorkedCall,
+                _ => CwCopyHighlight.None,
+            };
+            link.Tip = TipWithStatus(_l.Get("Cw.Logbook.CallTip", link.Value), status, "Cw.Worked.NewCall", "Cw.Worked.Call");
+        }
+        else
+        {
+            var status = CwWorkedLookup.ForLocator(link.Value, _workedGridFields);
+            link.Highlight = status switch
+            {
+                CwWorkedStatus.New => CwCopyHighlight.NewGrid,
+                CwWorkedStatus.Worked => CwCopyHighlight.WorkedGrid,
+                _ => CwCopyHighlight.None,
+            };
+            link.Tip = TipWithStatus(_l.Get("Cw.Logbook.GridTip", link.Value), status, "Cw.Worked.NewGrid", "Cw.Worked.Grid");
+        }
+    }
+
+    private string TipWithStatus(string action, CwWorkedStatus status, string newKey, string workedKey) => status switch
+    {
+        CwWorkedStatus.New => _l.Get(newKey) + Environment.NewLine + action,
+        CwWorkedStatus.Worked => _l.Get(workedKey) + Environment.NewLine + action,
+        _ => action,
     };
+
+    /// <summary>Read the worked calls and grid fields from every logbook, then re-mark the copy.</summary>
+    private async Task RefreshWorkedAsync()
+    {
+        try
+        {
+            var (calls, grids) = await _logbookRepository.LoadWorkedCallAndGridFieldsAsync().ConfigureAwait(false);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (_disposed)
+                    return;
+                _workedCalls = calls;
+                _workedGridFields = grids;
+                foreach (var link in Copy.AllWords.OfType<CwCopyLink>())
+                    Mark(link);
+            });
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "CW worked-call refresh failed");
+        }
+    }
+
+    private void OnLogbookQsosChanged(long logbookId) => _ = RefreshWorkedAsync();
 
     private void UpdateOwnStation()
     {
@@ -701,6 +782,8 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _disposed = true;
         _uiTimer.Stop();
         _waterfallTimer.Stop();
+        if (_watchingLogbook)
+            _logbookRepository.QsosChanged -= OnLogbookQsosChanged;
         _receiver.TextDecoded -= OnTextDecoded;
         _receiver.Faulted -= OnReceiverFaulted;
         _receiver.Stopped -= OnReceiverStopped;

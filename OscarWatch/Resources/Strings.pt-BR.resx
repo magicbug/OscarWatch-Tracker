@@ -6864,4 +6864,28 @@ Mais recente: {1} ({2})</value>
   <data name="Cw.CopyFontSize.Tip">
     <value>Na janela CW você também pode segurar Ctrl e girar a roda do mouse sobre o texto, ou pressionar Ctrl com mais ou menos. Ctrl+0 volta ao tamanho padrão.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Indicativo novo</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Grid novo</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Já trabalhado</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Seu indicativo</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Indicativo novo: não está em nenhum dos seus logbooks.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Já trabalhado: este indicativo está no seu logbook.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Grid novo: ainda não há QSO neste quadrado de 4 caracteres.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Já trabalhado: você tem um QSO neste quadrado.</value>
+  </data>
 </root>

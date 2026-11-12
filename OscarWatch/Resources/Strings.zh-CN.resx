@@ -6865,4 +6865,28 @@
   <data name="Cw.CopyFontSize.Tip">
     <value>在 CW 窗口中，也可以在文本上按住 Ctrl 并滚动鼠标滚轮，或按 Ctrl 加上加号或减号。Ctrl+0 恢复默认大小。</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>新呼号</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>新网格</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>已通联</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>你的呼号</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>新呼号：不在你的任何日志中。</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>已通联：此呼号在你的日志中。</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>新网格：此 4 字符网格尚无通联。</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>已通联：你在此网格有通联记录。</value>
+  </data>
 </root>

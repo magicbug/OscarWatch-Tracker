@@ -50,7 +50,7 @@ public sealed class CwCopySpotterTests
     [Fact]
     public void OwnCallAndLocatorAreNotLinked()
     {
-        Assert.Equal(CwTokenKind.Text, CwCopySpotter.Classify("MM9SQL/P", "MM9SQL", "IO85MW", out _));
+        Assert.Equal(CwTokenKind.OwnCallsign, CwCopySpotter.Classify("MM9SQL/P", "MM9SQL", "IO85MW", out _));
         Assert.Equal(CwTokenKind.Text, CwCopySpotter.Classify("IO85", "MM9SQL", "IO85MW", out _));
         Assert.Equal(CwTokenKind.Callsign, CwCopySpotter.Classify("G4ABC", "MM9SQL", "IO85MW", out _));
     }

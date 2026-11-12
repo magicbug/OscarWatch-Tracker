@@ -6869,4 +6869,28 @@ Aktuell: {1} ({2})</value>
   <data name="Cw.CopyFontSize.Tip">
     <value>Im CW-Fenster können Sie auch Strg gedrückt halten und über der Mitschrift das Mausrad drehen oder Strg mit Plus oder Minus drücken. Strg+0 stellt die Standardgröße wieder her.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Neues Rufzeichen</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Neues Feld</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Schon gearbeitet</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Ihr Rufzeichen</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Neues Rufzeichen: in keinem Ihrer Logbücher.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Schon gearbeitet: dieses Rufzeichen steht in Ihrem Logbuch.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Neues Feld: noch keine Verbindung in diesem 4-stelligen Feld.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Schon gearbeitet: Sie haben eine Verbindung in diesem Feld.</value>
+  </data>
 </root>

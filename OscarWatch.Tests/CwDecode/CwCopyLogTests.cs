@@ -8,9 +8,9 @@ public sealed class CwCopyLogTests
 {
     private static readonly DateTime T0 = new(2026, 11, 12, 14, 0, 0, DateTimeKind.Utc);
 
-    private static CwCopyLog NewLog() => new((text, token) => token.Kind == CwTokenKind.Text
-        ? new CwCopyWord(text)
-        : new CwCopyLink(text, token.Kind, token.Value, token.Value))
+    private static CwCopyLog NewLog() => new((text, token) => token.Kind is CwTokenKind.Callsign or CwTokenKind.Locator
+        ? new CwCopyLink(text, token.Kind, token.Value, token.Value)
+        : new CwCopyWord(text))
     {
         OwnCallsign = "MM9SQL",
         OwnLocator = "IO85MW",

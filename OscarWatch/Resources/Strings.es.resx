@@ -6864,4 +6864,28 @@ Está utilizando la versión {0}.
   <data name="Cw.CopyFontSize.Tip">
     <value>En la ventana CW también puedes mantener Ctrl y girar la rueda del ratón sobre el texto, o pulsar Ctrl con más o menos. Ctrl+0 vuelve al tamaño predeterminado.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Indicativo nuevo</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Cuadrícula nueva</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Ya trabajado</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Tu indicativo</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Indicativo nuevo: no está en ninguno de tus libros de guardia.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Ya trabajado: este indicativo está en tu libro de guardia.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Cuadrícula nueva: aún no hay QSO en esta cuadrícula de 4 caracteres.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Ya trabajado: tienes un QSO en esta cuadrícula.</value>
+  </data>
 </root>

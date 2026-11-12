@@ -8,6 +8,8 @@ public enum CwTokenKind
     Text,
     Callsign,
     Locator,
+    /// <summary>The operator's own callsign (someone calling you). Not offered to the logbook.</summary>
+    OwnCallsign,
 }
 
 /// <summary>One word of decoded copy. <see cref="Value"/> is what goes to the logbook.</summary>
@@ -49,10 +51,10 @@ public static class CwCopySpotter
             return CwTokenKind.Locator;
         }
 
-        if (IsCallsign(core) && !IsOwnCallsign(core, ownCallsign))
+        if (IsCallsign(core))
         {
             value = core;
-            return CwTokenKind.Callsign;
+            return IsOwnCallsign(core, ownCallsign) ? CwTokenKind.OwnCallsign : CwTokenKind.Callsign;
         }
 
         return CwTokenKind.Text;

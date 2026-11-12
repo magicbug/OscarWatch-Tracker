@@ -6869,4 +6869,28 @@ Terbaru: {1} ({2})</value>
   <data name="Cw.CopyFontSize.Tip">
     <value>Di jendela CW Anda juga dapat menahan Ctrl dan memutar roda tetikus di atas salinan, atau menekan Ctrl dengan plus atau minus. Ctrl+0 kembali ke ukuran bawaan.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Callsign baru</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Grid baru</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Pernah dikontak</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Callsign Anda</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Callsign baru: tidak ada di logbook mana pun.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Pernah dikontak: callsign ini ada di logbook Anda.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Grid baru: belum ada QSO di kotak 4 karakter ini.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Pernah dikontak: Anda punya QSO di kotak grid ini.</value>
+  </data>
 </root>

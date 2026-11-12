@@ -6864,4 +6864,28 @@ Latest: {1} ({2})</value>
   <data name="Cw.CopyFontSize.Tip">
     <value>In the CW window you can also hold Ctrl and turn the mouse wheel over the copy, or press Ctrl with plus or minus. Ctrl+0 goes back to the default size.</value>
   </data>
+  <data name="Cw.Legend.NewCall">
+    <value>New call</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>New grid</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Worked before</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Your call</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>New call: not in any of your logbooks.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Worked before: this call is in your logbook.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>New grid: no QSO in this 4-character field yet.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Worked before: you have a QSO in this grid field.</value>
+  </data>
 </root>

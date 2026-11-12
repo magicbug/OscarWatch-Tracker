@@ -1,25 +1,73 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text;
+using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OscarWatch.Core.CwDecode;
+using OscarWatch.Core.Ft4;
 
 namespace OscarWatch.Cw;
 
-/// <summary>One word of copy in the CW window.</summary>
-public class CwCopyWord(string text)
+/// <summary>How a word in the copy is marked, from the logbook.</summary>
+public enum CwCopyHighlight
 {
+    None,
+    NewCall,
+    WorkedCall,
+    NewGrid,
+    WorkedGrid,
+    /// <summary>The operator's own callsign: someone is calling you.</summary>
+    You,
+}
+
+/// <summary>One word of copy in the CW window.</summary>
+public class CwCopyWord(string text, CwCopyHighlight highlight = CwCopyHighlight.None) : ObservableObject
+{
+    /// <summary>The same shades FT4 uses for new call, new grid and calling me.</summary>
+    public static readonly IBrush NewCallBrush = Brush.Parse(Ft4DecodeHighlight.DefaultNewCallColour);
+    public static readonly IBrush NewGridBrush = Brush.Parse(Ft4DecodeHighlight.DefaultNewGridColour);
+    public static readonly IBrush YouBrush = Brush.Parse(Ft4DecodeHighlight.DefaultCallingMeColour);
+    public static readonly IBrush WorkedBrush = Brush.Parse("#33909090");
+
+    private CwCopyHighlight _highlight = highlight;
+
     public string Text { get; } = text;
+
+    public CwCopyHighlight Highlight
+    {
+        get => _highlight;
+        set
+        {
+            if (SetProperty(ref _highlight, value))
+                OnPropertyChanged(nameof(Background));
+        }
+    }
+
+    public IBrush Background => _highlight switch
+    {
+        CwCopyHighlight.NewCall => NewCallBrush,
+        CwCopyHighlight.NewGrid => NewGridBrush,
+        CwCopyHighlight.You => YouBrush,
+        CwCopyHighlight.WorkedCall or CwCopyHighlight.WorkedGrid => WorkedBrush,
+        _ => Brushes.Transparent,
+    };
 }
 
 /// <summary>A word the logbook can take: a callsign or a Maidenhead locator.</summary>
 public sealed class CwCopyLink(string text, CwTokenKind kind, string value, string tip) : CwCopyWord(text)
 {
+    private string _tip = tip;
+
     public CwTokenKind Kind { get; } = kind;
 
     /// <summary>What goes to the logbook (punctuation stripped, upper case).</summary>
     public string Value { get; } = value;
 
-    public string Tip { get; } = tip;
+    public string Tip
+    {
+        get => _tip;
+        set => SetProperty(ref _tip, value);
+    }
 
     public bool IsCallsign => Kind == CwTokenKind.Callsign;
 }
@@ -89,6 +137,9 @@ public sealed class CwCopyLog(Func<string, CwToken, CwCopyWord> createWord)
             line.Words.Add(Classify(words[i]));
         }
     }
+
+    /// <summary>Every word on screen, oldest first, for re-marking after the logbook changes.</summary>
+    public IEnumerable<CwCopyWord> AllWords => Lines.SelectMany(l => l.Words);
 
     public void Clear()
     {
