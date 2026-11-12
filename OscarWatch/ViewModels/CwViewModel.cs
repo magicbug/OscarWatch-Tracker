@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
@@ -29,7 +30,19 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     private readonly CwReceiverService _receiver;
     private readonly QsoLogbookEntryBridge _logbook;
     private readonly DispatcherTimer _uiTimer;
+    private readonly DispatcherTimer _waterfallTimer;
+    private const int MaxWaterfallBacklog = 8;
+    private readonly Queue<float[]> _waterfallBacklog = new();
+    private double _waterfallCredit;
+    private long _lastWaterfallTick = Stopwatch.GetTimestamp();
     private readonly SstvAutoStartCoordinator _autoStart = new();
+    private static readonly CwModelMetadata CwModel = CwModelMetadata.DeepCw();
+    /// <summary>Speed readings are averaged over a few steps, and dropped after a quiet spell.</summary>
+    private const double SpeedAverageAlpha = 0.3;
+    private static readonly TimeSpan SpeedHoldTime = TimeSpan.FromSeconds(8);
+    private readonly CwNoiseSquelch _squelch = new();
+    private double _wpm = double.NaN;
+    private DateTime _lastSpeedUtc = DateTime.MinValue;
     private bool _loadingDevices;
     private bool _disposed;
     private string? _lastError;
@@ -57,6 +70,8 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
         var s = _settings.Current.CwDecoder;
         _catDopplerFeedForward = s.CatDopplerFeedForward;
+        _squelchNoise = s.SquelchNoise;
+        _followNote = s.FollowNote;
         _autoStartEnabled = s.AutoStartEnabled;
         _autoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(s.AutoStartElevationDeg);
 
@@ -70,6 +85,8 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
         _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
         _uiTimer.Tick += (_, _) => RefreshUiTick();
+        _waterfallTimer = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(15) };
+        _waterfallTimer.Tick += (_, _) => WaterfallTick();
     }
 
     /// <summary>Semi-bold for true: callsigns in the copy and a note outside the model band.</summary>
@@ -138,6 +155,22 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private float[]? _spectrum;
 
+    /// <summary>Hide one- and two-letter words the model is unsure of.</summary>
+    [ObservableProperty]
+    private bool _squelchNoise;
+
+    /// <summary>Keep the steady note centred in the decode band as it drifts.</summary>
+    [ObservableProperty]
+    private bool _followNote;
+
+    /// <summary>How far the decode band sits from its home of 400 to 1200 Hz, for the waterfall.</summary>
+    [ObservableProperty]
+    private double _decodeOffsetHz;
+
+    /// <summary>Measured sending speed, or empty when none is heard.</summary>
+    [ObservableProperty]
+    private string _speedText = "";
+
     public bool CanStart => !IsRunning;
 
     public string LagText => _l.Get("Cw.Lag");
@@ -166,11 +199,13 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         UpdateOwnStation();
         ShowStoppedStatus();
         _uiTimer.Start();
+        _waterfallTimer.Start();
     }
 
     public void OnWindowClosed()
     {
         _uiTimer.Stop();
+        _waterfallTimer.Stop();
         StopReceiver();
         _settings.RequestSave();
     }
@@ -191,7 +226,10 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         {
             _lastError = null;
             UpdateOwnStation();
+            _squelch.Flush();
+            ResetSpeed();
             _receiver.StartLive(_settings.Current.CwDecoder);
+            DecodeOffsetHz = _receiver.DecodeOffsetHz;
             IsRunning = true;
             _startedByAuto = automatic;
             _statusFollowsAutoStart = true;
@@ -221,6 +259,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         PendingText = "";
         HasCopy = false;
         LogbookText = "";
+        _squelch.Flush();
         if (IsRunning)
             _receiver.ResetDecoder();
     }
@@ -305,6 +344,37 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
     }
 
+    partial void OnSquelchNoiseChanged(bool value)
+    {
+        _settings.Current.CwDecoder.SquelchNoise = value;
+        _settings.RequestSave();
+        _squelch.Flush();
+    }
+
+    partial void OnFollowNoteChanged(bool value)
+    {
+        _settings.Current.CwDecoder.FollowNote = value;
+        _settings.RequestSave();
+        _receiver.FollowNote = value;
+    }
+
+    /// <summary>Decode the note at <paramref name="hz"/> on the waterfall (a click on its trace).</summary>
+    public void TuneTo(double hz)
+    {
+        if (!IsRunning || !double.IsFinite(hz))
+            return;
+        var centre = (CwModel.SpectrogramMinFreqHz + CwModel.SpectrogramMaxFreqHz) / 2;
+        _receiver.TuneOffsetHz = CwTuner.ClampOffset(hz - centre) - _receiver.FeedForwardHz;
+        DecodeOffsetHz = _receiver.DecodeOffsetHz;
+    }
+
+    /// <summary>Put the decode band back to 400 to 1200 Hz (plus any rig control correction).</summary>
+    public void ResetTuning()
+    {
+        _receiver.TuneOffsetHz = 0;
+        DecodeOffsetHz = _receiver.DecodeOffsetHz;
+    }
+
     partial void OnAutoStartEnabledChanged(bool value)
     {
         _settings.Current.CwDecoder.AutoStartEnabled = value;
@@ -358,6 +428,8 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         ToneHz = double.NaN;
         ToneText = "";
         ToneOutOfBand = false;
+        DecodeOffsetHz = 0;
+        ResetSpeed();
         if (_lastError is not null)
         {
             _statusFollowsAutoStart = false;
@@ -428,11 +500,10 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        foreach (var row in _receiver.TakeSpectrumRows())
-            Spectrum = row;
-
         InputLevelPercent = Math.Clamp(_receiver.Audio.InputPeak * 100, 0, 100);
         UpdateTone();
+        if (SpeedText.Length > 0 && DateTime.UtcNow - _lastSpeedUtc > SpeedHoldTime)
+            ResetSpeed();
 
         if (_receiver.CaptureHealth.IsReconnecting)
             StatusText = _l.Get("Cw.Status.CaptureRetrying");
@@ -440,6 +511,42 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             StatusText = _l.Get("Cw.Status.SilentInput", SelectedInputDevice?.DisplayName ?? _l.Get("Ft4.Audio.SystemDefault"));
         else
             StatusText = ListeningText();
+    }
+
+    /// <summary>
+    /// Hands waterfall rows to the window at the rate they were made, rather than in the bursts
+    /// they arrive in, so the picture scrolls evenly. A backlog beyond a few rows is caught up.
+    /// </summary>
+    private void WaterfallTick()
+    {
+        var now = Stopwatch.GetTimestamp();
+        var elapsed = Stopwatch.GetElapsedTime(_lastWaterfallTick, now).TotalSeconds;
+        _lastWaterfallTick = now;
+        if (!IsRunning)
+        {
+            _waterfallBacklog.Clear();
+            _waterfallCredit = 0;
+            return;
+        }
+
+        DecodeOffsetHz = _receiver.DecodeOffsetHz;
+        foreach (var row in _receiver.TakeSpectrumRows())
+            _waterfallBacklog.Enqueue(row);
+
+        _waterfallCredit = Math.Min(_waterfallCredit + elapsed * CwReceiverService.SpectrumRowsPerSecond, 4);
+        var due = (int)_waterfallCredit;
+        if (_waterfallBacklog.Count > MaxWaterfallBacklog)
+            due = Math.Max(due, _waterfallBacklog.Count - MaxWaterfallBacklog / 2);
+
+        while (due > 0 && _waterfallBacklog.TryDequeue(out var next))
+        {
+            Spectrum = next;
+            due--;
+            _waterfallCredit = Math.Max(0, _waterfallCredit - 1);
+        }
+
+        if (_waterfallBacklog.Count == 0)
+            _waterfallCredit = Math.Min(_waterfallCredit, 1);
     }
 
     private void UpdateTone()
@@ -453,7 +560,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        ToneOutOfBand = !CwToneFinder.IsInModelBand(tone, CwModelMetadata.DeepCw());
+        ToneOutOfBand = !CwToneFinder.IsInModelBand(tone - DecodeOffsetHz, CwModel);
         ToneText = ToneOutOfBand ? _l.Get("Cw.Tone.OutOfBand", tone) : _l.Get("Cw.Tone", tone);
     }
 
@@ -524,15 +631,31 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             if (_disposed)
                 return;
 
-            if (update.CommittedText.Length > 0)
+            var text = SquelchNoise
+                ? _squelch.Process(update.CommittedText, update.CommittedConfidence)
+                : update.CommittedText;
+            if (text.Length > 0)
             {
-                Copy.Append(update.CommittedText, DateTime.UtcNow);
+                Copy.Append(text, DateTime.UtcNow);
                 HasCopy = !Copy.IsEmpty;
                 CopyAppended?.Invoke(this, EventArgs.Empty);
             }
 
-            PendingText = update.Pending.Text;
+            PendingText = SquelchNoise && CwNoiseSquelch.IsLikelyNoise(update.Pending) ? "" : update.Pending.Text;
+            if (update.Wpm is { } wpm)
+            {
+                _wpm = double.IsFinite(_wpm) ? _wpm + SpeedAverageAlpha * (wpm - _wpm) : wpm;
+                _lastSpeedUtc = DateTime.UtcNow;
+                SpeedText = _l.Get("Cw.Speed", Math.Round(_wpm));
+            }
         });
+
+    private void ResetSpeed()
+    {
+        _wpm = double.NaN;
+        _lastSpeedUtc = DateTime.MinValue;
+        SpeedText = "";
+    }
 
     private void OnReceiverFaulted(object? sender, Exception ex) =>
         Dispatcher.UIThread.Post(() => _lastError = _l.Get("Cw.Status.Error", ex.Message));
@@ -556,6 +679,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             return;
         _disposed = true;
         _uiTimer.Stop();
+        _waterfallTimer.Stop();
         _receiver.TextDecoded -= OnTextDecoded;
         _receiver.Faulted -= OnReceiverFaulted;
         _receiver.Stopped -= OnReceiverStopped;

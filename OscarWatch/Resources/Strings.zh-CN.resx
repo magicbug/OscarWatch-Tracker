@@ -6728,7 +6728,7 @@
     <value>CW 瀑布图</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>0 至 2000 Hz 的音频。解码器读取阴影频段（400 至 1200 Hz），请调谐使 CW 音调落在其中。黄线标出最强的稳定音调。</value>
+    <value>0 至 2000 Hz 的音频。解码器读取阴影频带。点击 CW 轨迹即可解码，右键单击可将频带复位到 400 至 1200 Hz。黄线标出最强的稳定音调。</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>单击带下划线的呼号或网格定位，或按 Enter 或空格键，即可填入日志的录入表单。添加 QSO 之前不会记录任何内容。</value>
@@ -6746,7 +6746,7 @@
     <value>无稳定音调</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>音调 {0:0} Hz 不在 400 至 1200 Hz 范围内，请重新调谐电台。</value>
+    <value>{0:0} Hz 音调在解码频带之外。请在瀑布图上点击它。</value>
   </data>
   <data name="Cw.Doppler">
     <value>下行多普勒 {0}</value>
@@ -6837,5 +6837,23 @@
   </data>
   <data name="Cw.Settings.Credit">
     <value>解码使用 e04 的 DeepCW 模型（MIT 许可），在本机运行，音频不会离开本机。</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} WPM</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>解码</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>跟随音调漂移</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>将最靠近阴影频带中心的稳定音调保持在中央，避免多普勒漂移把它带出频带。点击瀑布图上的轨迹可解码其他信号，右键单击可将频带复位。</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>隐藏噪声产生的零散字母</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>丢弃模型不确定的一两个字母的单词。这些在通联间隙几乎都是噪声。像 K 这样有把握的短词会保留。</value>
   </data>
 </root>

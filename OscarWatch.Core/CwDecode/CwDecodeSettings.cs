@@ -16,6 +16,12 @@ public sealed class CwDecodeSettings
     /// </summary>
     public bool CatDopplerFeedForward { get; set; } = true;
 
+    /// <summary>Hide one- and two-letter words the model is unsure of, which are almost always noise.</summary>
+    public bool SquelchNoise { get; set; } = true;
+
+    /// <summary>Keep the steady note nearest the decode band centred as it drifts.</summary>
+    public bool FollowNote { get; set; } = true;
+
     /// <summary>Start listening when the focused satellite rises while the frequency panel is on CW.</summary>
     public bool AutoStartEnabled { get; set; }
 

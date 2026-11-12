@@ -6728,7 +6728,7 @@
     <value>CW ウォーターフォール</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>0〜2000 Hz の音声です。デコーダーは網掛けの帯域（400〜1200 Hz）を読み取るので、CW の音がその中に入るように同調してください。黄色の線は最も強い安定した音を示します。</value>
+    <value>0 から 2000 Hz までの音声です。デコーダーは網掛けの帯域を読みます。CW の軌跡をクリックするとそれを解読し、右クリックで帯域を 400 から 1200 Hz に戻します。黄色の線は最も強い安定した音を示します。</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>下線付きのコールサインとロケーターは、クリック、または Enter かスペースでログブックの入力欄に入ります。QSO を追加するまで何も記録されません。</value>
@@ -6746,7 +6746,7 @@
     <value>安定した音なし</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>音 {0:0} Hz は 400〜1200 Hz の範囲外です。無線機を同調し直してください。</value>
+    <value>{0:0} Hz の音は解読帯域の外です。ウォーターフォールでクリックしてください。</value>
   </data>
   <data name="Cw.Doppler">
     <value>ダウンリンク ドップラー {0}</value>
@@ -6837,5 +6837,23 @@
   </data>
   <data name="Cw.Settings.Credit">
     <value>解読には e04 による DeepCW モデル（MIT ライセンス）を使い、このコンピューター上で実行します。音声が外部に送られることはありません。</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} WPM</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>解読</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>ずれていく音に追従する</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>網掛けの帯域の中央に最も近い安定した音を中央に保ち、ドップラーのずれで帯域から外れないようにします。ウォーターフォールの別の軌跡をクリックするとその信号を解読し、右クリックで帯域を元に戻します。</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>ノイズによる余分な文字を隠す</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>モデルが確信できない 1 文字または 2 文字の語を取り除きます。送信の合間に出るこれらはほぼ必ずノイズです。K のような確かな短い語は残ります。</value>
   </data>
 </root>

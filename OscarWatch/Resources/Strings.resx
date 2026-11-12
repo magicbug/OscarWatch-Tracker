@@ -6727,7 +6727,7 @@ Latest: {1} ({2})</value>
     <value>CW waterfall</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>Audio from 0 to 2000 Hz. The decoder reads the shaded band (400 to 1200 Hz), so tune until the CW note sits inside it. The yellow line marks the strongest steady note.</value>
+    <value>Audio from 0 to 2000 Hz. The decoder reads the shaded band. Click a CW trace to decode it, or right-click to put the band back to 400 to 1200 Hz. The yellow line marks the strongest steady note.</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>Underlined callsigns and locators go to the logbook entry form when clicked, or with Enter or Space. Nothing is logged until you add the QSO.</value>
@@ -6745,7 +6745,7 @@ Latest: {1} ({2})</value>
     <value>No steady note</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>Note {0:0} Hz is outside 400 to 1200 Hz. Retune the radio.</value>
+    <value>Note {0:0} Hz is outside the decode band. Click it on the waterfall.</value>
   </data>
   <data name="Cw.Doppler">
     <value>Downlink Doppler {0}</value>
@@ -6836,5 +6836,23 @@ Latest: {1} ({2})</value>
   </data>
   <data name="Cw.Settings.Credit">
     <value>Decoding uses the DeepCW model by e04 (MIT licence), run on this computer. No audio leaves the machine.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} wpm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Decoding</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Follow the note as it drifts</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Keeps the steady note nearest the middle of the shaded band in the middle, so Doppler drift does not carry it out. Click a trace on the waterfall to decode another signal; right-click to put the band back.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Hide stray letters from noise</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Drops words of one or two letters that the model is unsure of. These are almost always noise between overs. Confident short words such as K stay.</value>
   </data>
 </root>

@@ -10,8 +10,16 @@ public interface ICwModelRunner
     float[] Run(float[] spectrogram, int frames, int bins, out int outputFrames);
 }
 
-/// <summary>Text settled by one decode step, and the tail that may still change.</summary>
-public readonly record struct CwDecodeUpdate(string CommittedText, CwLaneText Pending);
+/// <summary>
+/// Text settled by one decode step, and the tail that may still change.
+/// <paramref name="CommittedConfidence"/> lines up with <paramref name="CommittedText"/> character
+/// for character. <paramref name="Wpm"/> is the sending speed heard in this step's window, if any.
+/// </summary>
+public readonly record struct CwDecodeUpdate(
+    string CommittedText,
+    CwLaneText Pending,
+    float[]? CommittedConfidence = null,
+    double? Wpm = null);
 
 /// <summary>
 /// Streaming DeepCW decode: buffer audio at the model rate, run a window of up to 12 s once a
@@ -79,37 +87,52 @@ public sealed class CwStreamDecoder
 
         var end = TotalSamples;
         _nextStepEnd = end + _stepSamples;
-        var (committed, pending) = RunWindow(_stitcher.WindowStartFrame(end), end, isFinal: false);
-        return new CwDecodeUpdate(committed, pending);
+        var window = RunWindow(_stitcher.WindowStartFrame(end), end, isFinal: false);
+        return new CwDecodeUpdate(window.Text, window.Pending, window.Confidence, window.Wpm);
     }
 
     /// <summary>Decode the rest of the buffered audio and settle every letter.</summary>
-    public string Finish()
+    public string Finish() => FinishWithConfidence().CommittedText;
+
+    /// <summary>
+    /// Decode the rest of the buffered audio and settle every letter, with the model's
+    /// confidence for each character.
+    /// </summary>
+    public CwDecodeUpdate FinishWithConfidence()
     {
         var output = new StringBuilder();
+        var confidence = new List<float>();
         var end = TotalSamples;
         while (true)
         {
             var startFrame = _stitcher.ContextStartFrame;
             var segmentEnd = Math.Min(end, (long)startFrame * _stitcher.HopSamples + _stitcher.MaxSegmentSamples);
             var isFinal = segmentEnd >= end;
-            output.Append(RunWindow(startFrame, segmentEnd, isFinal).Committed);
+            var window = RunWindow(startFrame, segmentEnd, isFinal);
+            output.Append(window.Text);
+            confidence.AddRange(window.Confidence);
             if (isFinal)
-                return output.ToString();
+                return new CwDecodeUpdate(output.ToString(), CwLaneText.Empty, [.. confidence]);
         }
     }
 
-    private (string Committed, CwLaneText Pending) RunWindow(int startFrame, long endSample, bool isFinal)
+    private readonly record struct WindowResult(string Text, float[] Confidence, CwLaneText Pending, double? Wpm);
+
+    private WindowResult RunWindow(int startFrame, long endSample, bool isFinal)
     {
         var startSample = (long)startFrame * _stitcher.HopSamples;
         var offset = (int)Math.Max(0, startSample - _bufferStartSample);
         var length = (int)Math.Max(0, endSample - _bufferStartSample) - offset;
+        double? wpm = null;
 
         if (length >= _metadata.FftLength)
         {
             var spectrogram = CwSpectrogram.Compute(_buffer.AsSpan(offset, length), _metadata, out var frames);
             var logits = _runner.Run(spectrogram, frames, _metadata.SpectrogramFrequencyBins, out var outputFrames);
             _stitcher.AddWindow(startFrame, logits, outputFrames, isFinal);
+            wpm = CwSpeedEstimator.Estimate(
+                spectrogram, frames, _metadata.SpectrogramFrequencyBins,
+                (double)_metadata.HopLength / _metadata.SampleRate);
         }
         else if (isFinal)
         {
@@ -118,14 +141,18 @@ public sealed class CwStreamDecoder
 
         var (committed, pending) = _stitcher.Take(isFinal);
         var text = "";
+        float[] confidence = [];
         if (committed is { Text.Length: > 0 } c)
         {
-            text = (c.PrependSpace && _transcript.Length > 0 ? " " : "") + c.Text;
+            var space = c.PrependSpace && _transcript.Length > 0;
+            text = (space ? " " : "") + c.Text;
+            var letters = c.Confidence ?? Enumerable.Repeat(1f, c.Text.Length).ToArray();
+            confidence = space ? [1f, .. letters] : letters;
             _transcript.Append(text);
         }
 
         TrimBuffer();
-        return (text, pending);
+        return new WindowResult(text, confidence, pending, wpm);
     }
 
     private void TrimBuffer()

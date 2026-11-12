@@ -2,8 +2,11 @@ using System.Text;
 
 namespace OscarWatch.Core.CwDecode;
 
-/// <summary>Decoded text, and whether a word gap comes before it.</summary>
-public readonly record struct CwLaneText(string Text, bool PrependSpace)
+/// <summary>
+/// Decoded text, and whether a word gap comes before it. <paramref name="Confidence"/> holds the
+/// model's probability for each character of <paramref name="Text"/> (1 for spaces), when known.
+/// </summary>
+public readonly record struct CwLaneText(string Text, bool PrependSpace, float[]? Confidence = null)
 {
     public static CwLaneText Empty { get; } = new("", false);
 }
@@ -184,11 +187,13 @@ public sealed class CwPosteriorStitcher
         return (committed, pending);
     }
 
-    private sealed class Span(string ch, int start, int end)
+    private sealed class Span(string ch, int start, int end, float confidence)
     {
         public string Char { get; } = ch;
         public int Start { get; set; } = start;
         public int End { get; set; } = end;
+        /// <summary>Peak probability of this character across its frames.</summary>
+        public float Confidence { get; set; } = confidence;
         public bool IsSpace => string.IsNullOrWhiteSpace(Char);
     }
 
@@ -259,10 +264,15 @@ public sealed class CwPosteriorStitcher
                 continue;
             }
 
+            var probability = (float)Math.Exp(scores[t * _classes + index]);
             if (index == previousIndex)
             {
                 if (active is not null)
+                {
                     active.End = t;
+                    active.Confidence = Math.Max(active.Confidence, probability);
+                }
+
                 continue;
             }
 
@@ -273,7 +283,7 @@ public sealed class CwPosteriorStitcher
                 continue;
             }
 
-            active = new Span(_chars[index], t, t);
+            active = new Span(_chars[index], t, t, probability);
             spans.Add(active);
         }
 
@@ -283,6 +293,7 @@ public sealed class CwPosteriorStitcher
     private static CwLaneText ToLaneText(IEnumerable<Span> spans, bool prependSpace)
     {
         var output = new StringBuilder();
+        var confidence = new List<float>();
         var hasLeadingSpace = prependSpace;
         var pendingSpace = false;
         foreach (var span in spans)
@@ -299,13 +310,16 @@ public sealed class CwPosteriorStitcher
             if (pendingSpace)
             {
                 output.Append(' ');
+                confidence.Add(1f);
                 pendingSpace = false;
             }
 
             output.Append(span.Char);
+            for (var i = 0; i < span.Char.Length; i++)
+                confidence.Add(span.Confidence);
         }
 
-        return new CwLaneText(output.ToString(), hasLeadingSpace);
+        return new CwLaneText(output.ToString(), hasLeadingSpace, [.. confidence]);
     }
 
     private float[] DilatedLogProbs(float[] logits, int frameCount)

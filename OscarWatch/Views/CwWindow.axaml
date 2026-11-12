@@ -128,6 +128,8 @@
           <TextBlock Text="{Binding ToneText}" Classes="cw-mono" Margin="0,0,18,0"
                      FontWeight="{Binding ToneOutOfBand, Converter={x:Static vm:CwViewModel.BoolToEmphasis}}"
                      IsVisible="{Binding ToneText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Text="{Binding SpeedText}" Classes="cw-mono" Margin="0,0,18,0"
+                     IsVisible="{Binding SpeedText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
           <TextBlock Text="{Binding DopplerText}" Classes="cw-mono" Margin="0,0,18,0"
                      IsVisible="{Binding DopplerText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
           <TextBlock Text="{Binding LagText}" Classes="cw-mono"
@@ -145,6 +147,8 @@
       <controls:CwWaterfallControl Height="130"
                                    Spectrum="{Binding Spectrum}"
                                    ToneHz="{Binding ToneHz}"
+                                   x:Name="Waterfall"
+                                   BandOffsetHz="{Binding DecodeOffsetHz}"
                                    ToolTip.Tip="{loc:Localize Key=Cw.Waterfall.Tip}"
                                    AutomationProperties.Name="{loc:Localize Key=Cw.Waterfall}" />
     </Border>

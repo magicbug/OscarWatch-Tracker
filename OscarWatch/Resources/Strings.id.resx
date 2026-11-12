@@ -6732,7 +6732,7 @@ Terbaru: {1} ({2})</value>
     <value>Waterfall CW</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>Audio dari 0 sampai 2000 Hz. Dekoder membaca pita yang diarsir (400 sampai 1200 Hz), jadi setel sampai nada CW berada di dalamnya. Garis kuning menandai nada stabil terkuat.</value>
+    <value>Audio dari 0 hingga 2000 Hz. Dekoder membaca pita berarsir. Klik jejak CW untuk mendekodenya, atau klik kanan untuk mengembalikan pita ke 400 hingga 1200 Hz. Garis kuning menandai nada stabil terkuat.</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>Tanda panggil dan lokator yang bergaris bawah masuk ke formulir isian logbook saat diklik, atau dengan Enter atau Spasi. Tidak ada yang dicatat sampai Anda menambahkan QSO.</value>
@@ -6750,7 +6750,7 @@ Terbaru: {1} ({2})</value>
     <value>Tidak ada nada stabil</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>Nada {0:0} Hz berada di luar 400 sampai 1200 Hz. Setel ulang radio.</value>
+    <value>Nada {0:0} Hz berada di luar pita dekode. Klik di waterfall.</value>
   </data>
   <data name="Cw.Doppler">
     <value>Doppler downlink {0}</value>
@@ -6841,5 +6841,23 @@ Terbaru: {1} ({2})</value>
   </data>
   <data name="Cw.Settings.Credit">
     <value>Dekode memakai model DeepCW oleh e04 (lisensi MIT) dan berjalan di komputer ini. Tidak ada audio yang keluar dari perangkat.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} wpm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Dekode</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Ikuti nada saat bergeser</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Menjaga nada stabil yang paling dekat dengan tengah pita berarsir tetap di tengah, agar pergeseran Doppler tidak membawanya keluar. Klik jejak di waterfall untuk mendekode sinyal lain; klik kanan untuk mengembalikan pita.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Sembunyikan huruf liar dari derau</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Membuang kata satu atau dua huruf yang tidak diyakini model. Ini hampir selalu derau di antara giliran. Kata pendek yang yakin seperti K tetap ada.</value>
   </data>
 </root>

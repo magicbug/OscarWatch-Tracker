@@ -6731,7 +6731,7 @@ Ultima versione: {1} ({2})</value>
     <value>Waterfall CW</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>Audio da 0 a 2000 Hz. Il decodificatore legge la banda ombreggiata (da 400 a 1200 Hz), quindi sintonizza finché la nota CW non vi rientra. La linea gialla indica la nota stabile più forte.</value>
+    <value>Audio da 0 a 2000 Hz. Il decodificatore legge la banda ombreggiata. Fai clic su una traccia CW per decodificarla, o clic destro per riportare la banda a 400-1200 Hz. La linea gialla indica la nota stabile più forte.</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>Nominativi e locatori sottolineati passano nel modulo del registro con un clic, oppure con Invio o Spazio. Non viene registrato nulla finché non aggiungi il QSO.</value>
@@ -6749,7 +6749,7 @@ Ultima versione: {1} ({2})</value>
     <value>Nessuna nota stabile</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>La nota a {0:0} Hz è fuori da 400 a 1200 Hz. Risintonizza la radio.</value>
+    <value>La nota a {0:0} Hz è fuori dalla banda di decodifica. Fai clic su di essa nella cascata.</value>
   </data>
   <data name="Cw.Doppler">
     <value>Doppler di downlink {0}</value>
@@ -6840,5 +6840,23 @@ Ultima versione: {1} ({2})</value>
   </data>
   <data name="Cw.Settings.Credit">
     <value>La decodifica usa il modello DeepCW di e04 (licenza MIT) ed è eseguita su questo computer. Nessun audio lascia la macchina.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} ppm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Decodifica</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Segui la nota quando si sposta</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Mantiene al centro la nota stabile più vicina al centro della banda ombreggiata, così la deriva Doppler non la porta fuori. Fai clic su una traccia nella cascata per decodificare un altro segnale; clic destro per riportare la banda.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Nascondi le lettere sparse dovute al rumore</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Scarta le parole di una o due lettere di cui il modello non è sicuro. Tra un cambio e l'altro sono quasi sempre rumore. Le parole brevi sicure come K restano.</value>
   </data>
 </root>

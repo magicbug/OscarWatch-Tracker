@@ -18,6 +18,8 @@ public partial class CwWindow : Window
         InitializeComponent();
         Opened += OnOpened;
         Closed += OnClosed;
+        Waterfall.TuneRequested += (_, hz) => (DataContext as CwViewModel)?.TuneTo(hz);
+        Waterfall.TuneResetRequested += (_, _) => (DataContext as CwViewModel)?.ResetTuning();
     }
 
     private void OnOpened(object? sender, EventArgs e)

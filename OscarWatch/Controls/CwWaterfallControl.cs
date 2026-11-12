@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -10,7 +11,8 @@ namespace OscarWatch.Controls;
 
 /// <summary>
 /// CW tuning view: a scrolling waterfall from 0 to 2000 Hz with the band the decoder reads
-/// (400 to 1200 Hz) shaded, and a marker on the strongest steady note.
+/// shaded, and a marker on the strongest steady note. Click a trace to decode it; right-click
+/// to put the band back.
 /// </summary>
 public sealed class CwWaterfallControl : Control
 {
@@ -19,7 +21,8 @@ public sealed class CwWaterfallControl : Control
     private const double MaxHz = CwReceiverService.WaterfallMaxHz;
     private const double BandLowHz = 400;
     private const double BandHighHz = 1200;
-    private const int HistoryRows = 120;
+    /// <summary>Ten seconds at the receiver's row rate.</summary>
+    private const int HistoryRows = (int)(CwReceiverService.SpectrumRowsPerSecond * 10);
     private const double RangeDb = 40;
     private const double ScaleHeight = 14;
 
@@ -50,10 +53,57 @@ public sealed class CwWaterfallControl : Control
             o => o._toneHz,
             (o, v) => o.ToneHz = v);
 
+    public static readonly DirectProperty<CwWaterfallControl, double> BandOffsetHzProperty =
+        AvaloniaProperty.RegisterDirect<CwWaterfallControl, double>(
+            nameof(BandOffsetHz),
+            o => o._bandOffsetHz,
+            (o, v) => o.BandOffsetHz = v);
+
+    private double _bandOffsetHz;
+
     public CwWaterfallControl()
     {
         MinHeight = 80;
         ClipToBounds = true;
+        Cursor = new Cursor(StandardCursorType.Cross);
+    }
+
+    /// <summary>A left click asks to decode the note at this frequency (hertz).</summary>
+    public event EventHandler<double>? TuneRequested;
+
+    /// <summary>A right click asks to put the decode band back home.</summary>
+    public event EventHandler? TuneResetRequested;
+
+    /// <summary>Hertz the shaded decode band sits above its home of 400 to 1200 Hz.</summary>
+    public double BandOffsetHz
+    {
+        get => _bandOffsetHz;
+        set
+        {
+            if (SetAndRaise(BandOffsetHzProperty, ref _bandOffsetHz, double.IsFinite(value) ? value : 0))
+                InvalidateVisual();
+        }
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+        var point = e.GetCurrentPoint(this);
+        var w = Bounds.Width;
+        if (w < 2)
+            return;
+
+        if (point.Properties.IsRightButtonPressed)
+        {
+            TuneResetRequested?.Invoke(this, EventArgs.Empty);
+            e.Handled = true;
+        }
+        else if (point.Properties.IsLeftButtonPressed)
+        {
+            var hz = MinHz + Math.Clamp(point.Position.X / w, 0, 1) * (MaxHz - MinHz);
+            TuneRequested?.Invoke(this, hz);
+            e.Handled = true;
+        }
     }
 
     /// <summary>Power in dB from 0 to 2000 Hz. Each new array adds a waterfall row.</summary>
@@ -95,7 +145,7 @@ public sealed class CwWaterfallControl : Control
         }
         else
         {
-            _noiseFloor += (floor - _noiseFloor) * (floor > _noiseFloor ? 0.05 : 0.02);
+            _noiseFloor += (floor - _noiseFloor) * (floor > _noiseFloor ? 0.02 : 0.008);
         }
 
         PaintRow(row);
@@ -170,8 +220,8 @@ public sealed class CwWaterfallControl : Control
                 new Rect(0, waterfall.Y, w, waterfall.Height * _filledRows / HistoryRows));
         }
 
-        var bandLeft = Math.Round(X(BandLowHz, w)) + 0.5;
-        var bandRight = Math.Round(X(BandHighHz, w)) + 0.5;
+        var bandLeft = Math.Round(X(BandLowHz + _bandOffsetHz, w)) + 0.5;
+        var bandRight = Math.Round(X(BandHighHz + _bandOffsetHz, w)) + 0.5;
         context.FillRectangle(BandShade, new Rect(bandLeft, waterfall.Y, bandRight - bandLeft, waterfall.Height));
         context.DrawLine(BandEdge, new Point(bandLeft, waterfall.Y), new Point(bandLeft, h));
         context.DrawLine(BandEdge, new Point(bandRight, waterfall.Y), new Point(bandRight, h));
@@ -191,7 +241,7 @@ public sealed class CwWaterfallControl : Control
 
         if (double.IsFinite(_toneHz))
         {
-            var inBand = _toneHz is >= BandLowHz and <= BandHighHz;
+            var inBand = _toneHz >= BandLowHz + _bandOffsetHz && _toneHz <= BandHighHz + _bandOffsetHz;
             var x = Math.Round(X(_toneHz, w)) + 0.5;
             context.DrawLine(inBand ? ToneInBand : ToneOutOfBand, new Point(x, waterfall.Y), new Point(x, h));
         }

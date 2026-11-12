@@ -6,7 +6,7 @@
         x:DataType="vm:CwViewModel"
         Title="{loc:Localize Key=Window.CwSettings.Title}"
         Width="560"
-        Height="460"
+        Height="580"
         MinWidth="460"
         MinHeight="380"
         WindowStartupLocation="CenterOwner"
@@ -59,6 +59,13 @@
         </Grid>
         <CheckBox Content="{loc:Localize Key=Cw.CatFeedForward}" IsChecked="{Binding CatDopplerFeedForward}" />
         <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.CatFeedForward.Tip}" />
+
+        <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.Decoding}" />
+        <CheckBox Content="{loc:Localize Key=Cw.FollowNote}" IsChecked="{Binding FollowNote}" />
+        <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.FollowNote.Tip}" />
+        <CheckBox Content="{loc:Localize Key=Cw.SquelchNoise}" IsChecked="{Binding SquelchNoise}" />
+        <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.SquelchNoise.Tip}" />
 
         <Separator Classes="cw-rule" />
         <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.AutoStart}" />

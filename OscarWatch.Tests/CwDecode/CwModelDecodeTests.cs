@@ -64,18 +64,22 @@ public sealed class CwModelDecodeTests(ITestOutputHelper output)
     }
 
     /// <summary>
-    /// The live path: soundcard rate to 8 kHz (waterfall), to the model rate, then the rig control
-    /// note offset removed. A note at 1300 Hz, outside the model band, is brought back to 1100 Hz.
+    /// The live path: soundcard rate to 8 kHz (waterfall), tuned, then to the model rate. A note
+    /// far outside the model band is brought to its centre, the way a click on its trace does.
     /// </summary>
-    [Fact]
-    public void SoundcardRateAudioDecodesThroughTheReceiveChain()
+    [Theory]
+    [InlineData(1300.0)]
+    [InlineData(1650.0)]
+    [InlineData(300.0)]
+    public void SoundcardRateAudioDecodesThroughTheReceiveChain(double toneHz)
     {
         using var model = LoadModel();
         var decoder = new CwStreamDecoder(model.Metadata, model);
-        var audio = CwTestAudio.Morse("CQ DE G4ABC IO91 K", 22, 1300, 48000, noiseRms: 0.02);
+        var audio = CwTestAudio.Morse("CQ DE G4ABC IO91 K", 22, toneHz, 48000, noiseRms: 0.02);
         var toWaterfall = new OscarWatch.Core.Sstv.SstvResampler(48000, 8000);
+        var tuner = new CwTuner(8000, model.Metadata);
+        tuner.OffsetHz = toneHz - tuner.CentreHz;
         var toModel = new CwResampler(8000, model.Metadata.SampleRate, 1400, 127);
-        var shifter = new CwFrequencyShifter(model.Metadata.SampleRate) { ShiftHz = -200 };
         var at8k = new List<float>();
         var atModel = new List<float>();
 
@@ -84,17 +88,47 @@ public sealed class CwModelDecodeTests(ITestOutputHelper output)
             at8k.Clear();
             atModel.Clear();
             toWaterfall.Process(audio.AsSpan(i, Math.Min(1024, audio.Length - i)), at8k);
+            tuner.Process(at8k);
             toModel.Process(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(at8k), atModel);
-            shifter.Process(atModel);
             decoder.Append(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(atModel));
             decoder.Step();
         }
 
         decoder.Finish();
-        output.WriteLine($"Receive chain: {decoder.Transcript}");
+        output.WriteLine($"Receive chain at {toneHz} Hz: {decoder.Transcript}");
 
         Assert.Contains("G4ABC", decoder.Transcript);
         Assert.Contains("IO91", decoder.Transcript);
+    }
+
+    [Fact]
+    public void SquelchedNoiseLeavesNoCopy()
+    {
+        using var model = LoadModel();
+        var squelch = new CwNoiseSquelch();
+        var shown = "";
+        for (var seed = 1; seed <= 6; seed++)
+        {
+            var decoder = new CwStreamDecoder(model.Metadata, model);
+            var random = new Random(seed);
+            var audio = new float[model.Metadata.SampleRate * 30];
+            for (var i = 0; i < audio.Length; i++)
+                audio[i] = (float)(0.05 * (random.NextDouble() * 2 - 1));
+
+            for (var i = 0; i < audio.Length; i += 3200)
+            {
+                decoder.Append(audio.AsSpan(i, Math.Min(3200, audio.Length - i)));
+                if (decoder.Step() is { } u)
+                    shown += squelch.Process(u.CommittedText, u.CommittedConfidence);
+            }
+
+            var rest = decoder.FinishWithConfidence();
+            shown += squelch.Process(rest.CommittedText, rest.CommittedConfidence);
+            squelch.Flush();
+        }
+
+        output.WriteLine($"Shown after squelch: '{shown}'");
+        Assert.True(shown.Replace(" ", "").Length <= 1, shown);
     }
 
     [Fact]

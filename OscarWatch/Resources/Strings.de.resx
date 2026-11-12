@@ -6732,7 +6732,7 @@ Aktuell: {1} ({2})</value>
     <value>CW-Wasserfall</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>Audio von 0 bis 2000 Hz. Der Decoder liest das schattierte Band (400 bis 1200 Hz), also so abstimmen, dass der CW-Ton darin liegt. Die gelbe Linie markiert den stärksten gleichmäßigen Ton.</value>
+    <value>Audio von 0 bis 2000 Hz. Der Dekoder liest den schattierten Bereich. Klicken Sie auf eine CW-Spur, um sie zu dekodieren, oder mit der rechten Maustaste, um den Bereich auf 400 bis 1200 Hz zurückzusetzen. Die gelbe Linie markiert den stärksten gleichmäßigen Ton.</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>Unterstrichene Rufzeichen und Locator gelangen per Klick, Eingabe oder Leertaste in das Eingabeformular des Logbuchs. Geloggt wird erst, wenn Sie das QSO hinzufügen.</value>
@@ -6750,7 +6750,7 @@ Aktuell: {1} ({2})</value>
     <value>Kein gleichmäßiger Ton</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>Ton {0:0} Hz liegt außerhalb von 400 bis 1200 Hz. Bitte das Funkgerät nachstimmen.</value>
+    <value>Ton {0:0} Hz liegt außerhalb des Dekodierbereichs. Klicken Sie ihn im Wasserfall an.</value>
   </data>
   <data name="Cw.Doppler">
     <value>Downlink-Doppler {0}</value>
@@ -6841,5 +6841,23 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Cw.Settings.Credit">
     <value>Die Dekodierung nutzt das DeepCW-Modell von e04 (MIT-Lizenz) und läuft auf diesem Computer. Kein Audio verlässt das Gerät.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} WpM</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Dekodierung</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Dem Ton folgen, wenn er wandert</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Hält den gleichmäßigen Ton, der der Mitte des schattierten Bereichs am nächsten ist, in der Mitte, damit ihn die Doppler-Drift nicht hinausträgt. Klicken Sie im Wasserfall auf eine Spur, um ein anderes Signal zu dekodieren; Rechtsklick setzt den Bereich zurück.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Einzelne Zeichen aus dem Rauschen ausblenden</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Verwirft Wörter aus einem oder zwei Zeichen, bei denen sich das Modell unsicher ist. Das ist zwischen den Durchgängen fast immer Rauschen. Sichere kurze Wörter wie K bleiben.</value>
   </data>
 </root>

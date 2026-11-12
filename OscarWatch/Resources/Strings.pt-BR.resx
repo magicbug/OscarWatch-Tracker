@@ -6727,7 +6727,7 @@ Mais recente: {1} ({2})</value>
     <value>Cascata CW</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>Áudio de 0 a 2000 Hz. O decodificador lê a faixa sombreada (400 a 1200 Hz), então sintonize até a nota CW ficar dentro dela. A linha amarela marca a nota estável mais forte.</value>
+    <value>Áudio de 0 a 2000 Hz. O decodificador lê a faixa sombreada. Clique em um traço CW para decodificá-lo, ou com o botão direito para devolver a faixa a 400 a 1200 Hz. A linha amarela marca a nota estável mais forte.</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>Indicativos e localizadores sublinhados vão para o formulário do livro de registro ao clicar, ou com Enter ou Espaço. Nada é registrado até você adicionar o QSO.</value>
@@ -6745,7 +6745,7 @@ Mais recente: {1} ({2})</value>
     <value>Sem nota estável</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>A nota de {0:0} Hz está fora de 400 a 1200 Hz. Ressintonize o rádio.</value>
+    <value>A nota de {0:0} Hz está fora da faixa de decodificação. Clique nela na cascata.</value>
   </data>
   <data name="Cw.Doppler">
     <value>Doppler de descida {0}</value>
@@ -6836,5 +6836,23 @@ Mais recente: {1} ({2})</value>
   </data>
   <data name="Cw.Settings.Credit">
     <value>A decodificação usa o modelo DeepCW de e04 (licença MIT) e roda neste computador. Nenhum áudio sai da máquina.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} ppm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Decodificação</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Acompanhar a nota quando ela se desloca</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Mantém no centro a nota estável mais próxima do meio da faixa sombreada, para que a deriva Doppler não a tire de lá. Clique em um traço da cascata para decodificar outro sinal; clique com o botão direito para devolver a faixa.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Ocultar letras soltas vindas do ruído</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Descarta palavras de uma ou duas letras de que o modelo não tem certeza. Entre câmbios, quase sempre são ruído. Palavras curtas confiáveis, como K, permanecem.</value>
   </data>
 </root>

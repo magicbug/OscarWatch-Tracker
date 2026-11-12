@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using OscarWatch.Core.CwDecode;
 using OscarWatch.Core.Recording;
 using OscarWatch.Core.Sstv;
@@ -24,13 +25,25 @@ public sealed class CwReceiverService : IDisposable
     public const double WaterfallMinHz = 0;
     public const double WaterfallMaxHz = 2000;
     public const int WaterfallColumns = 400;
-    private const double SpectrumRowsPerSecond = 10;
-    private const int MaxQueuedSpectrumRows = 50;
-    private const int ChunkSamples = 2048;
+    public const double SpectrumRowsPerSecond = 25;
+    /// <summary>128 ms FFT (7.8 Hz bins), a new one every 32 ms so each 40 ms row holds at least one.</summary>
+    private const int SpectrumWindowSamples = 1024;
+    private const int SpectrumHopSamples = 256;
+    private const int MaxQueuedSpectrumRows = 100;
+    private const int ChunkSamples = 1024;
     private const double ResampleCutoffHz = 1400;
     private const int ResampleTaps = 127;
     /// <summary>Per-row smoothing of the note finder's averaged spectrum (about two seconds).</summary>
-    private const double ToneAverageAlpha = 0.05;
+    private const double ToneAverageAlpha = 0.02;
+    /// <summary>Faster average for note following (about half a second), so it keeps up with Doppler.</summary>
+    private const double FollowAverageAlpha = 0.08;
+    /// <summary>Note following only looks this far either side of the band centre.</summary>
+    private const double FollowCaptureHz = 250;
+    /// <summary>Fraction of the error corrected per row, and the most it moves per row (125 Hz/s).</summary>
+    private const double FollowGain = 0.1;
+    private const double FollowMaxStepHz = 5;
+    private const double ToneSearchMinHz = 150;
+    private const double ToneSearchMaxHz = 1900;
 
     private readonly CwAudioService _audio;
     private readonly Queue<float[]> _spectrumRows = new();
@@ -42,6 +55,7 @@ public sealed class CwReceiverService : IDisposable
     private volatile bool _inputSilent;
     private CwCaptureHealth _captureHealth = new(true, false);
     private double _feedForwardHz;
+    private double _tuneOffsetHz;
     private double _toneHz = double.NaN;
 
     public CwReceiverService(CwAudioService audio)
@@ -67,6 +81,22 @@ public sealed class CwReceiverService : IDisposable
         get => Volatile.Read(ref _feedForwardHz);
         set => Volatile.Write(ref _feedForwardHz, double.IsFinite(value) ? value : 0);
     }
+
+    /// <summary>
+    /// Hertz above the band centre (plus <see cref="FeedForwardHz"/>) of the note being decoded.
+    /// Set by clicking the waterfall, and moved by note following.
+    /// </summary>
+    public double TuneOffsetHz
+    {
+        get => Volatile.Read(ref _tuneOffsetHz);
+        set => Volatile.Write(ref _tuneOffsetHz, double.IsFinite(value) ? value : 0);
+    }
+
+    /// <summary>Keep the steady note near the decode band centre as it drifts.</summary>
+    public bool FollowNote { get; set; }
+
+    /// <summary>Total audio offset of the decode band: rig control correction plus tuning.</summary>
+    public double DecodeOffsetHz => CwTuner.ClampOffset(FeedForwardHz + TuneOffsetHz);
 
     /// <summary>Text settled by one decode step, and the tail that may still change.</summary>
     public event EventHandler<CwDecodeUpdate>? TextDecoded;
@@ -99,6 +129,8 @@ public sealed class CwReceiverService : IDisposable
     public void StartLive(CwDecodeSettings settings)
     {
         Stop();
+        TuneOffsetHz = 0;
+        FollowNote = settings.FollowNote;
         _audio.StartCapture(settings.InputDeviceId, settings.InputDeviceDisplayName);
         var rate = _audio.CaptureSampleRate;
         _cts = new CancellationTokenSource();
@@ -158,15 +190,26 @@ public sealed class CwReceiverService : IDisposable
         var warnedSilent = false;
         _inputSilent = false;
         Volatile.Write(ref _toneHz, double.NaN);
-        CwStreamDecoder? decoder = null;
+        BlockingCollection<float[]>? chunks = null;
+        Task? decodeTask = null;
         try
         {
             var model = LoadModel();
-            decoder = new CwStreamDecoder(model.Metadata, model);
+            var decoder = new CwStreamDecoder(model.Metadata, model);
+            chunks = new BlockingCollection<float[]>();
+            var queue = chunks;
+            decodeTask = Task.Factory.StartNew(
+                () => DecodeLoop(decoder, queue),
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
             var toWaterfall = new SstvResampler(rate, WaterfallRate);
             var toModel = new CwResampler(WaterfallRate, model.Metadata.SampleRate, ResampleCutoffHz, ResampleTaps);
-            var shifter = new CwFrequencyShifter(model.Metadata.SampleRate);
-            var tap = new SstvSpectrumTap(WaterfallRate, SpectrumRowsPerSecond, WaterfallMinHz, WaterfallMaxHz, WaterfallColumns);
+            var tuner = new CwTuner(WaterfallRate, model.Metadata);
+            var followAverage = new float[WaterfallColumns];
+            var tap = new SstvSpectrumTap(
+                WaterfallRate, SpectrumRowsPerSecond, WaterfallMinHz, WaterfallMaxHz, WaterfallColumns,
+                SpectrumWindowSamples, SpectrumHopSamples);
             var toneAverage = new float[WaterfallColumns];
             var rows = new List<float[]>(4);
             var at8k = new List<float>(ChunkSamples);
@@ -175,14 +218,8 @@ public sealed class CwReceiverService : IDisposable
             var stall = new CaptureStallWatch(DateTime.UtcNow);
             _captureHealth = new CwCaptureHealth(true, false);
 
-            while (!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested && !decodeTask.IsCompleted)
             {
-                if (_resetRequested)
-                {
-                    _resetRequested = false;
-                    decoder.Reset();
-                }
-
                 var n = _audio.ReadCaptureSamples(buffer);
                 var gotSamples = n > 0;
                 var reopen = stall.OnRead(DateTime.UtcNow, gotSamples);
@@ -223,19 +260,20 @@ public sealed class CwReceiverService : IDisposable
                 {
                     PublishSpectrum(rows);
                     UpdateTone(rows, toneAverage);
+                    if (FollowNote)
+                        FollowTone(rows, followAverage, tuner.CentreHz);
                 }
 
+                tuner.OffsetHz = DecodeOffsetHz;
+                tuner.Process(at8k);
                 atModel.Clear();
                 toModel.Process(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(at8k), atModel);
-                shifter.ShiftHz = -FeedForwardHz;
-                shifter.Process(atModel);
-                decoder.Append(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(atModel));
-                if (decoder.Step() is { } update)
-                    TextDecoded?.Invoke(this, update);
+                if (atModel.Count > 0)
+                    chunks.Add(atModel.ToArray());
             }
 
-            var rest = decoder.Finish();
-            TextDecoded?.Invoke(this, new CwDecodeUpdate(rest, CwLaneText.Empty));
+            chunks.CompleteAdding();
+            decodeTask.GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {
@@ -244,26 +282,81 @@ public sealed class CwReceiverService : IDisposable
         }
         finally
         {
+            if (chunks is { IsAddingCompleted: false })
+                chunks.CompleteAdding();
+            try
+            {
+                decodeTask?.Wait();
+            }
+            catch (AggregateException)
+            {
+                // Already reported above.
+            }
+
+            chunks?.Dispose();
             _inputSilent = false;
             Volatile.Write(ref _toneHz, double.NaN);
             Stopped?.Invoke(this, session);
         }
     }
 
+    /// <summary>
+    /// Runs the model away from the capture loop, so a decode step (a large share of a second on a
+    /// slow machine) never holds up the waterfall. Ends with the last letters once capture stops.
+    /// </summary>
+    private void DecodeLoop(CwStreamDecoder decoder, BlockingCollection<float[]> chunks)
+    {
+        foreach (var chunk in chunks.GetConsumingEnumerable())
+        {
+            if (_resetRequested)
+            {
+                _resetRequested = false;
+                decoder.Reset();
+            }
+
+            decoder.Append(chunk);
+            while (chunks.TryTake(out var more))
+                decoder.Append(more);
+            if (decoder.Step() is { } update)
+                TextDecoded?.Invoke(this, update);
+        }
+
+        TextDecoded?.Invoke(this, decoder.FinishWithConfidence());
+    }
+
+    private const double BinHz = (WaterfallMaxHz - WaterfallMinHz) / WaterfallColumns;
+
     private void UpdateTone(List<float[]> rows, float[] average)
     {
         foreach (var row in rows)
-        {
-            for (var i = 0; i < average.Length && i < row.Length; i++)
-            {
-                var power = (float)Math.Pow(10, row[i] / 10.0);
-                average[i] = average[i] == 0 ? power : average[i] + (float)ToneAverageAlpha * (power - average[i]);
-            }
-        }
+            Accumulate(row, average, ToneAverageAlpha);
 
-        var binHz = (WaterfallMaxHz - WaterfallMinHz) / WaterfallColumns;
-        var tone = CwToneFinder.Find(average, binHz);
+        var tone = CwToneFinder.Find(average, BinHz, ToneSearchMinHz, ToneSearchMaxHz);
         Volatile.Write(ref _toneHz, tone ?? double.NaN);
+    }
+
+    /// <summary>Nudge the tuning towards the steady note near the band centre, row by row.</summary>
+    private void FollowTone(List<float[]> rows, float[] average, double bandCentreHz)
+    {
+        foreach (var row in rows)
+        {
+            Accumulate(row, average, FollowAverageAlpha);
+            var centre = bandCentreHz + DecodeOffsetHz;
+            if (CwToneFinder.Find(average, BinHz, centre - FollowCaptureHz, centre + FollowCaptureHz) is not { } tone)
+                continue;
+
+            var step = Math.Clamp((tone - centre) * FollowGain, -FollowMaxStepHz, FollowMaxStepHz);
+            TuneOffsetHz = CwTuner.ClampOffset(TuneOffsetHz + step + FeedForwardHz) - FeedForwardHz;
+        }
+    }
+
+    private static void Accumulate(float[] row, float[] average, double alpha)
+    {
+        for (var i = 0; i < average.Length && i < row.Length; i++)
+        {
+            var power = (float)Math.Pow(10, row[i] / 10.0);
+            average[i] = average[i] == 0 ? power : average[i] + (float)alpha * (power - average[i]);
+        }
     }
 
     private bool ReopenStalledCapture(string? inputId, string? inputName, CaptureStallWatch stall)

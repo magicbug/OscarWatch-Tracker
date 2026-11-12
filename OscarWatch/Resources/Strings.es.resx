@@ -6727,7 +6727,7 @@ Está utilizando la versión {0}.
     <value>Cascada CW</value>
   </data>
   <data name="Cw.Waterfall.Tip">
-    <value>Audio de 0 a 2000 Hz. El decodificador lee la banda sombreada (400 a 1200 Hz), así que sintoniza hasta que la nota CW quede dentro. La línea amarilla marca la nota estable más fuerte.</value>
+    <value>Audio de 0 a 2000 Hz. El decodificador lee la banda sombreada. Haz clic en una traza CW para decodificarla, o clic derecho para devolver la banda a 400 a 1200 Hz. La línea amarilla marca la nota estable más fuerte.</value>
   </data>
   <data name="Cw.Copy.Hint">
     <value>Los indicativos y localizadores subrayados pasan al formulario del libro de guardia al hacer clic, o con Intro o Espacio. No se registra nada hasta que añadas el QSO.</value>
@@ -6745,7 +6745,7 @@ Está utilizando la versión {0}.
     <value>Sin nota estable</value>
   </data>
   <data name="Cw.Tone.OutOfBand">
-    <value>La nota de {0:0} Hz está fuera de 400 a 1200 Hz. Vuelve a sintonizar la radio.</value>
+    <value>La nota de {0:0} Hz está fuera de la banda de decodificación. Haz clic en ella en la cascada.</value>
   </data>
   <data name="Cw.Doppler">
     <value>Doppler de bajada {0}</value>
@@ -6836,5 +6836,23 @@ Está utilizando la versión {0}.
   </data>
   <data name="Cw.Settings.Credit">
     <value>La decodificación usa el modelo DeepCW de e04 (licencia MIT) y se ejecuta en este ordenador. El audio no sale del equipo.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} ppm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Decodificación</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Seguir la nota cuando se desplace</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Mantiene en el centro la nota estable más cercana al centro de la banda sombreada, para que la deriva Doppler no la saque. Haz clic en una traza de la cascada para decodificar otra señal; clic derecho para devolver la banda.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Ocultar letras sueltas del ruido</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Descarta palabras de una o dos letras de las que el modelo no está seguro. Casi siempre son ruido entre cambios. Las palabras cortas seguras, como K, se mantienen.</value>
   </data>
 </root>
