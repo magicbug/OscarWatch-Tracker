@@ -62,7 +62,7 @@ public sealed class SstvNoiseQualityTests
 
     private static double Error(SstvMode mode, float[] audio, bool chromaSmoothing)
     {
-        var image = Assert.Single(SstvRoundTripTests.Decode(audio, new SstvDecoderOptions { ChromaSmoothing = chromaSmoothing }));
+        var image = Assert.Single(SstvRoundTripTests.Decode(audio, new SstvDecoderOptions { ChromaSmoothing = chromaSmoothing, AdaptiveSmoothing = false }));
         return SstvRoundTripTests.MeanError(mode, image.Image);
     }
 }
