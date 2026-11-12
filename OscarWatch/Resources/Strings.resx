@@ -6675,4 +6675,217 @@ Latest: {1} ({2})</value>
   <data name="Logbook.Settings.Cw.Help">
     <value>CW keyer help</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>OscarWatch CW settings</value>
+  </data>
+  <data name="Cw.Start">
+    <value>Start</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>Stop</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>Clear</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>Clear the copy and start decoding afresh.</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>Save copy</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>Save the decoded copy as a text file, with UTC times.</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>Save CW copy</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>Text files</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>Copy saved to {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>Settings</value>
+  </data>
+  <data name="Cw.Help">
+    <value>Help</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>Open the OscarWatch CW guide on oscarwatch.org.</value>
+  </data>
+  <data name="Cw.Level">
+    <value>Level</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>CW waterfall</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>Audio from 0 to 2000 Hz. The decoder reads the shaded band. Click a CW trace to decode it, or right-click to put the band back to 400 to 1200 Hz. The yellow line marks the strongest steady note.</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>Underlined callsigns and locators go to the logbook entry form when clicked, or with Enter or Space. Nothing is logged until you add the QSO.</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>The newest letters. The decoder may still change them.</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>Copy runs about 2 s behind the signal.</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>Note {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>No steady note</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>Note {0:0} Hz is outside the decode band. Click it on the waterfall.</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>Downlink Doppler {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>rig correction {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>Put {0} in the logbook call box</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>Put {0} in the logbook locator box</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} is in the logbook call box.</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} is in the logbook locator box.</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>Opening the logbook with {0}.</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>The logbook is editing a saved QSO. Save or cancel the edit first.</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>Stopped. Press Start to listen.</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>Listening</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>Listening for {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>Audio input is not available on this computer.</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>The CW decoder stopped: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>No audio is reaching OscarWatch from {0}. Choose your radio's audio interface in Settings.</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>No audio from the soundcard. Reconnecting…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>Ready. Waiting for a satellite to be focused.</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>Ready. Waiting for the frequency panel to be on CW for {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>Ready. Waiting for the next pass of {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>Ready. Waiting for an elevation for {0}.</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>Ready. Waiting for {0} to rise above {1}°.</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>Audio</value>
+  </data>
+  <data name="Cw.Input">
+    <value>Input</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>Refresh</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>Correct the note for rig control Doppler steps</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>When rig control tunes in steps, the CW note drifts between steps. This moves the note back by the difference so it stays where you tuned it. Receive only: the radio is not retuned.</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>Automatic start</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>Start listening when the focused satellite rises</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>Only while this window is open and the frequency panel is on CW. Listening stops when the satellite sets.</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>Start elevation (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>Decoding uses the DeepCW model by e04 (MIT licence), run on this computer. No audio leaves the machine.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} wpm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Decoding</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Follow the note as it drifts</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Keeps the steady note nearest the middle of the shaded band in the middle, so Doppler drift does not carry it out. Click a trace on the waterfall to decode another signal; right-click to put the band back.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Hide stray letters from noise</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Drops words of one or two letters that the model is unsure of. These are almost always noise between overs. Confident short words such as K stay.</value>
+  </data>
+  <data name="Cw.Settings.Display">
+    <value>Display</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Decoded text size</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>In the CW window you can also hold Ctrl and turn the mouse wheel over the copy, or press Ctrl with plus or minus. Ctrl+0 goes back to the default size.</value>
+  </data>
+  <data name="Cw.Legend.NewCall">
+    <value>New call</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>New grid</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Worked before</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Your call</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>New call: not in any of your logbooks.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Worked before: this call is in your logbook.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>New grid: no QSO in this 4-character field yet.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Worked before: you have a QSO in this grid field.</value>
+  </data>
 </root>

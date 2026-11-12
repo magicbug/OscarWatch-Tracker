@@ -6676,4 +6676,217 @@
   <data name="Logbook.Settings.Cw.Help">
     <value>CW キーヤーのヘルプ</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>OscarWatch CW 設定</value>
+  </data>
+  <data name="Cw.Start">
+    <value>開始</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>停止</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>クリア</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>受信テキストを消去して、最初から解読し直します。</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>テキストを保存</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>解読したテキストを UTC 時刻付きでテキストファイルに保存します。</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>CW テキストを保存</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>テキストファイル</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>テキストを {0} に保存しました</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>設定</value>
+  </data>
+  <data name="Cw.Help">
+    <value>ヘルプ</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>oscarwatch.org の OscarWatch CW ガイドを開きます。</value>
+  </data>
+  <data name="Cw.Level">
+    <value>レベル</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>CW ウォーターフォール</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>0 から 2000 Hz までの音声です。デコーダーは網掛けの帯域を読みます。CW の軌跡をクリックするとそれを解読し、右クリックで帯域を 400 から 1200 Hz に戻します。黄色の線は最も強い安定した音を示します。</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>下線付きのコールサインとロケーターは、クリック、または Enter かスペースでログブックの入力欄に入ります。QSO を追加するまで何も記録されません。</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>最新の文字です。デコーダーがまだ変更する可能性があります。</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>テキストは信号より約 2 秒遅れて表示されます。</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>音 {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>安定した音なし</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>{0:0} Hz の音は解読帯域の外です。ウォーターフォールでクリックしてください。</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>ダウンリンク ドップラー {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>無線機補正 {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>{0} をログブックのコールサイン欄に入れる</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>{0} をログブックのロケーター欄に入れる</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} をログブックのコールサイン欄に入れました。</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} をログブックのロケーター欄に入れました。</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>{0} を入れてログブックを開いています。</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>ログブックで保存済みの QSO を編集中です。先に保存するか編集を取り消してください。</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>停止中です。開始を押すと受信します。</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>受信中</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>{0} を受信中</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>このコンピューターでは音声入力を使用できません。</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>CW デコーダーが停止しました: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>{0} から OscarWatch に音声が届いていません。設定で無線機のオーディオインターフェースを選んでください。</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>サウンドカードから音声がありません。再接続しています…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>準備完了。衛星が選択されるのを待っています。</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>準備完了。{0} の周波数パネルが CW になるのを待っています。</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>準備完了。{0} の次のパスを待っています。</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>準備完了。{0} の仰角を待っています。</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>準備完了。{0} が {1}° より上がるのを待っています。</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>オーディオ</value>
+  </data>
+  <data name="Cw.Input">
+    <value>入力</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>更新</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>無線機制御のドップラーステップに合わせて音を補正する</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>無線機制御が段階的に同調すると、ステップの間で CW の音がずれます。この設定はその差の分だけ音を戻し、同調した位置に保ちます。受信のみで、無線機の周波数は変更しません。</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>自動開始</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>選択中の衛星が昇ったら受信を開始する</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>このウィンドウが開いていて、周波数パネルが CW のときだけ動作します。衛星が沈むと受信を停止します。</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>開始仰角（°）</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>解読には e04 による DeepCW モデル（MIT ライセンス）を使い、このコンピューター上で実行します。音声が外部に送られることはありません。</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} WPM</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>解読</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>ずれていく音に追従する</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>網掛けの帯域の中央に最も近い安定した音を中央に保ち、ドップラーのずれで帯域から外れないようにします。ウォーターフォールの別の軌跡をクリックするとその信号を解読し、右クリックで帯域を元に戻します。</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>ノイズによる余分な文字を隠す</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>モデルが確信できない 1 文字または 2 文字の語を取り除きます。送信の合間に出るこれらはほぼ必ずノイズです。K のような確かな短い語は残ります。</value>
+  </data>
+  <data name="Cw.Settings.Display">
+    <value>表示</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>解読テキストのサイズ</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>CW ウィンドウでは、テキストの上で Ctrl を押しながらマウスホイールを回すか、Ctrl とプラスまたはマイナスを押しても変更できます。Ctrl+0 で既定のサイズに戻ります。</value>
+  </data>
+  <data name="Cw.Legend.NewCall">
+    <value>新しいコール</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>新しいグリッド</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>交信済み</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>自局のコール</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>新しいコール: どのログブックにもありません。</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>交信済み: このコールはログブックにあります。</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>新しいグリッド: この 4 文字のグリッドではまだ交信がありません。</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>交信済み: このグリッドでの交信があります。</value>
+  </data>
 </root>

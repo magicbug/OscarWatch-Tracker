@@ -6680,4 +6680,217 @@ Aktuell: {1} ({2})</value>
   <data name="Logbook.Settings.Cw.Help">
     <value>Hilfe zum CW-Keyer</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>OscarWatch CW Einstellungen</value>
+  </data>
+  <data name="Cw.Start">
+    <value>Start</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>Stopp</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>Leeren</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>Mitschrift leeren und neu mit dem Dekodieren beginnen.</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>Mitschrift speichern</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>Die dekodierte Mitschrift mit UTC-Zeiten als Textdatei speichern.</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>CW-Mitschrift speichern</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>Textdateien</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>Mitschrift gespeichert unter {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>Einstellungen</value>
+  </data>
+  <data name="Cw.Help">
+    <value>Hilfe</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>Die Anleitung zu OscarWatch CW auf oscarwatch.org öffnen.</value>
+  </data>
+  <data name="Cw.Level">
+    <value>Pegel</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>CW-Wasserfall</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>Audio von 0 bis 2000 Hz. Der Dekoder liest den schattierten Bereich. Klicken Sie auf eine CW-Spur, um sie zu dekodieren, oder mit der rechten Maustaste, um den Bereich auf 400 bis 1200 Hz zurückzusetzen. Die gelbe Linie markiert den stärksten gleichmäßigen Ton.</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>Unterstrichene Rufzeichen und Locator gelangen per Klick, Eingabe oder Leertaste in das Eingabeformular des Logbuchs. Geloggt wird erst, wenn Sie das QSO hinzufügen.</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>Die neuesten Zeichen. Der Decoder kann sie noch ändern.</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>Die Mitschrift läuft etwa 2 s hinter dem Signal.</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>Ton {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>Kein gleichmäßiger Ton</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>Ton {0:0} Hz liegt außerhalb des Dekodierbereichs. Klicken Sie ihn im Wasserfall an.</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>Downlink-Doppler {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>Funkgerätkorrektur {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>{0} in das Rufzeichenfeld des Logbuchs übernehmen</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>{0} in das Locatorfeld des Logbuchs übernehmen</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} steht im Rufzeichenfeld des Logbuchs.</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} steht im Locatorfeld des Logbuchs.</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>Logbuch wird mit {0} geöffnet.</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>Im Logbuch wird gerade ein gespeichertes QSO bearbeitet. Bitte zuerst speichern oder abbrechen.</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>Gestoppt. Zum Hören auf Start klicken.</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>Empfang läuft</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>Empfang von {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>Audioeingang ist auf diesem Computer nicht verfügbar.</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>Der CW-Decoder wurde angehalten: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>Von {0} kommt kein Audio bei OscarWatch an. Wählen Sie in den Einstellungen die Audioschnittstelle Ihres Funkgeräts.</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>Kein Audio von der Soundkarte. Verbindung wird wiederhergestellt…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>Bereit. Warten auf einen fokussierten Satelliten.</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>Bereit. Warten, bis das Frequenzfeld für {0} auf CW steht.</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>Bereit. Warten auf den nächsten Überflug von {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>Bereit. Warten auf einen Elevationswert für {0}.</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>Bereit. Warten, bis {0} über {1}° steigt.</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>Audio</value>
+  </data>
+  <data name="Cw.Input">
+    <value>Eingang</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>Ton um die Doppler-Schritte der Funkgerätesteuerung korrigieren</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>Wenn die Funkgerätesteuerung in Schritten abstimmt, wandert der CW-Ton zwischen den Schritten. Diese Option schiebt den Ton um die Differenz zurück, damit er dort bleibt, wo Sie abgestimmt haben. Nur Empfang: Das Funkgerät wird nicht nachgestimmt.</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>Automatischer Start</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>Empfang starten, wenn der fokussierte Satellit aufgeht</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>Nur solange dieses Fenster offen ist und das Frequenzfeld auf CW steht. Der Empfang endet, wenn der Satellit untergeht.</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>Start-Elevation (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>Die Dekodierung nutzt das DeepCW-Modell von e04 (MIT-Lizenz) und läuft auf diesem Computer. Kein Audio verlässt das Gerät.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} WpM</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Dekodierung</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Dem Ton folgen, wenn er wandert</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Hält den gleichmäßigen Ton, der der Mitte des schattierten Bereichs am nächsten ist, in der Mitte, damit ihn die Doppler-Drift nicht hinausträgt. Klicken Sie im Wasserfall auf eine Spur, um ein anderes Signal zu dekodieren; Rechtsklick setzt den Bereich zurück.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Einzelne Zeichen aus dem Rauschen ausblenden</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Verwirft Wörter aus einem oder zwei Zeichen, bei denen sich das Modell unsicher ist. Das ist zwischen den Durchgängen fast immer Rauschen. Sichere kurze Wörter wie K bleiben.</value>
+  </data>
+  <data name="Cw.Settings.Display">
+    <value>Anzeige</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Textgröße der Mitschrift</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>Im CW-Fenster können Sie auch Strg gedrückt halten und über der Mitschrift das Mausrad drehen oder Strg mit Plus oder Minus drücken. Strg+0 stellt die Standardgröße wieder her.</value>
+  </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Neues Rufzeichen</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Neues Feld</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Schon gearbeitet</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Ihr Rufzeichen</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Neues Rufzeichen: in keinem Ihrer Logbücher.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Schon gearbeitet: dieses Rufzeichen steht in Ihrem Logbuch.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Neues Feld: noch keine Verbindung in diesem 4-stelligen Feld.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Schon gearbeitet: Sie haben eine Verbindung in diesem Feld.</value>
+  </data>
 </root>

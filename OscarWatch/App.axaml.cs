@@ -138,6 +138,10 @@ public partial class App : Application
         services.AddSingleton<OscarWatch.Sstv.SstvReceiverService>();
         services.AddSingleton<IKeepAwake, KeepAwakeService>();
         services.AddSingleton<SstvViewModel>();
+        services.AddSingleton<OscarWatch.Services.QsoLogbookEntryBridge>();
+        services.AddSingleton<OscarWatch.Cw.CwAudioService>();
+        services.AddSingleton<OscarWatch.Cw.CwReceiverService>();
+        services.AddSingleton<CwViewModel>();
         services.AddSingleton<TerminalViewModel>();
         services.AddTransient<TerminalSettingsViewModel>();
 
@@ -161,6 +165,8 @@ public partial class App : Application
 
             var startupStopwatch = Stopwatch.StartNew();
             var mainVm = Services.GetRequiredService<MainViewModel>();
+            Services.GetRequiredService<OscarWatch.Services.QsoLogbookEntryBridge>().OpenLogbookRequested +=
+                (_, _) => mainVm.OpenQsoLogbookCommand.Execute(null);
             MainWindow = new MainWindow { DataContext = mainVm };
             MainWindowBounds.Apply(MainWindow, settingsService.Current);
             desktop.MainWindow = MainWindow;

@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        x:Class="OscarWatch.Views.CwSettingsWindow"
+        x:DataType="vm:CwViewModel"
+        Title="{loc:Localize Key=Window.CwSettings.Title}"
+        Width="560"
+        Height="580"
+        MinWidth="460"
+        MinHeight="380"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True">
+  <Window.Styles>
+    <Style Selector="TextBlock.cw-section">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="TextBlock.cw-note">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="28,0,0,0" />
+      <Setter Property="Foreground" Value="{DynamicResource ThemeSecondaryForegroundBrush}" />
+    </Style>
+    <Style Selector="Separator.cw-rule">
+      <Setter Property="Margin" Value="0,6,0,2" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel Margin="14">
+    <StackPanel DockPanel.Dock="Bottom"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,12,0,0">
+      <Button Content="{loc:Localize Key=Common.Close}"
+              Classes="dialog-footer"
+              Click="OnCloseClick"
+              IsDefault="True"
+              IsCancel="True"
+              MinWidth="100" />
+    </StackPanel>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="8" Margin="0,0,6,0">
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.Audio}" />
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+          <TextBlock Grid.Column="0"
+                     Text="{loc:Localize Key=Cw.Input}"
+                     VerticalAlignment="Center" />
+          <ComboBox Grid.Column="1"
+                    ItemsSource="{Binding InputDeviceOptions}"
+                    SelectedItem="{Binding SelectedInputDevice}"
+                    HorizontalAlignment="Stretch"
+                    AutomationProperties.Name="{loc:Localize Key=Cw.Input}" />
+          <Button Grid.Column="2"
+                  Content="{loc:Localize Key=Cw.Refresh}"
+                  Command="{Binding RefreshInputDevicesCommand}"
+                  IsEnabled="{Binding CanStart}" />
+        </Grid>
+        <CheckBox Content="{loc:Localize Key=Cw.CatFeedForward}" IsChecked="{Binding CatDopplerFeedForward}" />
+        <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.CatFeedForward.Tip}" />
+
+        <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.Decoding}" />
+        <CheckBox Content="{loc:Localize Key=Cw.FollowNote}" IsChecked="{Binding FollowNote}" />
+        <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.FollowNote.Tip}" />
+        <CheckBox Content="{loc:Localize Key=Cw.SquelchNoise}" IsChecked="{Binding SquelchNoise}" />
+        <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.SquelchNoise.Tip}" />
+
+        <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.Display}" />
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock Text="{loc:Localize Key=Cw.CopyFontSize}" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding CopyFontSize}"
+                         Minimum="{Binding MinCopyFontSize}"
+                         Maximum="{Binding MaxCopyFontSize}"
+                         Increment="1"
+                         FormatString="0"
+                         Width="140"
+                         AutomationProperties.Name="{loc:Localize Key=Cw.CopyFontSize}" />
+        </StackPanel>
+        <TextBlock Classes="cw-note" Margin="0" Text="{loc:Localize Key=Cw.CopyFontSize.Tip}" />
+
+        <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.AutoStart}" />
+        <CheckBox Content="{loc:Localize Key=Cw.AutoStart}" IsChecked="{Binding AutoStartEnabled}" />
+        <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.AutoStart.Tip}" />
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="28,0,0,0">
+          <TextBlock Text="{loc:Localize Key=Cw.AutoStart.Elevation}" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding AutoStartElevationDeg}"
+                         IsEnabled="{Binding AutoStartEnabled}"
+                         Minimum="-15" Maximum="30" Increment="1"
+                         FormatString="0"
+                         Width="140"
+                         AutomationProperties.Name="{loc:Localize Key=Cw.AutoStart.Elevation}" />
+        </StackPanel>
+
+        <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-note" Margin="0" Text="{loc:Localize Key=Cw.Settings.Credit}" />
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

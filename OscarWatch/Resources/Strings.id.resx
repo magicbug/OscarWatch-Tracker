@@ -6680,4 +6680,217 @@ Terbaru: {1} ({2})</value>
   <data name="Logbook.Settings.Cw.Help">
     <value>Bantuan keyer CW</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>Pengaturan OscarWatch CW</value>
+  </data>
+  <data name="Cw.Start">
+    <value>Mulai</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>Berhenti</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>Bersihkan</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>Bersihkan salinan dan mulai mendekode dari awal.</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>Simpan salinan</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>Simpan salinan hasil dekode sebagai berkas teks, dengan waktu UTC.</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>Simpan salinan CW</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>Berkas teks</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>Salinan disimpan ke {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>Pengaturan</value>
+  </data>
+  <data name="Cw.Help">
+    <value>Bantuan</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>Buka panduan OscarWatch CW di oscarwatch.org.</value>
+  </data>
+  <data name="Cw.Level">
+    <value>Level</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>Waterfall CW</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>Audio dari 0 hingga 2000 Hz. Dekoder membaca pita berarsir. Klik jejak CW untuk mendekodenya, atau klik kanan untuk mengembalikan pita ke 400 hingga 1200 Hz. Garis kuning menandai nada stabil terkuat.</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>Tanda panggil dan lokator yang bergaris bawah masuk ke formulir isian logbook saat diklik, atau dengan Enter atau Spasi. Tidak ada yang dicatat sampai Anda menambahkan QSO.</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>Huruf terbaru. Dekoder masih bisa mengubahnya.</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>Salinan tertinggal sekitar 2 detik dari sinyal.</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>Nada {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>Tidak ada nada stabil</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>Nada {0:0} Hz berada di luar pita dekode. Klik di waterfall.</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>Doppler downlink {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>koreksi radio {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>Masukkan {0} ke kotak tanda panggil logbook</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>Masukkan {0} ke kotak lokator logbook</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} sudah ada di kotak tanda panggil logbook.</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} sudah ada di kotak lokator logbook.</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>Membuka logbook dengan {0}.</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>Logbook sedang menyunting QSO yang tersimpan. Simpan atau batalkan suntingan terlebih dahulu.</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>Berhenti. Tekan Mulai untuk mendengarkan.</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>Mendengarkan</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>Mendengarkan {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>Input audio tidak tersedia di komputer ini.</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>Dekoder CW berhenti: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>Tidak ada audio dari {0} yang sampai ke OscarWatch. Pilih antarmuka audio radio Anda di Pengaturan.</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>Tidak ada audio dari kartu suara. Menyambung ulang…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>Siap. Menunggu satelit dipilih.</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>Siap. Menunggu panel frekuensi diatur ke CW untuk {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>Siap. Menunggu lintasan berikutnya dari {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>Siap. Menunggu elevasi untuk {0}.</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>Siap. Menunggu {0} naik di atas {1}°.</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>Audio</value>
+  </data>
+  <data name="Cw.Input">
+    <value>Input</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>Segarkan</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>Koreksi nada untuk langkah Doppler dari kontrol radio</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>Saat kontrol radio menyetel secara bertahap, nada CW bergeser di antara langkah. Opsi ini mengembalikan nada sebesar selisihnya agar tetap di tempat Anda menyetelnya. Hanya penerimaan: radio tidak disetel ulang.</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>Mulai otomatis</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>Mulai mendengarkan saat satelit yang dipilih terbit</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>Hanya selama jendela ini terbuka dan panel frekuensi diatur ke CW. Mendengarkan berhenti saat satelit terbenam.</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>Elevasi mulai (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>Dekode memakai model DeepCW oleh e04 (lisensi MIT) dan berjalan di komputer ini. Tidak ada audio yang keluar dari perangkat.</value>
+  </data>
+  <data name="Cw.Speed">
+    <value>{0:0} wpm</value>
+  </data>
+  <data name="Cw.Settings.Decoding">
+    <value>Dekode</value>
+  </data>
+  <data name="Cw.FollowNote">
+    <value>Ikuti nada saat bergeser</value>
+  </data>
+  <data name="Cw.FollowNote.Tip">
+    <value>Menjaga nada stabil yang paling dekat dengan tengah pita berarsir tetap di tengah, agar pergeseran Doppler tidak membawanya keluar. Klik jejak di waterfall untuk mendekode sinyal lain; klik kanan untuk mengembalikan pita.</value>
+  </data>
+  <data name="Cw.SquelchNoise">
+    <value>Sembunyikan huruf liar dari derau</value>
+  </data>
+  <data name="Cw.SquelchNoise.Tip">
+    <value>Membuang kata satu atau dua huruf yang tidak diyakini model. Ini hampir selalu derau di antara giliran. Kata pendek yang yakin seperti K tetap ada.</value>
+  </data>
+  <data name="Cw.Settings.Display">
+    <value>Tampilan</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Ukuran teks hasil dekode</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>Di jendela CW Anda juga dapat menahan Ctrl dan memutar roda tetikus di atas salinan, atau menekan Ctrl dengan plus atau minus. Ctrl+0 kembali ke ukuran bawaan.</value>
+  </data>
+  <data name="Cw.Legend.NewCall">
+    <value>Callsign baru</value>
+  </data>
+  <data name="Cw.Legend.NewGrid">
+    <value>Grid baru</value>
+  </data>
+  <data name="Cw.Legend.Worked">
+    <value>Pernah dikontak</value>
+  </data>
+  <data name="Cw.Legend.You">
+    <value>Callsign Anda</value>
+  </data>
+  <data name="Cw.Worked.NewCall">
+    <value>Callsign baru: tidak ada di logbook mana pun.</value>
+  </data>
+  <data name="Cw.Worked.Call">
+    <value>Pernah dikontak: callsign ini ada di logbook Anda.</value>
+  </data>
+  <data name="Cw.Worked.NewGrid">
+    <value>Grid baru: belum ada QSO di kotak 4 karakter ini.</value>
+  </data>
+  <data name="Cw.Worked.Grid">
+    <value>Pernah dikontak: Anda punya QSO di kotak grid ini.</value>
+  </data>
 </root>

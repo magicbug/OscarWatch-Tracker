@@ -432,6 +432,8 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.Sstv.InputDeviceId ??= "";
         settings.Sstv.InputDeviceDisplayName ??= "";
         settings.Sstv.ForcedMode ??= "";
+        settings.CwDecoder ??= new OscarWatch.Core.CwDecode.CwDecodeSettings();
+        settings.CwDecoder.Normalise();
         settings.Terminal ??= new OscarWatch.Core.Terminal.TerminalSettings();
         settings.Terminal.Normalise();
         settings.QsoLogbook ??= new QsoLogbookSettings();
