@@ -70,6 +70,13 @@ public sealed class SstvDecoderOptions
     public bool WeightedPixels { get; set; } = true;
 
     /// <summary>
+    /// Fade pixels towards a dim grey where the subcarrier envelope says the signal is mostly noise, so
+    /// noise reads as grey grain rather than full-strength random colour. Pictures down to about 4 dB
+    /// carrier to noise keep their colour.
+    /// </summary>
+    public bool NoiseFade { get; set; } = true;
+
+    /// <summary>
     /// Once the line timing is well established, keep a picture going through a longer loss
     /// of signal (a deep fade or the antenna pointing away), and give a picture announced by
     /// a VIS header longer to find its first syncs.
@@ -566,7 +573,7 @@ public sealed class SstvDecoder
     {
         _mode = mode;
         _image = new SstvImage(mode.Width, mode.Height);
-        _renderer = new SstvLineRenderer(mode, _image, Options.ChromaSmoothing, Options.WeightedPixels);
+        _renderer = new SstvLineRenderer(mode, _image, Options.ChromaSmoothing, Options.WeightedPixels, Options.NoiseFade);
         var nominal = mode.LineMs * InternalRate / 1000.0;
         _tracker = new SstvLineTracker(nominal)
         {

@@ -16,6 +16,7 @@ public sealed class SstvSignalBuffer
     private double[] _cumulative = new double[(1 << 16) + 1];
     private double[] _cumulativeSquares = new double[(1 << 16) + 1];
     private double[] _cumulativeWeight = new double[(1 << 16) + 1];
+    private double[] _cumulativeWeightSquares = new double[(1 << 16) + 1];
     private double[] _cumulativeWeighted = new double[(1 << 16) + 1];
     private int _count;
 
@@ -46,6 +47,25 @@ public sealed class SstvSignalBuffer
         return (_cumulativeWeight[b] - _cumulativeWeight[a]) / (b - a);
     }
 
+    /// <summary>
+    /// Standard deviation of the stored weights over [start, end) divided by their mean. The SSTV
+    /// subcarrier has a constant envelope, so this is near 0 on a clean signal, whatever the picture,
+    /// about 0.25 at 6 dB carrier to noise and about 0.8 on noise alone.
+    /// </summary>
+    public double WeightVariation(long start, long end)
+    {
+        var a = Math.Max(start, Start) - Start;
+        var b = Math.Min(end, End) - Start;
+        if (b <= a)
+            return double.NaN;
+        var n = b - a;
+        var mean = (_cumulativeWeight[b] - _cumulativeWeight[a]) / n;
+        if (mean <= 1e-9)
+            return double.NaN;
+        var meanSquare = (_cumulativeWeightSquares[b] - _cumulativeWeightSquares[a]) / n;
+        return Math.Sqrt(Math.Max(0, meanSquare - mean * mean)) / mean;
+    }
+
     internal int Capacity => _data.Length;
 
     public bool Contains(long start, long end) => start >= Start && end <= End && end >= start;
@@ -66,6 +86,7 @@ public sealed class SstvSignalBuffer
             var d = value - SquareCentre;
             _cumulativeSquares[_count + 1] = _cumulativeSquares[_count] + d * d;
             _cumulativeWeight[_count + 1] = _cumulativeWeight[_count] + w;
+            _cumulativeWeightSquares[_count + 1] = _cumulativeWeightSquares[_count] + (double)w * w;
             _cumulativeWeighted[_count + 1] = _cumulativeWeighted[_count] + w * (value - SquareCentre);
             _count++;
         }
@@ -132,6 +153,7 @@ public sealed class SstvSignalBuffer
         var baseSum = _cumulative[drop];
         var baseSquares = _cumulativeSquares[drop];
         var baseWeight = _cumulativeWeight[drop];
+        var baseWeightSquares = _cumulativeWeightSquares[drop];
         var baseWeighted = _cumulativeWeighted[drop];
 
         // A buffer that was grown for a long picture and is now mostly empty is rebuilt smaller, so the
@@ -142,6 +164,7 @@ public sealed class SstvSignalBuffer
         var cumulative = capacity == _data.Length ? _cumulative : new double[capacity + 1];
         var squares = capacity == _data.Length ? _cumulativeSquares : new double[capacity + 1];
         var cumulativeWeight = capacity == _data.Length ? _cumulativeWeight : new double[capacity + 1];
+        var weightSquares = capacity == _data.Length ? _cumulativeWeightSquares : new double[capacity + 1];
         var weighted = capacity == _data.Length ? _cumulativeWeighted : new double[capacity + 1];
 
         Array.Copy(_data, drop, data, 0, keep);
@@ -151,6 +174,7 @@ public sealed class SstvSignalBuffer
             cumulative[i] = _cumulative[i + drop] - baseSum;
             squares[i] = _cumulativeSquares[i + drop] - baseSquares;
             cumulativeWeight[i] = _cumulativeWeight[i + drop] - baseWeight;
+            weightSquares[i] = _cumulativeWeightSquares[i + drop] - baseWeightSquares;
             weighted[i] = _cumulativeWeighted[i + drop] - baseWeighted;
         }
 
@@ -159,6 +183,7 @@ public sealed class SstvSignalBuffer
         _cumulative = cumulative;
         _cumulativeSquares = squares;
         _cumulativeWeight = cumulativeWeight;
+        _cumulativeWeightSquares = weightSquares;
         _cumulativeWeighted = weighted;
         _count = keep;
         Start += drop;
@@ -171,6 +196,7 @@ public sealed class SstvSignalBuffer
         _cumulative[0] = 0;
         _cumulativeSquares[0] = 0;
         _cumulativeWeight[0] = 0;
+        _cumulativeWeightSquares[0] = 0;
         _cumulativeWeighted[0] = 0;
     }
 
@@ -194,6 +220,7 @@ public sealed class SstvSignalBuffer
         Array.Resize(ref _cumulative, size + 1);
         Array.Resize(ref _cumulativeSquares, size + 1);
         Array.Resize(ref _cumulativeWeight, size + 1);
+        Array.Resize(ref _cumulativeWeightSquares, size + 1);
         Array.Resize(ref _cumulativeWeighted, size + 1);
     }
 }

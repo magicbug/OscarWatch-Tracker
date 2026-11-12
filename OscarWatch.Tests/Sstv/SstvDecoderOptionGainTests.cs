@@ -25,6 +25,7 @@ public sealed class SstvDecoderOptionGainTests(ITestOutputHelper output)
             StackedSyncSearch = false,
             WeightedPixels = false,
             AdaptiveSmoothing = false,
+            NoiseFade = false,
         };
         enable?.Invoke(o);
         return o;
