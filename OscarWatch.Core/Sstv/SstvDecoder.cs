@@ -231,6 +231,13 @@ public sealed class SstvDecoder
     private double _pendingPosition;
     private double _pendingScore;
     private double _afcHz;
+    // A step in the line timing found after a run of missed lines, until the next line agrees with it. The
+    // state taken before it is kept so that a step that does not hold up can be taken back.
+    private int _stepStartLine = -1;
+    private int _stepCheckLine = -1;
+    private int _stepLockedLine = -1;
+    private int _stepPriorLastLocked = -1;
+    private int _stepPriorMisses;
     private bool _fromVis;
     private bool _visFromTonePower;
     private long _imageStartIndex;
@@ -453,6 +460,7 @@ public sealed class SstvDecoder
     /// </summary>
     private void EndAfterLastLock()
     {
+        RollBackOpenStep();
         var mode = _mode!;
         var keep = _lastLockedLine + 1;
         for (var i = keep; i < _nextLine; i++)
@@ -569,6 +577,8 @@ public sealed class SstvDecoder
         _missesSinceLock = 0;
         _lastLockedLine = -1;
         _pendingLine = -1;
+        _stepCheckLine = -1;
+        _stepStartLine = -1;
         _afcHz = Options.AutoTune ? Math.Clamp(offsetHz, -MaxOffsetHz, MaxOffsetHz) : 0;
         _fromVis = fromVis;
         _visFromTonePower = false;
@@ -610,6 +620,20 @@ public sealed class SstvDecoder
 
             var hit = SstvSyncDetector.Find(
                 _buffer, predicted, half, syncLen, _afcHz + Options.TuningOffsetHz, Options.ToneSync ? _baseband : null, FeedForwardHz);
+            if (_stepCheckLine == line)
+            {
+                var agrees = hit is { } next
+                    && next.Score >= Options.SyncThreshold
+                    && Math.Abs(next.Position - predicted) <= ReacquireToleranceMs * rate / 1000.0;
+                _stepCheckLine = -1;
+                if (!agrees)
+                {
+                    // The sync that started the step was not a real step: go back to the old timing and look again.
+                    UndoStep();
+                    continue;
+                }
+            }
+
             if (hit is { } found)
                 _syncScore[line] = (float)found.Score;
             if (hit is { } h && h.Score >= Options.SyncThreshold && !HoldForConfirmation(line, h, predicted))
@@ -671,12 +695,60 @@ public sealed class SstvDecoder
 
     private void AcceptSync(int line, double position, double score)
     {
+        BeginStepIfLost(line, position);
         _tracker!.Accept(line, position, score);
         _syncPosition[line] = position;
         _failure[line] = SstvLineFailure.None;
         _quality[line] = SstvLineQuality.Locked;
         _missesSinceLock = 0;
         _lastLockedLine = Math.Max(_lastLockedLine, line);
+    }
+
+    /// <summary>
+    /// A well established grid that was lost for several lines and now has a sync well off where it
+    /// predicted: the line timing most likely stepped, which a dropout in the recording or a pause in the
+    /// sender's audio does. The grid is restarted from the first missed line, so the old timing does not
+    /// keep pulling the predictions back to where the lines used to be. It is a trial: if the next line does
+    /// not land one period later on the new grid, the old grid is restored.
+    /// </summary>
+    private void BeginStepIfLost(int line, double position)
+    {
+        var tracker = _tracker!;
+        if (_stepCheckLine >= 0
+            || tracker.AcceptedCount < EstablishedGridLines
+            || _missesSinceLock < ReacquireMisses
+            || Math.Abs(position - tracker.Predict(line)) <= ReacquireToleranceMs * InternalRate / 1000.0)
+            return;
+
+        _stepStartLine = Math.Clamp(_lastLockedLine + 1, 0, line);
+        _stepLockedLine = line;
+        _stepPriorLastLocked = _lastLockedLine;
+        _stepPriorMisses = _missesSinceLock;
+        _stepCheckLine = line + 1;
+        tracker.StartSegment(_stepStartLine);
+    }
+
+    /// <summary>
+    /// A trial step still waiting for its next line when the picture ends can no longer be confirmed, and the final
+    /// redraw would put the lines since the step on its grid. Take it back, as a lone pulse is taken back.
+    /// </summary>
+    private void RollBackOpenStep()
+    {
+        if (_stepCheckLine < 0 || _stepStartLine < 0)
+            return;
+        _stepCheckLine = -1;
+        UndoStep();
+    }
+
+    private void UndoStep()
+    {
+        _tracker!.UndoSegment(_stepStartLine);
+        _syncPosition[_stepLockedLine] = double.NaN;
+        _quality[_stepLockedLine] = SstvLineQuality.Predicted;
+        _failure[_stepLockedLine] = SstvLineFailure.OffGrid;
+        _lastLockedLine = _stepPriorLastLocked;
+        _missesSinceLock = _stepPriorMisses + 1;
+        _stepStartLine = -1;
     }
 
     /// <summary>
@@ -695,6 +767,7 @@ public sealed class SstvDecoder
             if (Math.Abs(hit.Position - _pendingPosition - tracker.PeriodAt(line, centred: false)) <= tolerance)
             {
                 AcceptSync(pending, _pendingPosition, _pendingScore);
+                _stepCheckLine = -1; // this line has just agreed with it
                 return false;
             }
         }
@@ -786,6 +859,7 @@ public sealed class SstvDecoder
 
     private void FinishImage(bool complete, bool alignToBottom = false)
     {
+        RollBackOpenStep();
         var mode = _mode!;
         ReSync();
         var tracker = _tracker!;
