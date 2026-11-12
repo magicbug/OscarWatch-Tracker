@@ -6855,4 +6855,13 @@ Latest: {1} ({2})</value>
   <data name="Cw.SquelchNoise.Tip">
     <value>Drops words of one or two letters that the model is unsure of. These are almost always noise between overs. Confident short words such as K stay.</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>Display</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Decoded text size</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>In the CW window you can also hold Ctrl and turn the mouse wheel over the copy, or press Ctrl with plus or minus. Ctrl+0 goes back to the default size.</value>
+  </data>
 </root>

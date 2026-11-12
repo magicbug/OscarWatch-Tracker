@@ -6856,4 +6856,13 @@
   <data name="Cw.SquelchNoise.Tip">
     <value>丢弃模型不确定的一两个字母的单词。这些在通联间隙几乎都是噪声。像 K 这样有把握的短词会保留。</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>显示</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>解码文本大小</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>在 CW 窗口中，也可以在文本上按住 Ctrl 并滚动鼠标滚轮，或按 Ctrl 加上加号或减号。Ctrl+0 恢复默认大小。</value>
+  </data>
 </root>

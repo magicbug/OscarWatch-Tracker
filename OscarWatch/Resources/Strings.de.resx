@@ -6860,4 +6860,13 @@ Aktuell: {1} ({2})</value>
   <data name="Cw.SquelchNoise.Tip">
     <value>Verwirft Wörter aus einem oder zwei Zeichen, bei denen sich das Modell unsicher ist. Das ist zwischen den Durchgängen fast immer Rauschen. Sichere kurze Wörter wie K bleiben.</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>Anzeige</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Textgröße der Mitschrift</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>Im CW-Fenster können Sie auch Strg gedrückt halten und über der Mitschrift das Mausrad drehen oder Strg mit Plus oder Minus drücken. Strg+0 stellt die Standardgröße wieder her.</value>
+  </data>
 </root>

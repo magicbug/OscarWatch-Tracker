@@ -6855,4 +6855,13 @@ Mais recente: {1} ({2})</value>
   <data name="Cw.SquelchNoise.Tip">
     <value>Descarta palavras de uma ou duas letras de que o modelo não tem certeza. Entre câmbios, quase sempre são ruído. Palavras curtas confiáveis, como K, permanecem.</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>Exibição</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Tamanho do texto decodificado</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>Na janela CW você também pode segurar Ctrl e girar a roda do mouse sobre o texto, ou pressionar Ctrl com mais ou menos. Ctrl+0 volta ao tamanho padrão.</value>
+  </data>
 </root>

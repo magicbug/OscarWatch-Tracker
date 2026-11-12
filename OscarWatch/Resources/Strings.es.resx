@@ -6855,4 +6855,13 @@ Está utilizando la versión {0}.
   <data name="Cw.SquelchNoise.Tip">
     <value>Descarta palabras de una o dos letras de las que el modelo no está seguro. Casi siempre son ruido entre cambios. Las palabras cortas seguras, como K, se mantienen.</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>Pantalla</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Tamaño del texto decodificado</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>En la ventana CW también puedes mantener Ctrl y girar la rueda del ratón sobre el texto, o pulsar Ctrl con más o menos. Ctrl+0 vuelve al tamaño predeterminado.</value>
+  </data>
 </root>

@@ -6860,4 +6860,13 @@ Terbaru: {1} ({2})</value>
   <data name="Cw.SquelchNoise.Tip">
     <value>Membuang kata satu atau dua huruf yang tidak diyakini model. Ini hampir selalu derau di antara giliran. Kata pendek yang yakin seperti K tetap ada.</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>Tampilan</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Ukuran teks hasil dekode</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>Di jendela CW Anda juga dapat menahan Ctrl dan memutar roda tetikus di atas salinan, atau menekan Ctrl dengan plus atau minus. Ctrl+0 kembali ke ukuran bawaan.</value>
+  </data>
 </root>

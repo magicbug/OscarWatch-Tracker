@@ -68,6 +68,20 @@
         <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.SquelchNoise.Tip}" />
 
         <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.Display}" />
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock Text="{loc:Localize Key=Cw.CopyFontSize}" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding CopyFontSize}"
+                         Minimum="{Binding MinCopyFontSize}"
+                         Maximum="{Binding MaxCopyFontSize}"
+                         Increment="1"
+                         FormatString="0"
+                         Width="140"
+                         AutomationProperties.Name="{loc:Localize Key=Cw.CopyFontSize}" />
+        </StackPanel>
+        <TextBlock Classes="cw-note" Margin="0" Text="{loc:Localize Key=Cw.CopyFontSize.Tip}" />
+
+        <Separator Classes="cw-rule" />
         <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.AutoStart}" />
         <CheckBox Content="{loc:Localize Key=Cw.AutoStart}" IsChecked="{Binding AutoStartEnabled}" />
         <TextBlock Classes="cw-note" Text="{loc:Localize Key=Cw.AutoStart.Tip}" />

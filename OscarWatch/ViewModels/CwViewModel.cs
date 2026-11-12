@@ -72,6 +72,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _catDopplerFeedForward = s.CatDopplerFeedForward;
         _squelchNoise = s.SquelchNoise;
         _followNote = s.FollowNote;
+        _copyFontSize = CwDecodeSettings.ClampCopyFontSize(s.CopyFontSize);
         _autoStartEnabled = s.AutoStartEnabled;
         _autoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(s.AutoStartElevationDeg);
 
@@ -162,6 +163,13 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     /// <summary>Keep the steady note centred in the decode band as it drifts.</summary>
     [ObservableProperty]
     private bool _followNote;
+
+    /// <summary>Text size of the decoded copy, in pixels.</summary>
+    [ObservableProperty]
+    private double _copyFontSize;
+
+    public double MinCopyFontSize => CwDecodeSettings.MinCopyFontSize;
+    public double MaxCopyFontSize => CwDecodeSettings.MaxCopyFontSize;
 
     /// <summary>How far the decode band sits from its home of 400 to 1200 Hz, for the waterfall.</summary>
     [ObservableProperty]
@@ -349,6 +357,19 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _settings.Current.CwDecoder.SquelchNoise = value;
         _settings.RequestSave();
         _squelch.Flush();
+    }
+
+    partial void OnCopyFontSizeChanged(double value)
+    {
+        var size = CwDecodeSettings.ClampCopyFontSize(value);
+        if (size != value)
+        {
+            CopyFontSize = size;
+            return;
+        }
+
+        _settings.Current.CwDecoder.CopyFontSize = size;
+        _settings.RequestSave();
     }
 
     partial void OnFollowNoteChanged(bool value)

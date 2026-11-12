@@ -6859,4 +6859,13 @@ Ultima versione: {1} ({2})</value>
   <data name="Cw.SquelchNoise.Tip">
     <value>Scarta le parole di una o due lettere di cui il modello non è sicuro. Tra un cambio e l'altro sono quasi sempre rumore. Le parole brevi sicure come K restano.</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>Visualizzazione</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>Dimensione del testo decodificato</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>Nella finestra CW puoi anche tenere premuto Ctrl e ruotare la rotellina del mouse sul testo, oppure premere Ctrl con più o meno. Ctrl+0 torna alla dimensione predefinita.</value>
+  </data>
 </root>

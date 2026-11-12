@@ -27,6 +27,16 @@ public sealed class CwDecodeSettings
 
     public double AutoStartElevationDeg { get; set; } = SstvSettings.DefaultAutoStartElevationDeg;
 
+    public const double MinCopyFontSize = 10;
+    public const double MaxCopyFontSize = 40;
+    public const double DefaultCopyFontSize = 16;
+
+    /// <summary>Text size of the decoded copy, in pixels.</summary>
+    public double CopyFontSize { get; set; } = DefaultCopyFontSize;
+
+    public static double ClampCopyFontSize(double size) =>
+        double.IsFinite(size) ? Math.Clamp(Math.Round(size), MinCopyFontSize, MaxCopyFontSize) : DefaultCopyFontSize;
+
     public int? WindowWidth { get; set; }
     public int? WindowHeight { get; set; }
 
@@ -35,5 +45,6 @@ public sealed class CwDecodeSettings
         InputDeviceId ??= "";
         InputDeviceDisplayName ??= "";
         AutoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(AutoStartElevationDeg);
+        CopyFontSize = ClampCopyFontSize(CopyFontSize);
     }
 }

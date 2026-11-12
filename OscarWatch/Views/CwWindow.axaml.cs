@@ -1,7 +1,9 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using OscarWatch.Core.CwDecode;
 using OscarWatch.Cw;
 using OscarWatch.Localization;
 using OscarWatch.ViewModels;
@@ -20,6 +22,41 @@ public partial class CwWindow : Window
         Closed += OnClosed;
         Waterfall.TuneRequested += (_, hz) => (DataContext as CwViewModel)?.TuneTo(hz);
         Waterfall.TuneResetRequested += (_, _) => (DataContext as CwViewModel)?.ResetTuning();
+        CopyScroller.AddHandler(PointerWheelChangedEvent, OnCopyWheel, RoutingStrategies.Tunnel);
+        KeyDown += OnWindowKeyDown;
+    }
+
+    /// <summary>Ctrl and the mouse wheel over the copy changes its text size.</summary>
+    private void OnCopyWheel(object? sender, PointerWheelEventArgs e)
+    {
+        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control) || DataContext is not CwViewModel vm || e.Delta.Y == 0)
+            return;
+        vm.CopyFontSize += Math.Sign(e.Delta.Y);
+        e.Handled = true;
+    }
+
+    /// <summary>Ctrl and plus, minus or 0 changes or resets the copy text size.</summary>
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control) || DataContext is not CwViewModel vm)
+            return;
+
+        switch (e.Key)
+        {
+            case Key.OemPlus or Key.Add:
+                vm.CopyFontSize += 1;
+                break;
+            case Key.OemMinus or Key.Subtract:
+                vm.CopyFontSize -= 1;
+                break;
+            case Key.D0 or Key.NumPad0:
+                vm.CopyFontSize = CwDecodeSettings.DefaultCopyFontSize;
+                break;
+            default:
+                return;
+        }
+
+        e.Handled = true;
     }
 
     private void OnOpened(object? sender, EventArgs e)

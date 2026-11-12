@@ -6860,4 +6860,13 @@ LOS: {2}
   <data name="Cw.SquelchNoise.Tip">
     <value>ตัดคำที่มีหนึ่งหรือสองตัวอักษรซึ่งโมเดลไม่มั่นใจออก คำเหล่านี้แทบทั้งหมดคือสัญญาณรบกวนระหว่างการส่ง คำสั้นที่มั่นใจ เช่น K จะยังคงอยู่</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>การแสดงผล</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>ขนาดข้อความที่ถอดรหัส</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>ในหน้าต่าง CW คุณยังกด Ctrl ค้างไว้แล้วหมุนล้อเมาส์เหนือข้อความ หรือกด Ctrl พร้อมบวกหรือลบได้ Ctrl+0 จะกลับไปใช้ขนาดเริ่มต้น</value>
+  </data>
 </root>

@@ -6856,4 +6856,13 @@
   <data name="Cw.SquelchNoise.Tip">
     <value>モデルが確信できない 1 文字または 2 文字の語を取り除きます。送信の合間に出るこれらはほぼ必ずノイズです。K のような確かな短い語は残ります。</value>
   </data>
+  <data name="Cw.Settings.Display">
+    <value>表示</value>
+  </data>
+  <data name="Cw.CopyFontSize">
+    <value>解読テキストのサイズ</value>
+  </data>
+  <data name="Cw.CopyFontSize.Tip">
+    <value>CW ウィンドウでは、テキストの上で Ctrl を押しながらマウスホイールを回すか、Ctrl とプラスまたはマイナスを押しても変更できます。Ctrl+0 で既定のサイズに戻ります。</value>
+  </data>
 </root>
