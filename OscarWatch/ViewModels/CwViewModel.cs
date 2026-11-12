@@ -178,9 +178,12 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     public double MinCopyFontSize => CwDecodeSettings.MinCopyFontSize;
     public double MaxCopyFontSize => CwDecodeSettings.MaxCopyFontSize;
 
-    /// <summary>How far the decode band sits from its home of 400 to 1200 Hz, for the waterfall.</summary>
+    /// <summary>
+    /// How far the decode band sits from its home of 400 to 1200 Hz on the waterfall. The waterfall
+    /// already shows audio after the rig control correction, so this is the operator's tuning only.
+    /// </summary>
     [ObservableProperty]
-    private double _decodeOffsetHz;
+    private double _bandOffsetHz;
 
     /// <summary>Measured sending speed, or empty when none is heard.</summary>
     [ObservableProperty]
@@ -251,7 +254,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             _squelch.Flush();
             ResetSpeed();
             _receiver.StartLive(_settings.Current.CwDecoder);
-            DecodeOffsetHz = _receiver.DecodeOffsetHz;
+            BandOffsetHz = _receiver.TuneOffsetHz;
             IsRunning = true;
             _startedByAuto = automatic;
             _statusFollowsAutoStart = true;
@@ -399,15 +402,15 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         if (!IsRunning || !double.IsFinite(hz))
             return;
         var centre = (CwModel.SpectrogramMinFreqHz + CwModel.SpectrogramMaxFreqHz) / 2;
-        _receiver.TuneOffsetHz = CwTuner.ClampOffset(hz - centre) - _receiver.FeedForwardHz;
-        DecodeOffsetHz = _receiver.DecodeOffsetHz;
+        _receiver.TuneOffsetHz = CwTuner.ClampOffset(hz - centre);
+        BandOffsetHz = _receiver.TuneOffsetHz;
     }
 
-    /// <summary>Put the decode band back to 400 to 1200 Hz (plus any rig control correction).</summary>
+    /// <summary>Put the decode band back to 400 to 1200 Hz.</summary>
     public void ResetTuning()
     {
         _receiver.TuneOffsetHz = 0;
-        DecodeOffsetHz = _receiver.DecodeOffsetHz;
+        BandOffsetHz = _receiver.TuneOffsetHz;
     }
 
     partial void OnAutoStartEnabledChanged(bool value)
@@ -530,7 +533,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         ToneHz = double.NaN;
         ToneText = "";
         ToneOutOfBand = false;
-        DecodeOffsetHz = 0;
+        BandOffsetHz = 0;
         ResetSpeed();
         if (_lastError is not null)
         {
@@ -631,7 +634,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        DecodeOffsetHz = _receiver.DecodeOffsetHz;
+        BandOffsetHz = _receiver.TuneOffsetHz;
         foreach (var row in _receiver.TakeSpectrumRows())
             _waterfallBacklog.Enqueue(row);
 
@@ -662,7 +665,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        ToneOutOfBand = !CwToneFinder.IsInModelBand(tone - DecodeOffsetHz, CwModel);
+        ToneOutOfBand = !CwToneFinder.IsInModelBand(tone - BandOffsetHz, CwModel);
         ToneText = ToneOutOfBand ? _l.Get("Cw.Tone.OutOfBand", tone) : _l.Get("Cw.Tone", tone);
     }
 

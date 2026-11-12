@@ -160,7 +160,7 @@
                                    Spectrum="{Binding Spectrum}"
                                    ToneHz="{Binding ToneHz}"
                                    x:Name="Waterfall"
-                                   BandOffsetHz="{Binding DecodeOffsetHz}"
+                                   BandOffsetHz="{Binding BandOffsetHz}"
                                    ToolTip.Tip="{loc:Localize Key=Cw.Waterfall.Tip}"
                                    AutomationProperties.Name="{loc:Localize Key=Cw.Waterfall}" />
     </Border>

@@ -72,7 +72,10 @@ public sealed class CwReceiverService : IDisposable
     /// <summary>True while live input has carried no audio for a while (likely the wrong soundcard).</summary>
     public bool IsInputSilent => _inputSilent;
 
-    /// <summary>Strongest steady note, in hertz, or NaN when nothing stands out.</summary>
+    /// <summary>
+    /// Strongest steady note, in hertz, or NaN when nothing stands out. Like the waterfall rows,
+    /// it is measured after the rig control correction, so it reads where the decoder hears it.
+    /// </summary>
     public double ToneHz => Volatile.Read(ref _toneHz);
 
     /// <summary>Note offset from rig control, in hertz, removed from the audio before decoding.</summary>
@@ -258,6 +261,13 @@ public sealed class CwReceiverService : IDisposable
                 tap.Add(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(at8k), rows);
                 if (rows.Count > 0)
                 {
+                    var feedForward = FeedForwardHz;
+                    if (feedForward != 0)
+                    {
+                        for (var r = 0; r < rows.Count; r++)
+                            rows[r] = CwSpectrumShift.Shift(rows[r], -feedForward, BinHz);
+                    }
+
                     PublishSpectrum(rows);
                     UpdateTone(rows, toneAverage);
                     if (FollowNote)
@@ -335,18 +345,21 @@ public sealed class CwReceiverService : IDisposable
         Volatile.Write(ref _toneHz, tone ?? double.NaN);
     }
 
-    /// <summary>Nudge the tuning towards the steady note near the band centre, row by row.</summary>
+    /// <summary>
+    /// Nudge the tuning towards the steady note near the band centre, row by row. Rows are
+    /// already corrected for rig control steps, so the band centre is home plus the tuning.
+    /// </summary>
     private void FollowTone(List<float[]> rows, float[] average, double bandCentreHz)
     {
         foreach (var row in rows)
         {
             Accumulate(row, average, FollowAverageAlpha);
-            var centre = bandCentreHz + DecodeOffsetHz;
+            var centre = bandCentreHz + TuneOffsetHz;
             if (CwToneFinder.Find(average, BinHz, centre - FollowCaptureHz, centre + FollowCaptureHz) is not { } tone)
                 continue;
 
             var step = Math.Clamp((tone - centre) * FollowGain, -FollowMaxStepHz, FollowMaxStepHz);
-            TuneOffsetHz = CwTuner.ClampOffset(TuneOffsetHz + step + FeedForwardHz) - FeedForwardHz;
+            TuneOffsetHz = CwTuner.ClampOffset(TuneOffsetHz + step);
         }
     }
 
