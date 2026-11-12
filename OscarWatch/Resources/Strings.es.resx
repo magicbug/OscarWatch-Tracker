@@ -6675,4 +6675,166 @@ Está utilizando la versión {0}.
   <data name="Logbook.Settings.Cw.Help">
     <value>Ayuda del manipulador CW</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>Ajustes de OscarWatch CW</value>
+  </data>
+  <data name="Cw.Start">
+    <value>Iniciar</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>Detener</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>Borrar</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>Borra el texto recibido y empieza a decodificar de nuevo.</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>Guardar texto</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>Guarda el texto decodificado en un archivo de texto, con horas UTC.</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>Guardar texto CW</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>Archivos de texto</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>Texto guardado en {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>Ajustes</value>
+  </data>
+  <data name="Cw.Help">
+    <value>Ayuda</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>Abre la guía de OscarWatch CW en oscarwatch.org.</value>
+  </data>
+  <data name="Cw.Level">
+    <value>Nivel</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>Cascada CW</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>Audio de 0 a 2000 Hz. El decodificador lee la banda sombreada (400 a 1200 Hz), así que sintoniza hasta que la nota CW quede dentro. La línea amarilla marca la nota estable más fuerte.</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>Los indicativos y localizadores subrayados pasan al formulario del libro de guardia al hacer clic, o con Intro o Espacio. No se registra nada hasta que añadas el QSO.</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>Las letras más recientes. El decodificador aún puede cambiarlas.</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>El texto va unos 2 s por detrás de la señal.</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>Nota {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>Sin nota estable</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>La nota de {0:0} Hz está fuera de 400 a 1200 Hz. Vuelve a sintonizar la radio.</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>Doppler de bajada {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>corrección del equipo {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>Poner {0} en la casilla de indicativo del libro de guardia</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>Poner {0} en la casilla de localizador del libro de guardia</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} está en la casilla de indicativo del libro de guardia.</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} está en la casilla de localizador del libro de guardia.</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>Abriendo el libro de guardia con {0}.</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>El libro de guardia está editando un QSO guardado. Guarda o cancela la edición primero.</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>Detenido. Pulsa Iniciar para escuchar.</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>Escuchando</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>Escuchando {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>La entrada de audio no está disponible en este ordenador.</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>El decodificador CW se detuvo: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>No llega audio a OscarWatch desde {0}. Elige la interfaz de audio de tu radio en Ajustes.</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>No hay audio de la tarjeta de sonido. Reconectando…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>Listo. Esperando a que se enfoque un satélite.</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>Listo. Esperando a que el panel de frecuencias esté en CW para {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>Listo. Esperando el próximo pase de {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>Listo. Esperando la elevación de {0}.</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>Listo. Esperando a que {0} supere {1}°.</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>Audio</value>
+  </data>
+  <data name="Cw.Input">
+    <value>Entrada</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>Actualizar</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>Corregir la nota según los pasos Doppler del control del equipo</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>Cuando el control del equipo sintoniza a pasos, la nota CW se desplaza entre pasos. Esto devuelve la nota según la diferencia para que se quede donde sintonizaste. Solo recepción: la radio no se vuelve a sintonizar.</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>Inicio automático</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>Empezar a escuchar cuando salga el satélite enfocado</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>Solo mientras esta ventana esté abierta y el panel de frecuencias esté en CW. La escucha se detiene cuando el satélite se pone.</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>Elevación de inicio (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>La decodificación usa el modelo DeepCW de e04 (licencia MIT) y se ejecuta en este ordenador. El audio no sale del equipo.</value>
+  </data>
 </root>

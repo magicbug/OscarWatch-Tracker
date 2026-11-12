@@ -6680,4 +6680,166 @@ LOS: {2}
   <data name="Logbook.Settings.Cw.Help">
     <value>Справка по CW-манипулятору</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>Настройки OscarWatch CW</value>
+  </data>
+  <data name="Cw.Start">
+    <value>Старт</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>Стоп</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>Очистить</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>Очистить принятый текст и начать декодирование заново.</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>Сохранить текст</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>Сохранить декодированный текст в текстовый файл с временем UTC.</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>Сохранить текст CW</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>Текстовые файлы</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>Текст сохранён в {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>Настройки</value>
+  </data>
+  <data name="Cw.Help">
+    <value>Справка</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>Открыть руководство по OscarWatch CW на oscarwatch.org.</value>
+  </data>
+  <data name="Cw.Level">
+    <value>Уровень</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>Водопад CW</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>Звук от 0 до 2000 Гц. Декодер читает затенённую полосу (от 400 до 1200 Гц), поэтому настройтесь так, чтобы тон CW попал в неё. Жёлтая линия отмечает самый сильный устойчивый тон.</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>Подчёркнутые позывные и локаторы попадают в форму журнала по щелчку, клавише Enter или пробелу. Ничего не записывается, пока вы не добавите QSO.</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>Самые новые знаки. Декодер ещё может их изменить.</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>Текст отстаёт от сигнала примерно на 2 с.</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>Тон {0:0} Гц</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>Нет устойчивого тона</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>Тон {0:0} Гц вне диапазона от 400 до 1200 Гц. Перестройте радиостанцию.</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>Доплер даунлинка {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>поправка радиостанции {0:+0;-0;0} Гц</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>Вставить {0} в поле позывного журнала</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>Вставить {0} в поле локатора журнала</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} в поле позывного журнала.</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} в поле локатора журнала.</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>Открываю журнал с {0}.</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>В журнале редактируется сохранённое QSO. Сначала сохраните или отмените правку.</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>Остановлено. Нажмите «Старт», чтобы слушать.</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>Приём</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>Приём {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>Аудиовход на этом компьютере недоступен.</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>Декодер CW остановлен: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>Звук от {0} не поступает в OscarWatch. Выберите аудиоинтерфейс радиостанции в настройках.</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>Нет звука от звуковой карты. Переподключение…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>Готово. Ожидание выбора спутника.</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>Готово. Ожидание режима CW на панели частот для {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>Готово. Ожидание следующего пролёта {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>Готово. Ожидание угла места для {0}.</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>Готово. Ожидание подъёма {0} выше {1}°.</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>Звук</value>
+  </data>
+  <data name="Cw.Input">
+    <value>Вход</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>Обновить</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>Корректировать тон по шагам доплеровской подстройки радиостанции</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>Когда управление радиостанцией подстраивает частоту шагами, тон CW смещается между шагами. Эта функция возвращает тон на величину разницы, чтобы он оставался там, где вы настроились. Только приём: радиостанция не перестраивается.</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>Автозапуск</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>Начинать приём, когда выбранный спутник восходит</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>Только пока это окно открыто и на панели частот выбран CW. Приём останавливается, когда спутник заходит.</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>Угол места для старта (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>Декодирование использует модель DeepCW от e04 (лицензия MIT) и выполняется на этом компьютере. Звук никуда не передаётся.</value>
+  </data>
 </root>

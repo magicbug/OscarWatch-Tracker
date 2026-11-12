@@ -6680,4 +6680,166 @@ LOS: {2}
   <data name="Logbook.Settings.Cw.Help">
     <value>วิธีใช้คีย์เยอร์ CW</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>การตั้งค่า OscarWatch CW</value>
+  </data>
+  <data name="Cw.Start">
+    <value>เริ่ม</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>หยุด</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>ล้าง</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>ล้างข้อความที่รับได้และเริ่มถอดรหัสใหม่</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>บันทึกข้อความ</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>บันทึกข้อความที่ถอดรหัสได้เป็นไฟล์ข้อความ พร้อมเวลา UTC</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>บันทึกข้อความ CW</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>ไฟล์ข้อความ</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>บันทึกข้อความไว้ที่ {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>การตั้งค่า</value>
+  </data>
+  <data name="Cw.Help">
+    <value>ช่วยเหลือ</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>เปิดคู่มือ OscarWatch CW บน oscarwatch.org</value>
+  </data>
+  <data name="Cw.Level">
+    <value>ระดับ</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>วอเตอร์ฟอล CW</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>เสียงตั้งแต่ 0 ถึง 2000 Hz ตัวถอดรหัสอ่านเฉพาะแถบที่แรเงา (400 ถึง 1200 Hz) ให้ปรับจูนจนเสียง CW อยู่ภายในแถบนั้น เส้นสีเหลืองแสดงเสียงที่คงที่และแรงที่สุด</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>สัญญาณเรียกขานและโลเคเตอร์ที่ขีดเส้นใต้จะถูกใส่ลงในแบบฟอร์มของสมุดบันทึกเมื่อคลิก หรือกด Enter หรือ Space จะยังไม่มีการบันทึกจนกว่าคุณจะเพิ่ม QSO</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>ตัวอักษรล่าสุด ตัวถอดรหัสอาจยังเปลี่ยนแปลงได้</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>ข้อความจะช้ากว่าสัญญาณประมาณ 2 วินาที</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>เสียง {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>ไม่มีเสียงที่คงที่</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>เสียง {0:0} Hz อยู่นอกช่วง 400 ถึง 1200 Hz โปรดปรับจูนวิทยุใหม่</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>ดอปเปลอร์ดาวน์ลิงก์ {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>การแก้ไขวิทยุ {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>ใส่ {0} ในช่องสัญญาณเรียกขานของสมุดบันทึก</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>ใส่ {0} ในช่องโลเคเตอร์ของสมุดบันทึก</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} อยู่ในช่องสัญญาณเรียกขานของสมุดบันทึกแล้ว</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} อยู่ในช่องโลเคเตอร์ของสมุดบันทึกแล้ว</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>กำลังเปิดสมุดบันทึกพร้อม {0}</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>สมุดบันทึกกำลังแก้ไข QSO ที่บันทึกไว้ โปรดบันทึกหรือยกเลิกการแก้ไขก่อน</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>หยุดอยู่ กด เริ่ม เพื่อฟัง</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>กำลังฟัง</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>กำลังฟัง {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>อินพุตเสียงไม่พร้อมใช้งานบนคอมพิวเตอร์เครื่องนี้</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>ตัวถอดรหัส CW หยุดทำงาน: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>ไม่มีเสียงจาก {0} มาถึง OscarWatch โปรดเลือกอินเทอร์เฟซเสียงของวิทยุในการตั้งค่า</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>ไม่มีเสียงจากการ์ดเสียง กำลังเชื่อมต่อใหม่…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>พร้อม กำลังรอให้เลือกดาวเทียม</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>พร้อม กำลังรอให้แผงความถี่ของ {0} เป็น CW</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>พร้อม กำลังรอการโคจรผ่านครั้งถัดไปของ {0}</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>พร้อม กำลังรอค่ามุมเงยของ {0}</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>พร้อม กำลังรอให้ {0} ขึ้นสูงกว่า {1}°</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>เสียง</value>
+  </data>
+  <data name="Cw.Input">
+    <value>อินพุต</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>รีเฟรช</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>แก้ไขเสียงตามขั้นดอปเปลอร์ของการควบคุมวิทยุ</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>เมื่อการควบคุมวิทยุปรับจูนเป็นขั้น เสียง CW จะเลื่อนระหว่างขั้น ตัวเลือกนี้จะเลื่อนเสียงกลับตามส่วนต่าง เพื่อให้อยู่ที่ตำแหน่งที่คุณจูนไว้ ใช้กับการรับเท่านั้น วิทยุจะไม่ถูกปรับจูนใหม่</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>เริ่มอัตโนมัติ</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>เริ่มฟังเมื่อดาวเทียมที่เลือกขึ้นมา</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>ทำงานเฉพาะเมื่อหน้าต่างนี้เปิดอยู่และแผงความถี่เป็น CW การฟังจะหยุดเมื่อดาวเทียมตก</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>มุมเงยเริ่มต้น (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>การถอดรหัสใช้โมเดล DeepCW ของ e04 (สัญญาอนุญาต MIT) และทำงานบนคอมพิวเตอร์เครื่องนี้ เสียงจะไม่ถูกส่งออกจากเครื่อง</value>
+  </data>
 </root>

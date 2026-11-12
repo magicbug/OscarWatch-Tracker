@@ -111,6 +111,7 @@ public sealed class AppSettings
     public PassRecordingSettings PassRecording { get; set; } = new();
     public Ft4Settings Ft4 { get; set; } = new();
     public OscarWatch.Core.Sstv.SstvSettings Sstv { get; set; } = new();
+    public OscarWatch.Core.CwDecode.CwDecodeSettings CwDecoder { get; set; } = new();
     public OscarWatch.Core.Terminal.TerminalSettings Terminal { get; set; } = new();
     public QsoLogbookSettings QsoLogbook { get; set; } = new();
     /// <summary>Transponder conflicts the user confirmed keeping locally instead of the published version.</summary>

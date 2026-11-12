@@ -2587,6 +2587,28 @@ public partial class MainViewModel : ViewModelBase
         window.Show(App.MainWindow);
     }
 
+    private static CwWindow? _openCwWindow;
+
+    [RelayCommand]
+    private void OpenCw()
+    {
+        _trackerSnapshot.FocusedNoradId = FocusedNoradId;
+        if (_openCwWindow is { IsVisible: true })
+        {
+            _openCwWindow.Activate();
+            return;
+        }
+
+        var vm = App.Services.GetRequiredService<CwViewModel>();
+        var window = new CwWindow { DataContext = vm };
+        window.Closed += (_, _) => _openCwWindow = null;
+        _openCwWindow = window;
+        if (App.MainWindow is null)
+            return;
+
+        window.Show(App.MainWindow);
+    }
+
     private static TerminalWindow? _openTerminalWindow;
 
     [RelayCommand]

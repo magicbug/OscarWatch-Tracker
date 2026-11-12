@@ -36,6 +36,11 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     private int _callLookupGeneration;
     private bool _dxccBackfillStarted;
     private CancellationTokenSource? _qrzLookupCts;
+    private readonly OscarWatch.Services.QsoLogbookEntryBridge? _entryBridge;
+    /// <summary>Locator sent from a decoder; call lookups keep it instead of clearing or replacing it.</summary>
+    private string? _decodedGrid;
+    /// <summary>Call the decoded locator belongs to, or null when it arrived before any call.</summary>
+    private string? _decodedGridCall;
 
     public QsoLogbookViewModel(
         IQsoLogbookRepository repository,
@@ -48,8 +53,10 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         IQrzCallbookService qrz,
         IHamQthCallbookService hamQth,
         ILocalizationService localization,
-        OscarWatch.Hardware.CwKeyerService? cwKeyer = null)
+        OscarWatch.Hardware.CwKeyerService? cwKeyer = null,
+        OscarWatch.Services.QsoLogbookEntryBridge? entryBridge = null)
     {
+        _entryBridge = entryBridge;
         _repository = repository;
         _tracker = tracker;
         _settings = settings;
@@ -285,6 +292,42 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         _dxccLookup.EnsureLoaded();
         _ = _cloudlogUpload.ProcessRetryQueueAsync();
         _ = BackfillMissingDxccAsync();
+        _entryBridge?.Attach(this);
+    }
+
+    /// <summary>
+    /// Put a decoded callsign and/or locator into the entry form, as if typed. Nothing is logged.
+    /// Refused while a saved QSO is being edited. A decoded locator survives the call lookup, so
+    /// clicking the locator before or after the call gives both.
+    /// </summary>
+    public bool FillFromDecode(string? call, string? grid)
+    {
+        if (IsEditingQso)
+            return false;
+
+        var newCall = string.IsNullOrWhiteSpace(call) ? null : call.Trim().ToUpperInvariant();
+        var newGrid = string.IsNullOrWhiteSpace(grid) ? null : MaidenheadLocator.UppercaseGridEntry(grid.Trim());
+        var currentCall = string.IsNullOrWhiteSpace(Call) ? null : Call.Trim().ToUpperInvariant();
+
+        if (newGrid is not null)
+        {
+            _decodedGrid = newGrid;
+            _decodedGridCall = newCall ?? currentCall;
+        }
+        else if (newCall is not null && _decodedGrid is not null)
+        {
+            // A locator pinned for another contact does not carry over to this one.
+            if (_decodedGridCall is not null && !string.Equals(_decodedGridCall, newCall, StringComparison.Ordinal))
+                _decodedGrid = null;
+            else
+                _decodedGridCall = newCall;
+        }
+
+        if (newCall is not null && !string.Equals(newCall, currentCall, StringComparison.Ordinal))
+            Call = newCall;
+        if (_decodedGrid is { } pinned)
+            Grid = pinned;
+        return true;
     }
 
     public async Task ApplyCloudlogSettingsAsync(QsoLogbookCloudlogSettingsRequest request)
@@ -539,6 +582,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     private void ClearEntryForm()
     {
+        _decodedGrid = null;
+        _decodedGridCall = null;
         _suppressCallLookup = true;
         ++_callLookupGeneration;
         Call = "";
@@ -759,6 +804,13 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     partial void OnGridChanged(string value)
     {
+        // Typing over a decoded locator hands it back to the operator.
+        if (_decodedGrid is not null && !string.Equals(value.Trim(), _decodedGrid, StringComparison.OrdinalIgnoreCase))
+        {
+            _decodedGrid = null;
+            _decodedGridCall = null;
+        }
+
         CoerceWorkedGrid(value);
         UpdateGridValidationState();
     }
@@ -926,14 +978,14 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        Grid = previous.GridSquare.Trim();
+        Grid = _decodedGrid ?? previous.GridSquare.Trim();
         Name = previous.Name.Trim();
     }
 
     private void ClearCorrespondentFields()
     {
         Name = "";
-        Grid = "";
+        Grid = _decodedGrid ?? "";
     }
 
     private async Task LookupCallbookIfNeededAsync(string call, int generation)
@@ -1354,6 +1406,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
+        _entryBridge?.Detach(this);
         CancelQrzLookup();
         _cloudlogUpload.UploadStateChanged -= OnCloudlogUploadStateChanged;
         _repository.QsosChanged -= OnRepositoryQsosChanged;

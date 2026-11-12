@@ -6676,4 +6676,166 @@
   <data name="Logbook.Settings.Cw.Help">
     <value>CW 键控器帮助</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>OscarWatch CW 设置</value>
+  </data>
+  <data name="Cw.Start">
+    <value>开始</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>停止</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>清除</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>清除已抄收的文本，重新开始解码。</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>保存抄收</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>将解码文本保存为文本文件，附带 UTC 时间。</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>保存 CW 抄收</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>文本文件</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>抄收已保存到 {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>设置</value>
+  </data>
+  <data name="Cw.Help">
+    <value>帮助</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>打开 oscarwatch.org 上的 OscarWatch CW 指南。</value>
+  </data>
+  <data name="Cw.Level">
+    <value>电平</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>CW 瀑布图</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>0 至 2000 Hz 的音频。解码器读取阴影频段（400 至 1200 Hz），请调谐使 CW 音调落在其中。黄线标出最强的稳定音调。</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>单击带下划线的呼号或网格定位，或按 Enter 或空格键，即可填入日志的录入表单。添加 QSO 之前不会记录任何内容。</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>最新的字符，解码器仍可能修改。</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>抄收文本比信号滞后约 2 秒。</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>音调 {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>无稳定音调</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>音调 {0:0} Hz 不在 400 至 1200 Hz 范围内，请重新调谐电台。</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>下行多普勒 {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>电台校正 {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>将 {0} 填入日志的呼号框</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>将 {0} 填入日志的网格定位框</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} 已填入日志的呼号框。</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} 已填入日志的网格定位框。</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>正在打开日志并填入 {0}。</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>日志正在编辑已保存的 QSO，请先保存或取消编辑。</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>已停止。按“开始”收听。</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>正在收听</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>正在收听 {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>此计算机上没有可用的音频输入。</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>CW 解码器已停止：{0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>OscarWatch 没有收到来自 {0} 的音频。请在设置中选择电台的音频接口。</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>声卡没有音频，正在重新连接…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>就绪。等待选择卫星。</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>就绪。等待 {0} 的频率面板切换到 CW。</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>就绪。等待 {0} 的下一次过境。</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>就绪。等待 {0} 的仰角数据。</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>就绪。等待 {0} 升至 {1}° 以上。</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>音频</value>
+  </data>
+  <data name="Cw.Input">
+    <value>输入</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>刷新</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>按电台控制的多普勒步进校正音调</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>当电台控制按步进调谐时，CW 音调会在步进之间漂移。此选项按差值将音调移回，使其保持在您调谐的位置。仅用于接收，不会重新调谐电台。</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>自动开始</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>所选卫星升起时开始收听</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>仅在此窗口打开且频率面板为 CW 时生效。卫星落下后停止收听。</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>开始仰角（°）</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>解码使用 e04 的 DeepCW 模型（MIT 许可），在本机运行，音频不会离开本机。</value>
+  </data>
 </root>

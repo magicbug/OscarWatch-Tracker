@@ -19,6 +19,8 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.11" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
+    <!-- 1.23.x is the newest ONNX Runtime with an osx-x64 native library. Later versions drop Intel Mac. -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
     <PackageReference Include="PortAudioSharp2" Version="1.0.6" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -110,6 +112,13 @@
     </Content>
     <Content Include="Assets\dxcc-prefix-map.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <!-- DeepCW CW decoder model (MIT, e04). The same files serve every platform. -->
+    <Content Include="..\native\deepcw\model.onnx;..\native\deepcw\model.onnx.json;..\native\deepcw\LICENSE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <Link>deepcw\%(Filename)%(Extension)</Link>
     </Content>
     <!-- Local builds copy every native library that is already in the tree.
          A RID publish copies only that platform, and keeps it as a real file

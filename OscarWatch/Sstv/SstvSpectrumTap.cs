@@ -17,19 +17,33 @@ public sealed class SstvSpectrumTap
     private const int Hop = Window / 2;
 
     private readonly float[] _window = new float[Window];
-    private readonly float[] _bins = new float[Columns];
-    private readonly double[] _power = new double[Columns];
+    private readonly float[] _bins;
+    private readonly double[] _power;
     private readonly int _rate;
     private readonly int _interval;
+    private readonly double _minHz;
+    private readonly double _maxHz;
+    private readonly int _columns;
     private int _filled;
     private int _sinceHop;
     private int _sinceRow;
     private int _segments;
 
     public SstvSpectrumTap(int sampleRate, double rowsPerSecond)
+        : this(sampleRate, rowsPerSecond, MinHz, MaxHz, Columns)
+    {
+    }
+
+    /// <summary>A tap over another audio range, for example the CW decoder's 0 to 2000 Hz.</summary>
+    public SstvSpectrumTap(int sampleRate, double rowsPerSecond, double minHz, double maxHz, int columns)
     {
         _rate = sampleRate;
         _interval = Math.Max(Hop, (int)Math.Round(sampleRate / rowsPerSecond));
+        _minHz = minHz;
+        _maxHz = maxHz;
+        _columns = columns;
+        _bins = new float[columns];
+        _power = new double[columns];
     }
 
     /// <summary>Add audio and append every row (dB per column) that falls due to <paramref name="rows"/>.</summary>
@@ -46,9 +60,9 @@ public sealed class SstvSpectrumTap
             if (_sinceHop == Hop)
             {
                 _sinceHop = 0;
-                if (_filled == Window && Ft4SpectrumAnalyzer.TryComputePassband(_window, _rate, _bins, MinHz, MaxHz))
+                if (_filled == Window && Ft4SpectrumAnalyzer.TryComputePassband(_window, _rate, _bins, _minHz, _maxHz))
                 {
-                    for (var i = 0; i < Columns; i++)
+                    for (var i = 0; i < _columns; i++)
                         _power[i] += Math.Pow(10, _bins[i] / 10.0);
                     _segments++;
                 }
@@ -61,8 +75,8 @@ public sealed class SstvSpectrumTap
             if (_segments == 0)
                 continue;
 
-            var row = new float[Columns];
-            for (var i = 0; i < Columns; i++)
+            var row = new float[_columns];
+            for (var i = 0; i < _columns; i++)
                 row[i] = (float)(10.0 * Math.Log10(Math.Max(_power[i] / _segments, 1e-10)));
             Array.Clear(_power);
             _segments = 0;

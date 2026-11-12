@@ -146,6 +146,112 @@ public class QsoLogbookCorrespondentLookupTests
         Assert.Equal("corrected", repo.LastUpdate.Comment);
     }
 
+    [Fact]
+    public async Task Decoded_call_runs_the_lookup_and_a_decoded_locator_replaces_its_grid()
+    {
+        var repo = new FakeLogbookRepository();
+        repo.LatestByCall["G4ABC"] = Qso("G4ABC", "Bob", "IO91");
+        using var vm = CreateViewModel(repo);
+        await SelectLogbookAsync(vm);
+        vm.RstSent = "579";
+
+        Assert.True(vm.FillFromDecode("g4abc", null));
+        Assert.Equal("G4ABC", vm.Call);
+        Assert.Equal("Bob", vm.Name);
+        Assert.Equal("IO91", vm.Grid);
+
+        Assert.True(vm.FillFromDecode(null, "IO85"));
+        Assert.Equal("IO85", vm.Grid);
+        Assert.Equal("G4ABC", vm.Call);
+        Assert.Equal("579", vm.RstSent);
+    }
+
+    [Fact]
+    public async Task Decoded_locator_before_the_call_survives_the_call_lookup()
+    {
+        var repo = new FakeLogbookRepository();
+        repo.LatestByCall["G4ABC"] = Qso("G4ABC", "Bob", "IO91");
+        using var vm = CreateViewModel(repo);
+        await SelectLogbookAsync(vm);
+
+        vm.FillFromDecode(null, "IO85");
+        vm.FillFromDecode("M0XYZ", null);
+        Assert.Equal("IO85", vm.Grid);
+
+        using var vm2 = CreateViewModel(repo);
+        await SelectLogbookAsync(vm2);
+        vm2.FillFromDecode(null, "IO85");
+        vm2.FillFromDecode("G4ABC", null);
+        Assert.Equal("IO85", vm2.Grid);
+        Assert.Equal("Bob", vm2.Name);
+    }
+
+    [Fact]
+    public async Task Decoded_locator_does_not_carry_over_to_another_call()
+    {
+        using var vm = CreateViewModel(new FakeLogbookRepository());
+        await SelectLogbookAsync(vm);
+
+        vm.FillFromDecode("G4ABC", null);
+        vm.FillFromDecode(null, "IO85");
+        vm.FillFromDecode("M0XYZ", null);
+
+        Assert.Equal("M0XYZ", vm.Call);
+        Assert.Equal("", vm.Grid);
+    }
+
+    [Fact]
+    public async Task Typing_a_grid_releases_the_decoded_locator()
+    {
+        using var vm = CreateViewModel(new FakeLogbookRepository());
+        await SelectLogbookAsync(vm);
+
+        vm.FillFromDecode(null, "IO85");
+        vm.Grid = "JO62";
+        vm.FillFromDecode("M0XYZ", null);
+
+        Assert.Equal("", vm.Grid);
+    }
+
+    [Fact]
+    public async Task Decoded_fill_is_refused_while_editing_a_saved_qso()
+    {
+        var saved = Qso("G0ABC", "Alice", "JO62");
+        using var vm = CreateViewModel(new FakeLogbookRepository());
+        await SelectLogbookAsync(vm);
+        vm.SelectedQso = QsoRowViewModel.From(saved, use24Hour: true, LocalizationService.Instance);
+        vm.BeginEditSelectedQsoCommand.Execute(null);
+
+        Assert.False(vm.FillFromDecode("M0XYZ", "IO85"));
+        Assert.Equal("G0ABC", vm.Call);
+        Assert.Equal("JO62", vm.Grid);
+    }
+
+    [Fact]
+    public async Task Entry_bridge_holds_a_fill_until_the_logbook_opens()
+    {
+        var bridge = new OscarWatch.Services.QsoLogbookEntryBridge();
+        var openRequests = 0;
+        bridge.OpenLogbookRequested += (_, _) => openRequests++;
+
+        Assert.Equal(OscarWatch.Services.QsoLogbookFillResult.OpeningLogbook, bridge.Fill("M0XYZ", null));
+        Assert.Equal(OscarWatch.Services.QsoLogbookFillResult.OpeningLogbook, bridge.Fill(null, "IO85"));
+        Assert.Equal(2, openRequests);
+
+        using var vm = CreateViewModel(new FakeLogbookRepository());
+        await SelectLogbookAsync(vm);
+        bridge.Attach(vm);
+        Assert.Equal("M0XYZ", vm.Call);
+        Assert.Equal("IO85", vm.Grid);
+
+        Assert.Equal(OscarWatch.Services.QsoLogbookFillResult.Filled, bridge.Fill("G4ABC", null));
+        Assert.Equal("G4ABC", vm.Call);
+
+        bridge.Detach(vm);
+        Assert.Equal(OscarWatch.Services.QsoLogbookFillResult.OpeningLogbook, bridge.Fill("G4XYZ", null));
+        Assert.Equal("G4ABC", vm.Call);
+    }
+
     private static QsoLogbookViewModel CreateViewModel(FakeLogbookRepository repo) =>
         new(
             repo,

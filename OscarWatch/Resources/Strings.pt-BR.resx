@@ -6675,4 +6675,166 @@ Mais recente: {1} ({2})</value>
   <data name="Logbook.Settings.Cw.Help">
     <value>Ajuda do manipulador CW</value>
   </data>
+  <data name="Menu.Tools.Cw">
+    <value>_OscarWatch CW</value>
+  </data>
+  <data name="Window.Cw.Title">
+    <value>OscarWatch CW</value>
+  </data>
+  <data name="Window.CwSettings.Title">
+    <value>Configurações do OscarWatch CW</value>
+  </data>
+  <data name="Cw.Start">
+    <value>Iniciar</value>
+  </data>
+  <data name="Cw.Stop">
+    <value>Parar</value>
+  </data>
+  <data name="Cw.Clear">
+    <value>Limpar</value>
+  </data>
+  <data name="Cw.Clear.Tip">
+    <value>Limpa o texto recebido e começa a decodificar de novo.</value>
+  </data>
+  <data name="Cw.SaveCopy">
+    <value>Salvar texto</value>
+  </data>
+  <data name="Cw.SaveCopy.Tip">
+    <value>Salva o texto decodificado em um arquivo de texto, com horários UTC.</value>
+  </data>
+  <data name="Cw.SaveCopy.Picker">
+    <value>Salvar texto CW</value>
+  </data>
+  <data name="Cw.SaveCopy.TextFiles">
+    <value>Arquivos de texto</value>
+  </data>
+  <data name="Cw.Saved">
+    <value>Texto salvo em {0}</value>
+  </data>
+  <data name="Cw.OpenSettings">
+    <value>Configurações</value>
+  </data>
+  <data name="Cw.Help">
+    <value>Ajuda</value>
+  </data>
+  <data name="Cw.Help.Tip">
+    <value>Abre o guia do OscarWatch CW em oscarwatch.org.</value>
+  </data>
+  <data name="Cw.Level">
+    <value>Nível</value>
+  </data>
+  <data name="Cw.Waterfall">
+    <value>Cascata CW</value>
+  </data>
+  <data name="Cw.Waterfall.Tip">
+    <value>Áudio de 0 a 2000 Hz. O decodificador lê a faixa sombreada (400 a 1200 Hz), então sintonize até a nota CW ficar dentro dela. A linha amarela marca a nota estável mais forte.</value>
+  </data>
+  <data name="Cw.Copy.Hint">
+    <value>Indicativos e localizadores sublinhados vão para o formulário do livro de registro ao clicar, ou com Enter ou Espaço. Nada é registrado até você adicionar o QSO.</value>
+  </data>
+  <data name="Cw.Pending.Tip">
+    <value>As letras mais recentes. O decodificador ainda pode alterá-las.</value>
+  </data>
+  <data name="Cw.Lag">
+    <value>O texto fica cerca de 2 s atrás do sinal.</value>
+  </data>
+  <data name="Cw.Tone">
+    <value>Nota {0:0} Hz</value>
+  </data>
+  <data name="Cw.Tone.None">
+    <value>Sem nota estável</value>
+  </data>
+  <data name="Cw.Tone.OutOfBand">
+    <value>A nota de {0:0} Hz está fora de 400 a 1200 Hz. Ressintonize o rádio.</value>
+  </data>
+  <data name="Cw.Doppler">
+    <value>Doppler de descida {0}</value>
+  </data>
+  <data name="Cw.FeedForward">
+    <value>correção do rádio {0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Cw.Logbook.CallTip">
+    <value>Colocar {0} no campo de indicativo do livro de registro</value>
+  </data>
+  <data name="Cw.Logbook.GridTip">
+    <value>Colocar {0} no campo de localizador do livro de registro</value>
+  </data>
+  <data name="Cw.Logbook.FilledCall">
+    <value>{0} está no campo de indicativo do livro de registro.</value>
+  </data>
+  <data name="Cw.Logbook.FilledGrid">
+    <value>{0} está no campo de localizador do livro de registro.</value>
+  </data>
+  <data name="Cw.Logbook.Opening">
+    <value>Abrindo o livro de registro com {0}.</value>
+  </data>
+  <data name="Cw.Logbook.Editing">
+    <value>O livro de registro está editando um QSO salvo. Salve ou cancele a edição primeiro.</value>
+  </data>
+  <data name="Cw.Status.Idle">
+    <value>Parado. Clique em Iniciar para ouvir.</value>
+  </data>
+  <data name="Cw.Status.Listening">
+    <value>Ouvindo</value>
+  </data>
+  <data name="Cw.Status.ListeningSat">
+    <value>Ouvindo {0}</value>
+  </data>
+  <data name="Cw.Status.NoAudio">
+    <value>A entrada de áudio não está disponível neste computador.</value>
+  </data>
+  <data name="Cw.Status.Error">
+    <value>O decodificador CW parou: {0}</value>
+  </data>
+  <data name="Cw.Status.SilentInput">
+    <value>Nenhum áudio está chegando ao OscarWatch de {0}. Escolha a interface de áudio do rádio em Configurações.</value>
+  </data>
+  <data name="Cw.Status.CaptureRetrying">
+    <value>Sem áudio da placa de som. Reconectando…</value>
+  </data>
+  <data name="Cw.Status.WaitingNoSatellite">
+    <value>Pronto. Aguardando um satélite em foco.</value>
+  </data>
+  <data name="Cw.Status.WaitingNotCw">
+    <value>Pronto. Aguardando o painel de frequências ficar em CW para {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNextPass">
+    <value>Pronto. Aguardando a próxima passagem de {0}.</value>
+  </data>
+  <data name="Cw.Status.WaitingNoElevation">
+    <value>Pronto. Aguardando a elevação de {0}.</value>
+  </data>
+  <data name="Cw.Status.Waiting">
+    <value>Pronto. Aguardando {0} subir acima de {1}°.</value>
+  </data>
+  <data name="Cw.Settings.Audio">
+    <value>Áudio</value>
+  </data>
+  <data name="Cw.Input">
+    <value>Entrada</value>
+  </data>
+  <data name="Cw.Refresh">
+    <value>Atualizar</value>
+  </data>
+  <data name="Cw.CatFeedForward">
+    <value>Corrigir a nota pelos passos Doppler do controle do rádio</value>
+  </data>
+  <data name="Cw.CatFeedForward.Tip">
+    <value>Quando o controle do rádio sintoniza em passos, a nota CW desliza entre os passos. Isto devolve a nota pela diferença para que ela fique onde você sintonizou. Somente recepção: o rádio não é ressintonizado.</value>
+  </data>
+  <data name="Cw.Settings.AutoStart">
+    <value>Início automático</value>
+  </data>
+  <data name="Cw.AutoStart">
+    <value>Começar a ouvir quando o satélite em foco nascer</value>
+  </data>
+  <data name="Cw.AutoStart.Tip">
+    <value>Somente enquanto esta janela estiver aberta e o painel de frequências estiver em CW. A escuta para quando o satélite se põe.</value>
+  </data>
+  <data name="Cw.AutoStart.Elevation">
+    <value>Elevação inicial (°)</value>
+  </data>
+  <data name="Cw.Settings.Credit">
+    <value>A decodificação usa o modelo DeepCW de e04 (licença MIT) e roda neste computador. Nenhum áudio sai da máquina.</value>
+  </data>
 </root>
