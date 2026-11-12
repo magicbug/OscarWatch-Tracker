@@ -59,6 +59,7 @@ public enum TerminalUhmStatus
     Off,
     NoToken,
     NoSatellite,
+    BelowHorizon,
     Active,
     RateLimited,
     NotEnabled,
@@ -657,6 +658,13 @@ public sealed class TerminalService : IAsyncDisposable
             .FirstOrDefault(s => string.Equals(s.NoradId, norad, StringComparison.Ordinal))?.LookAngles;
     }
 
+    /// <summary>True when the focused satellite has look angles at or above the status-report horizon (−1°).</summary>
+    internal bool UhmSatelliteIsUp()
+    {
+        var angles = CurrentLookAngles();
+        return angles is not null && SatelliteStatusReportFormatting.IsElevationReportable(angles.ElevationDeg);
+    }
+
     /// <summary>
     /// Next horizon crossing for the focused satellite: LOS while it is up, otherwise the next AOS within
     /// 24 hours. Cached for 30 s; null when there is no focused satellite or no crossing was found.
@@ -1017,7 +1025,7 @@ public sealed class TerminalService : IAsyncDisposable
 
     private void PostUhmHeard(TerminalDecodedMessage message, string myCall, TerminalSatelliteProfile profile)
     {
-        if (!Settings.Uhm.Enabled || !HasUhmToken() || DateTime.UtcNow < _uhmBlockedUntilUtc)
+        if (!Settings.Uhm.Enabled || !HasUhmToken() || !UhmSatelliteIsUp() || DateTime.UtcNow < _uhmBlockedUntilUtc)
             return;
 
         UhmHeardReport? report;
@@ -1072,6 +1080,7 @@ public sealed class TerminalService : IAsyncDisposable
         TerminalUhmStatus? idle = !uhm.Enabled ? TerminalUhmStatus.Off
             : !HasUhmToken() ? TerminalUhmStatus.NoToken
             : profile is null ? TerminalUhmStatus.NoSatellite
+            : !UhmSatelliteIsUp() ? TerminalUhmStatus.BelowHorizon
             : null;
         if (idle is { } status)
         {
@@ -1082,7 +1091,8 @@ public sealed class TerminalService : IAsyncDisposable
         if (now < _uhmBlockedUntilUtc)
             return Task.CompletedTask;
 
-        if (UhmStatus is TerminalUhmStatus.Off or TerminalUhmStatus.NoToken or TerminalUhmStatus.NoSatellite)
+        if (UhmStatus is TerminalUhmStatus.Off or TerminalUhmStatus.NoToken or TerminalUhmStatus.NoSatellite
+            or TerminalUhmStatus.BelowHorizon)
             SetUhmStatus(TerminalUhmStatus.Active, null);
 
         var doActive = now >= nextActive;

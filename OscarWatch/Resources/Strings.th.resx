@@ -5633,6 +5633,9 @@ LOS: {2}
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: เลือกดาวเทียมที่มีดิจิพีทเตอร์</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: ดาวเทียมอยู่ใต้เส้นขอบฟ้า</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: ถูกจำกัดอัตรา จะลองใหม่เร็วๆ นี้</value>
   </data>

@@ -1084,7 +1084,7 @@ public sealed partial class TerminalViewModel : ViewModelBase, IDisposable
         {
             TerminalUhmStatus.Active => DotOk,
             TerminalUhmStatus.Off => DotOff,
-            TerminalUhmStatus.NoSatellite or TerminalUhmStatus.RateLimited => DotBusy,
+            TerminalUhmStatus.NoSatellite or TerminalUhmStatus.BelowHorizon or TerminalUhmStatus.RateLimited => DotBusy,
             _ => DotError,
         };
 
@@ -1093,6 +1093,7 @@ public sealed partial class TerminalViewModel : ViewModelBase, IDisposable
             TerminalUhmStatus.Active => _l.Get("Terminal.Uhm.Status.Active"),
             TerminalUhmStatus.NoToken => _l.Get("Terminal.Uhm.Status.NoToken"),
             TerminalUhmStatus.NoSatellite => _l.Get("Terminal.Uhm.Status.NoSatellite"),
+            TerminalUhmStatus.BelowHorizon => _l.Get("Terminal.Uhm.Status.BelowHorizon"),
             TerminalUhmStatus.RateLimited => _l.Get("Terminal.Uhm.Status.RateLimited"),
             TerminalUhmStatus.NotEnabled => _l.Get("Terminal.Uhm.Status.NotEnabled"),
             TerminalUhmStatus.Unauthorised => _l.Get("Terminal.Uhm.Status.Unauthorised"),

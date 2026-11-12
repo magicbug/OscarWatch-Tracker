@@ -5628,6 +5628,9 @@ Mais recente: {1} ({2})</value>
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: selecione um satélite com digipeater</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: satélite abaixo do horizonte</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: limite de pedidos, nova tentativa em breve</value>
   </data>

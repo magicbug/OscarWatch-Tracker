@@ -5629,6 +5629,9 @@
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM:请选择带转发器的卫星</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: 卫星在地平线以下</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM:请求受限,稍后重试</value>
   </data>

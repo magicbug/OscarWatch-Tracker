@@ -5633,6 +5633,9 @@ Aktuell: {1} ({2})</value>
   <data name="Terminal.Uhm.Status.NoSatellite">
     <value>UHM: einen Satelliten mit Digipeater wählen</value>
   </data>
+  <data name="Terminal.Uhm.Status.BelowHorizon">
+    <value>UHM: Satellit unter dem Horizont</value>
+  </data>
   <data name="Terminal.Uhm.Status.RateLimited">
     <value>UHM: Anfragelimit erreicht, neuer Versuch gleich</value>
   </data>
