@@ -1033,11 +1033,21 @@
     ]
   },
   {
-    "name": "Luca",
+    "name": "LUCA-1",
     "norad_id": "67287",
+    "alternative_names": ["Luca", "RS90S"],
     "modes": [
       {
-        "type": "SSDV 2k4 GMSK",
+        "type": "SSTV",
+        "downlink": 437180,
+        "uplink": 0,
+        "downlink_mode": "FM",
+        "uplink_mode": "FM",
+        "doppler": "NOR",
+        "sstv_modes": ["Robot36"]
+      },
+      {
+        "type": "Telemetry 2k4 GMSK",
         "downlink": 437180,
         "uplink": 0,
         "downlink_mode": "FM",
