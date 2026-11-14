@@ -146,6 +146,7 @@ public abstract class IcomCivDriverBase : IRigDriver
                 .Warning(ex, "Failed to open CI-V port {Port} at {BaudRate}", Port, BaudRate);
             _transport.Dispose();
             _transport = null;
+            throw;
         }
     }
 
