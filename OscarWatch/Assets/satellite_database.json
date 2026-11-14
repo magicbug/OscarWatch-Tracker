@@ -842,7 +842,7 @@
   },
   {
     "name": "HADES-L",
-    "norad_id": "100909",
+    "norad_id": "101102",
     "modes": [
       {
         "type": "Voice A/U",
@@ -962,7 +962,8 @@
   },
   {
     "name": "UNNE-1B",
-    "norad_id": "100948",
+    "norad_id": "101101",
+    "alternative_names": ["HADES-E2"],
     "modes": [
       {
         "type": "FM Repeater",
