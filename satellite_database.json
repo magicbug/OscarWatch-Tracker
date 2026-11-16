@@ -864,8 +864,9 @@
     ]
   },
   {
-    "name": "Erminaz-2U",
-    "norad_id": "100915",
+    "name": "AO-129",
+    "norad_id": "101098",
+    "alternative_names": ["Erminaz-2U"],
     "modes": [
       {
         "type": "Digipeater (9k6 FSK)",
@@ -886,6 +887,37 @@
       {
         "type": "CW",
         "downlink": 435900,
+        "uplink": 0,
+        "downlink_mode": "CW",
+        "uplink_mode": "CW",
+        "doppler": "NOR"
+      }
+    ]
+  },
+  {
+    "name": "AO-130",
+    "norad_id": "101095",
+    "alternative_names": ["Erminaz-2V"],
+    "modes": [
+      {
+        "type": "Digipeater (9k6 FSK)",
+        "downlink": 145920,
+        "uplink": 145920,
+        "downlink_mode": "DATA-FM",
+        "uplink_mode": "DATA-FM",
+        "doppler": "NOR"
+      },
+      {
+        "type": "9k6 GMSK Telemetry / SSDV",
+        "downlink": 145920,
+        "uplink": 0,
+        "downlink_mode": "FM",
+        "uplink_mode": "FM",
+        "doppler": "NOR"
+      },
+      {
+        "type": "CW",
+        "downlink": 145920,
         "uplink": 0,
         "downlink_mode": "CW",
         "uplink_mode": "CW",
