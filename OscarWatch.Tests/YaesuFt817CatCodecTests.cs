@@ -32,6 +32,28 @@ public sealed class YaesuFt817CatCodecTests
         Assert.Equal(0x07, cmd[4]);
     }
 
+    [Theory]
+    [InlineData("USB", 0x01)]
+    [InlineData("LSB", 0x00)]
+    [InlineData("DATA-USB", 0x0A)]
+    [InlineData("DATA-LSB", 0x0A)]
+    [InlineData("DATA-FM", 0x0C)]
+    [InlineData("FM-DATA", 0x0C)]
+    public void BuildSetMode_maps_catalogue_modes(string mode, byte expectedModeByte)
+    {
+        var cmd = YaesuFt817CatCodec.BuildSetModeCommand(mode);
+        Assert.Equal(expectedModeByte, cmd[0]);
+        Assert.Equal(0x07, cmd[4]);
+    }
+
+    [Theory]
+    [InlineData(0x0A, "DIG")]
+    [InlineData(0x0C, "PKT")]
+    [InlineData(0x01, "USB")]
+    [InlineData(0x00, "LSB")]
+    public void DecodeMode_includes_dig_and_pkt(byte modeByte, string expected) =>
+        Assert.Equal(expected, YaesuFt817CatCodec.DecodeMode(modeByte));
+
     [Fact]
     public void BuildCtcss_67Hz_uses_bcd_tone_bytes()
     {

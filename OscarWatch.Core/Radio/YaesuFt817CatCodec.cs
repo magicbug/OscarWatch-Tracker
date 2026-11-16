@@ -64,6 +64,8 @@ public static class YaesuFt817CatCodec
         0x04 => "AM",
         0x08 => "FM",
         0x88 => "FM",
+        0x0A => "DIG",
+        0x0C => "PKT",
         _ => "USB"
     };
 
@@ -144,14 +146,19 @@ public static class YaesuFt817CatCodec
             _ => narrow
         };
 
+        // DATA-USB / DATA-LSB → DIG (0x0A): rear DATA jack. Sideband is menu #26 (USER-U / USER-L).
+        // DATA-FM / FM-DATA → PKT (0x0C): packet FM on the DATA jack.
+        // Plain USB / LSB / FM stay on the mic jack.
         return upper switch
         {
-            "LSB" or "DATA-LSB" => 0x00,
-            "USB" or "DATA-USB" => 0x01,
+            "LSB" => 0x00,
+            "USB" => 0x01,
+            "DATA-LSB" or "DATA-USB" => 0x0A,
             "CW" => useNarrow ? (byte)0x82 : (byte)0x02,
             "CWR" => useNarrow ? (byte)0x83 : (byte)0x03,
             "AM" => useNarrow ? (byte)0x84 : (byte)0x04,
-            "FM" or "FMN" or "DATA-FM" or "FM-DATA" => useNarrow ? (byte)0x88 : (byte)0x08,
+            "FM" or "FMN" => useNarrow ? (byte)0x88 : (byte)0x08,
+            "DATA-FM" or "FM-DATA" => 0x0C,
             _ => 0x01
         };
     }
