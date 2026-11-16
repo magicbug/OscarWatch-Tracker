@@ -59,6 +59,60 @@ public sealed class RigControllerConnectFailureTests
         Assert.Equal(1, attempts);
     }
 
+    private static string NonexistentSerialPort =>
+        OperatingSystem.IsWindows() ? "COM254" : "/dev/ttyOscarWatchNonexistent";
+
+    [Fact]
+    public void Icom_single_missing_port_reports_serial_port_not_found()
+    {
+        var controller = new RigController();
+        var port = NonexistentSerialPort;
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.IcomIc9700,
+            Port = port,
+            BaudRate = 19200,
+            CivAddress = "A2"
+        };
+
+        controller.PublishContext(settings, null);
+        controller.DrainCommandQueueForTests();
+
+        var status = controller.GetStatus();
+        Assert.Equal(RigStatusKind.SerialPortNotFound, status.StatusKind);
+        Assert.Equal(port, status.StatusPort);
+        Assert.DoesNotContain("CI-V is not responding", status.StatusDetail ?? "", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Icom_dual_missing_downlink_port_reports_serial_port_not_found_with_endpoint()
+    {
+        var controller = new RigController();
+        var port = NonexistentSerialPort;
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            DualRadioEnabled = true,
+            Downlink = new RigEndpointSettings
+            {
+                Type = RigType.IcomIc7300,
+                Port = port,
+                BaudRate = 19200,
+                CivAddress = "94"
+            },
+            Uplink = new RigEndpointSettings { Type = RigType.Dummy }
+        };
+
+        controller.PublishContext(settings, null);
+        controller.DrainCommandQueueForTests();
+
+        var status = controller.GetStatus();
+        Assert.Equal(RigStatusKind.SerialPortNotFound, status.StatusKind);
+        Assert.Equal(port, status.StatusPort);
+        Assert.Equal(SerialPortConnectErrorHelper.EndpointDownlink, status.StatusDetail);
+    }
+
     [Fact]
     public void Single_missing_port_reports_serial_port_not_found()
     {

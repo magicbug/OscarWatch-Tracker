@@ -1,3 +1,4 @@
+using OscarWatch.Core.Hardware;
 using OscarWatch.Core.Models;
 using OscarWatch.Rig;
 
@@ -5,6 +6,17 @@ namespace OscarWatch.Tests;
 
 public sealed class IcomCivDriverTests
 {
+    private static string NonexistentSerialPort =>
+        OperatingSystem.IsWindows() ? "COM254" : "/dev/ttyOscarWatchNonexistent";
+
+    [Fact]
+    public void Open_nonexistent_serial_port_throws_and_classifies_as_not_found()
+    {
+        var driver = new IcomIc7300Driver(NonexistentSerialPort, 19200, "94");
+        var ex = Assert.ThrowsAny<Exception>(() => driver.Open());
+        Assert.False(driver.IsConnected);
+        Assert.Equal(SerialPortConnectErrorKind.PortNotFound, SerialPortConnectErrorHelper.Classify(ex));
+    }
     private static readonly byte[] CivNak = [0xFE, 0xFE, 0x60, 0x00, 0xFA, 0xFD];
 
     [Fact]
