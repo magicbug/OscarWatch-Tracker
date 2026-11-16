@@ -245,6 +245,15 @@ LOS: {2}
   <data name="Pass.Schedule.AddTooltip">
     <value>Запланировать сигнал и оповещение перед AOS</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} дн.</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>TLE для {0} имеет возраст {1} дн. (эпоха {2:yyyy-MM-dd}). Время пролётов и доплер могут быть менее точными.</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>Старый TLE для {0}: {1} дн.</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Убрать этот пролёт из расписания</value>
   </data>
@@ -2724,6 +2733,12 @@ LOS: {2}
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>Автозагрузка только для OscarWatch и своих URL. Локальные файлы перечитываются при сохранении настроек или Спутники → Обновить TLE.</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>Предупреждать, когда возраст TLE достигает указанного числа дней</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>Для спутника с таким старым TLE в списке пролётов появляется предупреждение, а в выборе спутников он отмечается как устаревший TLE. Старые TLE снижают точность прогноза, особенно на низких орбитах. Возраст считается от эпохи самого TLE, поэтому он отличается от возраста загрузки в нижней строке.</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>

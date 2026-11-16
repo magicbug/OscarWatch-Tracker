@@ -245,6 +245,15 @@ Durasi: {4}</value>
   <data name="Pass.Schedule.AddTooltip">
     <value>Jadwalkan lintasan ini untuk bunyi dan peringatan sebelum AOS</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} hr</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>TLE untuk {0} berumur {1} hari (epoch {2:yyyy-MM-dd}). Waktu lintasan dan Doppler mungkin kurang akurat.</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>TLE lama untuk {0}: {1} hari</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Hapus lintasan ini dari jadwal</value>
   </data>
@@ -2724,6 +2733,12 @@ Lanjutkan?</value>
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>Unduhan otomatis hanya untuk OscarWatch dan URL kustom. Berkas lokal dibaca ulang saat Anda menyimpan pengaturan atau memilih Satelit → Segarkan TLE.</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>Peringatkan saat TLE berumur minimal sekian hari</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>Satelit dengan TLE seusang ini mendapat peringatan di daftar lintasan dan ditandai sebagai TLE usang di pemilih satelit. TLE lama membuat prediksi kurang akurat, terutama pada orbit rendah. Umur dihitung dari epoch TLE itu sendiri, sehingga berbeda dari umur unduhan di bagian bawah jendela.</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>

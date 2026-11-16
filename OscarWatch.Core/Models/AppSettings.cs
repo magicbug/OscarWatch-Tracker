@@ -36,6 +36,8 @@ public sealed class AppSettings
     /// <summary>When true, UI times use 24-hour clock; otherwise 12-hour with AM/PM per culture.</summary>
     public bool Use24HourClock { get; set; }
     public int TleStaleHours { get; set; } = 6;
+    /// <summary>Warn when a satellite's orbital element set is at least this many days old (see <see cref="ElementAgeWarning"/>).</summary>
+    public int ElementAgeWarningDays { get; set; } = ElementAgeWarning.DefaultDays;
     public TleSourceSettings TleSource { get; set; } = new();
     public TleAutoUpdateMode TleAutoUpdate { get; set; } = TleAutoUpdateMode.OnStartup;
     /// <summary>On startup, check tle.oscarwatch.org for new transponder database entries.</summary>

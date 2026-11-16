@@ -147,6 +147,13 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Tle.UpdatesNote}" />
+            <TextBlock Text="{loc:Localize Key=Settings.Tle.ElementAge}" Margin="0,8,0,0" />
+            <NumericUpDown Value="{Binding ElementAgeWarningDays, Mode=TwoWay}"
+                           Minimum="1" Maximum="365" FormatString="F0" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       Text="{loc:Localize Key=Settings.Tle.ElementAgeNote}" />
           </StackPanel>
         </ScrollViewer>
       </TabItem>

@@ -1068,6 +1068,36 @@ public partial class MainViewModel : ViewModelBase
         RefreshHamsAtRoveClockDisplay();
     }
 
+    /// <summary>
+    /// Marks pass rows whose satellite has an element set at least the configured number of days old. The age
+    /// comes from each element set's own epoch, so it is not the same as the catalogue download age in the footer.
+    /// </summary>
+    private void UpdateElementAgeDisplays()
+    {
+        var rows = Passes.OfType<PassRowViewModel>().ToList();
+        if (rows.Count == 0)
+            return;
+
+        var warningDays = ElementAgeWarning.ClampDays(_settings.Current.ElementAgeWarningDays);
+        var nowUtc = DateTime.UtcNow;
+        var epochs = new Dictionary<string, DateTime>(StringComparer.Ordinal);
+        foreach (var sat in _tleService.Catalog)
+        {
+            if (sat.EpochUtc is { } epoch)
+                epochs[SatelliteCatalogMatching.NormalizeNoradId(sat.NoradId)] = epoch;
+        }
+
+        foreach (var row in rows)
+        {
+            if (epochs.TryGetValue(SatelliteCatalogMatching.NormalizeNoradId(row.NoradId), out var epochUtc)
+                && ElementAgeWarning.WholeDaysOld(epochUtc, nowUtc) is { } days
+                && ElementAgeWarning.IsOldEnough(epochUtc, nowUtc, warningDays))
+                row.ApplyElementAge(days, epochUtc);
+            else
+                row.ClearElementAge();
+        }
+    }
+
     private void RefreshPassTimeDisplay()
     {
         var clockFormat = PassDisplayFormat.FromSettings(_settings.Current.Use24HourClock);
@@ -1099,6 +1129,7 @@ public partial class MainViewModel : ViewModelBase
         ApplyPassListHighlights(items);
         ReplacePassList(items);
         UpdateCommunityStatusDisplays();
+        UpdateElementAgeDisplays();
     }
 
     private void RefreshHamsAtRoveClockDisplay()
@@ -3611,6 +3642,7 @@ public partial class MainViewModel : ViewModelBase
                     SelectedListItem = PassListSelection.FindMatchingRow(Passes, selectedNorad, selectedAos);
 
                 UpdateCommunityStatusDisplays();
+                UpdateElementAgeDisplays();
 
                 // Update the timeline passes for the elevation timeline control
                 TimelinePasses = merged.Take(50).ToList();
@@ -3670,6 +3702,14 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
 
     [ObservableProperty]
     private string _communityStatusAutomationName = "";
+    [ObservableProperty]
+    private bool _showElementAge;
+    [ObservableProperty]
+    private string _elementAgeText = "";
+    [ObservableProperty]
+    private string _elementAgeToolTip = "";
+    [ObservableProperty]
+    private string _elementAgeAutomationName = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ScheduleGlyph))]
@@ -3732,6 +3772,23 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
         CommunityStatusDotOpacity = stale ? 0.55 : 1.0;
         CommunityStatusToolTip = toolTip;
         CommunityStatusAutomationName = automationName;
+    }
+
+    public void ClearElementAge()
+    {
+        ShowElementAge = false;
+        ElementAgeText = "";
+        ElementAgeToolTip = "";
+        ElementAgeAutomationName = "";
+    }
+
+    /// <summary>Marks this pass because the satellite's orbital elements are old (see <see cref="ElementAgeWarning"/>).</summary>
+    public void ApplyElementAge(int days, DateTime epochUtc)
+    {
+        ShowElementAge = true;
+        ElementAgeText = L.Get("Pass.ElementAge.Label", days);
+        ElementAgeToolTip = L.Get("Pass.ElementAge.ToolTip", SatelliteName, days, epochUtc);
+        ElementAgeAutomationName = L.Get("Pass.ElementAge.Automation", SatelliteName, days);
     }
 
     public void UpdateDisplay(DateTime utcNow, TimeSpan imminentWindow, bool isRecording)

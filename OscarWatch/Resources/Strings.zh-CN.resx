@@ -241,6 +241,15 @@
   <data name="Pass.Schedule.AddTooltip">
     <value>安排此过境，以便在 AOS 前发出提示音和警报</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} 天</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>{0} 的 TLE 已有 {1} 天（历元 {2:yyyy-MM-dd}）。过境时间和多普勒可能不够准确。</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>{0} 的旧 TLE：{1} 天</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>从此过境安排中移除</value>
   </data>
@@ -2720,6 +2729,12 @@
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>自动下载仅适用于 OscarWatch 和自定义 URL。当您保存设置或选择卫星 -> 刷新 TLE 时，将重新读取本地文件。</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>当 TLE 至少达到此天数时发出警告</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>TLE 达到此天数的卫星会在过境列表中显示警告，并在卫星选择器中标记为过时的 TLE。旧的 TLE 会降低预测精度，低轨道尤其明显。天数从 TLE 自身的历元起算，因此与页脚显示的下载时间不同。</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>
