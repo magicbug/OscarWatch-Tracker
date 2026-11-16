@@ -86,7 +86,7 @@ public sealed class SettingsRecordingDevicesTests
         Assert.DoesNotContain("%AppData%", vm.RecordingOutputFolderWatermark, StringComparison.Ordinal);
     }
 
-    private static SettingsViewModel CreateViewModel(
+    internal static SettingsViewModel CreateViewModel(
         IAudioRecordingService recording,
         TestSettingsService? settings = null)
     {
@@ -153,7 +153,7 @@ public sealed class SettingsRecordingDevicesTests
         public Task StopAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 
-    private sealed class TestSettingsService : ISettingsService
+    internal sealed class TestSettingsService : ISettingsService
     {
         public AppSettings Current { get; } = new();
         public string? LoadError => null;

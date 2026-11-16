@@ -2816,32 +2816,36 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             setCivAddress(RigSettings.DefaultCivAddressFor(type));
     }
 
-    private RigSettings BuildRigSettingsForConflictCheck() => new()
+    internal RigSettings BuildRigSettingsForConflictCheck()
     {
-        Enabled = RigEnabled,
-        DualRadioEnabled = DualRadioEnabled,
-        Type = SelectedRigTypeChoice?.Value ?? RigType.None,
-        Port = SelectedRigComPort ?? "",
-        Connection = RigIcomLan.Connection,
-        Downlink = new RigEndpointSettings
+        var rig = new RigSettings
         {
-            Type = SelectedDownlinkRigTypeChoice?.Value ?? RigType.YaesuFt817,
-            Port = SelectedDownlinkComPort ?? "",
-            NetworkHost = DownlinkNetworkHost.Trim(),
-            NetworkPort = DownlinkNetworkPort,
-            Connection = LegConnection(SelectedDownlinkRigTypeChoice?.Value, DownlinkKenwood, DownlinkIcomLan)
-        },
-        Uplink = new RigEndpointSettings
-        {
-            Type = SelectedUplinkRigTypeChoice?.Value ?? RigType.YaesuFt818,
-            Port = SelectedUplinkComPort ?? "",
-            Connection = LegConnection(SelectedUplinkRigTypeChoice?.Value, UplinkKenwood, UplinkIcomLan)
-        }
-    };
+            Enabled = RigEnabled,
+            DualRadioEnabled = DualRadioEnabled,
+            Type = SelectedRigTypeChoice?.Value ?? RigType.None,
+            Port = SelectedRigComPort ?? "",
+            Connection = RigIcomLan.Connection,
+            Downlink = new RigEndpointSettings
+            {
+                Type = SelectedDownlinkRigTypeChoice?.Value ?? RigType.YaesuFt817,
+                Port = SelectedDownlinkComPort ?? "",
+                NetworkHost = DownlinkNetworkHost.Trim(),
+                NetworkPort = DownlinkNetworkPort
+            },
+            Uplink = new RigEndpointSettings
+            {
+                Type = SelectedUplinkRigTypeChoice?.Value ?? RigType.YaesuFt818,
+                Port = SelectedUplinkComPort ?? ""
+            }
+        };
 
-    private static RigConnectionKind LegConnection(
-        RigType? type, KenwoodHfLegSettingsViewModel kenwood, IcomLanSettingsViewModel icom) =>
-        RigSettings.IsIcomLanEndpoint(type ?? RigType.None) ? icom.Connection : kenwood.Connection;
+        DownlinkKenwood.ApplyTo(rig.Downlink);
+        UplinkKenwood.ApplyTo(rig.Uplink);
+        DownlinkIcomLan.ApplyTo(rig.Downlink);
+        UplinkIcomLan.ApplyTo(rig.Uplink);
+        RigIcomLan.ApplyTo(rig);
+        return rig;
+    }
 
     private void RefreshComPortConflictIfReady()
     {
