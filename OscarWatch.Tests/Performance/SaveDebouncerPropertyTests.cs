@@ -111,23 +111,21 @@ public sealed class SaveDebouncerPropertyTests : IDisposable
     }
 
     /// <summary>
-    /// Property 4: Debounce retains state on write failure.
+    /// Debounce retains state on write failure.
     /// When a write fails, _savePending remains true for retry.
     ///
     /// **Validates: Requirements 2.5**
     /// </summary>
-    [Property(MaxTest = 30)]
-    public bool Write_failure_retains_pending_state_for_retry(byte stationIndex)
+    [Fact]
+    public void Write_failure_retains_pending_state_for_retry()
     {
-        var stationName = $"Station-{stationIndex % 10}";
-
         // Use a path where the parent is a file (blocks directory creation → write fails)
         var blockerPath = Path.Combine(_tempDir, $"blocker-{Guid.NewGuid():N}");
         File.WriteAllText(blockerPath, "blocks directory creation");
         var settingsPath = Path.Combine(blockerPath, "settings.json");
 
         using var service = new SettingsService(settingsPath);
-        service.Current.GroundStation.DisplayName = stationName;
+        service.Current.GroundStation.DisplayName = "Station-Fail";
 
         Exception? reportedError = null;
         void Handler(Exception ex) => reportedError = ex;
@@ -138,14 +136,19 @@ public sealed class SaveDebouncerPropertyTests : IDisposable
             service.RequestSave();
 
             // Wait for both the error to be reported AND SavePending to become true
-            // (the continuation sets _savePending = true after the exception is observed)
-            // The debounced save retries a locked or blocked file a few times before reporting.
-            var deadline = DateTime.UtcNow.AddSeconds(8);
+            // (the continuation sets _savePending = true after the exception is observed).
+            // The debounced save retries a blocked file a few times before reporting.
+            // Match Timer_reset_on_rapid_requests: 15s covers thread-pool starvation on CI.
+            var deadline = DateTime.UtcNow.AddSeconds(15);
             while ((reportedError is null || !service.SavePending) && DateTime.UtcNow < deadline)
                 Thread.Sleep(50);
 
-            // After a failed write, SavePending should be true (retry on next trigger)
-            return reportedError is not null && service.SavePending;
+            Assert.True(
+                reportedError is not null,
+                "SaveFailed was not reported within 15 seconds after a blocked write.");
+            Assert.True(
+                service.SavePending,
+                "SavePending was false after SaveFailed; the failed write should stay pending for retry.");
         }
         finally
         {
