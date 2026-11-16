@@ -33,6 +33,7 @@ Thank you to everyone who has donated to support OscarWatch development.
 | Javier                   | EA1AAP         |
 | Mark                     | ZL3AB          |
 | William                  | WT0DX          |
+| Steve                    | N9IP           |
 
 
 If you donate and would like to be listed here, let Peter know your name and callsign.
