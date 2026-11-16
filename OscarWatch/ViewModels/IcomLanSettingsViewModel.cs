@@ -10,7 +10,7 @@ namespace OscarWatch.ViewModels;
 
 /// <summary>
 /// Serial or network control for an Icom radio with a LAN or Wi-Fi interface:
-/// the IC-9700 as a single radio, or an IC-705, IC-905 or IC-7300 dual-radio leg.
+/// the IC-9700 as a single radio or Dual radio leg, or an IC-705, IC-905 or IC-7300 dual-radio leg.
 /// </summary>
 public sealed partial class IcomLanSettingsViewModel : ObservableObject
 {

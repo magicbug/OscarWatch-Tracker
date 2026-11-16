@@ -19,6 +19,7 @@ public sealed class IcomLanSettingsTests
     [InlineData(RigType.IcomIc705)]
     [InlineData(RigType.IcomIc905)]
     [InlineData(RigType.IcomIc7300)]
+    [InlineData(RigType.IcomIc9700)]
     public void Network_capable_legs(RigType type)
     {
         Assert.True(RigSettings.IsIcomLanEndpoint(type));

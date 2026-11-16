@@ -69,7 +69,7 @@ public sealed class RigEndpointSettings
     public bool UsesKenwoodLan =>
         RigSettings.IsKenwoodLanCapable(Type) && Connection == RigConnectionKind.Lan;
 
-    /// <summary>True for an IC-705, IC-905 or IC-7300 leg set to network control.</summary>
+    /// <summary>True for an IC-705, IC-905, IC-7300 or IC-9700 leg set to network control.</summary>
     [JsonIgnore]
     public bool UsesIcomLan =>
         RigSettings.IsIcomLanEndpoint(Type) && Connection == RigConnectionKind.Lan;

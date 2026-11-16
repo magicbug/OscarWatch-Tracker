@@ -69,7 +69,11 @@ public sealed partial class KenwoodHfLegSettingsViewModel : ObservableObject
 
     public bool ShowLanFields => _dualRadioEnabled() && UsesLan;
 
-    public bool ShowSerialOptions => IsKenwoodHf && !UsesLan;
+    /// <summary>Hardware RTS for Kenwood HF COM legs and the TS-2000 as a Dual radio leg.</summary>
+    public bool ShowSerialOptions =>
+        _dualRadioEnabled()
+        && (RigSettings.IsKenwoodHfEndpoint(RigType) || RigType == RigType.KenwoodTs2000)
+        && !UsesLan;
 
     public bool ShowAccountType => ShowLanFields && RigType == RigType.KenwoodTs890s;
 

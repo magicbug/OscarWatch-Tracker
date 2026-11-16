@@ -1798,6 +1798,9 @@ public sealed class RigController : IRigController, IDisposable
                 return false;
             }
 
+            EnsureSatelliteModeOffForDualLeg(_downlinkDriver);
+            EnsureSatelliteModeOffForDualLeg(_uplinkDriver);
+
             _connectFailureLog.Reset();
             _lastConnectError = null;
             _lastConnectErrorKind = SerialPortConnectErrorKind.None;
@@ -2118,6 +2121,11 @@ public sealed class RigController : IRigController, IDisposable
 
         _useMainSub = false;
         _receiveVfo = RigVfo.Main;
+        _satelliteModeEngaged = false;
+
+        EnsureSatelliteModeOffForDualLeg(_downlinkDriver);
+        if (settings.Uplink.Type != RigType.Dummy)
+            EnsureSatelliteModeOffForDualLeg(_uplinkDriver);
 
         _downlinkDriver.SelectVfo(RigVfo.Main, force: true);
         if (settings.ReceiveRegion() == RigRegion.USA)
@@ -2259,6 +2267,25 @@ public sealed class RigController : IRigController, IDisposable
 
     private static string PassKey(RigTrackingContext context) =>
         $"{context.TrackState.NoradId}|{context.Mode.Type}|{context.Mode.DownlinkKHz}|{context.Mode.UplinkKHz}";
+
+    /// <summary>
+    /// Dual radio uses one VFO per leg. Satellite radios must leave SAT / SATL before Main/FA writes.
+    /// Does not set <see cref="_satelliteModeEngaged"/>; single-radio tear-down owns that flag.
+    /// </summary>
+    private static void EnsureSatelliteModeOffForDualLeg(IRigDriver? driver)
+    {
+        if (driver is null || !RigSettings.IsSatelliteDualEndpoint(driver.RigType))
+            return;
+
+        try
+        {
+            driver.SetSatelliteMode(false);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to leave satellite mode on dual-radio {RigType}", driver.RigType);
+        }
+    }
 
     private static bool IsIcomSatelliteLayoutRig(RigType type) =>
         type is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h;

@@ -230,7 +230,7 @@ public sealed class YaesuFt847Driver : IRigDriver
             return;
         }
 
-        var target = YaesuFt847VfoTarget.SatTx;
+        var target = CtcssTarget;
         var cmd = YaesuFt847CatCodec.BuildCtcssFrequencyCommand(hz, target, _satelliteMode);
         _transport.SendFrame(cmd, _catDelayMs);
     }
@@ -255,12 +255,16 @@ public sealed class YaesuFt847Driver : IRigDriver
         if (!_transport.IsOpen)
             return;
 
-        var target = YaesuFt847VfoTarget.SatTx;
+        var target = CtcssTarget;
         var cmd = on
             ? YaesuFt847CatCodec.BuildCtcssOnCommand(encoderOnly, target, _satelliteMode)
             : YaesuFt847CatCodec.BuildCtcssOffCommand(target, _satelliteMode);
         _transport.SendFrame(cmd, _catDelayMs);
     }
+
+    /// <summary>SAT TX while satellite mode is on; main VFO when used as a Dual radio leg.</summary>
+    private YaesuFt847VfoTarget CtcssTarget =>
+        _satelliteMode ? YaesuFt847VfoTarget.SatTx : YaesuFt847VfoTarget.Main;
 
     private YaesuFt847VfoTarget ResolveTarget(RigVfo vfo, bool uplink)
     {

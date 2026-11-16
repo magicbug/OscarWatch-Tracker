@@ -61,9 +61,31 @@ public sealed class RigSettings
     /// <summary>
     /// Dual-radio Icom leg types that can use network control.
     /// The original IC-7300 is USB only; the IC-7300MK2 has a LAN socket.
+    /// The IC-9700 can also be one dual-radio leg over LAN with satellite mode off.
     /// </summary>
     public static bool IsIcomLanEndpoint(RigType type) =>
-        type is RigType.IcomIc705 or RigType.IcomIc905 or RigType.IcomIc7300;
+        type is RigType.IcomIc705 or RigType.IcomIc905 or RigType.IcomIc7300 or RigType.IcomIc9700;
+
+    /// <summary>
+    /// Full-duplex satellite radios that can also run as one Dual radio leg with satellite mode off.
+    /// FlexRadio SmartSDR stays single-radio only.
+    /// </summary>
+    public static bool IsSatelliteDualEndpoint(RigType type) =>
+        type is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h
+            or RigType.YaesuFt847 or RigType.KenwoodTs2000;
+
+    /// <summary>Icom satellite radios that need a CI-V address as a Dual radio leg.</summary>
+    public static bool IsIcomSatelliteCivEndpoint(RigType type) =>
+        type is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h;
+
+    /// <summary>Typical CI-V USB baud for the IC-9700 (must match the radio menu).</summary>
+    public const int Ic9700DefaultBaudRate = 115200;
+
+    /// <summary>Typical CI-V baud for the IC-910, IC-9100 and IC-821H (must match the radio menu).</summary>
+    public const int IcomSatelliteDefaultBaudRate = 19200;
+
+    /// <summary>Typical CAT baud for the FT-847 and TS-2000.</summary>
+    public const int Ft847Ts2000DefaultBaudRate = 57600;
 
     public static bool IsYaesuNewCatDualEndpoint(RigType type) =>
         type is RigType.YaesuFt991 or RigType.YaesuFt991a or RigType.YaesuFtx1;
@@ -250,7 +272,10 @@ public sealed class RigSettings
             or RigType.IcomIc705 or RigType.IcomIc7300 or RigType.IcomIc905
             or RigType.IcomIc7100
             or RigType.IcomIc706 or RigType.IcomIc706Mkii or RigType.IcomIc706MkiiG
+            or RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h
+            or RigType.YaesuFt847
             or RigType.KenwoodThD74 or RigType.KenwoodThD75
+            or RigType.KenwoodTs2000
             or RigType.KenwoodTs990s or RigType.KenwoodTs890s
             or RigType.KenwoodTs590s or RigType.KenwoodTs590sg;
 

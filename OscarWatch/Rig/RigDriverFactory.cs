@@ -52,7 +52,7 @@ public static class RigDriverFactory
             endpoint.CatDelayMs)
         : CreateEndpoint(endpoint);
 
-    /// <summary>Icom IC-9700, IC-705, IC-905 or IC-7300 over network control (CI-V only, no audio).</summary>
+    /// <summary>Icom IC-9700, IC-705, IC-905 or IC-7300 over network control (CI-V only, no audio). IC-9700 may be single-radio or a Dual radio leg.</summary>
     public static IRigDriver CreateIcomLan(
         RigType type,
         string host,
@@ -114,6 +114,21 @@ public static class RigDriverFactory
             endpoint.Type, endpoint.Port, endpoint.BaudRate, endpoint.CatDelayMs),
         RigType.KenwoodTs990s or RigType.KenwoodTs890s or RigType.KenwoodTs590s or RigType.KenwoodTs590sg =>
             CreateKenwoodHfDriver(endpoint),
+        RigType.IcomIc910 => new IcomIc910Driver(
+            endpoint.Port, endpoint.BaudRate, ResolveEndpointCivAddress(endpoint), endpoint.CatDelayMs),
+        RigType.IcomIc9100 => new IcomIc9100Driver(
+            endpoint.Port, endpoint.BaudRate, ResolveEndpointCivAddress(endpoint), endpoint.CatDelayMs),
+        RigType.IcomIc9700 => new IcomIc9700Driver(
+            endpoint.Port, endpoint.BaudRate, ResolveEndpointCivAddress(endpoint), endpoint.CatDelayMs),
+        RigType.IcomIc821h => new IcomIc821hDriver(
+            endpoint.Port, endpoint.BaudRate, ResolveEndpointCivAddress(endpoint), endpoint.CatDelayMs),
+        RigType.YaesuFt847 => new YaesuFt847Driver(endpoint.Port, endpoint.BaudRate, endpoint.CatDelayMs),
+        RigType.KenwoodTs2000 => new KenwoodTs2000Driver(
+            endpoint.Port,
+            endpoint.BaudRate,
+            endpoint.CatDelayMs,
+            hardwareRtsEnabled: endpoint.KenwoodHardwareRtsEnabled,
+            traceEnabled: false),
         _ => CreateSingle(
             endpoint.Type,
             endpoint.Port,

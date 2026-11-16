@@ -751,16 +751,32 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             or RigType.IcomIc821h;
 
     public bool ShowIc910PowerClass =>
-        !DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.IcomIc910;
+        (!DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.IcomIc910)
+        || (DualRadioEnabled
+            && (SelectedDownlinkRigTypeChoice?.Value == RigType.IcomIc910
+                || SelectedUplinkRigTypeChoice?.Value == RigType.IcomIc910));
 
     public bool ShowIc9700PowerClass =>
-        !DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.IcomIc9700;
+        (!DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.IcomIc9700)
+        || (DualRadioEnabled
+            && (SelectedDownlinkRigTypeChoice?.Value == RigType.IcomIc9700
+                || SelectedUplinkRigTypeChoice?.Value == RigType.IcomIc9700));
 
     public bool ShowRigFt847CatHint =>
-        SelectedRigTypeChoice?.Value == RigType.YaesuFt847;
+        (!DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.YaesuFt847)
+        || (DualRadioEnabled
+            && (SelectedDownlinkRigTypeChoice?.Value == RigType.YaesuFt847
+                || SelectedUplinkRigTypeChoice?.Value == RigType.YaesuFt847));
+
+    /// <summary>TS-2000 Trace and single-radio RTS options (satellite mode path).</summary>
+    public bool ShowRigTs2000SingleOptions =>
+        !DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.KenwoodTs2000;
 
     public bool ShowRigTs2000CatHint =>
-        SelectedRigTypeChoice?.Value == RigType.KenwoodTs2000;
+        ShowRigTs2000SingleOptions
+        || (DualRadioEnabled
+            && (SelectedDownlinkRigTypeChoice?.Value == RigType.KenwoodTs2000
+                || SelectedUplinkRigTypeChoice?.Value == RigType.KenwoodTs2000));
 
     public bool ShowRigFlexHint =>
         SelectedRigTypeChoice?.Value == RigType.FlexSmartSdr;
@@ -784,13 +800,15 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         DualRadioEnabled
         && (SelectedDownlinkRigTypeChoice?.Value is RigType.IcomIc705 or RigType.IcomIc7300 or RigType.IcomIc905
             or RigType.IcomIc7100
-            || RigSettings.IsIc706SeriesEndpoint(SelectedDownlinkRigTypeChoice?.Value ?? RigType.None));
+            || RigSettings.IsIc706SeriesEndpoint(SelectedDownlinkRigTypeChoice?.Value ?? RigType.None)
+            || RigSettings.IsIcomSatelliteCivEndpoint(SelectedDownlinkRigTypeChoice?.Value ?? RigType.None));
 
     public bool ShowUplinkCivAddress =>
         DualRadioEnabled
         && (SelectedUplinkRigTypeChoice?.Value is RigType.IcomIc705 or RigType.IcomIc7300 or RigType.IcomIc905
             or RigType.IcomIc7100
-            || RigSettings.IsIc706SeriesEndpoint(SelectedUplinkRigTypeChoice?.Value ?? RigType.None));
+            || RigSettings.IsIc706SeriesEndpoint(SelectedUplinkRigTypeChoice?.Value ?? RigType.None)
+            || RigSettings.IsIcomSatelliteCivEndpoint(SelectedUplinkRigTypeChoice?.Value ?? RigType.None));
 
     public bool ShowDownlinkIc705CivHint =>
         DualRadioEnabled && SelectedDownlinkRigTypeChoice?.Value == RigType.IcomIc705;
@@ -1048,6 +1066,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         [
             new(RigType.YaesuFt817, "Yaesu FT-817"),
             new(RigType.YaesuFt818, "Yaesu FT-818"),
+            new(RigType.YaesuFt847, "Yaesu FT-847"),
             new(RigType.YaesuFt857, "Yaesu FT-857 / FT-857D"),
             new(RigType.YaesuFt991, "Yaesu FT-991"),
             new(RigType.YaesuFt991a, "Yaesu FT-991A"),
@@ -1059,8 +1078,13 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             new(RigType.IcomIc706, "ICOM IC-706"),
             new(RigType.IcomIc706Mkii, "ICOM IC-706MKII"),
             new(RigType.IcomIc706MkiiG, "ICOM IC-706MKIIG"),
+            new(RigType.IcomIc910, "ICOM IC-910"),
+            new(RigType.IcomIc9100, "ICOM IC-9100"),
+            new(RigType.IcomIc9700, "ICOM IC-9700"),
+            new(RigType.IcomIc821h, "ICOM IC-821H"),
             new(RigType.KenwoodThD74, "Kenwood TH-D74"),
             new(RigType.KenwoodThD75, "Kenwood TH-D75"),
+            new(RigType.KenwoodTs2000, "Kenwood TS-2000"),
             new(RigType.KenwoodTs990s, "Kenwood TS-990S"),
             new(RigType.KenwoodTs890s, "Kenwood TS-890S"),
             new(RigType.KenwoodTs590s, "Kenwood TS-590S"),
@@ -2526,6 +2550,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowIc9700PowerClass));
         OnPropertyChanged(nameof(ShowRigCivAddress));
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
+        OnPropertyChanged(nameof(ShowRigFt847CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
         OnPropertyChanged(nameof(ShowDownlinkCivAddress));
         OnPropertyChanged(nameof(ShowDownlinkSerialFields));
         OnPropertyChanged(nameof(ShowDownlinkSdrFields));
@@ -2591,6 +2618,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFlexFields));
         OnPropertyChanged(nameof(ShowRigFt847CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
         OnPropertyChanged(nameof(ShowRigFlexHint));
         OnPropertyChanged(nameof(ShowRigFlexDuplexWarning));
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
@@ -2599,7 +2627,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             return;
 
         if (value.Value is RigType.YaesuFt847 or RigType.KenwoodTs2000)
-            RigBaudRate = 57600;
+            RigBaudRate = RigSettings.Ft847Ts2000DefaultBaudRate;
 
         if (value.Value == RigType.FlexSmartSdr)
         {
@@ -2634,6 +2662,11 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     partial void OnSelectedDownlinkRigTypeChoiceChanged(RigTypeOption? value)
     {
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
+        OnPropertyChanged(nameof(ShowRigFt847CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
+        OnPropertyChanged(nameof(ShowIc910PowerClass));
+        OnPropertyChanged(nameof(ShowIc9700PowerClass));
         OnPropertyChanged(nameof(ShowDownlinkCivAddress));
         OnPropertyChanged(nameof(ShowDownlinkSerialFields));
         OnPropertyChanged(nameof(ShowDownlinkSdrFields));
@@ -2705,6 +2738,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         if (RigSettings.IsIc706SeriesEndpoint(value.Value))
             ApplyIc706SeriesDefaults(value.Value, v => DownlinkBaudRate = v, v => DownlinkCivAddress = v, DownlinkCivAddress);
 
+        ApplySatelliteDualDefaults(
+            value.Value, v => DownlinkBaudRate = v, v => DownlinkCivAddress = v, DownlinkCivAddress);
+
         if (value.Value == RigType.SdrRigCtlTcp && DownlinkCatDelayMs < 100)
             DownlinkCatDelayMs = 100;
     }
@@ -2718,6 +2754,11 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         }
 
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
+        OnPropertyChanged(nameof(ShowRigFt847CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000CatHint));
+        OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
+        OnPropertyChanged(nameof(ShowIc910PowerClass));
+        OnPropertyChanged(nameof(ShowIc9700PowerClass));
         OnPropertyChanged(nameof(ShowUplinkCivAddress));
         OnPropertyChanged(nameof(ShowUplinkSerialFields));
         OnPropertyChanged(nameof(ShowUplinkIc705CivHint));
@@ -2784,6 +2825,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         if (RigSettings.IsIc706SeriesEndpoint(value.Value))
             ApplyIc706SeriesDefaults(value.Value, v => UplinkBaudRate = v, v => UplinkCivAddress = v, UplinkCivAddress);
 
+        ApplySatelliteDualDefaults(
+            value.Value, v => UplinkBaudRate = v, v => UplinkCivAddress = v, UplinkCivAddress);
+
         if (RigSettings.IsKenwoodHfEndpoint(value.Value))
             UplinkBaudRate = RigSettings.KenwoodHfDefaultBaudRate;
     }
@@ -2803,6 +2847,26 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigIc706CatHint));
         OnPropertyChanged(nameof(ShowRigIc706MkiiCatHint));
         OnPropertyChanged(nameof(ShowRigIc706MkiiGCatHint));
+    }
+
+    private static void ApplySatelliteDualDefaults(
+        RigType type,
+        Action<int> setBaudRate,
+        Action<string> setCivAddress,
+        string? currentCivAddress)
+    {
+        if (!RigSettings.IsSatelliteDualEndpoint(type))
+            return;
+
+        setBaudRate(type switch
+        {
+            RigType.IcomIc9700 => RigSettings.Ic9700DefaultBaudRate,
+            RigType.YaesuFt847 or RigType.KenwoodTs2000 => RigSettings.Ft847Ts2000DefaultBaudRate,
+            _ => RigSettings.IcomSatelliteDefaultBaudRate
+        });
+
+        if (RigSettings.IsIcomSatelliteCivEndpoint(type) && ShouldSuggestCivAddress(currentCivAddress))
+            setCivAddress(RigSettings.DefaultCivAddressFor(type));
     }
 
     private static void ApplyIc706SeriesDefaults(

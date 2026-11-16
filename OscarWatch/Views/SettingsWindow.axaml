@@ -581,12 +581,7 @@
                   </ComboBox>
                 </Grid>
               </StackPanel>
-              <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                         FontSize="11"
-                         TextWrapping="Wrap"
-                         IsVisible="{Binding ShowRigFt847CatHint}"
-                         Text="{loc:Localize Key=Settings.Radio.Ft847Hint}" />
-              <StackPanel Spacing="6" IsVisible="{Binding ShowRigTs2000CatHint}">
+              <StackPanel Spacing="6" IsVisible="{Binding ShowRigTs2000SingleOptions}">
                 <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                            FontSize="11"
                            TextWrapping="Wrap"
@@ -755,7 +750,7 @@
                   <StackPanel Spacing="4" IsVisible="{Binding ShowDownlinkCivAddress}">
                     <TextBlock Text="{loc:Localize Key=Settings.Radio.CivAddress}" />
                     <TextBox Text="{Binding DownlinkCivAddress, Mode=TwoWay}"
-                             Watermark="A4 / 94 / AC / 88 / 48 / 4C / 58" />
+                             Watermark="A2 / 7C / 4C / A4 / 94 / AC / 88 / 48 / 58" />
                     <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                FontSize="11"
                                TextWrapping="Wrap"
@@ -955,7 +950,7 @@
                     <StackPanel Spacing="4" IsVisible="{Binding ShowUplinkCivAddress}">
                       <TextBlock Text="{loc:Localize Key=Settings.Radio.CivAddress}" />
                       <TextBox Text="{Binding UplinkCivAddress, Mode=TwoWay}"
-                               Watermark="A4 / 94 / AC / 88 / 48 / 4C / 58" />
+                               Watermark="A2 / 7C / 4C / A4 / 94 / AC / 88 / 48 / 58" />
                       <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                  FontSize="11"
                                  TextWrapping="Wrap"
@@ -1008,6 +1003,38 @@
                                  Increment="10" FormatString="F0" />
                 </StackPanel>
               </Border>
+              <StackPanel Spacing="4" IsVisible="{Binding ShowIc910PowerClass}">
+                <TextBlock Text="{loc:Localize Key=Settings.Radio.Ic910PowerClass}" />
+                <ComboBox ItemsSource="{Binding Ic910PowerClassChoices}"
+                          SelectedItem="{Binding SelectedIc910PowerClassChoice, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:Ic910PowerClassOption">
+                      <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.Ic910PowerClassHint}" />
+              </StackPanel>
+              <StackPanel Spacing="4" IsVisible="{Binding ShowIc9700PowerClass}">
+                <TextBlock Text="{loc:Localize Key=Settings.Radio.Ic9700PowerClass}" />
+                <ComboBox ItemsSource="{Binding Ic9700PowerClassChoices}"
+                          SelectedItem="{Binding SelectedIc9700PowerClassChoice, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:Ic9700PowerClassOption">
+                      <TextBlock Text="{Binding Label}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.Ic9700PowerClassHint}" />
+              </StackPanel>
               <Button Content="{loc:Localize Key=Settings.Radio.RefreshComPorts}"
                       Command="{Binding RefreshComPortsCommand}"
                       HorizontalAlignment="Left"
@@ -1018,6 +1045,11 @@
                        TextWrapping="Wrap"
                        IsVisible="{Binding ShowRigFt817CatHint}"
                        Text="{loc:Localize Key=Settings.Radio.Ft817Hint}" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       IsVisible="{Binding ShowRigFt847CatHint}"
+                       Text="{loc:Localize Key=Settings.Radio.Ft847Hint}" />
             <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                        FontSize="11"
                        TextWrapping="Wrap"
