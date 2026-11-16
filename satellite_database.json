@@ -841,8 +841,9 @@
     ]
   },
   {
-    "name": "HADES-L",
-    "norad_id": "100909",
+    "name": "SO-132",
+    "norad_id": "101102",
+    "alternative_names": ["HADES-L"],
     "modes": [
       {
         "type": "Voice A/U",
