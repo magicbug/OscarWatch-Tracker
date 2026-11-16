@@ -35,6 +35,7 @@ Thank you to everyone who has donated to support OscarWatch development.
 | William                  | WT0DX          |
 | Steve                    | N9IP           |
 | Lars                     | SM0TGU         |
+| Jordi                    | EB3JT          |
 
 
 If you donate and would like to be listed here, let Peter know your name and callsign.
