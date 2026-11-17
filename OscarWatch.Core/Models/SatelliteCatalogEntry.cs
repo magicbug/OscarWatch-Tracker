@@ -7,7 +7,4 @@ public sealed class SatelliteCatalogEntry
     public required string Line1 { get; init; }
     public required string Line2 { get; init; }
     public DateTime? EpochUtc { get; init; }
-
-    public bool IsStale(TimeSpan maxAge) =>
-        EpochUtc.HasValue && DateTime.UtcNow - EpochUtc.Value > maxAge;
 }

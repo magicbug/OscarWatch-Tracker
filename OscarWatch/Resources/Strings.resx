@@ -241,6 +241,15 @@
   <data name="Pass.Schedule.AddTooltip">
     <value>Schedule this pass for a ding and alert before AOS</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} d</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>The TLE for {0} is {1} days old (epoch {2:yyyy-MM-dd}). Pass times and Doppler may be less accurate.</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>Old TLE for {0}: {1} days</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Remove this pass from the schedule</value>
   </data>
@@ -2720,6 +2729,12 @@ Continue?</value>
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>Automatic download applies to OscarWatch and custom URLs only. Local files are re-read when you save settings or choose Satellites → Refresh TLEs.</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>Warn when a TLE is at least this many days old</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>A satellite whose TLE is this old gets a warning in the pass list and is marked as a stale TLE in the satellite picker. Old TLEs make predictions less accurate, most of all for low orbits. The age is counted from the TLE's own epoch, so it differs from the download age in the footer.</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>

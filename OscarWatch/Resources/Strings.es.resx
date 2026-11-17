@@ -241,6 +241,15 @@
   <data name="Pass.Schedule.AddTooltip">
     <value>Programar este pase para un aviso sonoro y una alerta antes del AOS</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} d</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>El TLE de {0} tiene {1} días (época {2:yyyy-MM-dd}). Las horas de los pases y el Doppler pueden ser menos precisos.</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>TLE antiguo de {0}: {1} días</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Quitar este pase de la programación</value>
   </data>
@@ -2720,6 +2729,12 @@
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>La descarga automática solo se aplica a OscarWatch y a URL personalizadas. Los archivos locales se vuelven a cargar al guardar la configuración o al seleccionar Satélites → Actualizar TLE.</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>Avisar cuando un TLE tenga al menos tantos días</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>Un satélite con un TLE así de antiguo muestra un aviso en la lista de pases y se marca como TLE obsoleto en el selector de satélites. Los TLE antiguos hacen las predicciones menos precisas, sobre todo en órbitas bajas. La antigüedad se cuenta desde la época del propio TLE, por lo que difiere de la antigüedad de la descarga que se muestra en el pie.</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>

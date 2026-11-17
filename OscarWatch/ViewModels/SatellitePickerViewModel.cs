@@ -59,6 +59,8 @@ public partial class SatellitePickerViewModel : ViewModelBase
             _settings.Current.EnabledSatelliteNames ?? [],
             StringComparer.OrdinalIgnoreCase);
         var enabledIds = SatelliteCatalogMatching.CreateNoradIdSet(_settings.Current.EnabledSatelliteNoradIds);
+        var utcNow = DateTime.UtcNow;
+        var warningDays = _settings.Current.ElementAgeWarningDays;
         foreach (var sat in _loadedCatalog.OrderBy(s => s.Name))
         {
             var item = new SatelliteItemViewModel
@@ -67,7 +69,7 @@ public partial class SatellitePickerViewModel : ViewModelBase
                 NoradId = sat.NoradId,
                 // Same rules as TleService.GetEnabledSatellites so checkboxes match the map.
                 IsEnabled = SatelliteCatalogMatching.IsEnabled(sat, enabledIds, enabledNames),
-                IsStale = sat.IsStale(TimeSpan.FromDays(14)),
+                IsStale = ElementAgeWarning.IsOldEnough(sat.EpochUtc, utcNow, warningDays),
                 EpochText = sat.EpochUtc?.ToString("yyyy-MM-dd") ?? "?"
             };
             item.EnabledChanged += ApplyFilters;

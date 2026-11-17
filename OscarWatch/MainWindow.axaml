@@ -742,6 +742,16 @@
                                  ToolTip.Tip="{Binding CommunityStatusToolTip}"
                                  AutomationProperties.Name="{Binding CommunityStatusAutomationName}"
                                  Fill="{Binding CommunityStatusKind, Converter={x:Static theme:CommunityStatusDotFillConverter.Instance}}" />
+                        <TextBlock DockPanel.Dock="Right"
+                                   Margin="6,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Text="{Binding ElementAgeText}"
+                                   IsVisible="{Binding ShowElementAge}"
+                                   Foreground="{DynamicResource StaleTleForegroundBrush}"
+                                   ToolTip.Tip="{Binding ElementAgeToolTip}"
+                                   AutomationProperties.Name="{Binding ElementAgeAutomationName}" />
                         <TextBlock Text="{Binding SatelliteName}"
                                    FontWeight="SemiBold"
                                    FontSize="16"

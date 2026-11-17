@@ -245,6 +245,15 @@ LOS: {2}
   <data name="Pass.Schedule.AddTooltip">
     <value>ตั้งเวลาพาสนี้ให้มีเสียงติ๊งและการแจ้งเตือนก่อน AOS</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} วัน</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>TLE ของ {0} มีอายุ {1} วัน (epoch {2:yyyy-MM-dd}) เวลาพาสและดอปเปลอร์อาจแม่นยำน้อยลง</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>TLE เก่าของ {0}: {1} วัน</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>นำพาสนี้ออกจากตาราง</value>
   </data>
@@ -2724,6 +2733,12 @@ LOS: {2}
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>การดาวน์โหลดอัตโนมัติใช้กับ OscarWatch และ URL กำหนดเองเท่านั้น ไฟล์ในเครื่องจะถูกอ่านใหม่เมื่อคุณบันทึกการตั้งค่า หรือเลือก ดาวเทียม → รีเฟรช TLE</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>เตือนเมื่อ TLE มีอายุอย่างน้อยกี่วัน</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>ดาวเทียมที่มี TLE เก่าขนาดนี้จะมีคำเตือนในรายการพาส และถูกทำเครื่องหมายเป็น TLE ล้าสมัยในตัวเลือกดาวเทียม TLE เก่าทำให้การพยากรณ์แม่นยำน้อยลง โดยเฉพาะวงโคจรต่ำ อายุนับจาก epoch ของ TLE เอง จึงต่างจากอายุการดาวน์โหลดที่แสดงในส่วนท้าย</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>

@@ -78,6 +78,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private int _passPredictionHours = 48;
+    [ObservableProperty]
+    private int _elementAgeWarningDays = ElementAgeWarning.DefaultDays;
 
     [ObservableProperty]
     private int _upcomingPassesMinDurationMinutes;
@@ -1351,6 +1353,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         _settings.Current.MinimumElevationDeg = MinimumElevationDeg;
         _settings.Current.PassPredictionHours = PassPredictionHours;
         _settings.Current.UpcomingPassesMinDurationMinutes = UpcomingPassesMinDurationMinutes;
+        _settings.Current.ElementAgeWarningDays = ElementAgeWarning.ClampDays(ElementAgeWarningDays);
         _settings.Current.Theme = ThemePreference;
         _settings.Current.UiLanguage = newLanguage;
         _settings.Current.ShowFootprintMotionArrows = ShowFootprintMotionArrows;
@@ -1593,6 +1596,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             MinimumElevationDeg = _settings.Current.MinimumElevationDeg;
             PassPredictionHours = _settings.Current.PassPredictionHours;
             UpcomingPassesMinDurationMinutes = _settings.Current.UpcomingPassesMinDurationMinutes;
+            ElementAgeWarningDays = ElementAgeWarning.ClampDays(_settings.Current.ElementAgeWarningDays);
             ThemePreference = _settings.Current.Theme;
             SelectedThemeOption = ThemeOptions.FirstOrDefault(o => o.Value == ThemePreference)
                 ?? ThemeOptions[0];

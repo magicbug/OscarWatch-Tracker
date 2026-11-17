@@ -447,6 +447,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
         settings.EnabledSatelliteNames ??= [];
         settings.EnabledSatelliteNoradIds ??= [];
         settings.UpcomingPassesMinDurationMinutes = Math.Clamp(settings.UpcomingPassesMinDurationMinutes, 0, 120);
+        settings.ElementAgeWarningDays = ElementAgeWarning.ClampDays(settings.ElementAgeWarningDays);
         settings.PassFilterMinDurationMinutes = Math.Clamp(settings.PassFilterMinDurationMinutes, 0, 120);
         settings.PassPlannerPredictionHours = Math.Clamp(settings.PassPlannerPredictionHours, 6, 168);
         if (settings.PassPlannerMinElevationDeg is { } plannerMinElevation)

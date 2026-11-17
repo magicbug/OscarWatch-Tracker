@@ -245,6 +245,15 @@ Dauer: {4}</value>
   <data name="Pass.Schedule.AddTooltip">
     <value>Diesen Überflug für Gong und Hinweis vor AOS vormerken</value>
   </data>
+  <data name="Pass.ElementAge.Label">
+    <value>⚠ {0} T</value>
+  </data>
+  <data name="Pass.ElementAge.ToolTip">
+    <value>Das TLE für {0} ist {1} Tage alt (Epoche {2:yyyy-MM-dd}). Überflugzeiten und Doppler können ungenauer sein.</value>
+  </data>
+  <data name="Pass.ElementAge.Automation">
+    <value>Altes TLE für {0}: {1} Tage</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Diesen Überflug aus der Vormerkung entfernen</value>
   </data>
@@ -2724,6 +2733,12 @@ Fortfahren?</value>
   </data>
   <data name="Settings.Tle.UpdatesNote">
     <value>Automatischer Download gilt nur für OscarWatch und eigene URLs. Lokale Dateien werden neu gelesen, wenn Sie Einstellungen speichern oder Satelliten → TLEs aktualisieren wählen.</value>
+  </data>
+  <data name="Settings.Tle.ElementAge">
+    <value>Warnen, wenn ein TLE mindestens so viele Tage alt ist</value>
+  </data>
+  <data name="Settings.Tle.ElementAgeNote">
+    <value>Für einen Satelliten mit einem so alten TLE erscheint in der Überflugliste eine Warnung, und die Satellitenauswahl markiert ihn als veraltetes TLE. Alte TLEs machen Vorhersagen ungenauer, besonders bei niedrigen Umlaufbahnen. Das Alter wird ab der Epoche des TLE gezählt und unterscheidet sich daher vom Download-Alter in der Fußzeile.</value>
   </data>
   <data name="Settings.Tle.Source.OscarWatch">
     <value>OscarWatch (tle.oscarwatch.org)</value>
