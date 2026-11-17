@@ -2780,7 +2780,7 @@ Continuare?</value>
     <value>Controlla all'avvio gli aggiornamenti del database dei transponder</value>
   </data>
   <data name="Settings.Tracking.TransponderCheckNote">
-    <value>Scarica tle.oscarwatch.org/satellite_database.json quando sono disponibili aggiornamenti. I nuovi satelliti e le nuove modalità vengono proposti per l'unione; le modifiche locali vengono mantenute, a meno che tu non accetti quelle pubblicate.</value>
+    <value>Scarica oscarwatch.org/satellite_database.json quando sono disponibili aggiornamenti. I nuovi satelliti e le nuove modalità vengono proposti per l'unione; le modifiche locali vengono mantenute, a meno che tu non accetti quelle pubblicate.</value>
   </data>
   <data name="Settings.AppUpdate.Enabled">
     <value>Controlla gli aggiornamenti dell'applicazione all'avvio e ogni giorno durante l'esecuzione</value>
@@ -4505,7 +4505,7 @@ Continuare?</value>
     <value>il file importato</value>
   </data>
   <data name="DbMerge.Source.Remote">
-    <value>tle.oscarwatch.org</value>
+    <value>oscarwatch.org</value>
   </data>
   <data name="DbMerge.UseImported">
     <value>Usa la versione importata</value>

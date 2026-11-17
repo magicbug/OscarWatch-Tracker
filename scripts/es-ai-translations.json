@@ -82,7 +82,7 @@
   "DbMerge.Prefix.Imported": "Importado",
   "DbMerge.Prefix.Published": "Publicado",
   "DbMerge.Source.Import": "el archivo importado",
-  "DbMerge.Source.Remote": "tle.oscarwatch.org",
+  "DbMerge.Source.Remote": "oscarwatch.org",
   "DbMerge.Summary.FromSuffix": " de {0}.",
   "DbMerge.Summary.ManyConflicts": "{0} conflictos",
   "DbMerge.Summary.ManyNewModes": "{0} modos nuevos",

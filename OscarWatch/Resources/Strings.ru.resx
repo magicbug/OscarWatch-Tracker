@@ -2780,7 +2780,7 @@ LOS: {2}
     <value>Проверять обновления базы транспондеров при запуске</value>
   </data>
   <data name="Settings.Tracking.TransponderCheckNote">
-    <value>Скачивает tle.oscarwatch.org/satellite_database.json, когда есть обновления. Новые спутники и режимы предлагаются к слиянию; ваши правки сохраняются, пока вы не примете опубликованные изменения.</value>
+    <value>Скачивает oscarwatch.org/satellite_database.json, когда есть обновления. Новые спутники и режимы предлагаются к слиянию; ваши правки сохраняются, пока вы не примете опубликованные изменения.</value>
   </data>
   <data name="Settings.AppUpdate.Enabled">
     <value>Проверять обновления программы при запуске и ежедневно, пока она запущена</value>
@@ -4505,7 +4505,7 @@ LOS: {2}
     <value>импортированный файл</value>
   </data>
   <data name="DbMerge.Source.Remote">
-    <value>tle.oscarwatch.org</value>
+    <value>oscarwatch.org</value>
   </data>
   <data name="DbMerge.UseImported">
     <value>Взять импортированную версию</value>

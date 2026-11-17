@@ -2780,7 +2780,7 @@ LOS: {2}
     <value>ตรวจการอัปเดตฐานข้อมูลทรานสปอนเดอร์เมื่อเริ่มต้น</value>
   </data>
   <data name="Settings.Tracking.TransponderCheckNote">
-    <value>ดาวน์โหลด tle.oscarwatch.org/satellite_database.json เมื่อมีการอัปเดต จะเสนอให้รวมดาวเทียมและโหมดใหม่; การแก้ไขในเครื่องของคุณจะถูกเก็บไว้ เว้นแต่คุณยอมรับการเปลี่ยนแปลงที่เผยแพร่</value>
+    <value>ดาวน์โหลด oscarwatch.org/satellite_database.json เมื่อมีการอัปเดต จะเสนอให้รวมดาวเทียมและโหมดใหม่; การแก้ไขในเครื่องของคุณจะถูกเก็บไว้ เว้นแต่คุณยอมรับการเปลี่ยนแปลงที่เผยแพร่</value>
   </data>
   <data name="Settings.AppUpdate.Enabled">
     <value>ตรวจหาการอัปเดตแอปเมื่อเริ่มต้น และทุกวันขณะทำงาน</value>
@@ -4505,7 +4505,7 @@ LOS: {2}
     <value>ไฟล์ที่นำเข้า</value>
   </data>
   <data name="DbMerge.Source.Remote">
-    <value>tle.oscarwatch.org</value>
+    <value>oscarwatch.org</value>
   </data>
   <data name="DbMerge.UseImported">
     <value>ใช้รุ่นที่นำเข้า</value>

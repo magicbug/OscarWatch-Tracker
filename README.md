@@ -4,7 +4,7 @@
 
 Desktop satellite tracking for amateur radio operators. OscarWatch shows where AMSAT spacecraft are, predicts passes over your station, works out Doppler-corrected uplink and downlink frequencies, and can drive your rotator and radio during a pass, all from one map-centred window.
 
-TLEs and the transponder frequency database are published from [tle.oscarwatch.org](https://tle.oscarwatch.org/) ([TLEs](https://tle.oscarwatch.org/), [transponder database](https://tle.oscarwatch.org/satellite_database.json)).
+TLEs are published from [tle.oscarwatch.org](https://tle.oscarwatch.org/). The transponder frequency database is published at [oscarwatch.org/satellite_database.json](https://oscarwatch.org/satellite_database.json).
 
 ## Who is this for?
 
@@ -87,7 +87,7 @@ Plain-language help is on the website at [oscarwatch.org/docs/tracker](https://o
 - **Voice announcements**: optional spoken “rising” alerts when a satellite crosses a configurable elevation while ascending (e.g. “Alpha Oscar Zero Seven is rising”); Settings → Voice
 - **Pass recording**: optional automatic audio capture (WAV, or MP3 when ffmpeg is on PATH) from a line-in or USB audio device while the **focused** satellite is above configurable elevation thresholds; Settings → Recording. Default output folder is under your OscarWatch app data directory (see [Settings location](#settings-location)). Files are named in UTC as `{sat-name}-{yy-MM-dd-HH-mm}.wav` or `.mp3`. A red **REC** badge appears on the pass row while recording.
 - **Doppler frequencies**: draggable overlay on the world map with transponder modes from the satellite database, live radio/sat uplink & downlink, RX offsets (separate stored values for Voice and CW on linear SSB), CTCSS (access/arm), and **Voice/CW** toggle for linear SSB (header buttons + **Ctrl+W**; CAT/Cloudlog follow **Settings → Radio → Linear CW: keep receive in USB/LSB**)
-- **Transponder database editor**: Satellites → Manage transponder database… (add satellites from your **TLE catalog** or a custom name, **Import/Export JSON**, edit modes); **Satellites → Update transponder database…** merges published modes from [tle.oscarwatch.org/satellite_database.json](https://tle.oscarwatch.org/satellite_database.json) (new entries added with your consent; local edits kept on conflicts unless you accept remote). See [documents/satellite-database.md](documents/satellite-database.md)
+- **Transponder database editor**: Satellites → Manage transponder database… (add satellites from your **TLE catalog** or a custom name, **Import/Export JSON**, edit modes); **Satellites → Update transponder database…** merges published modes from [oscarwatch.org/satellite_database.json](https://oscarwatch.org/satellite_database.json) (new entries added with your consent; local edits kept on conflicts unless you accept remote). See [documents/satellite-database.md](documents/satellite-database.md)
 - **Radio CAT**: doppler tracking, satellite/split setup, Main/Sub VFOs, uplink CTCSS where supported; Settings → Radio (see [Supported hardware](#supported-hardware))
 - **Rotator control**: serial pass tracking, manual park, and **manual rotator** (az/el dialog in Standby for quick contacts between passes); Settings → Rotator (see [Supported hardware](#supported-hardware))
 - **Cloudlog**: optional Radio API v2 uplink/downlink when tracking (**Settings → Integrations → Cloudlog**)
@@ -278,7 +278,7 @@ The operator guide at [oscarwatch.org/docs/settings](https://oscarwatch.org/docs
 | Recordings              | `recordings/` (default; configurable under Settings → Recording)                                 |
 | TLE cache               | `tle-cache.txt`                                                                                  |
 | Transponder DB (user)   | `satellite_database.json`                                                                        |
-| Transponder DB (remote) | [tle.oscarwatch.org/satellite_database.json](https://tle.oscarwatch.org/satellite_database.json) |
+| Transponder DB (remote) | [oscarwatch.org/satellite_database.json](https://oscarwatch.org/satellite_database.json) |
 | Logs                    | `logs/` (daily rolling `oscarwatch-YYYYMMDD.log`, 14 days retained)                              |
 | Doppler pass CSVs       | `doppler-logs/` (optional; CSVs older than 14 days pruned)                                       |
 | OscarWatch Logbook      | `qso_logbook.db` (local SQLite; export ADIF for backup)                                          |
@@ -290,7 +290,7 @@ Open the recordings or log folder from **Help → Open recordings folder** or **
 
 Pull requests are welcome for bug fixes, rig or rotator drivers, tracking behaviour, operator-facing features, **UI translations**, and **transponder database** entries (new satellites/modes or corrections with a credible source). For larger changes, open an issue first so we can agree direction before you spend time on a big diff.
 
-Transponder data is also published at [tle.oscarwatch.org/satellite_database.json](https://tle.oscarwatch.org/satellite_database.json); see [documents/satellite-database.md](documents/satellite-database.md).
+Transponder data is also published at [oscarwatch.org/satellite_database.json](https://oscarwatch.org/satellite_database.json); see [documents/satellite-database.md](documents/satellite-database.md).
 
 ### Translations (UI)
 

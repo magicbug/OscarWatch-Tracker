@@ -110,8 +110,8 @@
       },
       {
         "type": "UHF Packet",
-        "downlink": 437550,
-        "uplink": 437550,
+        "downlink": 437825,
+        "uplink": 437825,
         "downlink_mode": "DATA-FM",
         "uplink_mode": "DATA-FM",
         "doppler": "NOR"

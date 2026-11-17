@@ -2776,7 +2776,7 @@
     <value>启动时检查转发器数据库更新</value>
   </data>
   <data name="Settings.Tracking.TransponderCheckNote">
-    <value>当更新可用时下载 tle.oscarwatch.org/satellite_database.json。提供新的卫星和模式进行合并：除非您接受已发布的更改，否则您的本地编辑将被保留。</value>
+    <value>当更新可用时下载 oscarwatch.org/satellite_database.json。提供新的卫星和模式进行合并：除非您接受已发布的更改，否则您的本地编辑将被保留。</value>
   </data>
   <data name="Settings.AppUpdate.Enabled">
     <value>启动时以及运行期间每天检查应用程序更新</value>
@@ -4501,7 +4501,7 @@
     <value>导入的文件</value>
   </data>
   <data name="DbMerge.Source.Remote">
-    <value>tle.oscarwatch.org</value>
+    <value>oscarwatch.org</value>
   </data>
   <data name="DbMerge.UseImported">
     <value>使用导入版本</value>

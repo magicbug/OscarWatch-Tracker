@@ -2780,7 +2780,7 @@ Lanjutkan?</value>
     <value>Periksa pembaruan basis data transponder saat mulai</value>
   </data>
   <data name="Settings.Tracking.TransponderCheckNote">
-    <value>Mengunduh tle.oscarwatch.org/satellite_database.json saat pembaruan tersedia. Satelit dan mode baru ditawarkan untuk digabung; suntingan lokal Anda tetap kecuali Anda menerima perubahan terbitan.</value>
+    <value>Mengunduh oscarwatch.org/satellite_database.json saat pembaruan tersedia. Satelit dan mode baru ditawarkan untuk digabung; suntingan lokal Anda tetap kecuali Anda menerima perubahan terbitan.</value>
   </data>
   <data name="Settings.AppUpdate.Enabled">
     <value>Periksa pembaruan aplikasi saat mulai dan setiap hari selama berjalan</value>
@@ -4505,7 +4505,7 @@ Lanjutkan?</value>
     <value>berkas yang diimpor</value>
   </data>
   <data name="DbMerge.Source.Remote">
-    <value>tle.oscarwatch.org</value>
+    <value>oscarwatch.org</value>
   </data>
   <data name="DbMerge.UseImported">
     <value>Pakai versi impor</value>

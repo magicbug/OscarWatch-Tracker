@@ -6,11 +6,11 @@ OscarWatch keeps **orbits** (TLEs) and **frequencies/modes** (transponder databa
 
 | Layer | Location | Role |
 |-------|----------|------|
-| **Remote** | [tle.oscarwatch.org/satellite_database.json](https://tle.oscarwatch.org/satellite_database.json) | Canonical published updates — new satellites and new/edited transponder modes |
+| **Remote** | [oscarwatch.org/satellite_database.json](https://oscarwatch.org/satellite_database.json) | Canonical published updates: new satellites and new or edited transponder modes |
 | **Bundled** | `OscarWatch/Assets/satellite_database.json` | Shipped with each app release; fallback when no user file exists |
 | **User** | `%AppData%/OscarWatch/satellite_database.json` | Your working copy after first edit or after a merge from the remote URL |
 
-TLEs are fetched from the same host: [tle.oscarwatch.org](https://tle.oscarwatch.org/).
+TLEs are fetched separately from [tle.oscarwatch.org](https://tle.oscarwatch.org/).
 
 ## Current app behaviour
 
@@ -76,7 +76,7 @@ When a database entry is found, the map and pass list show the preferred `name` 
 ## Contributing updates
 
 1. **GitHub** — pull requests updating `satellite_database.json` / `OscarWatch/Assets/satellite_database.json` (and the repo root copy if kept in sync).
-2. **Remote publish** — maintained copies on [tle.oscarwatch.org](https://tle.oscarwatch.org/) for operators between app releases.
+2. **Remote publish**: the live copy at [oscarwatch.org/satellite_database.json](https://oscarwatch.org/satellite_database.json) for operators between app releases.
 
 Include a short note in the PR: source (official satellite page, operator reports, coordination with AMSAT/ARISS, etc.). Frequency changes on active spacecraft should reflect confirmed operating status, not rumour.
 

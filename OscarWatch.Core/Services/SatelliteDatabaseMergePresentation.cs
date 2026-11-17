@@ -19,7 +19,7 @@ public static class SatelliteDatabaseMergePresentationExtensions
         presentation switch
         {
             SatelliteDatabaseMergePresentation.FileImport => "the imported file",
-            _ => "tle.oscarwatch.org"
+            _ => "oscarwatch.org"
         };
 
     public static string ConflictRemoteLabel(this SatelliteDatabaseMergePresentation presentation) =>

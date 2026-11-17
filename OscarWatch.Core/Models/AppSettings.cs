@@ -40,7 +40,7 @@ public sealed class AppSettings
     public int ElementAgeWarningDays { get; set; } = ElementAgeWarning.DefaultDays;
     public TleSourceSettings TleSource { get; set; } = new();
     public TleAutoUpdateMode TleAutoUpdate { get; set; } = TleAutoUpdateMode.OnStartup;
-    /// <summary>On startup, check tle.oscarwatch.org for new transponder database entries.</summary>
+    /// <summary>On startup, check oscarwatch.org for new transponder database entries.</summary>
     public bool TransponderDatabaseCheckOnStartup { get; set; } = true;
     /// <summary>On startup and every 24 hours while running, check GitHub for a newer release.</summary>
     public bool AppUpdateCheckEnabled { get; set; } = true;

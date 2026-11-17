@@ -3,7 +3,7 @@
   "App.Title": "OscarWatch",
   "DbEditor.Doppler": "Doppler",
   "DbEditor.FileType.Json": "JSON",
-  "DbMerge.Source.Remote": "tle.oscarwatch.org",
+  "DbMerge.Source.Remote": "oscarwatch.org",
   "Dx.Collapsed.AzEl": "{0} · Az {1} · El {2}",
   "Dx.Collapsed.AzElPending": "{0} · Az — · El —",
   "Freq.Ctcss": "CTCSS",
