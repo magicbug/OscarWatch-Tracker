@@ -1702,6 +1702,9 @@ Lanjutkan?</value>
   <data name="Logbook.Station.Unavailable">
     <value>Tidak ada satelit yang dipilih atau mode belum tersinkron</value>
   </data>
+  <data name="Logbook.ExportSelectedAdif">
+    <value>Ekspor yang dipilih ke ADIF</value>
+  </data>
   <data name="Logbook.ExportAdif">
     <value>Ekspor ADIF</value>
   </data>
@@ -1719,6 +1722,15 @@ Lanjutkan?</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.Scope.DateRange">
     <value>QSO dalam rentang tanggal UTC</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedNone">
+    <value>QSO dipilih (tidak ada yang dipilih)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedOne">
+    <value>QSO dipilih (1)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedMany">
+    <value>QSO dipilih ({0})</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.FromUtc">
     <value>Dari (UTC)</value>
@@ -1788,6 +1800,12 @@ Lanjutkan?</value>
   </data>
   <data name="Logbook.Status.ExportedManyRange">
     <value>Mengekspor {0} QSO ke ADIF ({1} UTC).</value>
+  </data>
+  <data name="Logbook.Status.ExportedOneSelected">
+    <value>1 QSO yang dipilih diekspor ke ADIF.</value>
+  </data>
+  <data name="Logbook.Status.ExportedManySelected">
+    <value>{0} QSO yang dipilih diekspor ke ADIF.</value>
   </data>
   <data name="Logbook.CloudlogStatus.Pending">
     <value>Tertunda</value>

@@ -3171,6 +3171,9 @@
   <data name="Logbook.Station.Unavailable">
     <value>衛星未選択またはモード未同期</value>
   </data>
+  <data name="Logbook.ExportSelectedAdif">
+    <value>選択をADIFにエクスポート</value>
+  </data>
   <data name="Logbook.ExportAdif">
     <value>ADIFをエクスポート</value>
   </data>
@@ -3188,6 +3191,15 @@
   </data>
   <data name="Logbook.ExportAdif.Dialog.Scope.DateRange">
     <value>UTC 日付範囲の QSO</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedNone">
+    <value>選択したQSO（未選択）</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedOne">
+    <value>選択したQSO（1）</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedMany">
+    <value>選択したQSO（{0}）</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.FromUtc">
     <value>開始 (UTC)</value>
@@ -3257,6 +3269,12 @@
   </data>
   <data name="Logbook.Status.ExportedManyRange">
     <value>{0} 件の QSO を ADIF にエクスポートしました（{1} UTC）。</value>
+  </data>
+  <data name="Logbook.Status.ExportedOneSelected">
+    <value>選択したQSOを1件ADIFにエクスポートしました。</value>
+  </data>
+  <data name="Logbook.Status.ExportedManySelected">
+    <value>選択したQSOを{0}件ADIFにエクスポートしました。</value>
   </data>
   <data name="Logbook.CloudlogStatus.Pending">
     <value>保留</value>

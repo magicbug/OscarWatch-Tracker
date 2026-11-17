@@ -3,7 +3,8 @@ namespace OscarWatch.Core.Logbook;
 public enum QsoAdifExportScope
 {
     All,
-    DateRange
+    DateRange,
+    Selected
 }
 
 public sealed class QsoAdifExportOptions
@@ -19,4 +20,8 @@ public sealed class QsoAdifExportOptions
     public bool ForLotw { get; init; }
 }
 
-public sealed record QsoAdifExportDialogDefaults(DateTimeOffset FromUtcDate, DateTimeOffset ToUtcDate);
+public sealed record QsoAdifExportDialogDefaults(
+    DateTimeOffset FromUtcDate,
+    DateTimeOffset ToUtcDate,
+    int SelectedCount = 0,
+    QsoAdifExportScope InitialScope = QsoAdifExportScope.All);

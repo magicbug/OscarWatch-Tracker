@@ -106,6 +106,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     [NotifyCanExecuteChangedFor(nameof(ReuploadSelectedQsoCommand))]
     private QsoRowViewModel? _selectedQso;
 
+    private IReadOnlyList<QsoRowViewModel> _selectedQsos = [];
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EntryCommitLabel))]
     [NotifyPropertyChangedFor(nameof(ShowCancelEdit))]
@@ -226,9 +228,19 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     public bool CanExport => SelectedLogbook is not null && QsoRows.Count > 0;
 
-    public bool CanDeleteQso => SelectedQso is not null && !IsEditingQso;
+    public int SelectedQsoCount => _selectedQsos.Count;
 
-    public bool CanEditQso => SelectedQso is not null && !IsEditingQso;
+    public bool CanExportSelected => SelectedLogbook is not null && SelectedQsoCount > 0;
+
+    /// <summary>
+    /// True when a single QSO is the active target. Tests may set <see cref="SelectedQso"/>
+    /// without a DataGrid multi-selection list (<see cref="SelectedQsoCount"/> stays 0).
+    /// </summary>
+    public bool HasSingleSelectedQso => SelectedQso is not null && SelectedQsoCount <= 1;
+
+    public bool CanDeleteQso => HasSingleSelectedQso && !IsEditingQso;
+
+    public bool CanEditQso => HasSingleSelectedQso && !IsEditingQso;
 
     public bool ShowCancelEdit => IsEditingQso;
 
@@ -636,11 +648,20 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         && left.Minute == right.Minute
         && left.Second == right.Second;
 
+    public void SetSelectedQsos(IReadOnlyList<QsoRowViewModel> rows)
+    {
+        _selectedQsos = rows ?? [];
+        NotifySelectionDependentState();
+    }
+
     [RelayCommand(CanExecute = nameof(CanExport))]
     public async Task<int> CountQsosForExportAsync(QsoAdifExportOptions options)
     {
         if (SelectedLogbook is null)
             return 0;
+
+        if (options.Scope == QsoAdifExportScope.Selected)
+            return SelectedQsoCount;
 
         var (fromInclusive, toExclusive) = QsoLogbookExportRange.ToQueryBounds(options);
         return await _repository.CountQsosAsync(
@@ -649,13 +670,19 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
             toExclusive).ConfigureAwait(true);
     }
 
-    public QsoAdifExportDialogDefaults GetExportDialogDefaults()
+    public QsoAdifExportDialogDefaults GetExportDialogDefaults(
+        QsoAdifExportScope preferredScope = QsoAdifExportScope.All)
     {
         var utcDates = QsoRows.Select(row => row.Record.QsoUtc).ToList();
         var (from, to) = QsoLogbookExportRange.DefaultUtcDates(utcDates);
+        var initialScope = preferredScope == QsoAdifExportScope.Selected && SelectedQsoCount > 0
+            ? QsoAdifExportScope.Selected
+            : QsoAdifExportScope.All;
         return new QsoAdifExportDialogDefaults(
             new DateTimeOffset(from, TimeSpan.Zero),
-            new DateTimeOffset(to, TimeSpan.Zero));
+            new DateTimeOffset(to, TimeSpan.Zero),
+            SelectedQsoCount,
+            initialScope);
     }
 
     public async Task<string?> ExportAdifAsync(QsoAdifExportOptions options)
@@ -663,11 +690,20 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         if (SelectedLogbook is null)
             return null;
 
-        var (fromInclusive, toExclusive) = QsoLogbookExportRange.ToQueryBounds(options);
-        var qsos = await _repository.ListQsosAsync(
-            SelectedLogbook.Id,
-            fromInclusive,
-            toExclusive).ConfigureAwait(true);
+        IReadOnlyList<QsoRecord> qsos;
+        if (options.Scope == QsoAdifExportScope.Selected)
+        {
+            qsos = _selectedQsos.Select(row => row.Record).ToList();
+        }
+        else
+        {
+            var (fromInclusive, toExclusive) = QsoLogbookExportRange.ToQueryBounds(options);
+            qsos = await _repository.ListQsosAsync(
+                SelectedLogbook.Id,
+                fromInclusive,
+                toExclusive).ConfigureAwait(true);
+        }
+
         if (qsos.Count == 0)
             return null;
 
@@ -676,6 +712,13 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     public string FormatExportStatusText(QsoAdifExportOptions options, int exportedCount)
     {
+        if (options.Scope == QsoAdifExportScope.Selected)
+        {
+            return exportedCount == 1
+                ? _l.Get("Logbook.Status.ExportedOneSelected")
+                : _l.Get("Logbook.Status.ExportedManySelected", exportedCount);
+        }
+
         if (options.Scope == QsoAdifExportScope.DateRange)
         {
             var (from, to) = QsoLogbookExportRange.NormalizeUtcDates(options.FromUtcDate, options.ToUtcDate);
@@ -695,6 +738,9 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     public static string BuildSuggestedExportFileName(string logbookName, QsoAdifExportOptions options)
     {
         var safeName = SanitizeExportFileName(logbookName);
+        if (options.Scope == QsoAdifExportScope.Selected)
+            return $"{safeName}_selected.adi";
+
         if (options.Scope != QsoAdifExportScope.DateRange)
             return $"{safeName}.adi";
 
@@ -755,6 +801,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     partial void OnSelectedLogbookChanged(QsoLogbook? value)
     {
+        _selectedQsos = [];
+        NotifySelectionDependentState();
         _ = ApplySelectedLogbookChangeAsync();
         CommitQsoCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanEditLogbook));
@@ -779,6 +827,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         BeginEditSelectedQsoCommand.NotifyCanExecuteChanged();
         DeleteSelectedQsoCommand.NotifyCanExecuteChanged();
         ReuploadSelectedQsoCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(CanEditQso));
+        OnPropertyChanged(nameof(CanDeleteQso));
         OnPropertyChanged(nameof(EntryCommitLabel));
         OnPropertyChanged(nameof(ShowCancelEdit));
         OnPropertyChanged(nameof(EditingStatusText));
@@ -788,8 +838,24 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     partial void OnSelectedQsoChanged(QsoRowViewModel? value)
     {
+        OnPropertyChanged(nameof(HasSingleSelectedQso));
+        OnPropertyChanged(nameof(CanEditQso));
+        OnPropertyChanged(nameof(CanDeleteQso));
         BeginEditSelectedQsoCommand.NotifyCanExecuteChanged();
         DeleteSelectedQsoCommand.NotifyCanExecuteChanged();
+        ReuploadSelectedQsoCommand.NotifyCanExecuteChanged();
+    }
+
+    private void NotifySelectionDependentState()
+    {
+        OnPropertyChanged(nameof(SelectedQsoCount));
+        OnPropertyChanged(nameof(CanExportSelected));
+        OnPropertyChanged(nameof(HasSingleSelectedQso));
+        OnPropertyChanged(nameof(CanEditQso));
+        OnPropertyChanged(nameof(CanDeleteQso));
+        BeginEditSelectedQsoCommand.NotifyCanExecuteChanged();
+        DeleteSelectedQsoCommand.NotifyCanExecuteChanged();
+        ReuploadSelectedQsoCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnCallChanged(string value)
@@ -1232,6 +1298,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     private async Task ReloadQsosAsync(string? callFilter = null)
     {
         QsoRows.Clear();
+        _selectedQsos = [];
+        NotifySelectionDependentState();
         if (SelectedLogbook is null)
         {
             QsoCount = 0;

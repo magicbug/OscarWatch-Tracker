@@ -1702,6 +1702,9 @@ LOS: {2}
   <data name="Logbook.Station.Unavailable">
     <value>ยังไม่ได้เลือกดาวเทียม หรือยังไม่ได้ซิงค์โหมด</value>
   </data>
+  <data name="Logbook.ExportSelectedAdif">
+    <value>ส่งออกที่เลือกเป็น ADIF</value>
+  </data>
   <data name="Logbook.ExportAdif">
     <value>ส่งออก ADIF</value>
   </data>
@@ -1719,6 +1722,15 @@ LOS: {2}
   </data>
   <data name="Logbook.ExportAdif.Dialog.Scope.DateRange">
     <value>QSO ในช่วงวันที่ UTC</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedNone">
+    <value>QSO ที่เลือก (ไม่ได้เลือก)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedOne">
+    <value>QSO ที่เลือก (1)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedMany">
+    <value>QSO ที่เลือก ({0})</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.FromUtc">
     <value>จาก (UTC)</value>
@@ -1788,6 +1800,12 @@ LOS: {2}
   </data>
   <data name="Logbook.Status.ExportedManyRange">
     <value>ส่งออก {0} QSO เป็น ADIF ({1} UTC)</value>
+  </data>
+  <data name="Logbook.Status.ExportedOneSelected">
+    <value>ส่งออก QSO ที่เลือก 1 รายการเป็น ADIF แล้ว</value>
+  </data>
+  <data name="Logbook.Status.ExportedManySelected">
+    <value>ส่งออก QSO ที่เลือก {0} รายการเป็น ADIF แล้ว</value>
   </data>
   <data name="Logbook.CloudlogStatus.Pending">
     <value>รอดำเนินการ</value>

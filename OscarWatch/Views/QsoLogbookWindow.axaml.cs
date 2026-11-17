@@ -7,6 +7,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
+using OscarWatch.Core.Logbook;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Services;
 using OscarWatch.Localization;
@@ -25,6 +26,11 @@ public partial class QsoLogbookWindow : Window
         Closed += OnClosed;
         // Tunnel so a focused text box or combo box (F4 opens its list) cannot take the macro keys first.
         AddHandler(KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel);
+        // Tunnel so right-click on an already-selected row keeps multi-row highlight intact.
+        QsoHistoryGrid.AddHandler(
+            InputElement.PointerPressedEvent,
+            OnQsoHistoryPointerPressed,
+            RoutingStrategies.Tunnel);
     }
 
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
@@ -120,12 +126,29 @@ public partial class QsoLogbookWindow : Window
 
         for (var node = e.Source as Visual; node is not null; node = node.GetVisualParent() as Visual)
         {
-            if (node is DataGridRow row && row.DataContext is QsoRowViewModel qsoRow)
+            if (node is not DataGridRow row || row.DataContext is not QsoRowViewModel qsoRow)
+                continue;
+
+            if (QsoHistoryGrid.SelectedItems.Contains(qsoRow))
+            {
+                // Keep the existing multi-row highlight when right-clicking inside it.
+                e.Handled = true;
+            }
+            else
             {
                 QsoHistoryGrid.SelectedItem = qsoRow;
-                break;
             }
+
+            break;
         }
+    }
+
+    private void OnQsoHistorySelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is not QsoLogbookViewModel vm)
+            return;
+
+        vm.SetSelectedQsos(QsoHistoryGrid.SelectedItems.OfType<QsoRowViewModel>().ToList());
     }
 
     private async Task<LogbookDetailsDialogResult?> ShowLogbookDetailsDialogAsync(
@@ -248,14 +271,20 @@ public partial class QsoLogbookWindow : Window
             CallTextBox?.Focus();
     }
 
-    private async void OnExportAdifClick(object? sender, RoutedEventArgs e)
+    private async void OnExportAdifClick(object? sender, RoutedEventArgs e) =>
+        await RunExportAdifAsync(QsoAdifExportScope.All).ConfigureAwait(true);
+
+    private async void OnExportSelectedAdifClick(object? sender, RoutedEventArgs e) =>
+        await RunExportAdifAsync(QsoAdifExportScope.Selected).ConfigureAwait(true);
+
+    private async Task RunExportAdifAsync(QsoAdifExportScope initialScope)
     {
         if (DataContext is not QsoLogbookViewModel vm || vm.SelectedLogbook is null)
             return;
 
         var dialogResult = await ExportAdifDialog.ShowAsync(
             this,
-            vm.GetExportDialogDefaults(),
+            vm.GetExportDialogDefaults(initialScope),
             vm.CountQsosForExportAsync).ConfigureAwait(true);
         if (dialogResult is null)
             return;

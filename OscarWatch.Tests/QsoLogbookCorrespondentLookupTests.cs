@@ -253,8 +253,11 @@ public class QsoLogbookCorrespondentLookupTests
     }
 
     private static QsoLogbookViewModel CreateViewModel(FakeLogbookRepository repo) =>
+        CreateViewModel((IQsoLogbookRepository)repo);
+
+    internal static QsoLogbookViewModel CreateViewModel(IQsoLogbookRepository? repo = null) =>
         new(
-            repo,
+            repo ?? new FakeLogbookRepository(),
             new FakeTracker(),
             new FakeSettings(),
             new FakeCloudlogUpload(),

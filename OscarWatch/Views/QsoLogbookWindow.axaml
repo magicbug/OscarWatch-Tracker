@@ -72,7 +72,8 @@
         <MenuItem Header="{loc:Localize Key=Logbook.EditQso}"
                   Command="{Binding BeginEditSelectedQsoCommand}" />
         <MenuItem Header="{loc:Localize Key=Logbook.DeleteQso}"
-                  Click="OnDeleteQsoClick" />
+                  Click="OnDeleteQsoClick"
+                  IsEnabled="{Binding CanDeleteQso}" />
       </MenuItem>
       <MenuItem Header="{loc:Localize Key=Logbook.Menu.Export}">
         <MenuItem Header="{loc:Localize Key=Logbook.ExportAdif}"
@@ -430,13 +431,14 @@
                         Background="Transparent"
                         ItemsSource="{Binding QsoRows}"
                         SelectedItem="{Binding SelectedQso, Mode=TwoWay}"
+                        SelectionMode="Extended"
+                        SelectionChanged="OnQsoHistorySelectionChanged"
                         AutoGenerateColumns="False"
                         IsReadOnly="True"
                         CanUserReorderColumns="False"
                         CanUserResizeColumns="True"
                         GridLinesVisibility="Horizontal"
-                        HeadersVisibility="Column"
-                        PointerPressed="OnQsoHistoryPointerPressed">
+                        HeadersVisibility="Column">
                 <DataGrid.Styles>
                   <Style Selector="TextBlock.cloudlog-sent">
                     <Setter Property="Foreground" Value="{DynamicResource GpsOkBrush}" />
@@ -455,7 +457,12 @@
                     <MenuItem Header="{loc:Localize Key=Logbook.ReuploadCloudlog}"
                               Command="{Binding ReuploadSelectedQsoCommand}" />
                     <MenuItem Header="{loc:Localize Key=Logbook.DeleteQso}"
-                              Click="OnDeleteQsoClick" />
+                              Click="OnDeleteQsoClick"
+                              IsEnabled="{Binding CanDeleteQso}" />
+                    <Separator />
+                    <MenuItem Header="{loc:Localize Key=Logbook.ExportSelectedAdif}"
+                              Click="OnExportSelectedAdifClick"
+                              IsEnabled="{Binding CanExportSelected}" />
                   </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>

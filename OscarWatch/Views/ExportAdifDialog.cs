@@ -22,10 +22,26 @@ public static class ExportAdifDialog
         var l = LocalizationService.Instance;
         ExportAdifDialogResult? result = null;
 
+        var hasSelection = defaults.SelectedCount > 0;
+        var preferSelected = defaults.InitialScope == QsoAdifExportScope.Selected && hasSelection;
+
+        var selectedScopeRadio = new RadioButton
+        {
+            Content = defaults.SelectedCount switch
+            {
+                0 => l.Get("Logbook.ExportAdif.Dialog.Scope.SelectedNone"),
+                1 => l.Get("Logbook.ExportAdif.Dialog.Scope.SelectedOne"),
+                _ => l.Get("Logbook.ExportAdif.Dialog.Scope.SelectedMany", defaults.SelectedCount)
+            },
+            IsEnabled = hasSelection,
+            IsChecked = preferSelected,
+            GroupName = "ExportScope"
+        };
+
         var allScopeRadio = new RadioButton
         {
             Content = l.Get("Logbook.ExportAdif.Dialog.Scope.All"),
-            IsChecked = true,
+            IsChecked = !preferSelected,
             GroupName = "ExportScope"
         };
 
@@ -137,6 +153,7 @@ public static class ExportAdifDialog
                         TextWrapping = TextWrapping.Wrap,
                         Foreground = Brushes.Gray
                     },
+                    selectedScopeRadio,
                     allScopeRadio,
                     dateRangeRadio,
                     dateRangePanel,
@@ -156,6 +173,7 @@ public static class ExportAdifDialog
 
         QsoAdifExportOptions BuildOptions()
         {
+            var useSelected = selectedScopeRadio.IsChecked == true;
             var useDateRange = dateRangeRadio.IsChecked == true;
             var fromDate = (fromDatePicker.SelectedDate ?? defaults.FromUtcDate).UtcDateTime.Date;
             var toDate = (toDatePicker.SelectedDate ?? defaults.ToUtcDate).UtcDateTime.Date;
@@ -163,7 +181,11 @@ public static class ExportAdifDialog
 
             return new QsoAdifExportOptions
             {
-                Scope = useDateRange ? QsoAdifExportScope.DateRange : QsoAdifExportScope.All,
+                Scope = useSelected
+                    ? QsoAdifExportScope.Selected
+                    : useDateRange
+                        ? QsoAdifExportScope.DateRange
+                        : QsoAdifExportScope.All,
                 FromUtcDate = normalizedFrom,
                 ToUtcDate = normalizedTo,
                 ForLotw = forLotwCheckBox.IsChecked == true
@@ -189,6 +211,15 @@ public static class ExportAdifDialog
             fromDatePicker.IsEnabled = enabled;
             toDatePicker.IsEnabled = enabled;
         }
+
+        selectedScopeRadio.IsCheckedChanged += async (_, _) =>
+        {
+            if (selectedScopeRadio.IsChecked != true)
+                return;
+
+            SetDateRangeEnabled(false);
+            await RefreshPreviewAsync().ConfigureAwait(true);
+        };
 
         allScopeRadio.IsCheckedChanged += async (_, _) =>
         {

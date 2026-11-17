@@ -1702,6 +1702,9 @@ LOS: {2}
   <data name="Logbook.Station.Unavailable">
     <value>Спутник не выбран или режим не синхронизирован</value>
   </data>
+  <data name="Logbook.ExportSelectedAdif">
+    <value>Экспорт выбранных в ADIF</value>
+  </data>
   <data name="Logbook.ExportAdif">
     <value>Экспорт ADIF</value>
   </data>
@@ -1719,6 +1722,15 @@ LOS: {2}
   </data>
   <data name="Logbook.ExportAdif.Dialog.Scope.DateRange">
     <value>QSO в диапазоне дат UTC</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedNone">
+    <value>Выбранные QSO (ничего не выбрано)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedOne">
+    <value>Выбранный QSO (1)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedMany">
+    <value>Выбранные QSO ({0})</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.FromUtc">
     <value>С (UTC)</value>
@@ -1788,6 +1800,12 @@ LOS: {2}
   </data>
   <data name="Logbook.Status.ExportedManyRange">
     <value>Экспортировано QSO в ADIF: {0} ({1} UTC).</value>
+  </data>
+  <data name="Logbook.Status.ExportedOneSelected">
+    <value>Экспортирован 1 выбранный QSO в ADIF.</value>
+  </data>
+  <data name="Logbook.Status.ExportedManySelected">
+    <value>Экспортировано выбранных QSO в ADIF: {0}.</value>
   </data>
   <data name="Logbook.CloudlogStatus.Pending">
     <value>Ожидает</value>

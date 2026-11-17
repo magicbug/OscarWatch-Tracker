@@ -1,6 +1,8 @@
 using Microsoft.Data.Sqlite;
 using OscarWatch.Core.Logbook;
 using OscarWatch.Core.Models;
+using OscarWatch.Localization;
+using OscarWatch.ViewModels;
 
 namespace OscarWatch.Tests;
 
@@ -819,4 +821,140 @@ public class QsoLogbookRepositoryTests : IDisposable
         if (File.Exists(_path))
             File.Delete(_path);
     }
+}
+
+public class QsoLogbookSelectedExportTests
+{
+    [Fact]
+    public async Task SetSelectedQsos_enables_selected_export_and_disables_single_row_actions()
+    {
+        using var vm = QsoLogbookCorrespondentLookupTests.CreateViewModel();
+        vm.SelectedLogbook = new QsoLogbook { Id = 1, Name = "Main" };
+        await Task.Delay(50);
+
+        var first = Row("G1AAA", new DateTime(2026, 7, 12, 10, 0, 0, DateTimeKind.Utc), id: 1);
+        var second = Row("G2BBB", new DateTime(2026, 7, 12, 11, 0, 0, DateTimeKind.Utc), id: 2);
+
+        vm.SelectedQso = first;
+        Assert.True(vm.CanEditQso);
+        Assert.True(vm.CanDeleteQso);
+        Assert.True(vm.BeginEditSelectedQsoCommand.CanExecute(null));
+        Assert.True(vm.ReuploadSelectedQsoCommand.CanExecute(null));
+        Assert.False(vm.CanExportSelected);
+
+        vm.SetSelectedQsos([first]);
+        Assert.Equal(1, vm.SelectedQsoCount);
+        Assert.True(vm.CanExportSelected);
+        Assert.True(vm.CanEditQso);
+        Assert.True(vm.CanDeleteQso);
+
+        vm.SetSelectedQsos([first, second]);
+        Assert.Equal(2, vm.SelectedQsoCount);
+        Assert.True(vm.CanExportSelected);
+        Assert.False(vm.CanEditQso);
+        Assert.False(vm.CanDeleteQso);
+        Assert.False(vm.BeginEditSelectedQsoCommand.CanExecute(null));
+        Assert.False(vm.ReuploadSelectedQsoCommand.CanExecute(null));
+        Assert.False(vm.DeleteSelectedQsoCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task CountQsosForExportAsync_and_ExportAdifAsync_use_highlighted_rows_in_utc_order()
+    {
+        using var vm = QsoLogbookCorrespondentLookupTests.CreateViewModel();
+        vm.SelectedLogbook = new QsoLogbook
+        {
+            Id = 1,
+            Name = "Portable",
+            MyCallsign = "MM9SQL",
+            MyGridSquare = "IO87IP"
+        };
+        await Task.Delay(50);
+
+        var later = Row("G2BBB", new DateTime(2026, 7, 12, 12, 30, 0, DateTimeKind.Utc), id: 2, satName: "ISS");
+        var earlier = Row("G1AAA", new DateTime(2026, 7, 12, 10, 0, 0, DateTimeKind.Utc), id: 1, satName: "ISS");
+        var ignored = Row("G3CCC", new DateTime(2026, 7, 12, 9, 0, 0, DateTimeKind.Utc), id: 3, satName: "SO-50");
+        _ = ignored;
+
+        vm.SetSelectedQsos([later, earlier]);
+
+        var options = new QsoAdifExportOptions { Scope = QsoAdifExportScope.Selected };
+        Assert.Equal(2, await vm.CountQsosForExportAsync(options));
+
+        var adif = await vm.ExportAdifAsync(options);
+        Assert.NotNull(adif);
+        Assert.Contains("<CALL:5>G1AAA", adif, StringComparison.Ordinal);
+        Assert.Contains("<CALL:5>G2BBB", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("G3CCC", adif, StringComparison.Ordinal);
+        Assert.True(
+            adif!.IndexOf("G1AAA", StringComparison.Ordinal) < adif.IndexOf("G2BBB", StringComparison.Ordinal),
+            "Selected export should write QSOs in UTC chronological order.");
+        Assert.Contains("<SAT_NAME:3>ISS", adif, StringComparison.Ordinal);
+
+        var lotw = await vm.ExportAdifAsync(new QsoAdifExportOptions
+        {
+            Scope = QsoAdifExportScope.Selected,
+            ForLotw = true
+        });
+        Assert.NotNull(lotw);
+        Assert.Contains("<SAT_NAME:5>ARISS", lotw, StringComparison.Ordinal);
+        Assert.DoesNotContain("<SAT_NAME:3>ISS", lotw, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task GetExportDialogDefaults_preselects_selected_scope_when_rows_are_highlighted()
+    {
+        using var vm = QsoLogbookCorrespondentLookupTests.CreateViewModel();
+        vm.SelectedLogbook = new QsoLogbook { Id = 1, Name = "Main" };
+        await Task.Delay(50);
+
+        var row = Row("G1AAA", new DateTime(2026, 7, 12, 10, 0, 0, DateTimeKind.Utc));
+        vm.SetSelectedQsos([row]);
+
+        var defaults = vm.GetExportDialogDefaults(QsoAdifExportScope.Selected);
+        Assert.Equal(1, defaults.SelectedCount);
+        Assert.Equal(QsoAdifExportScope.Selected, defaults.InitialScope);
+
+        var allDefaults = vm.GetExportDialogDefaults();
+        Assert.Equal(1, allDefaults.SelectedCount);
+        Assert.Equal(QsoAdifExportScope.All, allDefaults.InitialScope);
+    }
+
+    [Fact]
+    public async Task BuildSuggestedExportFileName_and_FormatExportStatusText_cover_selected_scope()
+    {
+        using var _ = TestUiCulture.Apply(LocalizationCulture.DefaultLanguage);
+        using var vm = QsoLogbookCorrespondentLookupTests.CreateViewModel();
+        vm.SelectedLogbook = new QsoLogbook { Id = 1, Name = "Field Day" };
+        await Task.Delay(50);
+
+        var options = new QsoAdifExportOptions { Scope = QsoAdifExportScope.Selected };
+        Assert.Equal(
+            "Field Day_selected.adi",
+            QsoLogbookViewModel.BuildSuggestedExportFileName("Field Day", options));
+
+        Assert.Equal("Exported 1 selected QSO to ADIF.", vm.FormatExportStatusText(options, 1));
+        Assert.Equal("Exported 3 selected QSOs to ADIF.", vm.FormatExportStatusText(options, 3));
+    }
+
+    private static QsoRowViewModel Row(
+        string call,
+        DateTime qsoUtc,
+        long id = 1,
+        string satName = "SO-50") =>
+        QsoRowViewModel.From(
+            new QsoRecord
+            {
+                Id = id,
+                LogbookId = 1,
+                Call = call,
+                QsoUtc = qsoUtc,
+                SatName = satName,
+                Mode = "FM",
+                ModeRx = "FM",
+                PropMode = "SAT",
+                CreatedUtc = DateTime.UtcNow
+            },
+            use24Hour: true,
+            LocalizationService.Instance);
 }

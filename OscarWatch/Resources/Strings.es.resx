@@ -1695,6 +1695,9 @@
   <data name="Logbook.Station.Unavailable">
     <value>Ningún satélite seleccionado o modo no sincronizado</value>
   </data>
+  <data name="Logbook.ExportSelectedAdif">
+    <value>Exportar selección a ADIF</value>
+  </data>
   <data name="Logbook.ExportAdif">
     <value>Exportar ADIF</value>
   </data>
@@ -1712,6 +1715,15 @@
   </data>
   <data name="Logbook.ExportAdif.Dialog.Scope.DateRange">
     <value>QSO en un intervalo de fechas UTC</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedNone">
+    <value>QSOs seleccionados (ninguno)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedOne">
+    <value>QSO seleccionado (1)</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedMany">
+    <value>QSOs seleccionados ({0})</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.FromUtc">
     <value>Desde (UTC)</value>
@@ -1781,6 +1793,12 @@
   </data>
   <data name="Logbook.Status.ExportedManyRange">
     <value>Se exportaron {0} QSO a ADIF ({1} UTC).</value>
+  </data>
+  <data name="Logbook.Status.ExportedOneSelected">
+    <value>Se exportó 1 QSO seleccionado a ADIF.</value>
+  </data>
+  <data name="Logbook.Status.ExportedManySelected">
+    <value>Se exportaron {0} QSOs seleccionados a ADIF.</value>
   </data>
   <data name="Logbook.CloudlogStatus.Pending">
     <value>Pendiente</value>

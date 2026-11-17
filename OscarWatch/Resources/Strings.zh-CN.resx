@@ -1695,6 +1695,9 @@
   <data name="Logbook.Station.Unavailable">
     <value>未选择卫星或未同步模式</value>
   </data>
+  <data name="Logbook.ExportSelectedAdif">
+    <value>导出所选到 ADIF</value>
+  </data>
   <data name="Logbook.ExportAdif">
     <value>导出 ADIF</value>
   </data>
@@ -1712,6 +1715,15 @@
   </data>
   <data name="Logbook.ExportAdif.Dialog.Scope.DateRange">
     <value>UTC 日期范围内的 QSO</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedNone">
+    <value>所选 QSO（未选择）</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedOne">
+    <value>所选 QSO（1）</value>
+  </data>
+  <data name="Logbook.ExportAdif.Dialog.Scope.SelectedMany">
+    <value>所选 QSO（{0}）</value>
   </data>
   <data name="Logbook.ExportAdif.Dialog.FromUtc">
     <value>起始 (UTC)</value>
@@ -1781,6 +1793,12 @@
   </data>
   <data name="Logbook.Status.ExportedManyRange">
     <value>已将 {0} 条 QSO 导出为 ADIF（{1} UTC）。</value>
+  </data>
+  <data name="Logbook.Status.ExportedOneSelected">
+    <value>已将 1 条所选 QSO 导出为 ADIF。</value>
+  </data>
+  <data name="Logbook.Status.ExportedManySelected">
+    <value>已将 {0} 条所选 QSO 导出为 ADIF。</value>
   </data>
   <data name="Logbook.CloudlogStatus.Pending">
     <value>待上传</value>
