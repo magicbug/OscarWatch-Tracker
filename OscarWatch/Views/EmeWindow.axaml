@@ -1,0 +1,113 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        xmlns:eme="using:OscarWatch.Core.Eme"
+        x:Class="OscarWatch.Views.EmeWindow"
+        x:DataType="vm:EmeViewModel"
+        Title="{loc:Localize Key=Window.Moon.Title}"
+        Width="640" Height="720"
+        MinWidth="460" MinHeight="420"
+        WindowStartupLocation="CenterOwner"
+        AutomationProperties.Name="{Binding AccessibleName}"
+        AutomationProperties.HelpText="{Binding AccessibleSummary}">
+  <DockPanel Margin="10">
+    <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <StackPanel Spacing="2">
+          <TextBlock Text="{loc:Localize Key=Moon.Band}" FontSize="12" Opacity="0.75" />
+          <ComboBox ItemsSource="{Binding Bands}" SelectedItem="{Binding SelectedBand, Mode=TwoWay}" MinWidth="110"
+                    AutomationProperties.Name="{loc:Localize Key=Moon.Band}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="eme:EmeBand">
+                <TextBlock Text="{Binding Label}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+        <StackPanel Spacing="2">
+          <TextBlock Text="{loc:Localize Key=Moon.Frequency}" FontSize="12" Opacity="0.75" />
+          <TextBox Text="{Binding FrequencyText, Mode=TwoWay}" MinWidth="120"
+                   AutomationProperties.Name="{loc:Localize Key=Moon.Frequency}" />
+        </StackPanel>
+        <StackPanel Spacing="2">
+          <TextBlock Text="{loc:Localize Key=Moon.Beamwidth}" FontSize="12" Opacity="0.75" />
+          <TextBox Text="{Binding BeamwidthText, Mode=TwoWay}" MinWidth="80"
+                   AutomationProperties.Name="{loc:Localize Key=Moon.Beamwidth}" />
+        </StackPanel>
+      </StackPanel>
+      <TextBlock Text="{Binding FrequencyError}" IsVisible="{Binding FrequencyError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource ThemeForegroundBrush}" />
+      <WrapPanel Orientation="Horizontal">
+        <CheckBox Content="{loc:Localize Key=Moon.Circular}" IsChecked="{Binding IsCircular, Mode=TwoWay}" Margin="0,0,16,0" />
+        <CheckBox Content="{loc:Localize Key=Moon.LargeDigits}" IsChecked="{Binding LargeDigits, Mode=TwoWay}" Margin="0,0,16,0" />
+        <Button Content="{loc:Localize Key=Moon.Copy}" Click="OnCopyClick" IsEnabled="{Binding HasFrame}" />
+      </WrapPanel>
+    </StackPanel>
+
+    <Border DockPanel.Dock="Top" Padding="10,6" CornerRadius="4" Margin="0,0,0,8"
+            IsVisible="{Binding HasFrame}"
+            Background="{DynamicResource ThemeSubtlePanelBackgroundBrush}">
+      <TextBlock Text="{Binding StatusText}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"
+                 Foreground="{DynamicResource ThemeForegroundBrush}" />
+    </Border>
+
+    <Grid>
+      <ScrollViewer IsVisible="{Binding !LargeDigits}">
+        <ItemsControl ItemsSource="{Binding StatusSections}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:EarthViewStatusSection">
+              <StackPanel Margin="0,0,0,14" Spacing="4">
+                <TextBlock Text="{Binding Heading}" FontSize="13" FontWeight="SemiBold"
+                           AutomationProperties.HeadingLevel="2"
+                           Foreground="{DynamicResource ThemeForegroundBrush}" />
+                <Border Height="1" Margin="0,0,0,2" Background="{DynamicResource ThemeForegroundBrush}" Opacity="0.25" />
+                <ItemsControl ItemsSource="{Binding Rows}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:EarthViewStatusRow">
+                      <Grid ColumnDefinitions="190,*" Margin="0,2">
+                        <TextBlock Grid.Column="0" Text="{Binding Label}" IsVisible="{Binding Label, Converter={x:Static ObjectConverters.IsNotNull}}" FontSize="13" TextWrapping="Wrap"
+                                   Opacity="0.75" Margin="0,0,8,0"
+                                   Foreground="{DynamicResource ThemeForegroundBrush}" />
+                        <TextBlock Grid.Column="{Binding ValueColumn}" Grid.ColumnSpan="{Binding ValueColumnSpan}" Text="{Binding Value}" FontSize="13" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource ThemeForegroundBrush}" />
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <Viewbox IsVisible="{Binding LargeDigits}" Stretch="Uniform" MaxHeight="520">
+        <StackPanel Margin="20" Spacing="6" HorizontalAlignment="Center">
+          <TextBlock Text="{Binding ShortStatus}" FontSize="48" FontWeight="Bold" HorizontalAlignment="Center"
+                     Foreground="{DynamicResource ThemeForegroundBrush}" />
+          <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto" HorizontalAlignment="Center">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{loc:Localize Key=Moon.Label.Azimuth}" FontSize="24"
+                       VerticalAlignment="Bottom" Margin="0,0,24,12" Opacity="0.75" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding LargeAzimuth}" FontSize="110" FontWeight="Bold"
+                       FontFamily="Menlo,Consolas,monospace" HorizontalAlignment="Right"
+                       Foreground="{DynamicResource ThemeForegroundBrush}"
+                       AutomationProperties.Name="{loc:Localize Key=Moon.Label.Azimuth}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Localize Key=Moon.Label.Elevation}" FontSize="24"
+                       VerticalAlignment="Bottom" Margin="0,0,24,12" Opacity="0.75" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding LargeElevation}" FontSize="110" FontWeight="Bold"
+                       FontFamily="Menlo,Consolas,monospace" HorizontalAlignment="Right"
+                       Foreground="{DynamicResource ThemeForegroundBrush}"
+                       AutomationProperties.Name="{loc:Localize Key=Moon.Label.Elevation}" />
+          </Grid>
+        </StackPanel>
+      </Viewbox>
+
+      <Border IsVisible="{Binding !HasFrame}" IsHitTestVisible="False"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              Background="{DynamicResource ThemeSubtlePanelBackgroundBrush}" CornerRadius="4" Padding="12,8">
+        <TextBlock Text="{Binding EmptyMessage}" FontSize="13" TextWrapping="Wrap" MaxWidth="420"
+                   Foreground="{DynamicResource ThemeForegroundBrush}" />
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>
