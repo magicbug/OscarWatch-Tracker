@@ -134,15 +134,15 @@ public sealed class CwReceiverService : IDisposable
         Stop();
         TuneOffsetHz = 0;
         FollowNote = settings.FollowNote;
-        _audio.StartCapture(settings.InputDeviceId, settings.InputDeviceDisplayName);
-        var rate = _audio.CaptureSampleRate;
         _cts = new CancellationTokenSource();
         var token = _cts.Token;
         var session = ++SessionId;
         var inputId = settings.InputDeviceId;
         var inputName = settings.InputDeviceDisplayName;
+        // Load the model on the worker before opening the soundcard so a missing CRT or model
+        // file fails cleanly (and so a native crash mid-load does not leave capture running).
         _worker = Task.Factory.StartNew(
-            () => RunLive(rate, session, inputId, inputName, token),
+            () => RunLive(session, inputId, inputName, token),
             token,
             TaskCreationOptions.LongRunning,
             TaskScheduler.Default);
@@ -179,6 +179,7 @@ public sealed class CwReceiverService : IDisposable
                 return _model;
 
             var started = DateTime.UtcNow;
+            Log.Information("CW loading DeepCW model from {Dir}", CwOnnxModel.DefaultDirectory);
             _model = CwOnnxModel.Load();
             Log.Information("CW model loaded from {Dir} in {Ms:0} ms", CwOnnxModel.DefaultDirectory,
                 (DateTime.UtcNow - started).TotalMilliseconds);
@@ -186,10 +187,9 @@ public sealed class CwReceiverService : IDisposable
         }
     }
 
-    private void RunLive(int rate, int session, string? inputId, string? inputName, CancellationToken token)
+    private void RunLive(int session, string? inputId, string? inputName, CancellationToken token)
     {
         var device = string.IsNullOrWhiteSpace(inputName) ? "system default" : inputName;
-        var silence = new SstvInputSilence(rate);
         var warnedSilent = false;
         _inputSilent = false;
         Volatile.Write(ref _toneHz, double.NaN);
@@ -198,6 +198,10 @@ public sealed class CwReceiverService : IDisposable
         try
         {
             var model = LoadModel();
+            token.ThrowIfCancellationRequested();
+            _audio.StartCapture(inputId, inputName);
+            var rate = _audio.CaptureSampleRate;
+            var silence = new SstvInputSilence(rate);
             var decoder = new CwStreamDecoder(model.Metadata, model);
             chunks = new BlockingCollection<float[]>();
             var queue = chunks;

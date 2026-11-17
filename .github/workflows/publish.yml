@@ -213,8 +213,10 @@ jobs:
             -p:IncludeNativeLibrariesForSelfExtract=$singleFile `
             -o $out
 
-      # portaudio.dll (from PortAudioSharp2) needs VCRUNTIME140.dll, which a PC without the
-      # Visual C++ Redistributable lacks. Ship it beside the exe (Microsoft allows app-local copies).
+      # portaudio.dll needs VCRUNTIME140.dll; onnxruntime.dll (DeepCW) also needs MSVCP140.dll /
+      # MSVCP140_1.dll. A PC without the Visual C++ Redistributable lacks them. Ship app-local
+      # copies beside the exe (Microsoft allows this). Keep onnxruntime.dll as a real file in the
+      # project so these CRT DLLs are found; single-file extract under %TEMP% would not see them.
       - name: Bundle the Visual C++ runtime (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -227,14 +229,19 @@ jobs:
             ForEach-Object { Get-ChildItem "$($_.FullName)\$arch" -Directory -Filter "Microsoft.VC*.CRT" -ErrorAction SilentlyContinue } |
             Select-Object -First 1
           if (-not $crt) { throw "No Visual C++ runtime found for $arch under $vs" }
-          foreach ($name in "vcruntime140.dll", "vcruntime140_1.dll") {
+          foreach ($name in "vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll", "msvcp140_1.dll") {
             $src = Join-Path $crt.FullName $name
             if (Test-Path $src) {
               Copy-Item $src $out -Force
               Write-Host "Bundled $src"
             }
           }
-          if (-not (Test-Path (Join-Path $out "vcruntime140.dll"))) { throw "vcruntime140.dll was not bundled" }
+          foreach ($required in "vcruntime140.dll", "msvcp140.dll", "msvcp140_1.dll") {
+            if (-not (Test-Path (Join-Path $out $required))) { throw "$required was not bundled" }
+          }
+          if (-not (Test-Path (Join-Path $out "onnxruntime.dll"))) {
+            throw "onnxruntime.dll must sit beside OscarWatch.exe so app-local MSVCP140 can load with DeepCW"
+          }
 
       - name: Publish (Unix)
         if: runner.os != 'Windows'

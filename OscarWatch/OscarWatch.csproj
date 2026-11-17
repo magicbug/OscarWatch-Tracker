@@ -20,7 +20,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     <!-- 1.23.x is the newest ONNX Runtime with an osx-x64 native library. Later versions drop Intel Mac. -->
-    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.23.2" GeneratePathProperty="true" />
     <PackageReference Include="PortAudioSharp2" Version="1.0.6" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -97,6 +97,16 @@
              Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=$(PublishSingleFile);IncludeNativeLibrariesForSelfExtract=$(IncludeNativeLibrariesForSelfExtract);PublishDir=$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(PublishDir)'))" />
   </Target>
 
+  <!-- Package native assets can still be marked for single-file extract; force ONNX Runtime loose. -->
+  <Target Name="KeepOnnxRuntimeBesideExe" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Update="@(ResolvedFileToPublish)"
+                            Condition="'%(Filename)' == 'onnxruntime' Or '%(Filename)' == 'onnxruntime_providers_shared'">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
     <AvaloniaResource Remove="Assets\AprsSymbols\COPYRIGHT.md" />
@@ -119,6 +129,16 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <Link>deepcw\%(Filename)%(Extension)</Link>
+    </Content>
+    <!-- Keep ONNX Runtime beside the exe on Windows single-file publishes. If it is extracted
+         under %TEMP%, Windows will not search the app folder for MSVCP140, and DeepCW crashes
+         on PCs without a current Visual C++ Redistributable (see publish.yml CRT bundle). -->
+    <Content Include="$(PkgMicrosoft_ML_OnnxRuntime)\runtimes\$(RuntimeIdentifier)\native\onnxruntime.dll;$(PkgMicrosoft_ML_OnnxRuntime)\runtimes\$(RuntimeIdentifier)\native\onnxruntime_providers_shared.dll"
+             Condition="'$(RuntimeIdentifier)' != '' and Exists('$(PkgMicrosoft_ML_OnnxRuntime)\runtimes\$(RuntimeIdentifier)\native\onnxruntime.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <Link>%(Filename)%(Extension)</Link>
     </Content>
     <!-- Local builds copy every native library that is already in the tree.
          A RID publish copies only that platform, and keeps it as a real file
