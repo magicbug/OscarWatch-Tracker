@@ -225,20 +225,6 @@
     ]
   },
   {
-    "name": "RADFXSAT (FOX-1B)",
-    "norad_id": "43017",
-    "modes": [
-      {
-        "type": "Voice U/V",
-        "downlink": 145960,
-        "uplink": 435250,
-        "downlink_mode": "FM",
-        "uplink_mode": "FM",
-        "doppler": "NOR"
-      }
-    ]
-  },
-  {
     "name": "RS-44",
     "norad_id": "44909",
     "modes": [
