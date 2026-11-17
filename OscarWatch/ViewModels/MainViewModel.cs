@@ -924,7 +924,7 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task PostHamsAtActivationAsync(PassRowViewModel row)
     {
-        if (App.MainWindow is null)
+        if (App.MainWindow is null || row.IsCelestialBody)
             return;
 
         var posted = await HamsAtActivationCoordinator.PostAsync(
@@ -2341,6 +2341,8 @@ public partial class MainViewModel : ViewModelBase
 
     public void TogglePassScheduled(PassRowViewModel row)
     {
+        if (row.IsCelestialBody)
+            return;
         var updated = ScheduledPassReminder.Toggle(
             _settings.Current.ScheduledPasses ?? [],
             row.NoradId,
@@ -2778,7 +2780,7 @@ public partial class MainViewModel : ViewModelBase
 
     public PassVisualizerViewModel? CreatePassVisualizerViewModel(PassRowViewModel row)
     {
-        if (!CanOpenPassVisualizer(row))
+        if (row.IsCelestialBody || !CanOpenPassVisualizer(row))
             return null;
 
         var vm = App.Services.GetRequiredService<PassVisualizerViewModel>();

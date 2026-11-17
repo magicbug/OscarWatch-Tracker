@@ -153,4 +153,18 @@ public class CelestialPassListTests
             Assert.NotEqual(english, moon);
         }
     }
+
+    [Fact]
+    public void A_moon_entry_can_never_be_given_a_reminder()
+    {
+        var aos = Now.AddHours(1);
+        Assert.False(ScheduledPassReminder.CanSchedule("MOON"));
+        Assert.True(ScheduledPassReminder.CanSchedule("25544"));
+        Assert.Empty(ScheduledPassReminder.Toggle([], "MOON", aos));
+        Assert.Empty(ScheduledPassReminder.EnsureScheduled([], "MOON", aos));
+        // A satellite in the same list is untouched.
+        var iss = ScheduledPassReminder.Toggle([], "25544", aos);
+        var both = ScheduledPassReminder.Toggle(iss, "MOON", aos);
+        Assert.Equal("25544", Assert.Single(both).NoradId);
+    }
 }
