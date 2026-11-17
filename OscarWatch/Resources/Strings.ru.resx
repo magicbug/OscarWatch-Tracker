@@ -6980,4 +6980,244 @@ LOS: {2}
   <data name="Cw.Worked.Grid">
     <value>Уже проведена связь: в этом квадрате у вас есть связь.</value>
   </data>
+  <data name="Menu.Window.Moon">
+    <value>_Луна (EME)</value>
+  </data>
+  <data name="Window.Moon.Title">
+    <value>Луна (EME)</value>
+  </data>
+  <data name="Moon.Accessible.Name">
+    <value>Луна (EME)</value>
+  </data>
+  <data name="Moon.Empty.NoPosition">
+    <value>Не удаётся вычислить положение Луны. Проверьте положение станции в настройках.</value>
+  </data>
+  <data name="Moon.FrequencyInvalid">
+    <value>Введите частоту от 30 МГц до 100 ГГц. До этого доплер и потери на трассе не показываются.</value>
+  </data>
+  <data name="Moon.Band">
+    <value>Диапазон</value>
+  </data>
+  <data name="Moon.Frequency">
+    <value>Частота (МГц)</value>
+  </data>
+  <data name="Moon.Beamwidth">
+    <value>Ширина луча (°)</value>
+  </data>
+  <data name="Moon.Circular">
+    <value>Круговая поляризация</value>
+  </data>
+  <data name="Moon.LargeDigits">
+    <value>Крупные цифры</value>
+  </data>
+  <data name="Moon.Copy">
+    <value>Копировать</value>
+  </data>
+  <data name="Moon.Section.Position">
+    <value>Положение</value>
+  </data>
+  <data name="Moon.Section.Echo">
+    <value>Эхо и потери на трассе</value>
+  </data>
+  <data name="Moon.Section.Moon">
+    <value>Луна сегодня</value>
+  </data>
+  <data name="Moon.Section.Visibility">
+    <value>Восход и заход</value>
+  </data>
+  <data name="Moon.Label.Azimuth">
+    <value>Азимут</value>
+  </data>
+  <data name="Moon.Label.Elevation">
+    <value>Угол места</value>
+  </data>
+  <data name="Moon.Label.HourAngle">
+    <value>Часовой угол</value>
+  </data>
+  <data name="Moon.Label.GreenwichHourAngle">
+    <value>Часовой угол по Гринвичу</value>
+  </data>
+  <data name="Moon.Label.Declination">
+    <value>Склонение</value>
+  </data>
+  <data name="Moon.Label.Sublunar">
+    <value>Подлунная точка</value>
+  </data>
+  <data name="Moon.Label.Distance">
+    <value>Расстояние</value>
+  </data>
+  <data name="Moon.Label.RangeRate">
+    <value>Скорость изменения расстояния</value>
+  </data>
+  <data name="Moon.Label.EchoDelay">
+    <value>Задержка эха</value>
+  </data>
+  <data name="Moon.Label.OwnEcho">
+    <value>Сдвиг собственного эха</value>
+  </data>
+  <data name="Moon.Label.ExtraLoss">
+    <value>Дополнительные потери на трассе</value>
+  </data>
+  <data name="Moon.Label.AbsoluteLoss">
+    <value>Потери на трассе</value>
+  </data>
+  <data name="Moon.Label.Phase">
+    <value>Фаза</value>
+  </data>
+  <data name="Moon.Label.Diameter">
+    <value>Диаметр</value>
+  </data>
+  <data name="Moon.Label.NextPerigee">
+    <value>Следующий перигей</value>
+  </data>
+  <data name="Moon.Label.NextApogee">
+    <value>Следующий апогей</value>
+  </data>
+  <data name="Moon.Label.LastApsis">
+    <value>Последняя апсида</value>
+  </data>
+  <data name="Moon.Label.SunSeparation">
+    <value>Луна и Солнце</value>
+  </data>
+  <data name="Moon.Label.GalacticSeparation">
+    <value>Луна и центр Галактики</value>
+  </data>
+  <data name="Moon.Label.Status">
+    <value>Состояние</value>
+  </data>
+  <data name="Moon.Label.Next">
+    <value>Далее</value>
+  </data>
+  <data name="Moon.Label.Time">
+    <value>Время</value>
+  </data>
+  <data name="Moon.Value.Degrees">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.Position">
+    <value>{0:F1}°, {1:F1}°</value>
+  </data>
+  <data name="Moon.Value.Kilometres">
+    <value>{0:N0} км</value>
+  </data>
+  <data name="Moon.Value.RangeRate">
+    <value>{0:+0.000;-0.000} км/с</value>
+  </data>
+  <data name="Moon.Value.Seconds">
+    <value>{0:F3} с</value>
+  </data>
+  <data name="Moon.Value.Hertz">
+    <value>{0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Moon.Value.Decibels">
+    <value>{0:F1} dB</value>
+  </data>
+  <data name="Moon.Value.ExtraLoss">
+    <value>{0:F1} dB, {1}</value>
+  </data>
+  <data name="Moon.Value.Phase">
+    <value>{0}, освещено {1:F0}%</value>
+  </data>
+  <data name="Moon.Value.Diameter">
+    <value>{0:F1}′</value>
+  </data>
+  <data name="Moon.Value.Apsis">
+    <value>{0}, {1:N0} km</value>
+  </data>
+  <data name="Moon.Value.LastApsis">
+    <value>{0}, {1:F1} сут. назад</value>
+  </data>
+  <data name="Moon.Value.Separation">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.SeparationFlag">
+    <value>{0:F1}°. {1}</value>
+  </data>
+  <data name="Moon.Value.TimeUtc">
+    <value>{0} UTC</value>
+  </data>
+  <data name="Moon.Flag.Sun">
+    <value>Слишком близко к Солнцу: его шум может заглушить эхо.</value>
+  </data>
+  <data name="Moon.Flag.Galactic">
+    <value>На фоне Млечного Пути: фоновый шум выше.</value>
+  </data>
+  <data name="Moon.Note.NewMoon">
+    <value>Новолуние: Луна близко к Солнцу на небе. На низких диапазонах связи всё равно проводятся.</value>
+  </data>
+  <data name="Moon.Note.FreeSpace">
+    <value>Значения для свободного пространства и изотропных антенн, а не расчёт линии связи. Коэффициент отражения 6,5 % — допущение.</value>
+  </data>
+  <data name="Moon.Status.Up">
+    <value>Над горизонтом (от {0:F1}° и выше)</value>
+  </data>
+  <data name="Moon.Status.Down">
+    <value>Ниже предела {0:F1}°</value>
+  </data>
+  <data name="Moon.Short.Up">
+    <value>Выше</value>
+  </data>
+  <data name="Moon.Short.Down">
+    <value>Ниже</value>
+  </data>
+  <data name="Moon.Next.Rise">
+    <value>Восход в {0}</value>
+  </data>
+  <data name="Moon.Next.Set">
+    <value>Заход в {0}</value>
+  </data>
+  <data name="Moon.Next.None">
+    <value>Нет восхода и захода в ближайшие 3 суток</value>
+  </data>
+  <data name="Moon.Apsis.Perigee">
+    <value>перигей</value>
+  </data>
+  <data name="Moon.Apsis.Apogee">
+    <value>апогей</value>
+  </data>
+  <data name="Moon.Class.Good">
+    <value>хорошо</value>
+  </data>
+  <data name="Moon.Class.Fair">
+    <value>удовлетворительно</value>
+  </data>
+  <data name="Moon.Class.Poor">
+    <value>плохо</value>
+  </data>
+  <data name="Moon.Class.Bad">
+    <value>очень плохо</value>
+  </data>
+  <data name="Moon.Phase.New">
+    <value>Новолуние</value>
+  </data>
+  <data name="Moon.Phase.WaxingCrescent">
+    <value>Растущий серп</value>
+  </data>
+  <data name="Moon.Phase.FirstQuarter">
+    <value>Первая четверть</value>
+  </data>
+  <data name="Moon.Phase.WaxingGibbous">
+    <value>Растущая Луна</value>
+  </data>
+  <data name="Moon.Phase.Full">
+    <value>Полнолуние</value>
+  </data>
+  <data name="Moon.Phase.WaningGibbous">
+    <value>Убывающая Луна</value>
+  </data>
+  <data name="Moon.Phase.LastQuarter">
+    <value>Последняя четверть</value>
+  </data>
+  <data name="Moon.Phase.WaningCrescent">
+    <value>Убывающий серп</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Up">
+    <value>Луна над горизонтом. Азимут {0:F1} градуса, угол места {1:F1} градуса. Дополнительные потери на трассе {2:F1} дБ, {3}.</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Down">
+    <value>Луна ниже предела. Азимут {0:F1} градуса, угол места {1:F1} градуса. Дополнительные потери на трассе {2:F1} дБ, {3}.</value>
+  </data>
+  <data name="Moon.Copy.Header">
+    <value>Луна (EME), {0}</value>
+  </data>
 </root>

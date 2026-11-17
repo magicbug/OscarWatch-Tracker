@@ -2534,6 +2534,7 @@ public partial class MainViewModel : ViewModelBase
     private static QsoLogbookWindow? _openLogbookWindow;
     private static Ft4Window? _openFt4Window;
     private static EarthViewWindow? _openEarthViewWindow;
+    private static EmeWindow? _openMoonWindow;
 
     [RelayCommand]
     private void OpenQsoLogbook()
@@ -2575,6 +2576,27 @@ public partial class MainViewModel : ViewModelBase
         var window = new EarthViewWindow { DataContext = vm };
         window.Closed += (_, _) => _openEarthViewWindow = null;
         _openEarthViewWindow = window;
+        window.Show(App.MainWindow);
+    }
+
+    /// <summary>Opens the Moon (EME) window, or brings it to the front if it is already open.</summary>
+    [RelayCommand]
+    private void OpenMoon()
+    {
+        if (_openMoonWindow is { IsVisible: true })
+        {
+            _openMoonWindow.Activate();
+            return;
+        }
+        if (App.MainWindow is null)
+            return;
+        var vm = new EmeViewModel(
+            App.Services.GetRequiredService<ISettingsService>(),
+            App.Services.GetRequiredService<ILiveTrackingService>(),
+            App.Services.GetRequiredService<ILocalizationService>());
+        var window = new EmeWindow { DataContext = vm };
+        window.Closed += (_, _) => _openMoonWindow = null;
+        _openMoonWindow = window;
         window.Show(App.MainWindow);
     }
 

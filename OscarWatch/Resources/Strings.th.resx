@@ -6980,4 +6980,244 @@ LOS: {2}
   <data name="Cw.Worked.Grid">
     <value>เคยติดต่อแล้ว: คุณมี QSO ในช่องกริดนี้</value>
   </data>
+  <data name="Menu.Window.Moon">
+    <value>ดวงจันทร์ (EME)(_M)</value>
+  </data>
+  <data name="Window.Moon.Title">
+    <value>ดวงจันทร์ (EME)</value>
+  </data>
+  <data name="Moon.Accessible.Name">
+    <value>ดวงจันทร์ (EME)</value>
+  </data>
+  <data name="Moon.Empty.NoPosition">
+    <value>คำนวณตำแหน่งดวงจันทร์ไม่ได้ ตรวจสอบตำแหน่งสถานีในการตั้งค่า</value>
+  </data>
+  <data name="Moon.FrequencyInvalid">
+    <value>ป้อนความถี่ตั้งแต่ 30 MHz ถึง 100 GHz จะยังไม่แสดงดอปเปลอร์และการสูญเสียเส้นทางจนกว่าจะป้อน</value>
+  </data>
+  <data name="Moon.Band">
+    <value>ย่านความถี่</value>
+  </data>
+  <data name="Moon.Frequency">
+    <value>ความถี่ (MHz)</value>
+  </data>
+  <data name="Moon.Beamwidth">
+    <value>ความกว้างลำคลื่น (°)</value>
+  </data>
+  <data name="Moon.Circular">
+    <value>โพลาไรเซชันแบบวงกลม</value>
+  </data>
+  <data name="Moon.LargeDigits">
+    <value>ตัวเลขขนาดใหญ่</value>
+  </data>
+  <data name="Moon.Copy">
+    <value>คัดลอก</value>
+  </data>
+  <data name="Moon.Section.Position">
+    <value>ตำแหน่ง</value>
+  </data>
+  <data name="Moon.Section.Echo">
+    <value>เอคโค่และการสูญเสียเส้นทาง</value>
+  </data>
+  <data name="Moon.Section.Moon">
+    <value>ดวงจันทร์วันนี้</value>
+  </data>
+  <data name="Moon.Section.Visibility">
+    <value>การขึ้นและตก</value>
+  </data>
+  <data name="Moon.Label.Azimuth">
+    <value>มุมอะซิมัท</value>
+  </data>
+  <data name="Moon.Label.Elevation">
+    <value>มุมเงย</value>
+  </data>
+  <data name="Moon.Label.HourAngle">
+    <value>มุมชั่วโมง</value>
+  </data>
+  <data name="Moon.Label.GreenwichHourAngle">
+    <value>มุมชั่วโมงที่กรีนิช</value>
+  </data>
+  <data name="Moon.Label.Declination">
+    <value>มุมเดคลิเนชัน</value>
+  </data>
+  <data name="Moon.Label.Sublunar">
+    <value>จุดใต้ดวงจันทร์</value>
+  </data>
+  <data name="Moon.Label.Distance">
+    <value>ระยะทาง</value>
+  </data>
+  <data name="Moon.Label.RangeRate">
+    <value>อัตราการเปลี่ยนระยะทาง</value>
+  </data>
+  <data name="Moon.Label.EchoDelay">
+    <value>เวลาหน่วงของเอคโค่</value>
+  </data>
+  <data name="Moon.Label.OwnEcho">
+    <value>การเลื่อนความถี่เอคโค่ของตัวเอง</value>
+  </data>
+  <data name="Moon.Label.ExtraLoss">
+    <value>การสูญเสียเส้นทางเพิ่มเติม</value>
+  </data>
+  <data name="Moon.Label.AbsoluteLoss">
+    <value>การสูญเสียเส้นทาง</value>
+  </data>
+  <data name="Moon.Label.Phase">
+    <value>ข้างขึ้นข้างแรม</value>
+  </data>
+  <data name="Moon.Label.Diameter">
+    <value>เส้นผ่านศูนย์กลาง</value>
+  </data>
+  <data name="Moon.Label.NextPerigee">
+    <value>จุดใกล้โลกที่สุดครั้งถัดไป</value>
+  </data>
+  <data name="Moon.Label.NextApogee">
+    <value>จุดไกลโลกที่สุดครั้งถัดไป</value>
+  </data>
+  <data name="Moon.Label.LastApsis">
+    <value>จุดใกล้หรือไกลโลกครั้งล่าสุด</value>
+  </data>
+  <data name="Moon.Label.SunSeparation">
+    <value>ดวงจันทร์กับดวงอาทิตย์</value>
+  </data>
+  <data name="Moon.Label.GalacticSeparation">
+    <value>ดวงจันทร์กับใจกลางกาแล็กซี</value>
+  </data>
+  <data name="Moon.Label.Status">
+    <value>สถานะ</value>
+  </data>
+  <data name="Moon.Label.Next">
+    <value>ถัดไป</value>
+  </data>
+  <data name="Moon.Label.Time">
+    <value>เวลา</value>
+  </data>
+  <data name="Moon.Value.Degrees">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.Position">
+    <value>{0:F1}°, {1:F1}°</value>
+  </data>
+  <data name="Moon.Value.Kilometres">
+    <value>{0:N0} กม.</value>
+  </data>
+  <data name="Moon.Value.RangeRate">
+    <value>{0:+0.000;-0.000} กม./วินาที</value>
+  </data>
+  <data name="Moon.Value.Seconds">
+    <value>{0:F3} วินาที</value>
+  </data>
+  <data name="Moon.Value.Hertz">
+    <value>{0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Moon.Value.Decibels">
+    <value>{0:F1} dB</value>
+  </data>
+  <data name="Moon.Value.ExtraLoss">
+    <value>{0:F1} dB, {1}</value>
+  </data>
+  <data name="Moon.Value.Phase">
+    <value>{0} สว่าง {1:F0}%</value>
+  </data>
+  <data name="Moon.Value.Diameter">
+    <value>{0:F1}′</value>
+  </data>
+  <data name="Moon.Value.Apsis">
+    <value>{0}, {1:N0} km</value>
+  </data>
+  <data name="Moon.Value.LastApsis">
+    <value>{0} เมื่อ {1:F1} วันก่อน</value>
+  </data>
+  <data name="Moon.Value.Separation">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.SeparationFlag">
+    <value>{0:F1}°. {1}</value>
+  </data>
+  <data name="Moon.Value.TimeUtc">
+    <value>{0} UTC</value>
+  </data>
+  <data name="Moon.Flag.Sun">
+    <value>อยู่ใกล้ดวงอาทิตย์เกินไป: สัญญาณรบกวนอาจกลบเอคโค่</value>
+  </data>
+  <data name="Moon.Flag.Galactic">
+    <value>อยู่หน้าทางช้างเผือก: สัญญาณรบกวนพื้นหลังสูงขึ้น</value>
+  </data>
+  <data name="Moon.Note.NewMoon">
+    <value>จันทร์ดับ: ดวงจันทร์อยู่ใกล้ดวงอาทิตย์บนท้องฟ้า ยังติดต่อบนย่านความถี่ต่ำได้</value>
+  </data>
+  <data name="Moon.Note.FreeSpace">
+    <value>ค่าในอวกาศว่างสำหรับสายอากาศไอโซโทรปิก ไม่ใช่การคำนวณลิงก์บัดเจ็ต ค่าสะท้อน 6.5% เป็นเพียงข้อสมมติ</value>
+  </data>
+  <data name="Moon.Status.Up">
+    <value>ขึ้นแล้ว (ตั้งแต่ {0:F1}° ขึ้นไป)</value>
+  </data>
+  <data name="Moon.Status.Down">
+    <value>ต่ำกว่าขีดจำกัด {0:F1}°</value>
+  </data>
+  <data name="Moon.Short.Up">
+    <value>ขึ้น</value>
+  </data>
+  <data name="Moon.Short.Down">
+    <value>ลง</value>
+  </data>
+  <data name="Moon.Next.Rise">
+    <value>ขึ้นเวลา {0}</value>
+  </data>
+  <data name="Moon.Next.Set">
+    <value>ตกเวลา {0}</value>
+  </data>
+  <data name="Moon.Next.None">
+    <value>ไม่มีการขึ้นหรือตกภายใน 3 วัน</value>
+  </data>
+  <data name="Moon.Apsis.Perigee">
+    <value>จุดใกล้โลกที่สุด</value>
+  </data>
+  <data name="Moon.Apsis.Apogee">
+    <value>จุดไกลโลกที่สุด</value>
+  </data>
+  <data name="Moon.Class.Good">
+    <value>ดี</value>
+  </data>
+  <data name="Moon.Class.Fair">
+    <value>พอใช้</value>
+  </data>
+  <data name="Moon.Class.Poor">
+    <value>แย่</value>
+  </data>
+  <data name="Moon.Class.Bad">
+    <value>แย่มาก</value>
+  </data>
+  <data name="Moon.Phase.New">
+    <value>จันทร์ดับ</value>
+  </data>
+  <data name="Moon.Phase.WaxingCrescent">
+    <value>ข้างขึ้น (เสี้ยว)</value>
+  </data>
+  <data name="Moon.Phase.FirstQuarter">
+    <value>ข้างขึ้น ครึ่งดวง</value>
+  </data>
+  <data name="Moon.Phase.WaxingGibbous">
+    <value>ข้างขึ้น (เกินครึ่ง)</value>
+  </data>
+  <data name="Moon.Phase.Full">
+    <value>เพ็ญ</value>
+  </data>
+  <data name="Moon.Phase.WaningGibbous">
+    <value>ข้างแรม (เกินครึ่ง)</value>
+  </data>
+  <data name="Moon.Phase.LastQuarter">
+    <value>ข้างแรม ครึ่งดวง</value>
+  </data>
+  <data name="Moon.Phase.WaningCrescent">
+    <value>ข้างแรม (เสี้ยว)</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Up">
+    <value>ดวงจันทร์ขึ้นแล้ว มุมอะซิมัท {0:F1} องศา มุมเงย {1:F1} องศา การสูญเสียเส้นทางเพิ่มเติม {2:F1} dB {3}</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Down">
+    <value>ดวงจันทร์ต่ำกว่าขีดจำกัด มุมอะซิมัท {0:F1} องศา มุมเงย {1:F1} องศา การสูญเสียเส้นทางเพิ่มเติม {2:F1} dB {3}</value>
+  </data>
+  <data name="Moon.Copy.Header">
+    <value>ดวงจันทร์ (EME) {0}</value>
+  </data>
 </root>

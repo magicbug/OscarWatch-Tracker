@@ -6975,4 +6975,244 @@ Mais recente: {1} ({2})</value>
   <data name="Cw.Worked.Grid">
     <value>Já trabalhado: você tem um QSO neste quadrado.</value>
   </data>
+  <data name="Menu.Window.Moon">
+    <value>_Lua (EME)</value>
+  </data>
+  <data name="Window.Moon.Title">
+    <value>Lua (EME)</value>
+  </data>
+  <data name="Moon.Accessible.Name">
+    <value>Lua (EME)</value>
+  </data>
+  <data name="Moon.Empty.NoPosition">
+    <value>Não é possível calcular a posição da Lua. Verifique a posição da estação em Configurações.</value>
+  </data>
+  <data name="Moon.FrequencyInvalid">
+    <value>Informe uma frequência de 30 MHz a 100 GHz. O Doppler e a perda de percurso não são mostrados até então.</value>
+  </data>
+  <data name="Moon.Band">
+    <value>Banda</value>
+  </data>
+  <data name="Moon.Frequency">
+    <value>Frequência (MHz)</value>
+  </data>
+  <data name="Moon.Beamwidth">
+    <value>Largura do feixe (°)</value>
+  </data>
+  <data name="Moon.Circular">
+    <value>Polarização circular</value>
+  </data>
+  <data name="Moon.LargeDigits">
+    <value>Dígitos grandes</value>
+  </data>
+  <data name="Moon.Copy">
+    <value>Copiar</value>
+  </data>
+  <data name="Moon.Section.Position">
+    <value>Posição</value>
+  </data>
+  <data name="Moon.Section.Echo">
+    <value>Eco e perda de percurso</value>
+  </data>
+  <data name="Moon.Section.Moon">
+    <value>A Lua hoje</value>
+  </data>
+  <data name="Moon.Section.Visibility">
+    <value>Nascer e pôr</value>
+  </data>
+  <data name="Moon.Label.Azimuth">
+    <value>Azimute</value>
+  </data>
+  <data name="Moon.Label.Elevation">
+    <value>Elevação</value>
+  </data>
+  <data name="Moon.Label.HourAngle">
+    <value>Ângulo horário</value>
+  </data>
+  <data name="Moon.Label.GreenwichHourAngle">
+    <value>Ângulo horário de Greenwich</value>
+  </data>
+  <data name="Moon.Label.Declination">
+    <value>Declinação</value>
+  </data>
+  <data name="Moon.Label.Sublunar">
+    <value>Ponto sublunar</value>
+  </data>
+  <data name="Moon.Label.Distance">
+    <value>Distância</value>
+  </data>
+  <data name="Moon.Label.RangeRate">
+    <value>Velocidade radial</value>
+  </data>
+  <data name="Moon.Label.EchoDelay">
+    <value>Atraso do eco</value>
+  </data>
+  <data name="Moon.Label.OwnEcho">
+    <value>Desvio do eco próprio</value>
+  </data>
+  <data name="Moon.Label.ExtraLoss">
+    <value>Perda de percurso adicional</value>
+  </data>
+  <data name="Moon.Label.AbsoluteLoss">
+    <value>Perda de percurso</value>
+  </data>
+  <data name="Moon.Label.Phase">
+    <value>Fase</value>
+  </data>
+  <data name="Moon.Label.Diameter">
+    <value>Diâmetro</value>
+  </data>
+  <data name="Moon.Label.NextPerigee">
+    <value>Próximo perigeu</value>
+  </data>
+  <data name="Moon.Label.NextApogee">
+    <value>Próximo apogeu</value>
+  </data>
+  <data name="Moon.Label.LastApsis">
+    <value>Última apside</value>
+  </data>
+  <data name="Moon.Label.SunSeparation">
+    <value>Lua e Sol</value>
+  </data>
+  <data name="Moon.Label.GalacticSeparation">
+    <value>Lua e centro galáctico</value>
+  </data>
+  <data name="Moon.Label.Status">
+    <value>Estado</value>
+  </data>
+  <data name="Moon.Label.Next">
+    <value>Próximo</value>
+  </data>
+  <data name="Moon.Label.Time">
+    <value>Hora</value>
+  </data>
+  <data name="Moon.Value.Degrees">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.Position">
+    <value>{0:F1}°, {1:F1}°</value>
+  </data>
+  <data name="Moon.Value.Kilometres">
+    <value>{0:N0} km</value>
+  </data>
+  <data name="Moon.Value.RangeRate">
+    <value>{0:+0.000;-0.000} km/s</value>
+  </data>
+  <data name="Moon.Value.Seconds">
+    <value>{0:F3} s</value>
+  </data>
+  <data name="Moon.Value.Hertz">
+    <value>{0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Moon.Value.Decibels">
+    <value>{0:F1} dB</value>
+  </data>
+  <data name="Moon.Value.ExtraLoss">
+    <value>{0:F1} dB, {1}</value>
+  </data>
+  <data name="Moon.Value.Phase">
+    <value>{0}, {1:F0}% iluminada</value>
+  </data>
+  <data name="Moon.Value.Diameter">
+    <value>{0:F1}′</value>
+  </data>
+  <data name="Moon.Value.Apsis">
+    <value>{0}, {1:N0} km</value>
+  </data>
+  <data name="Moon.Value.LastApsis">
+    <value>{0}, há {1:F1} dias</value>
+  </data>
+  <data name="Moon.Value.Separation">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.SeparationFlag">
+    <value>{0:F1}°. {1}</value>
+  </data>
+  <data name="Moon.Value.TimeUtc">
+    <value>{0} UTC</value>
+  </data>
+  <data name="Moon.Flag.Sun">
+    <value>Muito perto do Sol: o ruído dele pode encobrir um eco.</value>
+  </data>
+  <data name="Moon.Flag.Galactic">
+    <value>Na frente da Via Láctea: o ruído de fundo é maior.</value>
+  </data>
+  <data name="Moon.Note.NewMoon">
+    <value>Lua nova: fica perto do Sol no céu. Ainda se fazem contatos nas bandas baixas.</value>
+  </data>
+  <data name="Moon.Note.FreeSpace">
+    <value>Valores de espaço livre para antenas isotrópicas, não um orçamento de enlace. A refletividade de 6,5% é uma suposição.</value>
+  </data>
+  <data name="Moon.Status.Up">
+    <value>Acima (a {0:F1}° ou mais)</value>
+  </data>
+  <data name="Moon.Status.Down">
+    <value>Abaixo do limite de {0:F1}°</value>
+  </data>
+  <data name="Moon.Short.Up">
+    <value>Acima</value>
+  </data>
+  <data name="Moon.Short.Down">
+    <value>Abaixo</value>
+  </data>
+  <data name="Moon.Next.Rise">
+    <value>Nasce às {0}</value>
+  </data>
+  <data name="Moon.Next.Set">
+    <value>Se põe às {0}</value>
+  </data>
+  <data name="Moon.Next.None">
+    <value>Sem nascer nem pôr nos próximos 3 dias</value>
+  </data>
+  <data name="Moon.Apsis.Perigee">
+    <value>perigeu</value>
+  </data>
+  <data name="Moon.Apsis.Apogee">
+    <value>apogeu</value>
+  </data>
+  <data name="Moon.Class.Good">
+    <value>boa</value>
+  </data>
+  <data name="Moon.Class.Fair">
+    <value>razoável</value>
+  </data>
+  <data name="Moon.Class.Poor">
+    <value>ruim</value>
+  </data>
+  <data name="Moon.Class.Bad">
+    <value>muito ruim</value>
+  </data>
+  <data name="Moon.Phase.New">
+    <value>Lua nova</value>
+  </data>
+  <data name="Moon.Phase.WaxingCrescent">
+    <value>Crescente</value>
+  </data>
+  <data name="Moon.Phase.FirstQuarter">
+    <value>Quarto crescente</value>
+  </data>
+  <data name="Moon.Phase.WaxingGibbous">
+    <value>Gibosa crescente</value>
+  </data>
+  <data name="Moon.Phase.Full">
+    <value>Lua cheia</value>
+  </data>
+  <data name="Moon.Phase.WaningGibbous">
+    <value>Gibosa minguante</value>
+  </data>
+  <data name="Moon.Phase.LastQuarter">
+    <value>Quarto minguante</value>
+  </data>
+  <data name="Moon.Phase.WaningCrescent">
+    <value>Minguante</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Up">
+    <value>Lua acima. Azimute {0:F1} graus, elevação {1:F1} graus. Perda de percurso adicional {2:F1} dB, {3}.</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Down">
+    <value>Lua abaixo do limite. Azimute {0:F1} graus, elevação {1:F1} graus. Perda de percurso adicional {2:F1} dB, {3}.</value>
+  </data>
+  <data name="Moon.Copy.Header">
+    <value>Lua (EME), {0}</value>
+  </data>
 </root>
