@@ -139,6 +139,31 @@ public static class IcomCivCodec
     }
 
     /// <summary>
+    /// Decodes a 00/01 toggle reply for a two-byte CI-V command (for example 16 5A satellite mode
+    /// on IC-9700/9100, or 1A 07 satellite mode on IC-910). Returns null for plain ACK/NAK or unrelated frames.
+    /// </summary>
+    public static bool? DecodeCommandToggleFromResponse(ReadOnlySpan<byte> response, byte command, byte subCommand)
+    {
+        if (response.Length < 8)
+            return null;
+
+        for (var i = 4; i <= response.Length - 4; i++)
+        {
+            if (response[i] == command && response[i + 1] == subCommand)
+            {
+                return response[i + 2] switch
+                {
+                    0x00 => false,
+                    0x01 => true,
+                    _ => null
+                };
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// True when <paramref name="hz"/> is in an amateur satellite band on ICOM satellite rigs.
     /// Includes HF (IC-9100), VHF/UHF/23cm (IC-910/9700/9100), and SHF for IC-905
     /// (13 cm / 6 cm / 3 cm).

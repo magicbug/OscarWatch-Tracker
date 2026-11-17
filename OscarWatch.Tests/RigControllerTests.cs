@@ -3223,5 +3223,414 @@ public class RigControllerTests
         Assert.InRange(transport.FbHz, 145_000_000, 146_000_000);
     }
 
+    [Theory]
+    [InlineData(RigType.IcomIc9700)]
+    [InlineData(RigType.IcomIc9100)]
+    [InlineData(RigType.IcomIc910)]
+    public void Icom_first_resume_cat_recovers_when_pre_sat_vhf_read_inverts_rs44_satellite_vfo(RigType rigType)
+    {
+        // Issue #228: radio starts on 145 MHz VHF in normal VFO mode, while its stored Satellite VFO
+        // already has 435 MHz on Main and 145 MHz on Sub from an earlier RS-44 pass. If the first 0x03
+        // read right after entering SAT mode still returns normal VFO's 145 MHz, TryBandSwap sends 07 B0
+        // and inverts the Satellite VFO; WriteInitialFrequenciesWithBandRecovery must swap back with 07 B0,
+        // re-apply modes, and program 435 MHz on Main and 145 MHz on Sub on the first Resume CAT.
+        var transport = new StatefulIcomSatelliteTransport
+        {
+            NormalMainHz = 145_500_000,
+            SatMainHz = 435_600_000,
+            SatSubHz = 145_950_000,
+            StaleNormalReadsAfterSatEntry = 1
+        };
+        IcomCivDriverBase driver = rigType switch
+        {
+            RigType.IcomIc9700 => new IcomIc9700Driver(transport),
+            RigType.IcomIc9100 => new IcomIc9100Driver(transport),
+            _ => new IcomIc910Driver(transport)
+        };
+        using var controller = new RigController(_ => driver);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = rigType,
+            Port = "COM9",
+            CatDelayMs = 0,
+            CivAddress = RigSettings.DefaultCivAddressFor(rigType),
+            CatUpdatesPaused = true
+        };
+
+        var rs44Ft4 = new SatelliteTransponderMode
+        {
+            Type = "FT4",
+            DownlinkKHz = 435_640,
+            UplinkKHz = 145_965,
+            DownlinkMode = "DATA-USB",
+            UplinkMode = "DATA-LSB",
+            Doppler = "REV"
+        };
+        var context = new RigTrackingContext
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "RS-44",
+                NoradId = "44909",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 25, 1400, 0)
+            },
+            Mode = rs44Ft4,
+            Corrected = DopplerFrequencyCalculator.Compute(rs44Ft4, 0, 0)
+        };
+
+        // 1. Start program and select RS-44 while CAT is paused.
+        controller.Update(settings, context);
+        controller.DrainCommandQueueForTests();
+        Assert.False(transport.SatelliteMode);
+
+        // 2. Click "Resume CAT" once: must land on 435 MHz Main (USB/USB-D) and 145 MHz Sub (LSB/LSB-D).
+        settings.CatUpdatesPaused = false;
+        controller.Update(settings, context);
+        controller.DrainCommandQueueForTests();
+
+        Assert.True(transport.SatelliteMode);
+        Assert.Equal(435_640_000, transport.SatMainHz);
+        Assert.Equal(145_965_000, transport.SatSubHz);
+        Assert.Equal(0x01, transport.SatMainMode);
+        Assert.Equal(0x00, transport.SatSubMode);
+        if (rigType is RigType.IcomIc9700 or RigType.IcomIc9100)
+        {
+            Assert.True(transport.SatMainDataOn);
+            Assert.True(transport.SatSubDataOn);
+        }
+    }
+
+    [Theory]
+    [InlineData(RigType.IcomIc9700)]
+    [InlineData(RigType.IcomIc910)]
+    public void Icom_first_resume_cat_swaps_via_sub_fallback_on_uhf_downlink_when_main_read_misses(RigType rigType)
+    {
+        var transport = new StatefulIcomSatelliteTransport
+        {
+            NormalMainHz = 145_500_000,
+            SatMainHz = 145_900_000,
+            SatSubHz = 435_700_000,
+            SuppressSatMainReadsCount = 2
+        };
+        IcomCivDriverBase driver = rigType == RigType.IcomIc9700
+            ? new IcomIc9700Driver(transport)
+            : new IcomIc910Driver(transport);
+        using var controller = new RigController(_ => driver);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = rigType,
+            Port = "COM9",
+            CatDelayMs = 0,
+            CivAddress = RigSettings.DefaultCivAddressFor(rigType)
+        };
+
+        var rs44 = new SatelliteTransponderMode
+        {
+            Type = "SSB Transponder",
+            DownlinkKHz = 435_640,
+            UplinkKHz = 145_965,
+            DownlinkMode = "USB",
+            UplinkMode = "LSB",
+            Doppler = "REV"
+        };
+        controller.Update(settings, new RigTrackingContext
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "RS-44",
+                NoradId = "44909",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 25, 1400, 0)
+            },
+            Mode = rs44,
+            Corrected = DopplerFrequencyCalculator.Compute(rs44, 0, 0)
+        });
+        controller.DrainCommandQueueForTests();
+
+        Assert.Equal(1, transport.ExchangeCount);
+        Assert.Equal(435_640_000, transport.SatMainHz);
+        Assert.Equal(145_965_000, transport.SatSubHz);
+    }
+
+    [Theory]
+    [InlineData(RigType.IcomIc9700)]
+    [InlineData(RigType.IcomIc910)]
+    public void Icom_satellite_mode_entry_resends_sat_on_when_first_readback_reports_off(RigType rigType)
+    {
+        var transport = new StatefulIcomSatelliteTransport
+        {
+            NormalMainHz = 145_500_000,
+            SatMainHz = 145_900_000,
+            SatSubHz = 435_700_000,
+            IgnoreFirstSatModeOn = true
+        };
+        IcomCivDriverBase driver = rigType == RigType.IcomIc9700
+            ? new IcomIc9700Driver(transport)
+            : new IcomIc910Driver(transport);
+        using var controller = new RigController(_ => driver);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = rigType,
+            Port = "COM9",
+            CatDelayMs = 0,
+            CivAddress = RigSettings.DefaultCivAddressFor(rigType)
+        };
+
+        var rs44 = new SatelliteTransponderMode
+        {
+            Type = "SSB Transponder",
+            DownlinkKHz = 435_640,
+            UplinkKHz = 145_965,
+            DownlinkMode = "USB",
+            UplinkMode = "LSB",
+            Doppler = "REV"
+        };
+        controller.Update(settings, new RigTrackingContext
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "RS-44",
+                NoradId = "44909",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 25, 1400, 0)
+            },
+            Mode = rs44,
+            Corrected = DopplerFrequencyCalculator.Compute(rs44, 0, 0)
+        });
+        controller.DrainCommandQueueForTests();
+
+        Assert.True(transport.SatelliteMode);
+        Assert.Equal(435_640_000, transport.SatMainHz);
+        Assert.Equal(145_965_000, transport.SatSubHz);
+    }
+
+    [Fact]
+    public void Failed_identity_recheck_teardown_skips_satellite_mode_exit_commands()
+    {
+        var rig = new RecordingRigDriver
+        {
+            RigType = RigType.IcomIc9700,
+            MainHz = 435_640_000,
+            SubHz = 145_965_000
+        };
+        using var controller = new RigController(_ => rig);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.IcomIc9700,
+            Port = "COM9",
+            CatDelayMs = 0,
+            ExitSatelliteModeOnClose = true
+        };
+
+        var rs44 = new SatelliteTransponderMode
+        {
+            Type = "SSB Transponder",
+            DownlinkKHz = 435_640,
+            UplinkKHz = 145_965,
+            DownlinkMode = "USB",
+            UplinkMode = "LSB",
+            Doppler = "REV"
+        };
+        var context = new RigTrackingContext
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "RS-44",
+                NoradId = "44909",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 25, 1400, 0)
+            },
+            Mode = rs44,
+            Corrected = DopplerFrequencyCalculator.Compute(rs44, 0, 0)
+        };
+
+        controller.Update(settings, context);
+        controller.DrainCommandQueueForTests();
+        Assert.True(rig.LastSatelliteModeOn);
+
+        rig.Commands.Clear();
+        rig.ConfirmIdentity = false;
+        controller.RequireIdentityRecheck();
+        controller.Update(settings, context);
+        controller.DrainCommandQueueForTests();
+
+        Assert.DoesNotContain("sat-off", rig.Commands);
+        Assert.Contains("dispose", rig.Commands);
+    }
+
+    private sealed class StatefulIcomSatelliteTransport : IIcomCivTransport
+    {
+        public long NormalMainHz { get; set; } = 145_500_000;
+        public long NormalSubHz { get; set; } = 435_500_000;
+        public long SatMainHz { get; set; } = 145_900_000;
+        public long SatSubHz { get; set; } = 435_700_000;
+        public byte SatMainMode { get; private set; }
+        public byte SatSubMode { get; private set; }
+        public bool SatMainDataOn { get; private set; }
+        public bool SatSubDataOn { get; private set; }
+        public bool SatelliteMode { get; private set; }
+        public int StaleNormalReadsAfterSatEntry { get; set; }
+        public int SuppressSatMainReadsCount { get; set; }
+        public bool IgnoreFirstSatModeOn { get; set; }
+        public int ExchangeCount { get; private set; }
+        public bool IsOpen { get; private set; }
+
+        private bool _subSelected;
+
+        public void Open() => IsOpen = true;
+
+        public void Dispose() => IsOpen = false;
+
+        public void SetHandshakeLine(bool useRts, bool assert)
+        {
+        }
+
+        public byte[] WriteCommand(ReadOnlySpan<byte> body, int postDelayMs = 50)
+        {
+            if (body.Length == 0)
+                return [];
+
+            // 16 5A (IC-9700 / IC-9100) or 1A 07 (IC-910) satellite mode read/write
+            if ((body[0] == 0x16 && body.Length >= 2 && body[1] == 0x5A)
+                || (body[0] == 0x1A && body.Length >= 2 && body[1] == 0x07))
+            {
+                if (body.Length == 2)
+                    return [0xFE, 0xFE, 0xE0, 0xA2, body[0], body[1], (byte)(SatelliteMode ? 0x01 : 0x00), 0xFD];
+
+                var turnOn = body[2] == 0x01;
+                if (turnOn && IgnoreFirstSatModeOn)
+                {
+                    IgnoreFirstSatModeOn = false;
+                    return Ack();
+                }
+
+                SatelliteMode = turnOn;
+                return Ack();
+            }
+
+            if (body[0] == 0x07 && body.Length >= 2)
+            {
+                switch (body[1])
+                {
+                    case 0xD0:
+                    case 0x00:
+                        _subSelected = false;
+                        return Ack();
+                    case 0xD1:
+                    case 0x01:
+                        _subSelected = true;
+                        return Ack();
+                    case 0xB0:
+                        ExchangeCount++;
+                        if (SatelliteMode)
+                        {
+                            (SatMainHz, SatSubHz) = (SatSubHz, SatMainHz);
+                            (SatMainMode, SatSubMode) = (SatSubMode, SatMainMode);
+                            (SatMainDataOn, SatSubDataOn) = (SatSubDataOn, SatMainDataOn);
+                        }
+                        else
+                        {
+                            (NormalMainHz, NormalSubHz) = (NormalSubHz, NormalMainHz);
+                        }
+                        return Ack();
+                }
+            }
+
+            if (body[0] == 0x03)
+            {
+                if (SatelliteMode && !_subSelected && SuppressSatMainReadsCount > 0)
+                {
+                    SuppressSatMainReadsCount--;
+                    return [];
+                }
+
+                long readHz;
+                if (SatelliteMode && !_subSelected && StaleNormalReadsAfterSatEntry > 0)
+                {
+                    StaleNormalReadsAfterSatEntry--;
+                    readHz = NormalMainHz;
+                }
+                else if (SatelliteMode)
+                {
+                    readHz = _subSelected ? SatSubHz : SatMainHz;
+                }
+                else
+                {
+                    readHz = _subSelected ? NormalSubHz : NormalMainHz;
+                }
+
+                var encoded = IcomCivCodec.EncodeSetFrequencyHz(readHz);
+                return [0xFE, 0xFE, 0xE0, 0xA2, 0x03, encoded[1], encoded[2], encoded[3], encoded[4], encoded[5], 0xFD];
+            }
+
+            if (body[0] == 0x06 && body.Length >= 2)
+            {
+                if (SatelliteMode)
+                {
+                    if (_subSelected)
+                        SatSubMode = body[1];
+                    else
+                        SatMainMode = body[1];
+                }
+                return Ack();
+            }
+
+            if (body[0] == 0x1A && body.Length >= 4 && body[1] == 0x06)
+            {
+                if (SatelliteMode)
+                {
+                    var dataOn = body[2] == 0x01;
+                    if (_subSelected)
+                        SatSubDataOn = dataOn;
+                    else
+                        SatMainDataOn = dataOn;
+                }
+                return Ack();
+            }
+
+            if (body[0] == 0x05 && body.Length >= 6)
+            {
+                var digits = "";
+                for (var i = 5; i >= 1; i--)
+                    digits += body[i].ToString("X2");
+                digits = digits.TrimStart('0');
+                var targetHz = digits.Length == 0 ? 0 : long.Parse(digits);
+
+                var currentHz = SatelliteMode
+                    ? (_subSelected ? SatSubHz : SatMainHz)
+                    : (_subSelected ? NormalSubHz : NormalMainHz);
+                if (RigSatModeHelper.NeedsMainSubBandSwap(currentHz, targetHz / 1000.0))
+                    return Nak();
+
+                if (SatelliteMode)
+                {
+                    if (_subSelected)
+                        SatSubHz = targetHz;
+                    else
+                        SatMainHz = targetHz;
+                }
+                else
+                {
+                    if (_subSelected)
+                        NormalSubHz = targetHz;
+                    else
+                        NormalMainHz = targetHz;
+                }
+
+                return Ack();
+            }
+
+            return Ack();
+        }
+
+        private static byte[] Ack() => [0xFE, 0xFE, 0xE0, 0xA2, 0xFB, 0xFD];
+        private static byte[] Nak() => [0xFE, 0xFE, 0xE0, 0xA2, 0xFA, 0xFD];
+    }
+
     private static long ToHz(double kHz) => (long)Math.Round(kHz * 1000.0);
 }

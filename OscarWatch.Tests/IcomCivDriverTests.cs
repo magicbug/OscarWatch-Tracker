@@ -303,4 +303,49 @@ public sealed class IcomCivDriverTests
 
         Assert.False(driver.TryConfirmIdentity());
     }
+
+    [Theory]
+    [InlineData(RigType.IcomIc9700, 0x16, 0x5A, 0x01, true)]
+    [InlineData(RigType.IcomIc9700, 0x16, 0x5A, 0x00, false)]
+    [InlineData(RigType.IcomIc9100, 0x16, 0x5A, 0x01, true)]
+    [InlineData(RigType.IcomIc910, 0x1A, 0x07, 0x01, true)]
+    [InlineData(RigType.IcomIc910, 0x1A, 0x07, 0x00, false)]
+    public void TryReadSatelliteMode_decodes_toggle_response(
+        RigType rigType,
+        byte cmd,
+        byte subCmd,
+        byte stateByte,
+        bool expectedActive)
+    {
+        var transport = new RecordingIcomCivTransport();
+        IcomCivDriverBase driver = rigType switch
+        {
+            RigType.IcomIc9700 => new IcomIc9700Driver(transport),
+            RigType.IcomIc9100 => new IcomIc9100Driver(transport),
+            _ => new IcomIc910Driver(transport)
+        };
+        driver.Open();
+
+        transport.CommandResponses.Enqueue([0xFE, 0xFE, 0xE0, 0xA2, cmd, subCmd, stateByte, 0xFD]);
+        Assert.True(driver.CanReadSatelliteMode);
+        Assert.True(driver.TryReadSatelliteMode(out var active));
+        Assert.Equal(expectedActive, active);
+    }
+
+    [Fact]
+    public void SetSatelliteMode_invalidates_cached_vfo_so_next_select_sends_command()
+    {
+        var transport = new RecordingIcomCivTransport();
+        using var driver = new IcomIc9700Driver(transport);
+        driver.Open();
+
+        driver.SelectVfo(RigVfo.Main, force: true);
+        driver.SelectVfo(RigVfo.Main);
+        Assert.Single(transport.SentCommandBodies, b => b == "07d0");
+
+        driver.SetSatelliteMode(true);
+        transport.SentCommandBodies.Clear();
+        driver.SelectVfo(RigVfo.Main);
+        Assert.Contains("07d0", transport.SentCommandBodies);
+    }
 }

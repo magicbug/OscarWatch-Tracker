@@ -26,6 +26,8 @@ public sealed class IcomIc821hDriver : IcomCivDriverBase
     {
         // The IC-821H CI-V command table ends at 0x0F (no 1A 07 satellite-mode toggle; hardware NAKs it).
         // Track the expected layout so 07 D0 and 07 D1 match satellite vs normal Main/Sub operation.
+        if (_satelliteModeActive != on)
+            InvalidateSelectedVfo();
         _satelliteModeActive = on;
     }
 

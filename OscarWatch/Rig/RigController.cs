@@ -159,6 +159,7 @@ public sealed class RigController : IRigController, IDisposable
     private string? _lastConnectErrorPort;
     private string? _lastConnectEndpoint;
     private bool? _lastPassDownlinkOnVhf;
+    private double _lastSingleDownlinkCenterKHz;
     private double _lastDualDownlinkCenterKHz;
     private double _lastDualUplinkCenterKHz;
     /// <summary>Last Flex/sat pass identity (<see cref="SatelliteTrackState.Name"/>); used to force pan rebind on sat change.</summary>
@@ -848,9 +849,10 @@ public sealed class RigController : IRigController, IDisposable
             RunPassInit(settings, context);
     }
 
-    private void TearDownRig()
+    private void TearDownRig(bool skipSatelliteModeExit = false)
     {
-        ExitSatelliteModeBeforeTearDown();
+        if (!skipSatelliteModeExit)
+            ExitSatelliteModeBeforeTearDown();
         _satelliteModeEngaged = false;
         _driver?.Dispose();
         _driver = null;
@@ -921,6 +923,7 @@ public sealed class RigController : IRigController, IDisposable
         _lastAppliedCtcssHz = null;
         _lastAppliedCtcssSquelch = null;
         _lastPassDownlinkOnVhf = null;
+        _lastSingleDownlinkCenterKHz = 0;
         _lastDualDownlinkCenterKHz = 0;
         _lastDualUplinkCenterKHz = 0;
         _lastPassSatelliteKey = null;
@@ -1642,7 +1645,7 @@ public sealed class RigController : IRigController, IDisposable
                 if (ConfirmDriver(_driver, FormatSingleEndpoint(settings), endpointLabel: null, settings.Type))
                     return true;
 
-                TearDownRig();
+                TearDownRig(skipSatelliteModeExit: true);
                 return false;
             }
         }
@@ -1671,7 +1674,7 @@ public sealed class RigController : IRigController, IDisposable
 
             if (_identityMismatchDevice is not null)
             {
-                TearDownRig();
+                TearDownRig(skipSatelliteModeExit: true);
                 return false;
             }
 
@@ -1680,7 +1683,7 @@ public sealed class RigController : IRigController, IDisposable
                 ? $"Opened {endpoint} but SmartSDR is not responding"
                 : $"Opened {endpoint} but CI-V is not responding";
             Log.Warning("Rig opened {Endpoint} for {RigType} but link is not active", endpoint, settings.Type);
-            TearDownRig();
+            TearDownRig(skipSatelliteModeExit: true);
             RecordConnectFailure(
                 SerialPortConnectErrorKind.Generic,
                 endpoint,
@@ -1916,6 +1919,7 @@ public sealed class RigController : IRigController, IDisposable
         }
         AssignReceiveVfo(settings, context);
 
+        var enteringSatelliteMode = false;
         if (_isBeaconOnly)
         {
             if (settings.Type == RigType.KenwoodTs2000)
@@ -1929,12 +1933,13 @@ public sealed class RigController : IRigController, IDisposable
                 }
                 else
                 {
+                    enteringSatelliteMode = !_satelliteModeEngaged;
                     _driver.SetSatelliteMode(true);
                     _satelliteModeEngaged = true;
                     if (!_driver.IsSatelliteModeActive)
                     {
                         Log.Warning(
-                            "TS-2000 SATL not confirmed via SA; — continuing FA tracking for beacon (no FR/split in SAT).");
+                            "TS-2000 SATL not confirmed via SA; continuing FA tracking for beacon (no FR/split in SAT).");
                     }
 
                     Thread.Sleep(150);
@@ -1992,26 +1997,27 @@ public sealed class RigController : IRigController, IDisposable
                     _icomSplitActive = false;
                 }
 
+                enteringSatelliteMode = !_satelliteModeEngaged;
                 _driver.SetSatelliteMode(true);
                 _satelliteModeEngaged = true;
                 if (settings.Type == RigType.KenwoodTs2000 && !_driver.IsSatelliteModeActive)
                 {
                     Log.Warning(
-                        "TS-2000 SATL not confirmed via SA; — continuing FA/FB tracking (no FR/split in SAT).");
+                        "TS-2000 SATL not confirmed via SA; continuing FA/FB tracking (no FR/split in SAT).");
                 }
 
-                Thread.Sleep(150);
+                WaitForSatelliteModeEntry(settings, enteringSatelliteMode);
             }
 
             // IC-910/9100/9700 reject split CI-V in satellite (Main/Sub) mode with NAK.
-            // Kenwood SATL uses FA/FB only — never FR/FT (driver no-ops split while in SAT).
+            // Kenwood SATL uses FA/FB only, never FR/FT (driver no-ops split while in SAT).
             if (_useMainSub && !IsIcomSatelliteLayoutRig(settings.Type) && settings.Type != RigType.KenwoodTs2000)
                 _driver.SetSplitOn(false);
             if (settings.Type == RigType.IcomIc821h && _driver is IcomIc821hDriver ic821)
                 ic821.EstablishSatelliteVfoState();
         }
 
-        TryBandSwap(settings, context);
+        TryBandSwap(settings, context, enteringSatelliteMode);
 
         var setup = SetupVfosPolicy.Evaluate(
             context.EffectiveDownlinkMode,
@@ -2058,7 +2064,7 @@ public sealed class RigController : IRigController, IDisposable
 
         var initResult = isKenwoodSat && _driver is KenwoodTs2000Driver kenwoodInit
             ? InitializeKenwoodSatellitePass(settings, kenwoodInit, context, rxHz, txHz)
-            : WriteInitialFrequencies(settings, rxHz, txHz);
+            : WriteInitialFrequenciesWithBandRecovery(settings, context, rxHz, txHz, deferModeSetup);
 
         if (!isFlexSatPass)
             ApplyCtcss(settings, context, force: true);
@@ -2111,7 +2117,15 @@ public sealed class RigController : IRigController, IDisposable
             flexBeaconDriver.EnsureReceiveSliceActive();
         }
 
-        _lastPassDownlinkOnVhf = RigSatModeHelper.IsVhfCenterKHz(context.Mode.DownlinkKHz);
+        if (initResult.RxWritten && context.Mode.DownlinkKHz > 0)
+        {
+            _lastPassDownlinkOnVhf = RigSatModeHelper.IsVhfCenterKHz(context.Mode.DownlinkKHz);
+            _lastSingleDownlinkCenterKHz = context.Mode.DownlinkKHz;
+        }
+        else if (!initResult.RxWritten)
+        {
+            _lastSingleDownlinkCenterKHz = 0;
+        }
         _lastPassSatelliteKey = context.TrackState.Name;
         ArmDialMatchBeforePassbandCapture();
         ExtendDopplerSuspendMs(500);
@@ -2264,7 +2278,91 @@ public sealed class RigController : IRigController, IDisposable
         }
     }
 
-    private void TryBandSwap(RigSettings settings, RigTrackingContext context)
+    /// <summary>
+    /// Entering satellite mode from normal VFO mode takes longer than 150 ms on DSP/relay Icom rigs
+    /// (IC-9700, IC-9100, and IC-910) before Main/Sub reads reflect the Satellite VFO rather than
+    /// the normal VFO. Confirm via CI-V readback when supported.
+    /// </summary>
+    private void WaitForSatelliteModeEntry(RigSettings settings, bool enteringSatelliteMode)
+    {
+        if (!enteringSatelliteMode)
+        {
+            if (settings.CatDelayMs > 0)
+                Thread.Sleep(150);
+            return;
+        }
+
+        var initialSettleMs = settings.CatDelayMs > 0
+            ? (IsIcomSatelliteLayoutRig(settings.Type) ? 350 : 150)
+            : 0;
+        if (initialSettleMs > 0)
+            Thread.Sleep(initialSettleMs);
+
+        if (_driver is not IcomCivDriverBase { CanReadSatelliteMode: true } icomDriver)
+            return;
+
+        var retryDelayMs = settings.CatDelayMs > 0 ? 150 : 0;
+        var resentSatOn = false;
+        for (var attempt = 0; attempt < 3; attempt++)
+        {
+            if (attempt > 0 && retryDelayMs > 0)
+                Thread.Sleep(retryDelayMs);
+
+            if (!icomDriver.TryReadSatelliteMode(out var satActive))
+                continue;
+
+            if (satActive)
+            {
+                if (settings.CatDelayMs > 0)
+                    Thread.Sleep(Math.Clamp(settings.CatDelayMs, 50, 150));
+                return;
+            }
+
+            if (!resentSatOn)
+            {
+                resentSatOn = true;
+                Log.Debug("Satellite mode readback still off on {RigType}; resending satellite mode on", settings.Type);
+                _driver.SetSatelliteMode(true);
+                if (settings.CatDelayMs > 0)
+                    Thread.Sleep(250);
+            }
+        }
+    }
+
+    private InitialFrequencyWriteResult WriteInitialFrequenciesWithBandRecovery(
+        RigSettings settings,
+        RigTrackingContext context,
+        long rxHz,
+        long txHz,
+        bool deferModeSetup)
+    {
+        var result = WriteInitialFrequencies(settings, rxHz, txHz);
+        if (result.RxWritten
+            || result.TxWritten
+            || _driver is null
+            || !_useMainSub
+            || _isBeaconOnly
+            || !IsIcomSatelliteLayoutRig(settings.Type)
+            || !_driver.SupportsVfoExchange
+            || !RigSatModeHelper.AreDifferentMainSubBands(context.Mode.DownlinkKHz, context.Mode.UplinkKHz)
+            || !IsSupportedIcomSatelliteBand(settings.Type, context.Mode.DownlinkKHz)
+            || !IsSupportedIcomSatelliteBand(settings.Type, context.Mode.UplinkKHz))
+        {
+            return result;
+        }
+
+        Log.Warning(
+            "Initial satellite frequency write rejected on both Main and Sub for {RigType}; exchanging Main/Sub bands and retrying",
+            settings.Type);
+
+        _driver.ExchangeVfos();
+        if (!deferModeSetup)
+            ConfigureVfoModes(context);
+
+        return WriteInitialFrequencies(settings, rxHz, txHz);
+    }
+
+    private void TryBandSwap(RigSettings settings, RigTrackingContext context, bool enteringSatelliteMode = false)
     {
         if (_driver is null)
             return;
@@ -2274,24 +2372,12 @@ public sealed class RigController : IRigController, IDisposable
         if (UsesIcomSplitAbLayout(settings, context))
             return;
 
-        // TS-2000 SATL assigns downlink/uplink via FA/FB and SA P3 — not ICOM-style Main/Sub exchange.
+        // TS-2000 SATL assigns downlink/uplink via FA/FB and SA P3, not ICOM-style Main/Sub exchange.
         if (settings.Type == RigType.KenwoodTs2000)
             return;
 
         var canExchange = _driver.SupportsVfoExchange;
-        var downlinkOnVhf = RigSatModeHelper.IsVhfCenterKHz(context.Mode.DownlinkKHz);
-        if (canExchange
-            && _lastPassDownlinkOnVhf is bool previousDownlinkOnVhf
-            && previousDownlinkOnVhf != downlinkOnVhf)
-        {
-            _driver.ExchangeVfos();
-            return;
-        }
-
-        _driver.SelectVfo(RigVfo.Main);
-        Thread.Sleep(50);
-
-        var mainHz = _driver.ReadFrequencyHz(RigVfo.Main);
+        var mainHz = ReadSatelliteMainFrequencyHz(settings, enteringSatelliteMode);
         if (mainHz is > 0)
         {
             if (canExchange && RigSatModeHelper.NeedsMainSubBandSwap(mainHz.Value, context.Mode.DownlinkKHz))
@@ -2300,13 +2386,45 @@ public sealed class RigController : IRigController, IDisposable
             return;
         }
 
-        // CI-V read failed — infer from Sub when downlink/uplink are on opposite bands.
-        if (!canExchange || !downlinkOnVhf || !RigSatModeHelper.IsUhfCenterKHz(context.Mode.UplinkKHz))
+        if (canExchange
+            && _lastSingleDownlinkCenterKHz > 0
+            && RigSatModeHelper.AreDifferentMainSubBands(_lastSingleDownlinkCenterKHz, context.Mode.DownlinkKHz))
+        {
+            _driver.ExchangeVfos();
+            return;
+        }
+
+        // CI-V read on Main failed: infer from Sub when downlink and uplink sit on different bands.
+        if (!canExchange || !RigSatModeHelper.AreDifferentMainSubBands(context.Mode.DownlinkKHz, context.Mode.UplinkKHz))
             return;
 
+        _driver.SelectVfo(RigVfo.Sub, force: true);
         var subHz = _driver.ReadFrequencyHz(RigVfo.Sub);
-        if (subHz is > 0 and < 200_000_000)
+        if (subHz is > 0 && !RigSatModeHelper.NeedsMainSubBandSwap(subHz.Value, context.Mode.DownlinkKHz))
             _driver.ExchangeVfos();
+    }
+
+    private long? ReadSatelliteMainFrequencyHz(RigSettings settings, bool enteringSatelliteMode)
+    {
+        if (_driver is null)
+            return null;
+
+        var maxAttempts = enteringSatelliteMode && IsIcomSatelliteLayoutRig(settings.Type) ? 2 : 1;
+        for (var attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            if (attempt > 0 && settings.CatDelayMs > 0)
+                Thread.Sleep(150);
+
+            _driver.SelectVfo(RigVfo.Main, force: true);
+            if (settings.CatDelayMs > 0)
+                Thread.Sleep(50);
+
+            var mainHz = _driver.ReadFrequencyHz(RigVfo.Main);
+            if (mainHz is > 0)
+                return mainHz;
+        }
+
+        return null;
     }
 
     private static string PassKey(RigTrackingContext context) =>
@@ -2619,9 +2737,9 @@ public sealed class RigController : IRigController, IDisposable
         if (_useMainSub)
         {
             // Satellite layout: downlink mode on Main, uplink mode on Sub.
-            _driver.SelectVfo(RigVfo.Main);
+            _driver.SelectVfo(RigVfo.Main, force: true);
             _driver.SetMode(context.EffectiveDownlinkMode);
-            _driver.SelectVfo(RigVfo.Sub);
+            _driver.SelectVfo(RigVfo.Sub, force: true);
             _driver.SetMode(context.EffectiveUplinkMode);
             return;
         }

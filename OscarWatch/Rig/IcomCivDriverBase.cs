@@ -16,6 +16,7 @@ public abstract class IcomCivDriverBase : IRigDriver
     private readonly Func<IIcomCivTransport>? _transportFactory;
     private readonly int _catDelayMs;
     private RigVfo _currentVfo = RigVfo.VfoA;
+    private bool _vfoSelectionValid = true;
     private long _lastMainHz;
     private long _lastSubHz;
     private long _lastVfoAFreq;
@@ -204,12 +205,13 @@ public abstract class IcomCivDriverBase : IRigDriver
 
     private void SelectVfoInternal(RigVfo vfo, bool force)
     {
-        if (!force && _currentVfo == vfo && _transport is { IsOpen: true })
+        if (!force && _vfoSelectionValid && _currentVfo == vfo && _transport is { IsOpen: true })
             return;
 
         if (_transport is null || !IsConnected)
         {
             _currentVfo = vfo;
+            _vfoSelectionValid = true;
             return;
         }
 
@@ -223,10 +225,11 @@ public abstract class IcomCivDriverBase : IRigDriver
             _ => new byte[] { 0x07, 0x00 }
         };
 
+        var wasInvalid = !_vfoSelectionValid;
         var previousVfo = _currentVfo;
         if (TrySelectVfo(cmd, vfo, $"select VFO {vfo}"))
         {
-            if (previousVfo != vfo)
+            if (wasInvalid || previousVfo != vfo)
                 Thread.Sleep(_catDelayMs);
             return;
         }
@@ -235,17 +238,18 @@ public abstract class IcomCivDriverBase : IRigDriver
     }
 
     /// <summary>
-    /// VFO select (0x07). NAK means rejected; empty/no reply often means already selected — ICOM omits FB in SAT mode.
+    /// VFO select (0x07). NAK means rejected; empty/no reply often means already selected (ICOM omits FB in SAT mode).
     /// </summary>
     private bool TrySelectVfo(ReadOnlySpan<byte> body, RigVfo vfo, string description)
     {
         if (_transport is null || !IsConnected)
         {
             _currentVfo = vfo;
+            _vfoSelectionValid = true;
             return true;
         }
 
-        var changingVfo = _currentVfo != vfo;
+        var changingVfo = !_vfoSelectionValid || _currentVfo != vfo;
         var maxAttempts = changingVfo ? 3 : 2;
         for (var attempt = 0; attempt < maxAttempts; attempt++)
         {
@@ -256,6 +260,7 @@ public abstract class IcomCivDriverBase : IRigDriver
             if (IsCivAck(response))
             {
                 _currentVfo = vfo;
+                _vfoSelectionValid = true;
                 return true;
             }
 
@@ -273,6 +278,7 @@ public abstract class IcomCivDriverBase : IRigDriver
 
             Log.Debug("CI-V {Description} no ACK; assuming VFO selected", description);
             _currentVfo = vfo;
+            _vfoSelectionValid = true;
             return true;
         }
 
@@ -307,12 +313,34 @@ public abstract class IcomCivDriverBase : IRigDriver
 
     public abstract void SetSatelliteMode(bool on);
 
+    /// <summary>Two-byte CI-V query (without data byte) that reads back 00/01 satellite-mode state when supported.</summary>
+    protected virtual byte[]? SatelliteModeQueryCommand => null;
+
+    internal bool CanReadSatelliteMode => SatelliteModeQueryCommand is { Length: 2 };
+
+    internal bool TryReadSatelliteMode(out bool active)
+    {
+        active = false;
+        if (_transport is null || !IsConnected || SatelliteModeQueryCommand is not { Length: 2 } query)
+            return false;
+
+        var response = _transport.WriteCommand(query, _catDelayMs);
+        if (IcomCivCodec.DecodeCommandToggleFromResponse(response, query[0], query[1]) is not { } state)
+            return false;
+
+        active = state;
+        return true;
+    }
+
+    /// <summary>Marks cached VFO selection stale after entering or leaving satellite mode.</summary>
+    protected void InvalidateSelectedVfo() => _vfoSelectionValid = false;
+
     public void ExchangeVfos()
     {
         if (_transport is null || !IsConnected)
             return;
 
-        // Exchange is a toggle — send once only; a retry would swap twice and undo it.
+        // Exchange is a toggle: send once only; a retry would swap twice and undo it.
         var response = _transport.WriteCommand([0x07, 0xB0], _catDelayMs);
         if (!IsCivAck(response))
         {
@@ -320,13 +348,7 @@ public abstract class IcomCivDriverBase : IRigDriver
             return;
         }
 
-        _currentVfo = _currentVfo switch
-        {
-            RigVfo.Main => RigVfo.Sub,
-            RigVfo.Sub => RigVfo.Main,
-            RigVfo.VfoA => RigVfo.VfoB,
-            _ => RigVfo.VfoA
-        };
+        InvalidateSelectedVfo();
         (_lastMainHz, _lastSubHz) = (_lastSubHz, _lastMainHz);
         (_lastVfoAFreq, _lastVfoBFreq) = (_lastVfoBFreq, _lastVfoAFreq);
         Thread.Sleep(150);

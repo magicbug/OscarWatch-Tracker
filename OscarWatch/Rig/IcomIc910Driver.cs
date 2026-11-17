@@ -17,8 +17,13 @@ public sealed class IcomIc910Driver : IcomCivDriverBase
 
     public override bool SupportsTracking => true;
 
-    public override void SetSatelliteMode(bool on) =>
+    protected override byte[]? SatelliteModeQueryCommand => [0x1A, 0x07];
+
+    public override void SetSatelliteMode(bool on)
+    {
+        InvalidateSelectedVfo();
         WriteWithRetry(on ? [0x1A, 0x07, 0x01] : [0x1A, 0x07, 0x00]);
+    }
 
     protected override IEnumerable<byte[]> GetSetModeCommands(string mode) =>
         IcomCivCodec.EncodeIc910SetModeCommand(mode) is { } cmd ? [cmd] : [];
