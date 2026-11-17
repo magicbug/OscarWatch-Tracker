@@ -230,4 +230,78 @@ public sealed class MoonWindowsTests(ITestOutputHelper output)
         Assert.True(with.AosUtc > without.AosUtc);
         Assert.True(with.LosUtc < without.LosUtc);
     }
+
+    /// <summary>Brute force, one minute at a time with the ephemeris alone, for the edges of the spell the Moon is in at <paramref name="at"/>.</summary>
+    private static (DateTime Rise, DateTime Set) SpellAround(StationPosition st, DateTime at)
+    {
+        var rise = at;
+        while (Elevation(st, rise.AddMinutes(-1)) >= 0)
+            rise = rise.AddMinutes(-1);
+        var set = at;
+        while (Elevation(st, set.AddMinutes(1)) >= 0)
+            set = set.AddMinutes(1);
+        return (rise, set);
+    }
+
+    [Fact]
+    public void A_moon_that_has_been_up_for_days_near_the_pole_is_listed_with_its_real_rise_and_set()
+    {
+        // At 80 N the Moon stays up for about a week. On 1 Nov 2026 at 00:00 UTC it had already been up for
+        // 179 hours, which is more than the two day look-back the first version used.
+        var pole = new StationPosition(80, 0, 0);
+        var start = Utc(2026, 11, 1);
+        Assert.True(Elevation(pole, start) > 0);
+        var (rise, set) = SpellAround(pole, start);
+        Assert.True((start - rise).TotalHours > 72, "the case must be a multi-day spell");
+
+        foreach (var rule in new[] { MoonVisibilityRule.Default, new MoonVisibilityRule(0, 89.999, null) })
+        {
+            var first = MoonWindows.Find(rule, pole, start, start.AddDays(2))[0];
+            AssertSeconds(rise, first.AosUtc, 90);
+            AssertSeconds(set, first.LosUtc, 90);
+        }
+    }
+
+    [Fact]
+    public void The_rise_of_a_multi_day_moon_does_not_move_as_the_list_is_rebuilt()
+    {
+        var pole = new StationPosition(80, 0, 0);
+        foreach (var rule in new[] { MoonVisibilityRule.Default, new MoonVisibilityRule(0, 89.999, null) })
+        {
+            var a = MoonWindows.Find(rule, pole, Utc(2026, 11, 1), Utc(2026, 11, 2))[0];
+            var b = MoonWindows.Find(rule, pole, Utc(2026, 11, 1, 6), Utc(2026, 11, 2, 6))[0];
+            AssertSeconds(a.AosUtc, b.AosUtc, 90);
+            AssertSeconds(a.LosUtc, b.LosUtc, 90);
+        }
+    }
+
+    [Fact]
+    public void A_moon_still_up_at_the_end_of_the_range_has_its_real_set_in_both_paths()
+    {
+        var pole = new StationPosition(80, 0, 0);
+        var start = Utc(2026, 10, 27);
+        var end = start.AddDays(1);
+        var (rise, set) = SpellAround(pole, end.AddHours(-1));
+        Assert.True(set > end.AddDays(1), "the case must outlast the range");
+        foreach (var rule in new[] { MoonVisibilityRule.Default, new MoonVisibilityRule(0, 89.999, null) })
+        {
+            var window = MoonWindows.Find(rule, pole, start, end).Last(p => p.AosUtc < end);
+            AssertSeconds(set, window.LosUtc, 90);
+        }
+    }
+
+    [Fact]
+    public void The_peak_of_a_moon_already_up_is_the_peak_of_the_whole_window()
+    {
+        // From 20:00 the Moon is past its 17:36 transit. The scan path used to report the elevation at the
+        // start (14.5 degrees) as the maximum instead of 20.8.
+        foreach (var rule in new[] { MoonVisibilityRule.Default, new MoonVisibilityRule(0, 89.999, null) })
+        {
+            var whole = MoonWindows.Find(rule, London, Utc(2026, 11, 16, 6), Utc(2026, 11, 17))[0];
+            var late = MoonWindows.Find(rule, London, Utc(2026, 11, 16, 20), Utc(2026, 11, 17))[0];
+            Assert.Equal(whole.MaxElevationDeg, late.MaxElevationDeg, 0.05);
+            Assert.True(Math.Abs((whole.MaxElevationUtc - late.MaxElevationUtc).TotalMinutes) <= 2);
+            AssertSeconds(whole.AosUtc, late.AosUtc);
+        }
+    }
 }
