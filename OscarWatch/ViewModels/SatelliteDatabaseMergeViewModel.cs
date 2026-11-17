@@ -39,6 +39,13 @@ public partial class SatelliteDatabaseMergeViewModel : ViewModelBase
                 _l.Get("DbMerge.Item.NoradIdLine", item.SatelliteName, item.NoradId)));
         }
 
+        foreach (var item in plan.PreferredNameUpdates.OrderBy(i => i.CurrentName, StringComparer.OrdinalIgnoreCase))
+        {
+            PreferredNameUpdates.Add(new MergePreferredNameUpdateItem(
+                item.Key,
+                _l.Get("DbMerge.Item.PreferredNameLine", item.CurrentName, item.NewPreferredName)));
+        }
+
         foreach (var item in plan.NewSatellites)
         {
             var label = item.Entry.Modes.Count == 1
@@ -87,8 +94,10 @@ public partial class SatelliteDatabaseMergeViewModel : ViewModelBase
     public bool HasNewModes => NewModes.Count > 0;
     public bool HasConflicts => Conflicts.Count > 0;
     public bool HasNoradIdBackfills => NoradIdBackfills.Count > 0;
+    public bool HasPreferredNameUpdates => PreferredNameUpdates.Count > 0;
 
     public ObservableCollection<MergeNoradIdBackfillItem> NoradIdBackfills { get; } = [];
+    public ObservableCollection<MergePreferredNameUpdateItem> PreferredNameUpdates { get; } = [];
     public ObservableCollection<MergeAdditionItem> NewSatellites { get; } = [];
     public ObservableCollection<MergeAdditionItem> NewModes { get; } = [];
     public ObservableCollection<MergeConflictItem> Conflicts { get; } = [];
@@ -113,7 +122,7 @@ public partial class SatelliteDatabaseMergeViewModel : ViewModelBase
 
     public bool HasSelectedChanges()
     {
-        if (Plan.NoradIdBackfills.Count > 0)
+        if (Plan.NoradIdBackfills.Count > 0 || Plan.PreferredNameUpdates.Count > 0)
             return true;
 
         if (NewSatellites.Any(i => i.IsSelected) || NewModes.Any(i => i.IsSelected))
@@ -125,6 +134,13 @@ public partial class SatelliteDatabaseMergeViewModel : ViewModelBase
     private string BuildSummary(SatelliteDatabaseMergePlan plan, SatelliteDatabaseMergePresentation presentation)
     {
         var parts = new List<string>();
+        if (plan.PreferredNameUpdates.Count > 0)
+        {
+            parts.Add(plan.PreferredNameUpdates.Count == 1
+                ? _l.Get("DbMerge.Summary.OneRename", plan.PreferredNameUpdates.Count)
+                : _l.Get("DbMerge.Summary.ManyRenames", plan.PreferredNameUpdates.Count));
+        }
+
         if (plan.NoradIdBackfills.Count > 0)
         {
             parts.Add(plan.NoradIdBackfills.Count == 1
@@ -163,7 +179,17 @@ public partial class SatelliteDatabaseMergeViewModel : ViewModelBase
 
     private string BuildIntroHint(SatelliteDatabaseMergePlan plan, SatelliteDatabaseMergePresentation presentation)
     {
+        if (plan.PreferredNameUpdates.Count > 0
+            && plan.NoradIdBackfills.Count == 0
+            && plan.NewSatellites.Count == 0
+            && plan.NewModes.Count == 0
+            && plan.Conflicts.Count == 0)
+        {
+            return _l.Get("DbMerge.Intro.Renames");
+        }
+
         if (plan.NoradIdBackfills.Count > 0
+            && plan.PreferredNameUpdates.Count == 0
             && plan.NewSatellites.Count == 0
             && plan.NewModes.Count == 0
             && plan.Conflicts.Count == 0)
@@ -178,6 +204,12 @@ public partial class SatelliteDatabaseMergeViewModel : ViewModelBase
 }
 
 public sealed class MergeNoradIdBackfillItem(string key, string label)
+{
+    public string Key { get; } = key;
+    public string Label { get; } = label;
+}
+
+public sealed class MergePreferredNameUpdateItem(string key, string label)
 {
     public string Key { get; } = key;
     public string Label { get; } = label;

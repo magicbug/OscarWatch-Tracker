@@ -4489,6 +4489,9 @@ LOS: {2}
   <data name="DbMerge.NoradIdBackfills">
     <value>Каталожные номера NORAD</value>
   </data>
+  <data name="DbMerge.PreferredNameUpdates">
+    <value>Переименования спутников</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>Новые режимы транспондера</value>
   </data>
@@ -4528,6 +4531,9 @@ LOS: {2}
   <data name="DbMerge.Intro.NoradIds">
     <value>Эти каталожные номера будут добавлены спутникам в локальной базе, у которых номера ещё нет. Нажмите «Применить выбранное» для обновления.</value>
   </data>
+  <data name="DbMerge.Intro.Renames">
+    <value>У этих спутников в опубликованной базе новое предпочтительное имя (например обозначение OSCAR). Нажмите «Применить выбранное», чтобы переименовать локально.</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Ваша база транспондеров совпадает с {0}.</value>
   </data>
@@ -4555,6 +4561,12 @@ LOS: {2}
   <data name="DbMerge.Summary.ManyNoradIds">
     <value>{0} каталожных номеров NORAD</value>
   </data>
+  <data name="DbMerge.Summary.OneRename">
+    <value>{0} переименование спутника</value>
+  </data>
+  <data name="DbMerge.Summary.ManyRenames">
+    <value>{0} переименования спутников</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> из {0}.</value>
   </data>
@@ -4568,6 +4580,9 @@ LOS: {2}
     <value>{0} · {1}</value>
   </data>
   <data name="DbMerge.Item.NoradIdLine">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
   </data>
   <data name="DbAdd.Title">

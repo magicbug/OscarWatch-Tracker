@@ -4489,6 +4489,9 @@ LOS: {2}
   <data name="DbMerge.NoradIdBackfills">
     <value>หมายเลขแคตตาล็อก NORAD</value>
   </data>
+  <data name="DbMerge.PreferredNameUpdates">
+    <value>การเปลี่ยนชื่อดาวเทียม</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>โหมดทรานสปอนเดอร์ใหม่</value>
   </data>
@@ -4528,6 +4531,9 @@ LOS: {2}
   <data name="DbMerge.Intro.NoradIds">
     <value>หมายเลขแคตตาล็อกเหล่านี้จะถูกเพิ่มให้ดาวเทียมในฐานข้อมูลท้องถิ่นที่ยังไม่มี กดใช้รายการที่เลือกเพื่ออัปเดต</value>
   </data>
+  <data name="DbMerge.Intro.Renames">
+    <value>ดาวเทียมเหล่านี้มีชื่อที่ต้องการใหม่ในฐานข้อมูลที่เผยแพร่ (เช่น รหัส OSCAR) กดใช้รายการที่เลือกเพื่อเปลี่ยนชื่อในเครื่อง</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>ฐานข้อมูลทรานสปอนเดอร์ของคุณตรงกับ {0}</value>
   </data>
@@ -4555,6 +4561,12 @@ LOS: {2}
   <data name="DbMerge.Summary.ManyNoradIds">
     <value>หมายเลขแคตตาล็อก NORAD {0} รายการ</value>
   </data>
+  <data name="DbMerge.Summary.OneRename">
+    <value>การเปลี่ยนชื่อดาวเทียม {0} รายการ</value>
+  </data>
+  <data name="DbMerge.Summary.ManyRenames">
+    <value>การเปลี่ยนชื่อดาวเทียม {0} รายการ</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> จาก {0}</value>
   </data>
@@ -4568,6 +4580,9 @@ LOS: {2}
     <value>{0} · {1}</value>
   </data>
   <data name="DbMerge.Item.NoradIdLine">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
   </data>
   <data name="DbAdd.Title">

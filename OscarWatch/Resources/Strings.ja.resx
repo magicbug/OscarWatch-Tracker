@@ -4482,6 +4482,9 @@
   <data name="DbMerge.NoradIdBackfills">
     <value>NORAD カタログ ID</value>
   </data>
+  <data name="DbMerge.PreferredNameUpdates">
+    <value>衛星の改名</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>新しいトランスポンダモード</value>
   </data>
@@ -4521,6 +4524,9 @@
   <data name="DbMerge.Intro.NoradIds">
     <value>これらのカタログ番号は、まだ番号がないローカルデータベースの衛星に追加されます。更新するには「選択を適用」をクリックしてください。</value>
   </data>
+  <data name="DbMerge.Intro.Renames">
+    <value>公開データベースでこれらの衛星の表示名が新しくなりました（例: OSCAR 呼称）。「選択を適用」でローカル側も改名します。</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>トランスポンダデータベースは {0} と一致しています。</value>
   </data>
@@ -4548,6 +4554,12 @@
   <data name="DbMerge.Summary.ManyNoradIds">
     <value>NORAD カタログ ID {0} 件</value>
   </data>
+  <data name="DbMerge.Summary.OneRename">
+    <value>衛星の改名 {0} 件</value>
+  </data>
+  <data name="DbMerge.Summary.ManyRenames">
+    <value>衛星の改名 {0} 件</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value>（{0} より）。</value>
   </data>
@@ -4561,6 +4573,9 @@
     <value>{0} · {1}</value>
   </data>
   <data name="DbMerge.Item.NoradIdLine">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
   </data>
   <data name="DbAdd.Title">

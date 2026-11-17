@@ -67,6 +67,8 @@ The app loads **user → bundled** (see `SatelliteDatabaseService`).
 
 Lookup and remote merge prefer **NORAD catalogue ID** when both sides have one, then match by **preferred name** or any **`alternative_names`** entry. That lets you rename a satellite for the map without the next published update treating it as a new spacecraft.
 
+When the published entry keeps the old preferred name as an **`alternative_names`** value (for example `UNNE-1B` → `SO-131`), merge offers that rename locally and also replaces a stale **`norad_id`** when the catalogue number changed. TLE updates alone do not rewrite the transponder database; operators still need **Update transponder database** (or startup check) and to apply the merge.
+
 For frequency lookup, OscarWatch also registers common static aliases (e.g. `AO-7` → `AO-07`, `ISS (ZARYA)` → `ISS`, `FOX-1B` → `RADFXSAT (FOX-1B)`, `SAUDISAT 1C` → `SO-50`) and parenthetical prefixes. Optional `norad_id` remains the most reliable cross-catalog link (for example Celestrak `SAUDISAT 1C` → database `SO-50` via `27607`).
 
 When a database entry is found, the map and pass list show the preferred `name` rather than the raw TLE catalogue name. If a spacecraft has TLEs but no database entry, the frequency panel stays empty until an entry exists locally or via sync, and the map keeps the TLE name.

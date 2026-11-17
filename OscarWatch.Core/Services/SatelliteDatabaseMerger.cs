@@ -18,6 +18,7 @@ public static class SatelliteDatabaseMerger
         var newModes = new List<SatelliteDatabaseNewMode>();
         var conflicts = new List<SatelliteDatabaseMergeConflict>();
         var noradIdBackfills = new List<SatelliteDatabaseNoradIdBackfill>();
+        var preferredNameUpdates = new List<SatelliteDatabasePreferredNameUpdate>();
 
         foreach (var remoteEntry in remoteEntries)
         {
@@ -33,10 +34,20 @@ public static class SatelliteDatabaseMerger
             }
 
             // Prefer the local preferred name so Apply updates the renamed row,
-            // and so merge never overwrites a local display name with the remote name.
+            // unless the published entry is an official rename (local name listed as an alternative).
             var localName = localEntry.Name.Trim();
+            var remoteName = normalizedRemote.Name.Trim();
 
-            if (ShouldBackfillNoradId(localEntry.NoradId, normalizedRemote.NoradId))
+            if (IsOfficialPreferredNameRename(localName, remoteName, normalizedRemote.AlternativeNames))
+            {
+                preferredNameUpdates.Add(new SatelliteDatabasePreferredNameUpdate
+                {
+                    CurrentName = localName,
+                    NewPreferredName = remoteName
+                });
+            }
+
+            if (ShouldUpdateNoradId(localEntry.NoradId, normalizedRemote.NoradId))
             {
                 noradIdBackfills.Add(new SatelliteDatabaseNoradIdBackfill
                 {
@@ -80,7 +91,8 @@ public static class SatelliteDatabaseMerger
             NewSatellites = newSatellites,
             NewModes = newModes,
             Conflicts = conflicts,
-            NoradIdBackfills = noradIdBackfills
+            NoradIdBackfills = noradIdBackfills,
+            PreferredNameUpdates = preferredNameUpdates
         };
     }
 
@@ -111,7 +123,8 @@ public static class SatelliteDatabaseMerger
             NewSatellites = plan.NewSatellites,
             NewModes = plan.NewModes,
             Conflicts = conflicts,
-            NoradIdBackfills = plan.NoradIdBackfills
+            NoradIdBackfills = plan.NoradIdBackfills,
+            PreferredNameUpdates = plan.PreferredNameUpdates
         };
     }
 
@@ -220,8 +233,26 @@ public static class SatelliteDatabaseMerger
             if (!byName.TryGetValue(backfill.SatelliteName.Trim(), out var entry))
                 continue;
 
-            if (ShouldBackfillNoradId(entry.NoradId, backfill.NoradId))
+            if (ShouldUpdateNoradId(entry.NoradId, backfill.NoradId))
                 entry.NoradId = backfill.NoradId.Trim();
+        }
+
+        foreach (var rename in plan.PreferredNameUpdates)
+        {
+            var currentName = rename.CurrentName.Trim();
+            var newName = rename.NewPreferredName.Trim();
+            if (!byName.TryGetValue(currentName, out var entry))
+                continue;
+
+            if (byName.ContainsKey(newName) && !string.Equals(currentName, newName, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            entry.Name = newName;
+            entry.AlternativeNames = SatelliteDatabaseFile.NormalizeAlternativeNames(
+                newName,
+                ConcatDistinctAliases(entry.AlternativeNames, currentName));
+            byName.Remove(currentName);
+            byName[newName] = entry;
         }
 
         return result
@@ -371,8 +402,58 @@ public static class SatelliteDatabaseMerger
             && string.Equals(acknowledgment.RemoteFingerprint, ModeFingerprint(conflict.RemoteMode), StringComparison.Ordinal);
     }
 
-    private static bool ShouldBackfillNoradId(string? localNoradId, string? remoteNoradId) =>
-        string.IsNullOrWhiteSpace(localNoradId) && !string.IsNullOrWhiteSpace(remoteNoradId);
+    /// <summary>
+    /// Fill a missing local NORAD ID, or replace a stale one when the published catalogue ID changed
+    /// (for example UNNE-1B 100948 → SO-131 101101).
+    /// </summary>
+    private static bool ShouldUpdateNoradId(string? localNoradId, string? remoteNoradId)
+    {
+        if (string.IsNullOrWhiteSpace(remoteNoradId))
+            return false;
+
+        if (string.IsNullOrWhiteSpace(localNoradId))
+            return true;
+
+        var localCanonical = CanonicalNoradId(localNoradId);
+        var remoteCanonical = CanonicalNoradId(remoteNoradId);
+        if (localCanonical is null || remoteCanonical is null)
+            return !string.Equals(localNoradId.Trim(), remoteNoradId.Trim(), StringComparison.OrdinalIgnoreCase);
+
+        return !string.Equals(localCanonical, remoteCanonical, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// True when the published entry renamed the spacecraft and kept the local preferred name as an alias.
+    /// </summary>
+    private static bool IsOfficialPreferredNameRename(
+        string localName,
+        string remoteName,
+        IReadOnlyList<string>? remoteAlternativeNames)
+    {
+        if (string.Equals(localName, remoteName, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        foreach (var alias in remoteAlternativeNames ?? [])
+        {
+            if (string.Equals(alias?.Trim(), localName, StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static IEnumerable<string> ConcatDistinctAliases(
+        IEnumerable<string>? existing,
+        string additional)
+    {
+        if (existing is not null)
+        {
+            foreach (var alias in existing)
+                yield return alias;
+        }
+
+        yield return additional;
+    }
 
     private static SatelliteRadioEntry CloneEntry(SatelliteRadioEntry source) =>
         new()

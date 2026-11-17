@@ -29,6 +29,19 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
       <StackPanel Spacing="16">
+        <StackPanel Spacing="6" IsVisible="{Binding HasPreferredNameUpdates}">
+          <TextBlock Text="{loc:Localize Key=DbMerge.PreferredNameUpdates}" FontWeight="SemiBold" />
+          <ItemsControl ItemsSource="{Binding PreferredNameUpdates}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:MergePreferredNameUpdateItem">
+                <TextBlock Text="{Binding Label}"
+                           Margin="0,2"
+                           TextWrapping="Wrap" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
         <StackPanel Spacing="6" IsVisible="{Binding HasNoradIdBackfills}">
           <TextBlock Text="{loc:Localize Key=DbMerge.NoradIdBackfills}" FontWeight="SemiBold" />
           <ItemsControl ItemsSource="{Binding NoradIdBackfills}">

@@ -4485,6 +4485,9 @@ Continuar?</value>
   <data name="DbMerge.NoradIdBackfills">
     <value>IDs de catálogo NORAD</value>
   </data>
+  <data name="DbMerge.PreferredNameUpdates">
+    <value>Renomeações de satélites</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>Novos modos de transmissores/transponders</value>
   </data>
@@ -4524,6 +4527,9 @@ Continuar?</value>
   <data name="DbMerge.Intro.NoradIds">
     <value>Estes números de catálogo serão adicionados aos satélites da sua base local que ainda não tenham um. Clique em Aplicar selecionados para atualizar.</value>
   </data>
+  <data name="DbMerge.Intro.Renames">
+    <value>Estes satélites têm um novo nome preferido na base publicada (por exemplo uma designação OSCAR). Clique em Aplicar selecionados para renomeá-los localmente.</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Seu banco de dados de transmissores/transponders corresponde a {0}.</value>
   </data>
@@ -4551,6 +4557,12 @@ Continuar?</value>
   <data name="DbMerge.Summary.ManyNoradIds">
     <value>{0} IDs de catálogo NORAD</value>
   </data>
+  <data name="DbMerge.Summary.OneRename">
+    <value>{0} renomeação de satélite</value>
+  </data>
+  <data name="DbMerge.Summary.ManyRenames">
+    <value>{0} renomeações de satélites</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> de {0}.</value>
   </data>
@@ -4564,6 +4576,9 @@ Continuar?</value>
     <value>{0} · {1}</value>
   </data>
   <data name="DbMerge.Item.NoradIdLine">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
   </data>
   <data name="DbAdd.Title">

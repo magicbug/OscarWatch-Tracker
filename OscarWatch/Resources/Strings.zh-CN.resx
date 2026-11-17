@@ -4485,6 +4485,9 @@
   <data name="DbMerge.NoradIdBackfills">
     <value>NORAD 目录编号</value>
   </data>
+  <data name="DbMerge.PreferredNameUpdates">
+    <value>卫星重命名</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>新转发器模式</value>
   </data>
@@ -4524,6 +4527,9 @@
   <data name="DbMerge.Intro.NoradIds">
     <value>这些目录编号将添加到本地数据库中尚无编号的卫星。点击“应用所选项”进行更新。</value>
   </data>
+  <data name="DbMerge.Intro.Renames">
+    <value>这些卫星在已发布数据库中有了新的首选名称（例如 OSCAR 编号）。点击“应用所选”以在本地重命名。</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>您的转发器数据库与 {0} 匹配。</value>
   </data>
@@ -4551,6 +4557,12 @@
   <data name="DbMerge.Summary.ManyNoradIds">
     <value>{0} 个 NORAD 目录编号</value>
   </data>
+  <data name="DbMerge.Summary.OneRename">
+    <value>{0} 个卫星重命名</value>
+  </data>
+  <data name="DbMerge.Summary.ManyRenames">
+    <value>{0} 个卫星重命名</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value>来自 {0}。</value>
   </data>
@@ -4564,6 +4576,9 @@
     <value>{0}·{1}</value>
   </data>
   <data name="DbMerge.Item.NoradIdLine">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
   </data>
   <data name="DbAdd.Title">

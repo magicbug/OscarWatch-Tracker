@@ -394,6 +394,110 @@ public class SatelliteDatabaseMergerTests
         Assert.Empty(plan.Conflicts);
     }
 
+    [Fact]
+    public void BuildPlan_updates_stale_norad_id_and_official_oscar_rename()
+    {
+        // Local still has the pre-designation name and the old Transporter-18 catalogue ID.
+        var local = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "UNNE-1B",
+                NoradId = "100948",
+                Modes =
+                [
+                    Mode("FM Repeater", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM"),
+                    Mode("CW", 436_888, 0, downlinkMode: "CW", uplinkMode: "CW")
+                ]
+            }
+        };
+
+        var remote = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "SO-131",
+                NoradId = "101101",
+                AlternativeNames = ["UNNE-1B"],
+                Modes =
+                [
+                    Mode("FM Repeater", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM"),
+                    Mode("CW", 436_888, 0, downlinkMode: "CW", uplinkMode: "CW")
+                ]
+            }
+        };
+
+        var plan = SatelliteDatabaseMerger.BuildPlan(local, remote);
+
+        Assert.Empty(plan.NewSatellites);
+        Assert.Empty(plan.NewModes);
+        Assert.Empty(plan.Conflicts);
+        Assert.Single(plan.PreferredNameUpdates);
+        Assert.Equal("UNNE-1B", plan.PreferredNameUpdates[0].CurrentName);
+        Assert.Equal("SO-131", plan.PreferredNameUpdates[0].NewPreferredName);
+        Assert.Single(plan.NoradIdBackfills);
+        Assert.Equal("UNNE-1B", plan.NoradIdBackfills[0].SatelliteName);
+        Assert.Equal("A1101", plan.NoradIdBackfills[0].NoradId);
+
+        var merged = SatelliteDatabaseMerger.Apply(local, plan, new SatelliteDatabaseMergeSelection());
+        var entry = Assert.Single(merged);
+        Assert.Equal("SO-131", entry.Name);
+        Assert.Equal("A1101", entry.NoradId);
+        Assert.Contains(entry.AlternativeNames ?? [], a => a == "UNNE-1B");
+        Assert.Equal(2, entry.Modes.Count);
+
+        var tempPath = Path.Combine(Path.GetTempPath(), $"oscarwatch-so131-{Guid.NewGuid():N}.json");
+        try
+        {
+            SatelliteDatabaseFile.Save(tempPath, merged);
+            var database = new SatelliteDatabaseService(tempPath, tempPath);
+            Assert.NotNull(database.TryGetEntry("SO-131", "A1101"));
+            Assert.NotNull(database.TryGetEntry("UNNE-1B", "A1101"));
+            Assert.Equal(2, database.TryGetEntry("SO-131", "A1101")!.Modes.Count);
+        }
+        finally
+        {
+            if (File.Exists(tempPath))
+                File.Delete(tempPath);
+        }
+    }
+
+    [Fact]
+    public void BuildPlan_updates_stale_norad_id_for_hades_l_to_so132()
+    {
+        var local = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "HADES-L",
+                NoradId = "100909",
+                Modes = [Mode("Voice A/U", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM")]
+            }
+        };
+
+        var remote = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "SO-132",
+                NoradId = "101102",
+                AlternativeNames = ["HADES-L"],
+                Modes = [Mode("Voice A/U", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM")]
+            }
+        };
+
+        var plan = SatelliteDatabaseMerger.BuildPlan(local, remote);
+        Assert.True(plan.HasChanges);
+        Assert.Single(plan.PreferredNameUpdates);
+        Assert.Single(plan.NoradIdBackfills);
+
+        var merged = SatelliteDatabaseMerger.Apply(local, plan, new SatelliteDatabaseMergeSelection());
+        var entry = Assert.Single(merged);
+        Assert.Equal("SO-132", entry.Name);
+        Assert.Equal("A1102", entry.NoradId);
+        Assert.Contains(entry.AlternativeNames ?? [], a => a == "HADES-L");
+    }
+
     private static SatelliteRadioEntry Entry(string name, params SatelliteTransponderMode[] modes) =>
         new() { Name = name, Modes = modes.ToList() };
 

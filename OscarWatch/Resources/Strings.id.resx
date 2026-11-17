@@ -4489,6 +4489,9 @@ Lanjutkan?</value>
   <data name="DbMerge.NoradIdBackfills">
     <value>ID katalog NORAD</value>
   </data>
+  <data name="DbMerge.PreferredNameUpdates">
+    <value>Penggantian nama satelit</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>Mode transponder baru</value>
   </data>
@@ -4528,6 +4531,9 @@ Lanjutkan?</value>
   <data name="DbMerge.Intro.NoradIds">
     <value>Nomor katalog ini akan ditambahkan ke satelit di basis data lokal yang belum punya. Klik Terapkan yang dipilih untuk memperbarui.</value>
   </data>
+  <data name="DbMerge.Intro.Renames">
+    <value>Satelit ini memiliki nama pilihan baru di basis data terbitan (misalnya designation OSCAR). Klik Terapkan yang dipilih untuk mengganti nama secara lokal.</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Basis data transponder Anda cocok dengan {0}.</value>
   </data>
@@ -4555,6 +4561,12 @@ Lanjutkan?</value>
   <data name="DbMerge.Summary.ManyNoradIds">
     <value>{0} ID katalog NORAD</value>
   </data>
+  <data name="DbMerge.Summary.OneRename">
+    <value>{0} penggantian nama satelit</value>
+  </data>
+  <data name="DbMerge.Summary.ManyRenames">
+    <value>{0} penggantian nama satelit</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> dari {0}.</value>
   </data>
@@ -4568,6 +4580,9 @@ Lanjutkan?</value>
     <value>{0} · {1}</value>
   </data>
   <data name="DbMerge.Item.NoradIdLine">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
   </data>
   <data name="DbAdd.Title">
