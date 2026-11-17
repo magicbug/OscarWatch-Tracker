@@ -80,7 +80,7 @@ Per-radio subclasses only override what differs, usually **`SetSatelliteMode`**:
 | [`IcomIc910Driver`](../OscarWatch/Rig/IcomIc910Driver.cs) | `IcomIc910` | `1A 07 01` / `00` |
 | [`IcomIc9100Driver`](../OscarWatch/Rig/IcomIc9100Driver.cs) | `IcomIc9100` | `16 5A 01` / `00` (same as IC-9700) |
 | [`IcomIc9700Driver`](../OscarWatch/Rig/IcomIc9700Driver.cs) | `IcomIc9700` | `16 5A 01` / `00` |
-| [`IcomIc821hDriver`](../OscarWatch/Rig/IcomIc821hDriver.cs) | `IcomIc821h` | `1A 07 01` / `00`; inverted `07 D0`/`D1` in SAT; split no-op |
+| [`IcomIc821hDriver`](../OscarWatch/Rig/IcomIc821hDriver.cs) | `IcomIc821h` | Front-panel SAT only (no `1A 07`); inverted `07 D0`/`D1` in SAT; `07 B0` band swap; split no-op |
 | [`IcomIc705Driver`](../OscarWatch/Rig/IcomIc705Driver.cs) | `IcomIc705` | no-op (dual-radio VFO A only) |
 | [`IcomIc7300Driver`](../OscarWatch/Rig/IcomIc7300Driver.cs) | `IcomIc7300` | no-op (dual-radio VFO A only) |
 | [`IcomIc905Driver`](../OscarWatch/Rig/IcomIc905Driver.cs) | `IcomIc905` | no-op (dual-radio VFO A only) |

@@ -1722,8 +1722,9 @@ public class RigControllerTests
         });
         controller.DrainCommandQueueForTests();
 
-        Assert.Contains("1a0701", transport.SentCommandBodies);
+        Assert.DoesNotContain("1a0701", transport.SentCommandBodies);
         Assert.DoesNotContain("0f01", transport.SentCommandBodies);
+        Assert.Contains("07b0", transport.SentCommandBodies);
         Assert.Contains("07d1", transport.SentCommandBodies);
     }
 
@@ -1766,8 +1767,9 @@ public class RigControllerTests
         });
         controller.DrainCommandQueueForTests();
 
-        Assert.Contains("1a0700", transport.SentCommandBodies);
+        Assert.DoesNotContain("1a0700", transport.SentCommandBodies);
         Assert.DoesNotContain("0f01", transport.SentCommandBodies);
+        Assert.Contains("07d0", transport.SentCommandBodies);
     }
 
     [Fact]

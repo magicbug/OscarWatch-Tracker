@@ -25,6 +25,7 @@ public sealed class IcomIc705Driver : IcomCivDriverBase
     }
 
     public override bool SupportsTracking => true;
+    public override bool SupportsVfoExchange => false;
 
     public override void SetSatelliteMode(bool on)
     {

@@ -20,10 +20,19 @@ public sealed class IcomIc821hDriverTests
     }
 
     [Fact]
-    public void SupportsVfoExchange_is_false()
+    public void SupportsVfoExchange_is_true_and_sends_07b0()
     {
-        var driver = new IcomIc821hDriver("COM1", 19200, "4C");
-        Assert.False(driver.SupportsVfoExchange);
+        var transport = new RecordingIcomCivTransport();
+        using var driver = new IcomIc821hDriver(transport);
+        transport.Open();
+        driver.Open();
+
+        Assert.True(driver.SupportsVfoExchange);
+        Assert.True(((IRigDriver)driver).SupportsVfoExchange);
+
+        transport.SentCommandBodies.Clear();
+        driver.ExchangeVfos();
+        Assert.Contains("07b0", transport.SentCommandBodies);
     }
 
     [Fact]
@@ -59,18 +68,36 @@ public sealed class IcomIc821hDriverTests
     }
 
     [Fact]
-    public void SetSatelliteMode_sends_ic910_era_bytes()
+    public void SetSatelliteMode_tracks_vfo_mapping_without_sending_unsupported_1a07()
     {
         var transport = new RecordingIcomCivTransport();
-        var driver = new IcomIc821hDriver(transport);
+        using var driver = new IcomIc821hDriver(transport);
         transport.Open();
         driver.Open();
 
+        var before = transport.CommandCount;
         driver.SetSatelliteMode(true);
-        Assert.Contains("1a0701", transport.SentCommandBodies);
-
         driver.SetSatelliteMode(false);
-        Assert.Contains("1a0700", transport.SentCommandBodies);
+        Assert.Equal(before, transport.CommandCount);
+        Assert.DoesNotContain("1a0701", transport.SentCommandBodies);
+        Assert.DoesNotContain("1a0700", transport.SentCommandBodies);
+    }
+
+    [Fact]
+    public void SetFrequencyHz_allows_vhf_and_uhf_only()
+    {
+        var transport = new RecordingIcomCivTransport();
+        using var driver = new IcomIc821hDriver(transport);
+        transport.Open();
+        driver.Open();
+
+        Assert.True(driver.SetFrequencyHz(145_950_000));
+        Assert.True(driver.SetFrequencyHz(435_140_000));
+
+        var countBeforeInvalid = transport.SetFrequencyCommandCount;
+        Assert.False(driver.SetFrequencyHz(29_450_000));
+        Assert.False(driver.SetFrequencyHz(1_265_000_000));
+        Assert.Equal(countBeforeInvalid, transport.SetFrequencyCommandCount);
     }
 
     [Fact]

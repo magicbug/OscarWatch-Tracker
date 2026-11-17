@@ -22,12 +22,11 @@ public sealed class IcomIc821hDriver : IcomCivDriverBase
 
     public override bool SupportsTracking => true;
 
-    public bool SupportsVfoExchange => false;
-
     public override void SetSatelliteMode(bool on)
     {
+        // The IC-821H CI-V command table ends at 0x0F (no 1A 07 satellite-mode toggle; hardware NAKs it).
+        // Track the expected layout so 07 D0 and 07 D1 match satellite vs normal Main/Sub operation.
         _satelliteModeActive = on;
-        WriteWithRetry(on ? [0x1A, 0x07, 0x01] : [0x1A, 0x07, 0x00]);
     }
 
     public override void SetSplitOn(bool on)
@@ -67,4 +66,8 @@ public sealed class IcomIc821hDriver : IcomCivDriverBase
                 RigVfo.Sub => RigVfo.Main,
                 _ => vfo
             };
+
+    protected override bool IsFrequencyAllowedHz(long hz) =>
+        hz is >= 144_000_000 and <= 148_000_000
+            or >= 430_000_000 and <= 450_000_000;
 }

@@ -79,6 +79,7 @@ public abstract class IcomCivDriverBase : IRigDriver
 
     public bool IsConnected => _transport?.IsOpen == true;
     public abstract bool SupportsTracking { get; }
+    public virtual bool SupportsVfoExchange => true;
 
     public bool TryConfirmIdentity()
     {

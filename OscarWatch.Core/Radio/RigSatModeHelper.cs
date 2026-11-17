@@ -16,6 +16,18 @@ public static class RigSatModeHelper
     /// <summary>VHF vs UHF split used for pass-to-pass Main/Sub band swaps.</summary>
     private const double UhfLowerKHz = 400_000;
 
+    /// <summary>70 cm vs 23 cm (and higher) split for Main/Sub band swaps on 23 cm rigs.</summary>
+    private const double LBandLowerKHz = 900_000;
+
+    private enum MainSubBandSlot
+    {
+        Unknown,
+        Hf,
+        Vhf,
+        Uhf,
+        LBandAndAbove
+    }
+
     /// <summary>
     /// True when Main/Sub satellite layout applies (real cross-band pass with both frequencies).
     /// Beacon/downlink-only modes (uplink 0) must not use this — |downlink − 0| would always exceed 10 MHz.
@@ -47,19 +59,32 @@ public static class RigSatModeHelper
         };
 
     /// <summary>
-    /// True when Main is on the wrong band for <paramref name="downlinkKHz"/>.
-    /// Matches IC-910/9100/9700 satellite Main=RX, Sub=TX layout (HF/VHF/UHF).
+    /// True when <paramref name="firstKHz"/> and <paramref name="secondKHz"/> belong to different
+    /// Main/Sub hardware bands (HF, 2 m, 70 cm, or 23 cm and above).
     /// </summary>
-    public static bool NeedsMainSubBandSwap(long mainFrequencyHz, double downlinkKHz)
+    public static bool AreDifferentMainSubBands(double firstKHz, double secondKHz)
     {
-        if (downlinkKHz <= 0 || mainFrequencyHz <= 0)
-            return false;
-
-        var downlinkRegion = GetSatBandRegion(downlinkKHz);
-        if (downlinkRegion == RigSatBandRegion.Unknown)
-            return false;
-
-        var mainRegion = GetSatBandRegion(mainFrequencyHz / 1000.0);
-        return mainRegion != downlinkRegion;
+        var first = GetMainSubBandSlot(firstKHz);
+        var second = GetMainSubBandSlot(secondKHz);
+        return first != MainSubBandSlot.Unknown
+            && second != MainSubBandSlot.Unknown
+            && first != second;
     }
+
+    /// <summary>
+    /// True when Main is on the wrong band for <paramref name="downlinkKHz"/>.
+    /// Matches IC-821H/910/9100/9700 Main/Sub band units (HF, VHF, UHF, 23 cm).
+    /// </summary>
+    public static bool NeedsMainSubBandSwap(long mainFrequencyHz, double downlinkKHz) =>
+        mainFrequencyHz > 0 && downlinkKHz > 0 && AreDifferentMainSubBands(mainFrequencyHz / 1000.0, downlinkKHz);
+
+    private static MainSubBandSlot GetMainSubBandSlot(double kHz) =>
+        kHz switch
+        {
+            <= 0 => MainSubBandSlot.Unknown,
+            < HfUpperKHz => MainSubBandSlot.Hf,
+            < UhfLowerKHz => MainSubBandSlot.Vhf,
+            < LBandLowerKHz => MainSubBandSlot.Uhf,
+            _ => MainSubBandSlot.LBandAndAbove
+        };
 }

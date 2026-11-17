@@ -37,6 +37,8 @@ public class RigSatModeHelperTests
     [InlineData(29_450_000, 29_450, false)]
     [InlineData(145_900_000, 29_450, true)]
     [InlineData(435_700_000, 29_450, true)]
+    [InlineData(435_700_000, 1_265_000, true)]
+    [InlineData(1_265_000_000, 1_268_000, false)]
     public void NeedsMainSubBandSwap_detects_wrong_main_band(long mainHz, double downlinkKHz, bool expected) =>
         Assert.Equal(expected, RigSatModeHelper.NeedsMainSubBandSwap(mainHz, downlinkKHz));
 

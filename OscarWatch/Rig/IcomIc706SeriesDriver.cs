@@ -24,6 +24,7 @@ public sealed class IcomIc706SeriesDriver : IcomCivDriverBase
     }
 
     public override bool SupportsTracking => true;
+    public override bool SupportsVfoExchange => false;
 
     public override void SetSatelliteMode(bool on)
     {

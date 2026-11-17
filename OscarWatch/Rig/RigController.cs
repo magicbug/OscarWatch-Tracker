@@ -159,6 +159,8 @@ public sealed class RigController : IRigController, IDisposable
     private string? _lastConnectErrorPort;
     private string? _lastConnectEndpoint;
     private bool? _lastPassDownlinkOnVhf;
+    private double _lastDualDownlinkCenterKHz;
+    private double _lastDualUplinkCenterKHz;
     /// <summary>Last Flex/sat pass identity (<see cref="SatelliteTrackState.Name"/>); used to force pan rebind on sat change.</summary>
     private string? _lastPassSatelliteKey;
     private DateTime _lastDopplerLogUtc = DateTime.MinValue;
@@ -919,6 +921,8 @@ public sealed class RigController : IRigController, IDisposable
         _lastAppliedCtcssHz = null;
         _lastAppliedCtcssSquelch = null;
         _lastPassDownlinkOnVhf = null;
+        _lastDualDownlinkCenterKHz = 0;
+        _lastDualUplinkCenterKHz = 0;
         _lastPassSatelliteKey = null;
         _receiveVfo = RigVfo.VfoA;
         _suspendDopplerUntilUtc = DateTime.MinValue;
@@ -2127,11 +2131,17 @@ public sealed class RigController : IRigController, IDisposable
         if (settings.Uplink.Type != RigType.Dummy)
             EnsureSatelliteModeOffForDualLeg(_uplinkDriver);
 
+        var downlinkBandPrep = EnsureDualLegBandOnMain(
+            _downlinkDriver,
+            context.Mode.DownlinkKHz,
+            _lastDualDownlinkCenterKHz);
+        var hasActiveUplink = !_isBeaconOnly && settings.Uplink.Type != RigType.Dummy && context.Mode.UplinkKHz > 0;
+        var uplinkBandPrep = hasActiveUplink
+            ? EnsureDualLegBandOnMain(_uplinkDriver, context.Mode.UplinkKHz, _lastDualUplinkCenterKHz)
+            : new DualLegBandPrep(Swapped: false, ConfirmedOnTargetBand: true);
+
         _downlinkDriver.SelectVfo(RigVfo.Main, force: true);
-        if (settings.ReceiveRegion() == RigRegion.USA)
-            _downlinkDriver.SetToneSquelchOn(false);
-        else
-            _downlinkDriver.SetToneOn(false);
+        ClearDualDownlinkTone(settings);
 
         if (settings.Uplink.Type != RigType.Dummy)
         {
@@ -2158,6 +2168,14 @@ public sealed class RigController : IRigController, IDisposable
         _downlinkDriver.SelectVfo(RigVfo.Main);
         _downlinkDriver.SetMode(context.EffectiveDownlinkMode);
         var rxWritten = _downlinkDriver.SetFrequencyHz(rxHz);
+        if (!rxWritten && CanRetryDualLegWithBandSwap(_downlinkDriver, downlinkBandPrep, context.Mode.DownlinkKHz, rxHz))
+        {
+            _downlinkDriver.ExchangeVfos();
+            _downlinkDriver.SelectVfo(RigVfo.Main, force: true);
+            ClearDualDownlinkTone(settings);
+            _downlinkDriver.SetMode(context.EffectiveDownlinkMode);
+            rxWritten = _downlinkDriver.SetFrequencyHz(rxHz);
+        }
 
         var txWritten = true;
         if (!_isBeaconOnly && settings.Uplink.Type != RigType.Dummy)
@@ -2176,15 +2194,41 @@ public sealed class RigController : IRigController, IDisposable
             else
             {
                 txWritten = _uplinkDriver.SetFrequencyHz(txHz);
+                if (!txWritten && CanRetryDualLegWithBandSwap(_uplinkDriver, uplinkBandPrep, context.Mode.UplinkKHz, txHz))
+                {
+                    _uplinkDriver.ExchangeVfos();
+                    _uplinkDriver.SelectVfo(RigVfo.Main, force: true);
+                    _uplinkDriver.SetToneOn(false);
+                    _uplinkDriver.SetToneSquelchOn(false);
+                    _uplinkDriver.SetMode(context.EffectiveUplinkMode);
+                    txWritten = _uplinkDriver.SetFrequencyHz(txHz);
+                }
             }
         }
 
         ApplyCtcss(settings, context, force: true);
 
         if (rxWritten)
+        {
             _lastRigRxHz = rxHz;
+            if (context.Mode.DownlinkKHz > 0)
+                _lastDualDownlinkCenterKHz = context.Mode.DownlinkKHz;
+        }
+        else
+        {
+            _lastDualDownlinkCenterKHz = 0;
+        }
+
         if (txWritten)
+        {
             _lastRigTxHz = txHz;
+            if (hasActiveUplink)
+                _lastDualUplinkCenterKHz = context.Mode.UplinkKHz;
+        }
+        else if (hasActiveUplink)
+        {
+            _lastDualUplinkCenterKHz = 0;
+        }
 
         var initResult = new InitialFrequencyWriteResult(rxWritten, txWritten);
         if (initResult.RequiresRetry(_isBeaconOnly))
@@ -2286,6 +2330,100 @@ public sealed class RigController : IRigController, IDisposable
             Log.Warning(ex, "Failed to leave satellite mode on dual-radio {RigType}", driver.RigType);
         }
     }
+
+    private void ClearDualDownlinkTone(RigSettings settings)
+    {
+        if (_downlinkDriver is null)
+            return;
+
+        if (settings.ReceiveRegion() == RigRegion.USA)
+            _downlinkDriver.SetToneSquelchOn(false);
+        else
+            _downlinkDriver.SetToneOn(false);
+    }
+
+    /// <summary>
+    /// In normal (non-satellite) mode on IC-821H/910/9100/9700, Main and Sub are bound to separate
+    /// bands and only Main transmits. Swap Main and Sub (07 B0) before mode and frequency writes
+    /// when Main is on a different band from <paramref name="targetCenterKHz"/>.
+    /// </summary>
+    private static DualLegBandPrep EnsureDualLegBandOnMain(
+        IRigDriver driver,
+        double targetCenterKHz,
+        double previousCenterKHz)
+    {
+        if (!IsIcomSatelliteLayoutRig(driver.RigType)
+            || !driver.SupportsVfoExchange
+            || !IsSupportedIcomSatelliteBand(driver.RigType, targetCenterKHz))
+        {
+            return new DualLegBandPrep(Swapped: false, ConfirmedOnTargetBand: true);
+        }
+
+        // Split blocks 07 B0 (Main/Sub exchange) on IC-910/9100/9700; no-op on IC-821H.
+        driver.SetSplitOn(false);
+        driver.SelectVfo(RigVfo.Main, force: true);
+        Thread.Sleep(50);
+
+        var mainHz = driver.ReadFrequencyHz(RigVfo.Main);
+        if (mainHz is > 0)
+        {
+            if (!RigSatModeHelper.NeedsMainSubBandSwap(mainHz.Value, targetCenterKHz))
+                return new DualLegBandPrep(Swapped: false, ConfirmedOnTargetBand: true);
+
+            driver.ExchangeVfos();
+            return new DualLegBandPrep(Swapped: true, ConfirmedOnTargetBand: true);
+        }
+
+        if (previousCenterKHz > 0 && RigSatModeHelper.AreDifferentMainSubBands(previousCenterKHz, targetCenterKHz))
+        {
+            driver.ExchangeVfos();
+            return new DualLegBandPrep(Swapped: true, ConfirmedOnTargetBand: false);
+        }
+
+        if (previousCenterKHz <= 0)
+        {
+            var subHz = driver.ReadFrequencyHz(RigVfo.Sub);
+            if (subHz is > 0 && !RigSatModeHelper.NeedsMainSubBandSwap(subHz.Value, targetCenterKHz))
+            {
+                driver.ExchangeVfos();
+                return new DualLegBandPrep(Swapped: true, ConfirmedOnTargetBand: true);
+            }
+        }
+
+        return new DualLegBandPrep(Swapped: false, ConfirmedOnTargetBand: false);
+    }
+
+    private static bool CanRetryDualLegWithBandSwap(
+        IRigDriver driver,
+        DualLegBandPrep prep,
+        double targetCenterKHz,
+        long targetHz) =>
+        !prep.Swapped
+        && !prep.ConfirmedOnTargetBand
+        && targetHz > 0
+        && IsIcomSatelliteLayoutRig(driver.RigType)
+        && driver.SupportsVfoExchange
+        && IsSupportedIcomSatelliteBand(driver.RigType, targetCenterKHz);
+
+    private static bool IsSupportedIcomSatelliteBand(RigType type, double centerKHz) =>
+        type switch
+        {
+            RigType.IcomIc821h =>
+                centerKHz is >= 144_000 and <= 148_000
+                    or >= 430_000 and <= 450_000,
+            RigType.IcomIc910 or RigType.IcomIc9700 =>
+                centerKHz is >= 144_000 and <= 148_000
+                    or >= 430_000 and <= 450_000
+                    or >= 1_200_000 and <= 1_300_000,
+            RigType.IcomIc9100 =>
+                centerKHz is >= 1_800 and <= 54_000
+                    or >= 144_000 and <= 148_000
+                    or >= 430_000 and <= 450_000
+                    or >= 1_200_000 and <= 1_300_000,
+            _ => false
+        };
+
+    private readonly record struct DualLegBandPrep(bool Swapped, bool ConfirmedOnTargetBand);
 
     private static bool IsIcomSatelliteLayoutRig(RigType type) =>
         type is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h;
