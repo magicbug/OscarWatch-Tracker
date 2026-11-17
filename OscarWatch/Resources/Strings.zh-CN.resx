@@ -160,6 +160,9 @@
   <data name="Main.Passes">
     <value>即将过境</value>
   </data>
+  <data name="Body.Moon">
+    <value>月球</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>隐藏过境仰角时间线</value>
   </data>
@@ -2789,6 +2792,21 @@
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 表示显示高于最低仰角和地平线遮挡的每一次过境。过境规划有自己的最短时长。</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>在即将过境中显示月出和月落</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>月球仰角下限（°）</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>月球仰角上限（°）</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>同时对月球应用地平线遮挡</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>升起和落下是月球中心到达下方设置的仰角下限（默认0°）的时刻，与印刷版天文历时间（上缘，含大气折射）相差几分钟。不应用卫星的最小仰角设置，因此地平线上的月球也会列出。这些条目仅供参考，不能选为目标。</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>启动时检查转发器数据库更新</value>

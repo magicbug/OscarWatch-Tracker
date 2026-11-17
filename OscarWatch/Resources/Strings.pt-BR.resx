@@ -160,6 +160,9 @@
   <data name="Main.Passes">
     <value>Próximas passagens</value>
   </data>
+  <data name="Body.Moon">
+    <value>Lua</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Ocultar linha do tempo de elevação de passagens</value>
   </data>
@@ -2789,6 +2792,21 @@ Continuar?</value>
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 mostra cada passagem acima da elevação mínima e da máscara do horizonte. O planejador de passagens tem a sua própria duração mínima.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Mostrar o nascer e o pôr da Lua em Próximas passagens</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Limite de elevação da Lua (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Elevação máxima da Lua (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Aplicar também a máscara de horizonte à Lua</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>O nascer e o pôr são o momento em que o centro da Lua está no limite de elevação abaixo (0° por padrão), e diferem em alguns minutos dos horários de almanaques impressos (borda superior, com refração). A elevação mínima dos satélites não é aplicada, então a Lua no horizonte aparece na lista. Estas entradas são apenas informativas e não podem ser selecionadas como alvo.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Verificar atualizações do banco de dados de transmissores/transponders na inicialização</value>

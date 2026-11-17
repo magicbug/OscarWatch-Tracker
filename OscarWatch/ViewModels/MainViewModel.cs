@@ -2328,7 +2328,7 @@ public partial class MainViewModel : ViewModelBase
 
     partial void OnSelectedListItemChanged(IPassListItem? value)
     {
-        if (value is not PassRowViewModel row)
+        if (value is not PassRowViewModel row || row.IsCelestialBody)
             return;
 
         if (string.Equals(FocusedNoradId, row.NoradId, StringComparison.Ordinal))
@@ -2393,7 +2393,7 @@ public partial class MainViewModel : ViewModelBase
     private void UpdateNextPassCountdown()
     {
         var now = DateTime.UtcNow;
-        var rows = Passes.OfType<PassRowViewModel>();
+        var rows = Passes.OfType<PassRowViewModel>().Where(p => !p.IsCelestialBody);
         PassRowViewModel? next = null;
         if (!string.IsNullOrEmpty(FocusedNoradId))
         {
@@ -3591,17 +3591,25 @@ public partial class MainViewModel : ViewModelBase
                 trackingSettings.MinimumElevationDeg,
                 rematchHours,
                 minimumDurationMinutes: 0).ConfigureAwait(false);
-            var passes = PassSidebarMerge.WithinPredictionWindow(
+            var satellitePasses = PassSidebarMerge.WithinPredictionWindow(
                 predicted,
                 refreshUtc,
                 trackingSettings.PassPredictionHours,
                 trackingSettings.UpcomingPassesMinDurationMinutes);
+            // Moon and Sun rise and set are worked out afresh each time, so in-progress ones need no retaining below.
+            var celestialPasses = PassSidebarMerge.WithinPredictionWindow(
+                CelestialPassList.Build(trackingSettings, refreshUtc, trackingSettings.PassPredictionHours),
+                refreshUtc,
+                trackingSettings.PassPredictionHours,
+                trackingSettings.UpcomingPassesMinDurationMinutes);
+            var passes = PassSidebarMerge.WithCelestialBodies(satellitePasses, celestialPasses);
 
             void Apply()
             {
                 var utcNow = PassUtc.Normalize(DateTime.UtcNow);
                 var inProgress = Passes.OfType<PassRowViewModel>()
-                    .Where(p => PassUtc.Normalize(p.AosUtc) <= utcNow && PassUtc.Normalize(p.LosUtc) > utcNow)
+                    .Where(p => !p.IsCelestialBody
+                        && PassUtc.Normalize(p.AosUtc) <= utcNow && PassUtc.Normalize(p.LosUtc) > utcNow)
                     .Select(p => p.Source)
                     .ToList();
                 var merged = PassSidebarMerge.MergeInProgressPasses(passes, inProgress, utcNow)
@@ -3645,7 +3653,7 @@ public partial class MainViewModel : ViewModelBase
                 UpdateElementAgeDisplays();
 
                 // Update the timeline passes for the elevation timeline control
-                TimelinePasses = merged.Take(50).ToList();
+                TimelinePasses = merged.Where(p => !p.IsCelestialBody).Take(50).ToList();
                 UpdateSkyPlotPassPath();
             }
 
@@ -3727,9 +3735,15 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
         ? L.Get("Pass.Schedule.Remove")
         : L.Get("Pass.Schedule.Add");
 
-    /// <summary>Hide schedule control once the pass has started (too late to mark).</summary>
+    /// <summary>True for the Moon or Sun rise and set rows, which are not satellite passes.</summary>
+    public bool IsCelestialBody => Source is { IsCelestialBody: true };
+
+    /// <summary>
+    /// Hide schedule control once the pass has started (too late to mark), and for the Moon and Sun, whose
+    /// reminders are for satellite passes.
+    /// </summary>
     public bool ShowScheduleButton =>
-        Highlight is not PassRowHighlight.InProgress and not PassRowHighlight.Recording;
+        !IsCelestialBody && Highlight is not PassRowHighlight.InProgress and not PassRowHighlight.Recording;
 
     public bool CommunityStatusIsOn => CommunityStatusKind == SatelliteCommunityStatusKind.On;
     public bool CommunityStatusIsOff => CommunityStatusKind == SatelliteCommunityStatusKind.Off;
@@ -3863,7 +3877,7 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
         return new()
         {
             Source = p,
-            SatelliteName = p.SatelliteName,
+            SatelliteName = CelestialBodyName(p) ?? p.SatelliteName,
             NoradId = p.NoradId,
             AosUtc = p.AosUtc,
             LosUtc = p.LosUtc,
@@ -3877,6 +3891,13 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
             MaxElevationText = FormatPassMaxElevationText(p.MaxElevationDeg)
         };
     }
+
+    /// <summary>The translated name for a Moon or Sun entry; null for a satellite.</summary>
+    private static string? CelestialBodyName(PassInfo p) => p.Body switch
+    {
+        CelestialBodyKind.Moon => L.Get("Body.Moon"),
+        _ => null
+    };
 
     public PassRowViewModel WithTimeDisplay(ClockDisplayFormat clockFormat, bool useUtc)
     {

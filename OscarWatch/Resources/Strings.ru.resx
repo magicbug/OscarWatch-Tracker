@@ -160,6 +160,9 @@
   <data name="Main.Passes">
     <value>Ближайшие пролёты</value>
   </data>
+  <data name="Body.Moon">
+    <value>Луна</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Скрыть шкалу угла места пролётов</value>
   </data>
@@ -2793,6 +2796,21 @@ LOS: {2}
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 показывает каждый пролёт выше минимального угла места и маски горизонта. У планировщика пролётов своя минимальная длительность.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Показывать восход и заход Луны в списке ближайших пролётов</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Нижний предел угла места Луны (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Верхний предел угла места Луны (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Применять маску горизонта и к Луне</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>Восход и заход — момент, когда центр Луны находится на нижнем пределе угла места, заданном ниже (по умолчанию 0°). Он отличается на несколько минут от времени в печатных альманахах (верхний край, с рефракцией). Минимальный угол места для спутников не применяется, поэтому Луна у горизонта показывается. Эти записи носят информационный характер и не могут быть выбраны как цель.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Проверять обновления базы транспондеров при запуске</value>

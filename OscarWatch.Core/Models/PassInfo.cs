@@ -17,5 +17,10 @@ public sealed class PassInfo
     public double AosAzimuthDeg { get; init; }
     public double LosAzimuthDeg { get; init; }
 
+    /// <summary>Set when this entry is the Moon rising and setting, not a satellite pass.</summary>
+    public CelestialBodyKind? Body { get; init; }
+
+    public bool IsCelestialBody => Body.HasValue;
+
     public TimeSpan Duration => LosUtc - AosUtc;
 }

@@ -160,6 +160,9 @@
   <data name="Main.Passes">
     <value>พาสที่กำลังจะมาถึง</value>
   </data>
+  <data name="Body.Moon">
+    <value>ดวงจันทร์</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>ซ่อนไทม์ไลน์มุมเงยของพาส</value>
   </data>
@@ -2793,6 +2796,21 @@ LOS: {2}
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 แสดงทุกพาสที่สูงกว่ามุมเงยต่ำสุดและมาสก์ขอบฟ้า ตัววางแผนพาสมีระยะเวลาขั้นต่ำของตัวเอง</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>แสดงเวลาดวงจันทร์ขึ้นและตกในพาสที่กำลังจะมาถึง</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>ขีดจำกัดมุมเงยของดวงจันทร์ (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>มุมเงยสูงสุดของดวงจันทร์ (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>ใช้ขอบฟ้าที่กำหนดกับดวงจันทร์ด้วย</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>เวลาขึ้นและตกคือเวลาที่ศูนย์กลางของดวงจันทร์อยู่ที่ขีดจำกัดมุมเงยด้านล่าง (ค่าเริ่มต้น 0°) ซึ่งต่างจากเวลาในปฏิทินดาราศาสตร์ที่พิมพ์ไว้ไม่กี่นาที (ขอบบน รวมการหักเหของแสง) ไม่ใช้มุมเงยขั้นต่ำของดาวเทียม จึงแสดงดวงจันทร์ที่ขอบฟ้าด้วย รายการเหล่านี้ใช้เพื่อข้อมูลและเลือกเป็นเป้าหมายไม่ได้</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>ตรวจการอัปเดตฐานข้อมูลทรานสปอนเดอร์เมื่อเริ่มต้น</value>
