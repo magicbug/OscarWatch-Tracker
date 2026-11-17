@@ -169,6 +169,9 @@
   <data name="Main.Passes.DetachedStatus">
     <value>Ditampilkan di jendela terpisah</value>
   </data>
+  <data name="Body.Moon">
+    <value>Bulan</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Sembunyikan timeline elevasi lintasan</value>
   </data>
@@ -3009,6 +3012,21 @@ Lanjutkan?</value>
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 menampilkan setiap lintasan di atas elevasi minimum dan masker horizon. Perencana lintasan punya durasi minimum sendiri.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Tampilkan terbit dan terbenam Bulan di Lintasan Mendatang</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Batas elevasi Bulan (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Elevasi maksimum Bulan (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Terapkan juga mask horizon pada Bulan</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>Terbit dan terbenam adalah saat pusat Bulan berada pada batas elevasi di bawah (default 0°), berbeda beberapa menit dari waktu almanak cetak (tepi atas, dengan refraksi). Elevasi minimum satelit tidak diterapkan, sehingga Bulan di horizon tetap ditampilkan. Entri ini hanya informasi dan tidak dapat dipilih sebagai target.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Periksa pembaruan basis data transponder saat mulai</value>

@@ -169,6 +169,9 @@
   <data name="Main.Passes.DetachedStatus">
     <value>Mostrato in una finestra separata</value>
   </data>
+  <data name="Body.Moon">
+    <value>Luna</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Nascondi la timeline di elevazione dei passaggi</value>
   </data>
@@ -3009,6 +3012,21 @@ Continuare?</value>
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 mostra ogni passaggio sopra l'elevazione minima e la maschera dell'orizzonte. Il pianificatore ha una propria durata minima.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Mostra il sorgere e il tramonto della Luna in Prossimi passaggi</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Limite di elevazione della Luna (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Elevazione massima della Luna (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Applica la maschera dell'orizzonte anche alla Luna</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>Il sorgere e il tramontare sono il momento in cui il centro della Luna si trova al limite di elevazione indicato sotto (0° per impostazione predefinita), e differiscono di alcuni minuti dagli orari degli almanacchi stampati (bordo superiore, con rifrazione). L'elevazione minima dei satelliti non viene applicata, quindi la Luna all'orizzonte è elencata. Queste voci sono solo informative e non possono essere selezionate come bersaglio.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Controlla all'avvio gli aggiornamenti del database dei transponder</value>
