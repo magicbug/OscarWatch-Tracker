@@ -102,6 +102,7 @@
                    Text="{Binding StatusText}"
                    VerticalAlignment="Center"
                    TextTrimming="CharacterEllipsis"
+                   ToolTip.Tip="{Binding StatusText}"
                    Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
         <TextBlock Grid.Column="2"
                    Text="{Binding StationStatusText}"
@@ -520,32 +521,35 @@
           <Border Grid.Column="1"
                   Classes="logbook-panel logbook-station"
                   Classes.station-live="{Binding StationAvailable}"
+                  ClipToBounds="True"
                   Padding="12">
-            <StackPanel Spacing="10">
-              <TextBlock Text="{loc:Localize Key=Logbook.StationControl}"
-                         FontWeight="SemiBold" />
-              <StackPanel Spacing="4">
-                <TextBlock Text="{loc:Localize Key=Logbook.Station.Satellite}" FontSize="12"
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel Spacing="10">
+                <TextBlock Text="{loc:Localize Key=Logbook.StationControl}"
+                           FontWeight="SemiBold" />
+                <StackPanel Spacing="4">
+                  <TextBlock Text="{loc:Localize Key=Logbook.Station.Satellite}" FontSize="12"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                  <TextBlock Text="{Binding StationSatellite}"
+                             FontWeight="SemiBold"
+                             FontFamily="Consolas,Courier New,monospace" />
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="{loc:Localize Key=Logbook.Station.Mode}" FontSize="12"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                  <TextBlock Text="{Binding StationMode}" FontFamily="Consolas,Courier New,monospace" />
+                </StackPanel>
+                <StackPanel Spacing="4">
+                  <TextBlock Text="{loc:Localize Key=Logbook.Station.Frequencies}" FontSize="12"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                  <TextBlock Text="{Binding StationFrequencies}" FontFamily="Consolas,Courier New,monospace" />
+                </StackPanel>
+                <TextBlock Text="{loc:Localize Key=Logbook.Station.Note}"
+                           TextWrapping="Wrap"
+                           FontSize="11"
                            Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                <TextBlock Text="{Binding StationSatellite}"
-                           FontWeight="SemiBold"
-                           FontFamily="Consolas,Courier New,monospace" />
               </StackPanel>
-              <StackPanel Spacing="4">
-                <TextBlock Text="{loc:Localize Key=Logbook.Station.Mode}" FontSize="12"
-                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                <TextBlock Text="{Binding StationMode}" FontFamily="Consolas,Courier New,monospace" />
-              </StackPanel>
-              <StackPanel Spacing="4">
-                <TextBlock Text="{loc:Localize Key=Logbook.Station.Frequencies}" FontSize="12"
-                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                <TextBlock Text="{Binding StationFrequencies}" FontFamily="Consolas,Courier New,monospace" />
-              </StackPanel>
-              <TextBlock Text="{loc:Localize Key=Logbook.Station.Note}"
-                         TextWrapping="Wrap"
-                         FontSize="11"
-                         Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-            </StackPanel>
+            </ScrollViewer>
           </Border>
         </Grid>
       </DockPanel>

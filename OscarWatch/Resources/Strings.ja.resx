@@ -6641,7 +6641,7 @@
     <value>ログブック設定で CW キーイング用の COM ポートを選んでください。</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} は無線機、ローテーター、GPS または PTT ポートで使用中です。別の CW キーイング用ポートを選んでください。</value>
+    <value>{0} は無線機、ローテーター、または GPS で使用中です。別の CW キーイング用ポートを選んでください。</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} は別のアプリケーションで使用中です。</value>

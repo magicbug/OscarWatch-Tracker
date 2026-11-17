@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.IO.Ports;
 using System.Runtime.InteropServices;
 using OscarWatch.Core.Cw;
 using OscarWatch.Core.Hardware;
@@ -48,18 +47,20 @@ public sealed class CwKeyerService : IDisposable
 
     private readonly IRigController _rig;
     private readonly ISettingsService _settings;
+    private readonly HandshakePortPool _portPool;
     private readonly object _gate = new();
     private readonly object _portGate = new();
-    private SerialPort? _port;
+    private HandshakePortLease? _port;
     private Thread? _worker;
     private CancellationTokenSource? _cts;
     private volatile int _wpm;
     private int _activeSlot = -1;
 
-    public CwKeyerService(IRigController rig, ISettingsService settings)
+    public CwKeyerService(IRigController rig, ISettingsService settings, HandshakePortPool? portPool = null)
     {
         _rig = rig;
         _settings = settings;
+        _portPool = portPool ?? HandshakePortPool.Shared;
         _wpm = CwKeyerSettings.ClampWpm(settings.Current.QsoLogbook.CwKeyer.Wpm);
     }
 
@@ -100,6 +101,12 @@ public sealed class CwKeyerService : IDisposable
         var cw = settings.QsoLogbook.CwKeyer;
         var method = CwKeyingRoute.Resolve(cw, settings.Rig);
         var useRts = cw.KeyLine == PttLine.Rts;
+
+        if (method != CwKeyingMethod.SeparatePortLine)
+        {
+            lock (_portGate)
+                ClosePort();
+        }
 
         switch (method)
         {
@@ -166,12 +173,31 @@ public sealed class CwKeyerService : IDisposable
         cts.Dispose();
     }
 
-    /// <summary>Close the keyer's own COM port so another application can use it.</summary>
+    /// <summary>Release the keyer's separate COM port lease.</summary>
     public void ReleasePort()
     {
         Stop();
         lock (_portGate)
             ClosePort();
+    }
+
+    /// <summary>Release the separate COM port lease when settings no longer key CW on it.</summary>
+    public void ReleaseUnusedPort()
+    {
+        var settings = _settings.Current;
+        var cw = settings.QsoLogbook.CwKeyer;
+        var method = CwKeyingRoute.Resolve(cw, settings.Rig);
+        lock (_portGate)
+        {
+            if (_port is null)
+                return;
+            if (cw.Enabled
+                && method == CwKeyingMethod.SeparatePortLine
+                && string.Equals(_port.PortName, cw.SeparatePort?.Trim(), StringComparison.OrdinalIgnoreCase))
+                return;
+        }
+
+        ReleasePort();
     }
 
     public void Dispose() => ReleasePort();
@@ -286,21 +312,8 @@ public sealed class CwKeyerService : IDisposable
 
         lock (_portGate)
         {
-            if (_port is not { IsOpen: true } port)
-                return false;
-            try
-            {
-                if (useRts)
-                    port.RtsEnable = assert;
-                else
-                    port.DtrEnable = assert;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Debug(ex, "CW key line change on {Port} failed", port.PortName);
-                return false;
-            }
+            return _port is { IsOpen: true } port
+                && port.TrySetLine(useRts ? PttLine.Rts : PttLine.Dtr, assert);
         }
     }
 
@@ -319,22 +332,13 @@ public sealed class CwKeyerService : IDisposable
                 return CwKeyerStartResult.Started;
 
             ClosePort();
-            var port = new SerialPort(name, 9600, Parity.None, 8, StopBits.One)
-            {
-                Handshake = Handshake.None,
-                DtrEnable = false,
-                RtsEnable = false
-            };
             try
             {
-                port.Open();
-                _port = port;
-                Log.Information("CW keyer opened {Port}", name);
+                _port = _portPool.Acquire(name, "CW keyer");
                 return CwKeyerStartResult.Started;
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or ArgumentException)
             {
-                try { port.Dispose(); } catch { /* the open already failed */ }
                 Log.Warning(ex, "CW keyer could not open {Port}", name);
                 return SerialPortConnectErrorHelper.Classify(ex) switch
                 {
@@ -350,18 +354,7 @@ public sealed class CwKeyerService : IDisposable
     {
         var port = _port;
         _port = null;
-        if (port is null)
-            return;
-
-        try
-        {
-            port.Dispose();
-            Log.Information("CW keyer released {Port}", port.PortName);
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "CW keyer port close failed");
-        }
+        port?.Dispose();
     }
 
     /// <summary>Raises the Windows timer resolution to 1 ms while a message is keyed.</summary>

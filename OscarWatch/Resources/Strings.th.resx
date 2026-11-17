@@ -6645,7 +6645,7 @@ LOS: {2}
     <value>เลือกพอร์ต COM สำหรับคีย์ CW ในการตั้งค่าล็อกบุ๊ก</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} ถูกใช้โดยวิทยุ โรเตเตอร์ GPS หรือพอร์ต PTT อยู่แล้ว เลือกพอร์ตอื่นสำหรับคีย์ CW</value>
+    <value>{0} ถูกใช้โดยวิทยุ โรเตเตอร์ หรือ GPS อยู่แล้ว เลือกพอร์ตอื่นสำหรับคีย์ CW</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} ถูกใช้โดยแอปพลิเคชันอื่น</value>

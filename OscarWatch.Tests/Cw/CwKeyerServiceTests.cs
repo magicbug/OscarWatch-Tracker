@@ -106,6 +106,96 @@ public sealed class CwKeyerServiceTests
     }
 
     [Fact]
+    public void Separate_port_is_shared_between_ft4_ptt_and_cw_keyer_without_reopening()
+    {
+        var ports = new Dictionary<string, RecordingHandshakeSerialPort>(StringComparer.OrdinalIgnoreCase);
+        var openCalls = 0;
+        var pool = new HandshakePortPool(name =>
+        {
+            openCalls++;
+            var port = new RecordingHandshakeSerialPort(name);
+            ports[name] = port;
+            return port;
+        });
+
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt991a, cw =>
+        {
+            cw.Wpm = 60;
+            cw.UseSeparatePort = true;
+            cw.SeparatePort = "COM8";
+            cw.KeyLine = PttLine.Dtr;
+        });
+        settings.Current.Rig.Port = "COM7";
+        settings.Current.Ft4.PttMethod = PttMethod.SeparateComPort;
+        settings.Current.Ft4.SeparatePttPort = "COM8";
+        settings.Current.Ft4.PttLine = PttLine.Rts;
+
+        using var ft4Ptt = new PttKeyer(
+            rig,
+            () => settings.Current.Ft4.ToPttOptions(),
+            "FT4",
+            port => SerialPortConflictHelper.TryDescribeFt4SeparatePttConflict(settings.Current, port, out var m) ? m : null,
+            portPool: pool);
+        using var cwKeyer = new CwKeyerService(rig, settings, pool);
+
+        // FT4 keys RTS on COM8 and then unkeys, keeping its window lease open.
+        ft4Ptt.KeyNow();
+        Assert.True(ports["COM8"].RtsEnable);
+        Assert.False(ports["COM8"].DtrEnable);
+        ft4Ptt.UnkeyNow();
+        Assert.False(ports["COM8"].RtsEnable);
+
+        // With FT4's window still open, the Logbook CW keyer shares the same COM8 handle on DTR.
+        var finished = new ManualResetEventSlim();
+        CwKeyerFinish? finish = null;
+        cwKeyer.Finished += (_, e) => { finish = e.Finish; finished.Set(); };
+
+        Assert.Equal(CwKeyerStartResult.Started, cwKeyer.Send(0, CwMessage.FromText("E")));
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.Equal(CwKeyerFinish.Completed, finish);
+        Assert.Equal(1, openCalls);
+        Assert.True(ports["COM8"].IsOpen);
+        Assert.False(ports["COM8"].DtrEnable);
+        Assert.Contains("dtr:True", ports["COM8"].Events);
+
+        // Releasing FT4 leaves COM8 open while CW still holds a lease; releasing CW closes COM8.
+        ft4Ptt.ReleasePort();
+        Assert.True(ports["COM8"].IsOpen);
+
+        cwKeyer.ReleasePort();
+        Assert.False(ports["COM8"].IsOpen);
+    }
+
+    [Fact]
+    public void ReleaseUnusedPort_closes_separate_port_when_cw_settings_change()
+    {
+        RecordingHandshakeSerialPort? created = null;
+        var pool = new HandshakePortPool(name => created = new RecordingHandshakeSerialPort(name));
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw =>
+        {
+            cw.Wpm = 60;
+            cw.UseSeparatePort = true;
+            cw.SeparatePort = "COM8";
+        });
+        using var keyer = new CwKeyerService(rig, settings, pool);
+        var finished = new ManualResetEventSlim();
+        keyer.Finished += (_, _) => finished.Set();
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.Send(0, CwMessage.FromText("E")));
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+        Assert.NotNull(created);
+        Assert.True(created!.IsOpen);
+
+        settings.Current.QsoLogbook.CwKeyer.UseSeparatePort = false;
+        keyer.ReleaseUnusedPort();
+
+        Assert.False(created.IsOpen);
+    }
+
+    [Fact]
     public void Line_keying_without_rig_control_is_refused()
     {
         var rig = new RecordingRigController();
@@ -145,5 +235,39 @@ public sealed class CwKeyerServiceTests
         public void EnsureSavedStations() { }
         public void ApplyActiveStation() { }
         public void SyncActiveStationFromGroundStation() { }
+    }
+
+    private sealed class RecordingHandshakeSerialPort(string portName) : IHandshakeSerialPort
+    {
+        private bool _dtr;
+        private bool _rts;
+
+        public string PortName { get; } = portName;
+        public bool IsOpen { get; private set; }
+        public List<string> Events { get; } = [];
+
+        public bool DtrEnable
+        {
+            get => _dtr;
+            set
+            {
+                _dtr = value;
+                Events.Add($"dtr:{value}");
+            }
+        }
+
+        public bool RtsEnable
+        {
+            get => _rts;
+            set
+            {
+                _rts = value;
+                Events.Add($"rts:{value}");
+            }
+        }
+
+        public void Open() => IsOpen = true;
+
+        public void Dispose() => IsOpen = false;
     }
 }

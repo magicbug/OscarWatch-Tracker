@@ -54,6 +54,7 @@ public partial class QsoLogbookViewModel
         CwWpm = cw.Wpm;
         _suppressCwWpmSave = false;
         _cwKeyer?.SetWpm(cw.Wpm);
+        _cwKeyer?.ReleaseUnusedPort();
         RefreshCwKeyer(_tracker.GetCurrent());
     }
 
@@ -224,8 +225,12 @@ public partial class QsoLogbookViewModel
 
     partial void OnShowCwKeyerChanged(bool value)
     {
-        if (!value && CwSending)
-            StopCw();
+        if (!value)
+        {
+            if (CwSending)
+                StopCw();
+            _cwKeyer?.ReleasePort();
+        }
     }
 
     private void DisposeCwKeyer()

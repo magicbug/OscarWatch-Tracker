@@ -6640,7 +6640,7 @@ Está utilizando la versión {0}.
     <value>Elija el puerto COM de manipulación CW en los ajustes del libro.</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} ya lo usa la radio, el rotor, el GPS o un puerto PTT. Elija otro puerto para manipular CW.</value>
+    <value>{0} ya lo usa la radio, el rotor o el GPS. Elija otro puerto para manipular CW.</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} está en uso por otra aplicación.</value>

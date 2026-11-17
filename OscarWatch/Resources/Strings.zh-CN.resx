@@ -6641,7 +6641,7 @@
     <value>请在日志设置中选择 CW 键控 COM 端口。</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} 已被电台、转台、GPS 或 PTT 端口占用。请选择其他 CW 键控端口。</value>
+    <value>{0} 已被电台、转台或 GPS 占用。请选择其他 CW 键控端口。</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} 正被其他应用程序使用。</value>

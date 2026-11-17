@@ -270,6 +270,33 @@ public class SerialPortConflictHelperTests
     }
 
     [Fact]
+    public void Cw_keyer_may_share_separate_port_with_ft4_and_terminal_ptt_but_not_radio_rotator_or_gps()
+    {
+        var settings = new AppSettings
+        {
+            Rig = new RigSettings { Enabled = true, Type = RigType.YaesuFt991a, Port = "COM7" },
+            Rotator = new RotatorSettings { Enabled = true, Port = "COM4" },
+            Gps = new GpsSettings { Enabled = true, ConnectionKind = GpsConnectionKind.Serial, Port = "COM5" },
+            Ft4 = new Ft4Settings { PttMethod = PttMethod.SeparateComPort, SeparatePttPort = "COM8" },
+            Terminal = new TerminalSettings
+            {
+                Transport = TerminalTransportKind.BuiltIn,
+                BuiltIn = new TerminalBuiltInModemSettings
+                {
+                    PttMethod = PttMethod.SeparateComPort,
+                    SeparatePttPort = "COM8"
+                }
+            }
+        };
+
+        Assert.False(SerialPortConflictHelper.IsCwKeyPortOccupied(settings, "COM8"));
+        Assert.False(SerialPortConflictHelper.IsCwKeyPortOccupied(settings, "com8"));
+        Assert.True(SerialPortConflictHelper.IsCwKeyPortOccupied(settings, "COM7"));
+        Assert.True(SerialPortConflictHelper.IsCwKeyPortOccupied(settings, "COM4"));
+        Assert.True(SerialPortConflictHelper.IsCwKeyPortOccupied(settings, "COM5"));
+    }
+
+    [Fact]
     public void Kiss_serial_port_conflicts_with_radio_port()
     {
         var settings = new AppSettings

@@ -123,4 +123,36 @@ public sealed class PttKeyerTests : IDisposable
         Assert.False(marker.Exists);
         Assert.False(recovery.HasNotice);
     }
+
+    [Fact]
+    public void ReleaseUnusedPort_drops_keyed_line_even_when_another_lease_keeps_port_open()
+    {
+        FakeHandshakePort? created = null;
+        var pool = new HandshakePortPool(name => created = new FakeHandshakePort(name));
+        var rig = new RecordingRigController();
+        var options = new PttOptions(PttMethod.SeparateComPort, PttLine.Rts, false, "COM8", 0, 0);
+        using var cwLease = pool.Acquire("COM8", "CW keyer");
+        using var keyer = new PttKeyer(rig, () => options, "FT4", portPool: pool);
+
+        keyer.KeyNow();
+        Assert.True(keyer.IsKeyed);
+        Assert.True(created!.RtsEnable);
+
+        options = new PttOptions(PttMethod.Cat, PttLine.Rts, false, "COM8", 0, 0);
+        keyer.ReleaseUnusedPort();
+
+        Assert.False(keyer.IsKeyed);
+        Assert.False(created.RtsEnable);
+        Assert.True(created.IsOpen);
+    }
+
+    private sealed class FakeHandshakePort(string portName) : IHandshakeSerialPort
+    {
+        public string PortName { get; } = portName;
+        public bool IsOpen { get; private set; }
+        public bool DtrEnable { get; set; }
+        public bool RtsEnable { get; set; }
+        public void Open() => IsOpen = true;
+        public void Dispose() => IsOpen = false;
+    }
 }

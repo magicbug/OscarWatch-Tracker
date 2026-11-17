@@ -6640,7 +6640,7 @@ Latest: {1} ({2})</value>
     <value>Choose the CW key COM port in Logbook settings.</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} is already used by the radio, rotator, GPS or a PTT port. Choose a different CW key port.</value>
+    <value>{0} is already used by the radio, rotator or GPS. Choose a different CW key port.</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} is in use by another application.</value>

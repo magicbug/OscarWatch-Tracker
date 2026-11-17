@@ -6645,7 +6645,7 @@ LOS: {2}
     <value>Выберите COM-порт для манипуляции CW в настройках журнала.</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} уже занят радиостанцией, ОПУ, GPS или портом PTT. Выберите другой порт для манипуляции CW.</value>
+    <value>{0} уже занят радиостанцией, ОПУ или GPS. Выберите другой порт для манипуляции CW.</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} используется другим приложением.</value>

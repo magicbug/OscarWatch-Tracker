@@ -1,4 +1,3 @@
-using System.IO.Ports;
 using OscarWatch.Core.Hardware;
 using OscarWatch.Core.Services;
 using Serilog;
@@ -18,26 +17,31 @@ public sealed class PttKeyer : IDisposable
     private readonly string _label;
     private readonly Func<string, string?>? _describePortConflict;
     private readonly PttSessionMarker? _marker;
+    private readonly HandshakePortPool _portPool;
     private readonly object _portGate = new();
-    private SerialPort? _separatePort;
+    private HandshakePortLease? _separatePort;
+    private (PttLine Line, bool IdleAssert)? _keyedSeparateLine;
     private volatile bool _keyed;
     private Action<string>? _manualPrompt;
 
     /// <param name="label">Feature name for logs, for example <c>FT4</c> or <c>Terminal</c>.</param>
     /// <param name="describePortConflict">Returns a message when the separate PTT port is in use elsewhere.</param>
     /// <param name="marker">Records that PTT is up, so a crash while keyed is noticed at the next start.</param>
+    /// <param name="portPool">Shared handshake COM port pool, or null for the process-wide pool.</param>
     public PttKeyer(
         IRigController rig,
         Func<PttOptions> options,
         string label,
         Func<string, string?>? describePortConflict = null,
-        PttSessionMarker? marker = null)
+        PttSessionMarker? marker = null,
+        HandshakePortPool? portPool = null)
     {
         _rig = rig;
         _options = options;
         _label = label;
         _describePortConflict = describePortConflict;
         _marker = marker;
+        _portPool = portPool ?? HandshakePortPool.Shared;
     }
 
     public void SetManualPromptHandler(Action<string>? handler) => _manualPrompt = handler;
@@ -93,7 +97,8 @@ public sealed class PttKeyer : IDisposable
                 lock (_portGate)
                 {
                     EnsureSeparatePort(options);
-                    SetLine(_separatePort!, options.Line, assert: !options.Invert);
+                    _separatePort!.SetLine(options.Line, assert: !options.Invert);
+                    _keyedSeparateLine = (options.Line, IdleAssert: options.Invert);
                 }
                 break;
 
@@ -151,8 +156,9 @@ public sealed class PttKeyer : IDisposable
                 case PttMethod.SeparateComPort:
                     lock (_portGate)
                     {
+                        _keyedSeparateLine = null;
                         if (_separatePort is { IsOpen: true })
-                            SetLine(_separatePort, options.Line, assert: options.Invert);
+                            _separatePort.SetLine(options.Line, assert: options.Invert);
                     }
                     break;
             }
@@ -176,26 +182,41 @@ public sealed class PttKeyer : IDisposable
         var options = _options();
         try
         {
-            switch (options.Method)
+            var droppedTrackedLine = false;
+            lock (_portGate)
             {
-                case PttMethod.Vox:
-                    break;
-                case PttMethod.Cat:
-                    _rig.SetPtt(false);
-                    break;
-                case PttMethod.CatPortHandshake:
-                    _rig.SetHandshakePtt(options.Line == PttLine.Rts, assert: options.Invert);
-                    break;
-                case PttMethod.SeparateComPort:
-                    lock (_portGate)
-                    {
-                        if (_separatePort is { IsOpen: true })
-                            SetLine(_separatePort, options.Line, assert: options.Invert);
-                    }
-                    break;
-                case PttMethod.Manual:
-                    _manualPrompt?.Invoke("unkey");
-                    break;
+                if (_keyedSeparateLine is { } keyed)
+                {
+                    _keyedSeparateLine = null;
+                    droppedTrackedLine = true;
+                    if (_separatePort is { IsOpen: true })
+                        _separatePort.SetLine(keyed.Line, keyed.IdleAssert);
+                }
+            }
+
+            if (!droppedTrackedLine)
+            {
+                switch (options.Method)
+                {
+                    case PttMethod.Vox:
+                        break;
+                    case PttMethod.Cat:
+                        _rig.SetPtt(false);
+                        break;
+                    case PttMethod.CatPortHandshake:
+                        _rig.SetHandshakePtt(options.Line == PttLine.Rts, assert: options.Invert);
+                        break;
+                    case PttMethod.SeparateComPort:
+                        lock (_portGate)
+                        {
+                            if (_separatePort is { IsOpen: true })
+                                _separatePort.SetLine(options.Line, assert: options.Invert);
+                        }
+                        break;
+                    case PttMethod.Manual:
+                        _manualPrompt?.Invoke("unkey");
+                        break;
+                }
             }
         }
         catch (Exception ex)
@@ -223,21 +244,13 @@ public sealed class PttKeyer : IDisposable
             return;
 
         _separatePort?.Dispose();
-        _separatePort = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One)
-        {
-            Handshake = Handshake.None,
-            DtrEnable = false,
-            RtsEnable = false
-        };
+        _separatePort = null;
         try
         {
-            _separatePort.Open();
+            _separatePort = _portPool.Acquire(portName, _label);
         }
-        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException or ArgumentException)
         {
-            var failed = _separatePort;
-            _separatePort = null;
-            try { failed.Dispose(); } catch { /* the open already failed */ }
             throw new InvalidOperationException(DescribeOpenFailure(portName, ex), ex);
         }
     }
@@ -252,17 +265,9 @@ public sealed class PttKeyer : IDisposable
             _ => ex.Message
         };
 
-    private static void SetLine(SerialPort port, PttLine line, bool assert)
-    {
-        if (line == PttLine.Rts)
-            port.RtsEnable = assert;
-        else
-            port.DtrEnable = assert;
-    }
-
     /// <summary>
-    /// Drop PTT and close the separate PTT COM port so another application (MSHV, WSJT-X)
-    /// can open it. The next transmission opens it again.
+    /// Drop PTT and release the separate PTT COM port lease. Once no OscarWatch feature holds a lease,
+    /// the OS handle closes so another application (MSHV, WSJT-X) can open it.
     /// </summary>
     public void ReleasePort()
     {
@@ -272,8 +277,8 @@ public sealed class PttKeyer : IDisposable
     }
 
     /// <summary>
-    /// Close the separate PTT port when the settings no longer use it (another method,
-    /// or a different port), so the old port is free at once. Closing it also drops its lines.
+    /// Release the separate PTT port lease when the settings no longer use it (another method,
+    /// or a different port), dropping the keyed line first in case another feature keeps the port open.
     /// </summary>
     public void ReleaseUnusedPort()
     {
@@ -286,6 +291,14 @@ public sealed class PttKeyer : IDisposable
                 && string.Equals(_separatePort.PortName, options.SeparatePort?.Trim(), StringComparison.OrdinalIgnoreCase))
                 return;
 
+            if (_keyedSeparateLine is { } keyed)
+            {
+                _keyedSeparateLine = null;
+                _separatePort.TrySetLine(keyed.Line, keyed.IdleAssert);
+                _keyed = false;
+                _marker?.Clear();
+            }
+
             ClosePort();
         }
     }
@@ -294,18 +307,8 @@ public sealed class PttKeyer : IDisposable
     {
         var port = _separatePort;
         _separatePort = null;
-        if (port is null)
-            return;
-
-        try
-        {
-            port.Dispose();
-            Log.Information("{Label} released PTT port {Port}", _label, port.PortName);
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "{Label} PTT port close failed", _label);
-        }
+        _keyedSeparateLine = null;
+        port?.Dispose();
     }
 
     public void Dispose() => ReleasePort();

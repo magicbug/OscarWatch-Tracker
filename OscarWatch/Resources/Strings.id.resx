@@ -6645,7 +6645,7 @@ Terbaru: {1} ({2})</value>
     <value>Pilih port COM keying CW di pengaturan logbook.</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} sudah dipakai radio, rotator, GPS, atau port PTT. Pilih port lain untuk keying CW.</value>
+    <value>{0} sudah dipakai radio, rotator, atau GPS. Pilih port lain untuk keying CW.</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} sedang dipakai aplikasi lain.</value>

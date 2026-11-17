@@ -6645,7 +6645,7 @@ Aktuell: {1} ({2})</value>
     <value>Wählen Sie den COM-Port für die CW-Tastung in den Logbuch-Einstellungen.</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} wird bereits von Funkgerät, Rotor, GPS oder einem PTT-Port verwendet. Wählen Sie einen anderen Port für die CW-Tastung.</value>
+    <value>{0} wird bereits von Funkgerät, Rotor oder GPS verwendet. Wählen Sie einen anderen Port für die CW-Tastung.</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} wird von einer anderen Anwendung verwendet.</value>

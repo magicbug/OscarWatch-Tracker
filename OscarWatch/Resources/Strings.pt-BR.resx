@@ -6640,7 +6640,7 @@ Mais recente: {1} ({2})</value>
     <value>Escolha a porta COM de manipulação CW nas configurações do logbook.</value>
   </data>
   <data name="Logbook.Cw.Status.PortConflict">
-    <value>{0} já é usada pelo rádio, rotor, GPS ou uma porta PTT. Escolha outra porta para manipular CW.</value>
+    <value>{0} já é usada pelo rádio, rotor ou GPS. Escolha outra porta para manipular CW.</value>
   </data>
   <data name="Logbook.Cw.Status.PortBusy">
     <value>{0} está em uso por outro aplicativo.</value>
