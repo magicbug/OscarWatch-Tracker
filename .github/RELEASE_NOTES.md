@@ -1,67 +1,38 @@
-# OscarWatch Tracker v1.1.7 Release Notes
+# OscarWatch Tracker v1.1.8 Release Notes
 
-A big thank you to our newest supporters, **William WT0DX** and **Mark ZL3AB**. Your support keeps OscarWatch moving, and thank you as well to everyone who has already donated.
+A big thank you to our newest supporters, **Steve N9IP**, **Lars SM0TGU**, and **Jordi EB3JT**. Your support keeps OscarWatch moving, and thank you as well to everyone who has already donated.
 
-Welcome to version 1.1.7. This one is for the operators who sit with a pass from AOS to LOS: SSTV that holds together through the fades, an FT4 waterfall you can actually read on a busy downlink, network control for several Icom and Kenwood radios, and a troubleshooter for the morning OscarWatch will not start.
+Welcome to version 1.1.8. This one is for the dual-radio desk, the CW operator, and anyone who woke up to find SO-131 on the map with no modes: satellite radios as Dual radio legs, live CW decode and a logbook keyer, SSTV that follows a timing step instead of tearing the picture, and a transponder-database merge that keeps up when a bird gets its Oscar number.
 
-Thanks also to **Dave G4DPZ**, who found the SSTV decoder holding on to the memory of a long picture and sent the fix.
+Thanks also to **Dave G4DPZ** for the SSTV timing and adaptive smoothing work that landed in this release.
+
+## Dual radio
+
+* **Satellite radios as Dual radio legs.** The IC-910, IC-9100, IC-9700, IC-821H, FT-847, and TS-2000 can pair with another radio. OscarWatch turns satellite mode off and tunes one VFO only, so you can run an IC-9700 with a TS-990S (or similar) without fighting the radio's own sat mode. (#234, #235)
+* **Icom LAN on a Dual radio leg.** Saving Settings no longer fails with a COM-port hint when the downlink is an Icom (or Kenwood) network radio. The conflict check now sees the same LAN fields as Save.
+
+## CW
+
+* **Live CW decoding.** Decode soundcard audio locally with DeepCW: a tunable waterfall, Doppler correction, note following, and noise squelch. Automatic pass-based listening, transcript export, and logbook hooks for decoded callsigns and locators. Capture is shared with SSTV.
+* **CW keyer in the logbook.** Twelve named macros (F1 to F12) sit between the QSO entry and the history when the mode is CW. Kenwood uses KY text, Icom uses CI-V 0x17, and other radios key DTR or RTS on the CAT port or a separate COM port. Speed is set with the WPM box. (#154)
 
 ## SSTV
 
-Satellite pictures were being cut short or split when the pass faded into noise. The defences that deal with that are now on by default, and an existing settings file is updated once so they switch on for you.
+* **Timing steps without a torn picture.** A gap or repeat in the recording (or a pause in the sender's audio) used to pull every later sync off the grid. The decoder now starts a new stretch when a confirmed step lands, so the lower half of the picture stays locked. On a real ISS PD180 with timing steps, lock rose from about 92% to 98%.
+* **Adaptive smoothing for weak pictures.** Speckle is blended out where the neighbourhood is noisy, and left alone on a strong pass. On by default; ignored when Smooth across lines is on. Fine horizontal detail is no longer mistaken for noise.
+* **Noise looks like noise.** Pure noise no longer paints as bright random colour. Unsteady envelope fades towards dim grey, closer to what MMSSTV shows, while a usable picture keeps its colour.
+* **Shared pictures keep the NORAD ID.** Uploads include the catalogue number when it is known, so a renamed bird still lands in the right gallery on OscarWatch.org.
 
-* **Tone sync, hold through fades, and mode-matched filtering** stay with the picture when the signal drops.
-* **Doppler from the satellite:** the line prior is fed from the focused satellite's range rate.
-* **Headers in the noise:** a VIS leader buried in the noise is read from the tone on each bit. On a simulated FM link that is about 2 dB deeper, and on recorded passes several pictures land on the right rows.
-* **Sync when the pulses are missing:** if a fade takes out too many syncs for a normal run, the search stacks the last few lines at that mode's line period.
-* **FM clicks count for less:** pixels are weighted by subcarrier power, so an envelope dip does not drag the line.
-* A fade hold lasts up to 45 seconds, then trims back to the last lock if the signal never returns.
+## Radios and passes
 
-**Optional speckle smoothing** (SSTV Settings, off by default). When a picture finishes, each pixel is replaced by the middle value of its neighbours on the lines above and below. That lifts lone FM noise dots on a weak picture. It softens fine detail and small text, so leave it off when the signal is strong.
+* **FT-817 DATA jack for Digirig FT4.** Catalogue DATA-USB and DATA-LSB select DIG (and PKT for DATA-FM) so Digirig and similar interfaces can TX. Sideband stays on the USER-U / USER-L menu to avoid EEPROM writes. (#241)
+* **Icom serial port not found.** A missing or busy CI-V COM port now surfaces the port-not-found guidance instead of a generic "CI-V not responding" message.
+* **Stale TLE warning in the pass list.** A pass row is marked when the satellite's element set is older than a period you set on the TLE tab (1 to 365 days, default 14). The satellite picker uses the same period. Thank you, Dave G4DPZ.
+* **UHM while the bird is up.** Terminal UHM posts and match polling wait until the focused satellite is above the reportable elevation, and show Below horizon when it is not.
 
-**Soundcard overruns.** SSTV no longer asks for the lowest input latency. On raw ALSA that was silently dropping about a quarter of the audio and cutting every picture. Capture now asks for a safer buffer, and the log warns when the soundcard overflows or decoding falls behind.
+## Satellites and the transponder database
 
-**A steadier waterfall.** Every spectrum row is kept and drawn, timed from the audio, and each row is an average across its audio instead of one short FFT taken wherever a chunk happened to end.
+* **Oscar designations.** UNNE-1B is now **SO-131**, HADES-L is **SO-132**, Erminaz-2U / 2V are **AO-129** / **AO-130**, and Luca is **LUCA-1**, with former names kept as alternatives. Modes and aliases were refreshed for those birds; RADFXSAT (FOX-1B) was removed from the shipped database.
+* **Official renames on Update transponder database.** After a TLE update to the new Oscar name, merge used to match the old local entry and offer nothing, so SO-131 showed "No transponder data". The merge now offers the official preferred-name rename when the published entry lists your old name under alternative names, and it replaces a stale NORAD ID when the catalogue number changed. Run **Satellites → Update transponder database…** (or the startup check) and apply the rename.
 
-**Memory after a long picture.** A long PD picture no longer leaves the decoder sitting on hundreds of megabytes once the picture is finished. Idle listening settles back to the search buffers. Thank you, Dave G4DPZ.
-
-**Settings tabs.** SSTV Settings is now split like FT4: General, Decoding, Fades and noise, and Saving. The settings are the same, and easier to find.
-
-**Keep the computer awake** (off by default). Overnight listening could lose USB radio audio when the screen saver or idle sleep started (#214). Tick this and a live SSTV session holds the system and the display awake on Windows, macOS, and Linux.
-
-## FT4
-
-* **Waterfall speed.** Slow and Medium keep about 48 and 24 seconds of the pass on screen. Fast is the original 12-second scroll, and it stays the default.
-* **Weak traces next to a strong one.** Radio AGC used to push the noise, and the weak stations, below the waterfall floor, so they vanished even while they kept decoding. The floor now follows the level within about ten lines. Each line averages several FFTs so the noise is steadier. **Flatten waterfall** (on by default, under FT4 Settings, Appearance) evens out the radio's SSB filter shape, in the same spirit as WSJT-X Flatten.
-* **Slot lines, hover, and double-click.** A line marks the start of each 7.5-second slot, with the slot's UTC time. Hover shows the audio frequency a click would tune, in 10 Hz steps. Double-click a trace to tune it and decode that slot again with the deep decoder, which can pick up a weak station the early decode missed. **Slot lines with UTC times** can be turned off under Appearance.
-* **Advanced decode layout.** Basic keeps the single list. Advanced (FT4 Settings, Appearance) shows band activity on the left and, on the right, stations calling you plus your own transmissions. Your own echoes appear in that calling-me column. The first echo line stays unless a later copy is nearer the TX marker.
-* **Lists that fit.** Hz sits with the other numbers, as in WSJT-X, so a narrow window only shortens the message. Column titles are centred, and times are not cut off as you raise the font size. Drag the column divider where you want it. The FT4 window remembers its size and position.
-
-## Radios over the network
-
-* **Icom CI-V over LAN or Wi-Fi, with no audio.** The IC-9700, and the IC-705, IC-905, and IC-7300MK2 when they are a dual-radio leg, can be driven without a USB CI-V lead. Settings gain a Serial or Network choice, a login, and a connection test. Network passwords are left out of the diagnostics bundle. Turn on Network Control on the radio, and close RS-BA1 or wfview first: the radio accepts one remote client. (#163)
-* **Kenwood HF as a dual-radio leg.** The TS-990S, TS-890S, TS-590S, and TS-590SG can be the downlink or the uplink, on 10 m directly or on 2 m and 70 cm through the radio's own transverter. OscarWatch reads the transverter offset and leaves it under your control. Each radio is a dual-radio leg (downlink or uplink). The TS-990S and TS-890S can connect over LAN (TCP port 60000) as well as COM. The TS-590S and TS-590SG are COM. (#205)
-
-## Rotators
-
-* **AntRunner over GRBL.** Drive a MuseLab AntRunner on its serial port (X azimuth, Y elevation, 360 degrees is 40 mm), without Hamlib rotctld. (#177)
-* **Azimuth only for GS-232.** Controllers with no elevation, such as an RTC-59 with an Emoto 1300MSA, use the azimuth commands. With the setting on, elevation is ignored for tracking, parking, and keyhole avoidance, and it is hidden in Settings, the sidebar, and the manual Rotator window. (#190)
-* Settings hints now show only the note for the protocol you have selected.
-
-## OscarWatch Troubleshooter
-
-A small separate application, shipped beside OscarWatch on Windows, macOS, and Linux, for the morning the tracker will not start. It shows process, settings, device, and log status, opens the data and log folders, copies or saves redacted diagnostics, closes or starts a stuck OscarWatch, turns off the radio, rotator, and GPS, and can put settings aside (with their backups, so they are not put straight back).
-
-Also in this version:
-
-* **Clear all FT4 echo calibrations** without OscarWatch running, when a bad trim has left you transmitting off frequency and you cannot reach FT4 settings. It takes a dated backup first.
-* **GS-232 probe:** read position, stop or nudge a serial GS-232 rotator from the saved settings, and export a byte-level log for support.
-* Localised findings, freeze reports, restoring a settings backup, and optional rotator traffic recording.
-* Bug reports now point at the troubleshooter. On Linux, logs live under `~/.config/OscarWatch/logs/`.
-
-## Passes and names
-
-* Closing the pass planner no longer writes its minimum elevation, duration, and prediction window into the filters the sidebar and timeline use. Planner filters stay on the planner. Scheduled passes are still matched.
-* A short Meteor name no longer selects the rest of that family. ISS and SO-50 still follow their catalogue names.
-
-**Full Changelog**: https://github.com/magicbug/OscarWatch-Tracker/compare/v1.1.6...v1.1.7
+**Full Changelog**: https://github.com/magicbug/OscarWatch-Tracker/compare/v1.1.7...v1.1.8
