@@ -14,7 +14,8 @@ public sealed record SstvPictureUpload(
     string Mode,
     DateTime ReceivedUtc,
     double? SyncLock,
-    string? Client);
+    string? Client,
+    string? NoradId = null);
 
 /// <summary>
 /// Result of a gallery upload. <see cref="Status"/> is "approved" or "pending" when stored;
@@ -107,6 +108,8 @@ public sealed class SstvPictureShareService : ISstvPictureShareService
         file.Headers.ContentType = new MediaTypeHeaderValue(ContentTypeFor(picture.PicturePath));
         content.Add(file, "picture", System.IO.Path.GetFileName(picture.PicturePath));
         content.Add(new StringContent(picture.Satellite.Trim()), "satellite");
+        if (!string.IsNullOrWhiteSpace(picture.NoradId))
+            content.Add(new StringContent(picture.NoradId.Trim()), "norad_id");
         content.Add(new StringContent(picture.Mode.Trim()), "mode");
         content.Add(
             new StringContent(picture.ReceivedUtc.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture)),

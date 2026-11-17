@@ -275,15 +275,17 @@ public sealed class SstvPictureSharingTests : IDisposable
             SstvModeTable.Pd120.Name,
             Received,
             91.6,
-            "OscarWatch-Tracker/2.4.0");
+            "OscarWatch-Tracker/2.4.0",
+            "25544");
         using var content = SstvPictureShareService.BuildContent(picture, [1, 2, 3]);
 
         var parts = new Dictionary<string, string>();
         foreach (var part in content)
             parts[part.Headers.ContentDisposition!.Name!.Trim('"')] = await part.ReadAsStringAsync();
 
-        Assert.Equal(["picture", "satellite", "mode", "received_at", "sync_lock", "client"], parts.Keys);
+        Assert.Equal(["picture", "satellite", "norad_id", "mode", "received_at", "sync_lock", "client"], parts.Keys);
         Assert.Equal("ISS", parts["satellite"]);
+        Assert.Equal("25544", parts["norad_id"]);
         Assert.Equal("PD 120", parts["mode"]);
         Assert.Equal("2026-10-10T15:19:43Z", parts["received_at"]);
         Assert.Equal("92", parts["sync_lock"]);

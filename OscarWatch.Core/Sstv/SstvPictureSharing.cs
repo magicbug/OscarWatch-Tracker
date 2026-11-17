@@ -442,7 +442,7 @@ public sealed class SstvPictureUploader : IDisposable
     }
 
     private SstvPictureUpload ToUpload(SstvShareItem item) =>
-        new(item.PicturePath, item.Satellite, item.Mode, item.ReceivedUtc, item.SyncLock, _client);
+        new(item.PicturePath, item.Satellite, item.Mode, item.ReceivedUtc, item.SyncLock, _client, item.NoradId);
 
     private double? SafeElevation(string noradId)
     {
