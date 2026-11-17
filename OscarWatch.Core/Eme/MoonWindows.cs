@@ -13,16 +13,22 @@ public static class MoonWindows
 {
     public const string MoonId = "MOON";
 
-    /// <summary>How far before the start to look for a rise, so a Moon already up at the start is still listed.</summary>
-    private const double LookBackDays = 2.0;
+    /// <summary>
+    /// The longest the Moon can stay up or down that the search will follow, in days. Near the poles the Moon is
+    /// up for about a fortnight at a time, so a Moon already up at the start can have risen days ago.
+    /// </summary>
+    private const double MaxSpanDays = 21.0;
+
+    /// <summary>Step used to find the real rise of a Moon already up, or the set of one still up at the end.</summary>
+    private const double CoarseStepMinutes = 5.0;
 
     private const double ScanStepMinutes = 1.0;
 
     /// <summary>
     /// Every interval overlapping [<paramref name="startUtc"/>, <paramref name="endUtc"/>) when the Moon is up,
-    /// earliest first. A Moon already up at the start is included with its real rise time. When the Moon does not
-    /// cross the limit inside the search (a limit above its highest point, or a polar day or night) the result is
-    /// empty.
+    /// earliest first. A Moon already up at the start is included with its real rise time, and one still up at
+    /// the end with its real set time. When the Moon does not cross the limit inside the search (a limit above
+    /// its highest point, or a polar day or night) the result is empty.
     /// </summary>
     public static IReadOnlyList<PassInfo> Find(
         MoonVisibilityRule rule,
@@ -46,22 +52,32 @@ public static class MoonWindows
         var observer = new Observer(station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
         var start = ToAstroTime(startUtc);
         var end = ToAstroTime(endUtc);
-        var searchFrom = start.AddDays(-LookBackDays);
-        var searchDays = end.ut - searchFrom.ut + 1.0;
         var limit = rule.MinimumElevationDeg;
         var passes = new List<PassInfo>();
-        var cursor = searchFrom;
-        for (var guard = 0; guard < 64; guard++)
+        var cursor = start;
+
+        var atStart = MoonEphemeris.At(startUtc, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+        if (atStart is not null && rule.IsUp(atStart))
         {
-            var rise = Astronomy.SearchAltitude(
-                Body.Moon, observer, Direction.Rise, cursor, searchDays - (cursor.ut - searchFrom.ut), limit);
+            // Already up: find the real rise by stepping back, and the set by searching forward.
+            var set = Astronomy.SearchAltitude(Body.Moon, observer, Direction.Set, start, MaxSpanDays, limit);
+            if (set is null)
+                return passes;
+            var riseUtc = EarlierRise(rule, station, startUtc);
+            passes.Add(BuildPass(station, riseUtc, set.ToUtcDateTime(), PeakOf(rule, station, observer, riseUtc, set.ToUtcDateTime())));
+            cursor = set;
+        }
+
+        for (var guard = 0; guard < 64 && cursor.ut < end.ut; guard++)
+        {
+            var rise = Astronomy.SearchAltitude(Body.Moon, observer, Direction.Rise, cursor, end.ut - cursor.ut, limit);
             if (rise is null || rise.ut >= end.ut)
                 break;
-            var set = Astronomy.SearchAltitude(Body.Moon, observer, Direction.Set, rise, 2.0, limit);
+            var set = Astronomy.SearchAltitude(Body.Moon, observer, Direction.Set, rise, MaxSpanDays, limit);
             if (set is null)
                 break;
-            if (set.ut > start.ut)
-                passes.Add(BuildPass(station, rise.ToUtcDateTime(), set.ToUtcDateTime(), HighestPoint(observer, rise, set)));
+            passes.Add(BuildPass(station, rise.ToUtcDateTime(), set.ToUtcDateTime(),
+                PeakOf(rule, station, observer, rise.ToUtcDateTime(), set.ToUtcDateTime())));
             cursor = set;
         }
         return passes;
@@ -70,58 +86,55 @@ public static class MoonWindows
     private static IReadOnlyList<PassInfo> FindByScan(
         MoonVisibilityRule rule, StationPosition station, DateTime startUtc, DateTime endUtc)
     {
-        var from = startUtc;
         var step = TimeSpan.FromMinutes(ScanStepMinutes);
         var passes = new List<PassInfo>();
-        DateTime? riseUtc = null;
-        var previous = Sample(from);
+        var previous = Sample(startUtc);
         if (previous is null)
             return [];
         var previousUp = rule.IsUp(previous);
-        if (previousUp)
-            riseUtc = EarlierRise(rule, station, from);
-        double bestElevation = previousUp ? previous.ElevationDeg : double.NegativeInfinity;
-        var bestTime = from;
-        var last = endUtc.AddDays(1);
-        for (var t = from + step; t <= last; t += step)
+        DateTime? riseUtc = previousUp ? EarlierRise(rule, station, startUtc) : null;
+
+        var t = startUtc;
+        while (t < endUtc)
         {
+            t += step;
+            if (t > endUtc)
+                t = endUtc;
             var current = Sample(t);
             if (current is null)
                 break;
             var up = rule.IsUp(current);
             if (up && !previousUp)
-            {
                 riseUtc = Bisect(rule, station, previous.TimeUtc, current.TimeUtc, wantUp: true);
-                bestElevation = double.NegativeInfinity;
-            }
-            if (up && current.ElevationDeg > bestElevation)
-            {
-                bestElevation = current.ElevationDeg;
-                bestTime = current.TimeUtc;
-            }
             if (!up && previousUp && riseUtc is { } rise)
             {
                 var set = Bisect(rule, station, previous.TimeUtc, current.TimeUtc, wantUp: false);
-                if (set > startUtc && rise < endUtc)
-                    passes.Add(BuildPass(station, rise, set, RefinePeak(station, bestTime, step, rise, set)));
+                if (set > startUtc)
+                    passes.Add(BuildSampled(rule, station, rise, set));
                 riseUtc = null;
             }
             previous = current;
             previousUp = up;
-            if (!up && t > endUtc)
-                break;
         }
+
+        // Still up at the end of the range: find the real set, which may be days away near the poles.
+        if (previousUp && riseUtc is { } open && LaterSet(rule, station, previous.TimeUtc) is { } openSet)
+            passes.Add(BuildSampled(rule, station, open, openSet));
         return passes;
 
-        MoonSample? Sample(DateTime t) =>
-            MoonEphemeris.At(t, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+        MoonSample? Sample(DateTime time) =>
+            MoonEphemeris.At(time, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
     }
 
-    /// <summary>The real rise time of a Moon that is already up at <paramref name="from"/>, found by stepping back.</summary>
+    /// <summary>
+    /// The real rise time of a Moon that is up at <paramref name="from"/>, found by stepping back until it is
+    /// not up and then bisecting. If it was up for the whole of <see cref="MaxSpanDays"/> the earliest time
+    /// searched is returned.
+    /// </summary>
     private static DateTime EarlierRise(MoonVisibilityRule rule, StationPosition station, DateTime from)
     {
-        var step = TimeSpan.FromMinutes(ScanStepMinutes);
-        var limit = from.AddDays(-LookBackDays);
+        var step = TimeSpan.FromMinutes(CoarseStepMinutes);
+        var limit = from.AddDays(-MaxSpanDays);
         var later = from;
         for (var t = from - step; t >= limit; t -= step)
         {
@@ -135,13 +148,31 @@ public static class MoonWindows
         return later;
     }
 
-    /// <summary>Finds the moment between two scan samples when the rule changes, to about a second.</summary>
+    /// <summary>The real set time of a Moon that is up at <paramref name="from"/>, or null if it stays up for the whole search.</summary>
+    private static DateTime? LaterSet(MoonVisibilityRule rule, StationPosition station, DateTime from)
+    {
+        var step = TimeSpan.FromMinutes(CoarseStepMinutes);
+        var limit = from.AddDays(MaxSpanDays);
+        var earlier = from;
+        for (var t = from + step; t <= limit; t += step)
+        {
+            var s = MoonEphemeris.At(t, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+            if (s is null)
+                return null;
+            if (!rule.IsUp(s))
+                return Bisect(rule, station, earlier, t, wantUp: false);
+            earlier = t;
+        }
+        return null;
+    }
+
+    /// <summary>Finds the moment between two samples when the rule changes, to about a second.</summary>
     private static DateTime Bisect(
         MoonVisibilityRule rule, StationPosition station, DateTime before, DateTime after, bool wantUp)
     {
         var lo = before;
         var hi = after;
-        for (var i = 0; i < 12 && (hi - lo).TotalSeconds > 0.5; i++)
+        for (var i = 0; i < 16 && (hi - lo).TotalSeconds > 0.5; i++)
         {
             var mid = lo + (hi - lo) / 2;
             var s = MoonEphemeris.At(mid, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
@@ -156,37 +187,87 @@ public static class MoonWindows
         return hi;
     }
 
+    /// <summary>
+    /// The highest point of a window found by sampling every minute from the rise to the set, so the figure is the
+    /// same however late in the window the list is built, then refined around the best sample.
+    /// </summary>
+    private static (DateTime Utc, double ElevationDeg) SampledPeak(
+        MoonVisibilityRule rule, StationPosition station, DateTime rise, DateTime set)
+    {
+        var step = TimeSpan.FromMinutes(ScanStepMinutes);
+        var bestTime = rise;
+        var bestElevation = double.NegativeInfinity;
+        for (var t = rise; t <= set; t += step)
+        {
+            var s = MoonEphemeris.At(t, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+            if (s is null || !rule.IsUp(s))
+                continue;
+            if (s.ElevationDeg > bestElevation)
+            {
+                bestElevation = s.ElevationDeg;
+                bestTime = t;
+            }
+        }
+        if (double.IsNegativeInfinity(bestElevation))
+        {
+            var mid = rise + (set - rise) / 2;
+            var m = MoonEphemeris.At(mid, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+            return (mid, m?.ElevationDeg ?? double.NaN);
+        }
+        return RefinePeak(rule, station, bestTime, step, rise, set);
+    }
+
     private static (DateTime Utc, double ElevationDeg) RefinePeak(
-        StationPosition station, DateTime sampleTime, TimeSpan step, DateTime rise, DateTime set)
+        MoonVisibilityRule rule, StationPosition station, DateTime sampleTime, TimeSpan step, DateTime rise, DateTime set)
     {
         var lo = sampleTime - step;
         var hi = sampleTime + step;
         if (lo < rise) lo = rise;
         if (hi > set) hi = set;
+        double Up(DateTime t)
+        {
+            var s = MoonEphemeris.At(t, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+            return s is not null && rule.IsUp(s) ? s.ElevationDeg : double.NegativeInfinity;
+        }
         for (var i = 0; i < 30 && (hi - lo).TotalSeconds > 1; i++)
         {
             var third = (hi - lo) / 3;
             var a = lo + third;
             var b = hi - third;
-            var ea = MoonEphemeris.At(a, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres)?.ElevationDeg ?? double.NegativeInfinity;
-            var eb = MoonEphemeris.At(b, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres)?.ElevationDeg ?? double.NegativeInfinity;
-            if (ea < eb) lo = a; else hi = b;
+            if (Up(a) < Up(b)) lo = a; else hi = b;
         }
-        var mid = lo + (hi - lo) / 2;
-        var best = MoonEphemeris.At(mid, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
-        return (mid, best?.ElevationDeg ?? double.NaN);
+        var best = lo + (hi - lo) / 2;
+        var e = Up(best);
+        if (double.IsNegativeInfinity(e))
+        {
+            // The refinement left the up region (a maximum elevation cap): keep the sampled best.
+            var s = MoonEphemeris.At(sampleTime, station.LatitudeDeg, station.LongitudeDeg, station.HeightMetres);
+            return (sampleTime, s?.ElevationDeg ?? double.NaN);
+        }
+        return (best, e);
     }
 
-    /// <summary>The upper transit between rise and set, which is the highest point; the middle if it falls outside.</summary>
-    private static (DateTime Utc, double ElevationDeg) HighestPoint(Observer observer, AstroTime rise, AstroTime set)
+    /// <summary>
+    /// The highest point of a window on the plain-limit path: the upper transit between rise and set when the
+    /// window is short enough to hold one, and the sampled peak when it spans days (near the poles).
+    /// </summary>
+    private static (DateTime Utc, double ElevationDeg) PeakOf(
+        MoonVisibilityRule rule, StationPosition station, Observer observer, DateTime rise, DateTime set)
     {
-        var transit = Astronomy.SearchHourAngle(Body.Moon, observer, 0.0, rise).time;
-        if (transit.ut < rise.ut || transit.ut > set.ut)
-            transit = rise.AddDays((set.ut - rise.ut) / 2.0);
+        if ((set - rise).TotalHours > 30)
+            return SampledPeak(rule, station, rise, set);
+        var riseTime = ToAstroTime(rise);
+        var setTime = ToAstroTime(set);
+        var transit = Astronomy.SearchHourAngle(Body.Moon, observer, 0.0, riseTime).time;
+        if (transit.ut < riseTime.ut || transit.ut > setTime.ut)
+            transit = riseTime.AddDays((setTime.ut - riseTime.ut) / 2.0);
         var equator = Astronomy.Equator(Body.Moon, transit, observer, EquatorEpoch.OfDate, Aberration.Corrected);
         var horizon = Astronomy.Horizon(transit, observer, equator.ra, equator.dec, Refraction.None);
         return (transit.ToUtcDateTime(), horizon.altitude);
     }
+
+    private static PassInfo BuildSampled(MoonVisibilityRule rule, StationPosition station, DateTime rise, DateTime set) =>
+        BuildPass(station, rise, set, SampledPeak(rule, station, rise, set));
 
     private static PassInfo BuildPass(
         StationPosition station, DateTime riseUtc, DateTime setUtc, (DateTime Utc, double ElevationDeg) peak)
