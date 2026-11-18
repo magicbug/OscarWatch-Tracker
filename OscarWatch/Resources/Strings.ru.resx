@@ -4885,6 +4885,12 @@ LOS: {2}
   <data name="Ft4.DecodeFontSize.Note">
     <value>Размер шрифта списка декодов (10–28). Больший размер удобнее при слабом зрении.</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>Показывать разделители слотов</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>Отмечает первую декодировку каждого 7,5-секундного слота как Чётный или Нечётный, чтобы циклы было проще различать. Также применяется к «Вызывают меня» в расширенном виде.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Вид</value>
   </data>
@@ -4899,6 +4905,12 @@ LOS: {2}
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Активность на диапазоне</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>Чётный</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>Нечётный</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Зовут меня</value>

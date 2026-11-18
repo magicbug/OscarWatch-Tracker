@@ -4881,6 +4881,12 @@
   <data name="Ft4.DecodeFontSize.Note">
     <value>解码列表字体大小（10–28）。较大字号便于视力较弱时阅读。</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>显示时隙分隔</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>在每个 7.5 秒时隙的第一条解码上标注偶数或奇数，便于区分周期。高级布局中的“呼叫我”也会显示。</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>布局</value>
   </data>
@@ -4895,6 +4901,12 @@
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>频段活动</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>偶数</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>奇数</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>呼叫我</value>

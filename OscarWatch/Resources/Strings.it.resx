@@ -4885,6 +4885,12 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Dimensione del carattere per l'elenco delle decodifiche (10–28). I valori più grandi aiutano chi ha difficoltà visive.</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>Mostra divisori di slot</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>Segna la prima decodifica di ogni slot da 7,5 secondi con Pari o Dispari, così i cicli si distinguono più facilmente. Vale anche per Mi chiama nel layout avanzato.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Disposizione</value>
   </data>
@@ -4899,6 +4905,12 @@ Ultima versione: {1} ({2})</value>
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Attività in banda</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>Pari</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>Dispari</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Mi chiamano</value>

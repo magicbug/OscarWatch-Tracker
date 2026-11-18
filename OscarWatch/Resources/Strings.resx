@@ -4881,6 +4881,12 @@ Latest: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Font size for the decode list (10–28). Larger sizes help with poorer vision.</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>Show slot dividers</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>Marks the first decode of each 7.5 second slot with Even or Odd so cycles are easier to tell apart. Also applies to Calling me in the advanced layout.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Layout</value>
   </data>
@@ -4895,6 +4901,12 @@ Latest: {1} ({2})</value>
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Band activity</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>Even</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>Odd</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Calling me</value>

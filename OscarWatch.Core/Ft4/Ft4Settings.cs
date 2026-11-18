@@ -140,6 +140,12 @@ public sealed class Ft4Settings
     /// </summary>
     public bool ShowDtWsjtxConvention { get; set; } = true;
 
+    /// <summary>
+    /// When true (default), the first decode of each 7.5 s slot shows a compact Even or Odd
+    /// header on Band activity and Calling me so cycles are easier to tell apart.
+    /// </summary>
+    public bool ShowSlotDividers { get; set; } = true;
+
     /// <summary>When true, receive decodes are reported to PSK Reporter. Off by default.</summary>
     public bool PskReporterEnabled { get; set; }
 

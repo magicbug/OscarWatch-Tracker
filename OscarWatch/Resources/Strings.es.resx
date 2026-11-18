@@ -4881,6 +4881,12 @@ Está utilizando la versión {0}.
   <data name="Ft4.DecodeFontSize.Note">
     <value>Tamaño de fuente de la lista de decodes (10–28). Los tamaños mayores ayudan con visión reducida.</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>Mostrar separadores de slot</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>Marca la primera decodificación de cada slot de 7,5 segundos con Par o Impar para distinguir los ciclos con más facilidad. También se aplica a Me llama en el diseño avanzado.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Diseño</value>
   </data>
@@ -4895,6 +4901,12 @@ Está utilizando la versión {0}.
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Actividad de la banda</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>Par</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>Impar</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Me llaman</value>

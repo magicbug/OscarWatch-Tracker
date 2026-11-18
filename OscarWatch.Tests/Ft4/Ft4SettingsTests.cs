@@ -40,6 +40,7 @@ public sealed class Ft4SettingsTests
         Assert.True(settings.AudioDopplerRx);
         Assert.True(settings.ParallelTxEchoDecode);
         Assert.True(settings.ShowDtWsjtxConvention);
+        Assert.True(settings.ShowSlotDividers);
         Assert.Equal(Ft4TxWatchdog.DefaultMinutes, settings.TxWatchdogMinutes);
         Assert.False(settings.PskReporterEnabled);
         Assert.False(settings.OscarWatchSpotsEnabled);
@@ -161,5 +162,16 @@ public sealed class Ft4SettingsTests
         })!;
 
         Assert.Equal(Ft4Settings.DefaultWaterfallSpeed, settings.WaterfallSpeed);
+    }
+
+    [Fact]
+    public void Missing_slot_dividers_stays_on()
+    {
+        var settings = JsonSerializer.Deserialize<Ft4Settings>("{}", new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        })!;
+
+        Assert.True(settings.ShowSlotDividers);
     }
 }

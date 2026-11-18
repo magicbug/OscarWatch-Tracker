@@ -77,6 +77,26 @@
       <Setter Property="Padding" Value="0" />
       <Setter Property="HorizontalContentAlignment" Value="Stretch" />
     </Style>
+    <!-- Slot headers stay hidden until the owning list marks this row as a group start. -->
+    <Style Selector="ListBox.ft4-decodes Border.ft4-slot-header">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="ListBox.ft4-band Border.ft4-slot-header.band">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="ListBox.ft4-calling Border.ft4-slot-header.calling">
+      <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="Border.ft4-slot-header">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      <Setter Property="BorderThickness" Value="0,1,0,0" />
+      <Setter Property="Padding" Value="4,4,4,2" />
+      <Setter Property="Margin" Value="0,2,0,0" />
+    </Style>
+    <Style Selector="Border.ft4-slot-header TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
   </Window.Styles>
 
   <Window.Resources>
@@ -128,9 +148,32 @@
     </DataTemplate>
 
     <DataTemplate x:Key="Ft4DecodeRowTemplate" x:DataType="vm:Ft4DecodeRowViewModel">
-      <Grid ColumnSpacing="10" Margin="4,2"
-            Background="{Binding RowBackground}"
-            PointerPressed="OnDecodeRowPointerPressed">
+      <StackPanel>
+        <!-- Band activity and Calling me share this template and the same row objects.
+             Class setters keep each list's header independent of the other list. -->
+        <Border Classes="ft4-slot-header"
+                Classes.band="{Binding StartsBandSlot}"
+                IsHitTestVisible="False">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Even}"
+                       IsVisible="{Binding IsEvenSlot}" />
+            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Odd}"
+                       IsVisible="{Binding !IsEvenSlot}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="ft4-slot-header"
+                Classes.calling="{Binding StartsCallsToMeSlot}"
+                IsHitTestVisible="False">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Even}"
+                       IsVisible="{Binding IsEvenSlot}" />
+            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Odd}"
+                       IsVisible="{Binding !IsEvenSlot}" />
+          </StackPanel>
+        </Border>
+        <Grid ColumnSpacing="10" Margin="4,2"
+              Background="{Binding RowBackground}"
+              PointerPressed="OnDecodeRowPointerPressed">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto" MinWidth="76" SharedSizeGroup="Ft4Utc" />
           <ColumnDefinition Width="Auto" MinWidth="48" SharedSizeGroup="Ft4Kind" />
@@ -227,7 +270,8 @@
                    ToolTip.Tip="{Binding Message.Text}"
                    IsVisible="{Binding Message.IsReceiveActivity}" />
 
-      </Grid>
+        </Grid>
+      </StackPanel>
     </DataTemplate>
   </Window.Resources>
 
@@ -377,7 +421,7 @@
                               Content="{Binding}"
                               ContentTemplate="{StaticResource Ft4DecodeHeaderTemplate}" />
               <ListBox x:Name="DecodeList"
-                       Classes="ft4-decodes"
+                       Classes="ft4-decodes ft4-band"
                        ItemsSource="{Binding Decodes}"
                        SelectedItem="{Binding SelectedDecode}"
                        ItemTemplate="{StaticResource Ft4DecodeRowTemplate}"
@@ -418,7 +462,7 @@
                               Content="{Binding}"
                               ContentTemplate="{StaticResource Ft4DecodeHeaderTemplate}" />
               <ListBox x:Name="CallsToMeList"
-                       Classes="ft4-decodes"
+                       Classes="ft4-decodes ft4-calling"
                        ItemsSource="{Binding CallsToMe}"
                        SelectedItem="{Binding SelectedCallToMe}"
                        ItemTemplate="{StaticResource Ft4DecodeRowTemplate}"

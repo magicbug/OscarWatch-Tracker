@@ -4885,6 +4885,12 @@ LOS: {2}
   <data name="Ft4.DecodeFontSize.Note">
     <value>ขนาดแบบอักษรรายการถอดรหัส (10–28) ขนาดใหญ่ช่วยเมื่อสายตาไม่ดี</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>แสดงตัวแบ่งสล็อต</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>ทำเครื่องหมายการถอดรหัสแรกของแต่ละสล็อต 7.5 วินาทีด้วย คู่ หรือ คี่ เพื่อแยกวัฏจักรได้ง่ายขึ้น ใช้กับ คอล์ลหาฉัน ในเลย์เอาต์ขั้นสูงด้วย</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>รูปแบบ</value>
   </data>
@@ -4899,6 +4905,12 @@ LOS: {2}
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>กิจกรรมบนย่าน</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>คู่</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>คี่</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>เรียกฉัน</value>

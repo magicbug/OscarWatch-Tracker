@@ -4881,6 +4881,12 @@
   <data name="Ft4.DecodeFontSize.Note">
     <value>デコード一覧のフォントサイズ（10–28）。大きいほど見やすくなります。</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>スロット区切りを表示</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>各 7.5 秒スロットの最初のデコードに偶数／奇数を付け、サイクルを見分けやすくします。詳細レイアウトの「呼び出し」にも適用されます。</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>レイアウト</value>
   </data>
@@ -4895,6 +4901,12 @@
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>バンドの動き</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>偶数</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>奇数</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>自局宛て</value>

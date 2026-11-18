@@ -4885,6 +4885,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Ukuran font daftar decode (10–28). Ukuran lebih besar membantu penglihatan lemah.</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>Tampilkan pemisah slot</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>Menandai decode pertama setiap slot 7,5 detik dengan Genap atau Ganjil agar siklus lebih mudah dibedakan. Juga berlaku untuk Memanggil saya pada tata letak lanjutan.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Tata letak</value>
   </data>
@@ -4899,6 +4905,12 @@ Terbaru: {1} ({2})</value>
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Aktivitas band</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>Genap</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>Ganjil</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Memanggil saya</value>

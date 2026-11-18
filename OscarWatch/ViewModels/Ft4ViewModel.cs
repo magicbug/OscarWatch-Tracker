@@ -103,6 +103,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _parallelTxEchoDecode = ft4.ParallelTxEchoDecode;
         _saveSlotAudio = ft4.SaveSlotAudio;
         _showDtWsjtxConvention = ft4.ShowDtWsjtxConvention;
+        _showSlotDividers = ft4.ShowSlotDividers;
         _txWatchdogMinutes = Ft4TxWatchdog.ClampMinutes(ft4.TxWatchdogMinutes);
         _pskReporterEnabled = ft4.PskReporterEnabled;
         _oscarWatchSpotsTokenAvailable = Ft4OscarWatchSpots.HasApiToken(_settings.Current.SatelliteStatus.ApiToken);
@@ -293,6 +294,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     /// <summary>Show the DT column using the WSJT-X convention (0.5 s slot start removed).</summary>
     [ObservableProperty] private bool _showDtWsjtxConvention = true;
 
+    /// <summary>Show an Even/Odd header on the first decode of each slot in Band activity and Calling me.</summary>
+    [ObservableProperty] private bool _showSlotDividers = true;
+
     [ObservableProperty] private int _txWatchdogMinutes = Ft4TxWatchdog.DefaultMinutes;
     [ObservableProperty] private bool _pskReporterEnabled;
 
@@ -463,6 +467,13 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
         foreach (var row in Decodes)
             row.SetDtConvention(value);
+    }
+
+    partial void OnShowSlotDividersChanged(bool value)
+    {
+        _settings.Current.Ft4.ShowSlotDividers = value;
+        _settings.RequestSave();
+        MarkSlotDividers();
     }
 
     [RelayCommand]
@@ -1767,6 +1778,50 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 CallsToMe.Move(existing, i);
             else
                 CallsToMe.Insert(i, wanted[i]);
+        }
+
+        MarkSlotDividers();
+    }
+
+    /// <summary>
+    /// Mark the first displayed row of each slot in Band activity and Calling me separately.
+    /// The two lists share row objects, so each list uses its own neighbours.
+    /// </summary>
+    private void MarkSlotDividers()
+    {
+        if (!ShowSlotDividers)
+        {
+            foreach (var row in Decodes)
+            {
+                row.StartsBandSlot = false;
+                row.StartsCallsToMeSlot = false;
+            }
+
+            return;
+        }
+
+        DateTime? previousBand = null;
+        foreach (var row in Decodes)
+        {
+            var slot = row.Message.SlotUtc;
+            row.StartsBandSlot = Ft4SlotDivider.StartsGroup(slot, previousBand);
+            previousBand = slot;
+        }
+
+        DateTime? previousCalls = null;
+        foreach (var row in CallsToMe)
+        {
+            var slot = row.Message.SlotUtc;
+            row.StartsCallsToMeSlot = Ft4SlotDivider.StartsGroup(slot, previousCalls);
+            previousCalls = slot;
+        }
+
+        // Rows only on Band activity must not keep a stale Calling me header flag.
+        var inCalls = new HashSet<Ft4DecodeRowViewModel>(CallsToMe, ReferenceEqualityComparer.Instance);
+        foreach (var row in Decodes)
+        {
+            if (!inCalls.Contains(row))
+                row.StartsCallsToMeSlot = false;
         }
     }
 

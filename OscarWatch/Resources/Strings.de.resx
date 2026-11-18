@@ -4885,6 +4885,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.DecodeFontSize.Note">
     <value>Schriftgröße der Decode-Liste (10–28). Größere Werte helfen bei eingeschränkter Sehkraft.</value>
   </data>
+  <data name="Ft4.ShowSlotDividers">
+    <value>Slot-Trenner anzeigen</value>
+  </data>
+  <data name="Ft4.ShowSlotDividers.Note">
+    <value>Kennzeichnet die erste Decodierung jedes 7,5-Sekunden-Slots mit Gerade oder Ungerade, damit Zyklen leichter zu unterscheiden sind. Gilt auch für Ruft mich im erweiterten Layout.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Layout</value>
   </data>
@@ -4899,6 +4905,12 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Bandaktivität</value>
+  </data>
+  <data name="Ft4.Decodes.Even">
+    <value>Gerade</value>
+  </data>
+  <data name="Ft4.Decodes.Odd">
+    <value>Ungerade</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Ruft mich</value>

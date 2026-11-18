@@ -14,9 +14,19 @@ public sealed partial class Ft4DecodeRowViewModel : ObservableObject
         Message = message;
         _dtWsjtxConvention = dtWsjtxConvention;
         _dtText = FormatDt(message, dtWsjtxConvention);
+        IsEvenSlot = Ft4SlotClock.IsEvenSlot(message.SlotUtc, Ft4SlotClock.Ft4SlotSeconds);
     }
 
     public Ft4DecodedMessage Message { get; }
+
+    /// <summary>True when this decode's slot is an even FT4 period (from <see cref="Ft4SlotClock"/>).</summary>
+    public bool IsEvenSlot { get; }
+
+    /// <summary>First Band activity row of this slot; drives the Even/Odd header in that list.</summary>
+    [ObservableProperty] private bool _startsBandSlot;
+
+    /// <summary>First Calling me row of this slot; drives the Even/Odd header in that list.</summary>
+    [ObservableProperty] private bool _startsCallsToMeSlot;
 
     private bool _dtWsjtxConvention;
 
