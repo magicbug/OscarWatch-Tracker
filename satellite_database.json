@@ -520,6 +520,22 @@
         "doppler": "NOR"
       },
       {
+        "type": "FT8",
+        "downlink": 10489540,
+        "uplink": 2400040,
+        "downlink_mode": "DATA-USB",
+        "uplink_mode": "DATA-USB",
+        "doppler": "NOR"
+      },
+      {
+        "type": "FT4",
+        "downlink": 10489540,
+        "uplink": 2400040,
+        "downlink_mode": "DATA-USB",
+        "uplink_mode": "DATA-USB",
+        "doppler": "NOR"
+      },
+      {
         "type": "Wideband DATV",
         "downlink": 10495000,
         "uplink": 2405500,
