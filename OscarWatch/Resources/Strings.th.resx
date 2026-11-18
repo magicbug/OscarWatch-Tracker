@@ -5272,6 +5272,15 @@ LOS: {2}
   <data name="Ft4.DopplerDownlink">
     <value>ดาวน์ลิงก์:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>เอคโค:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>ค่า trim อัปลิงก์ที่บันทึกไว้สำหรับดาวเทียมและทรานสปอนเดอร์ FT4 นี้ ศูนย์หมายถึงไม่มี trim ค่าอื่นจะเลื่อนความถี่ส่งจนกว่าจะล้างในการตั้งค่า</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>ถอดรหัส</value>
   </data>

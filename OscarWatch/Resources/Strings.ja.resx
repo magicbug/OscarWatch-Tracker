@@ -5268,6 +5268,15 @@
   <data name="Ft4.DopplerDownlink">
     <value>ダウンリンク:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>エコー:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>この衛星とFT4トランスポンダーに保存されているアップリンクトリムです。ゼロはトリムなしです。それ以外の値は、設定で消去するまで送信周波数をずらします。</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>デコード</value>
   </data>

@@ -34,6 +34,10 @@
       <Setter Property="Opacity" Value="0.75" />
       <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
+    <!-- Non-zero trim is heavier so a leftover shift is distinct from 0 Hz. -->
+    <Style Selector="TextBlock.ft4-echo-active">
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
     <Style Selector="ProgressBar.ft4-slot">
       <Setter Property="Height" Value="10" />
       <Setter Property="MinHeight" Value="10" />
@@ -338,9 +342,10 @@
                      VerticalAlignment="Center" />
         </Grid>
 
-        <StackPanel Orientation="Horizontal"
-                    Spacing="14"
-                    VerticalAlignment="Center">
+        <WrapPanel Orientation="Horizontal"
+                   ItemSpacing="14"
+                   LineSpacing="4"
+                   VerticalAlignment="Center">
           <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
             <TextBlock Text="{loc:Localize Key=Ft4.SlotClock}"
                        Classes="ft4-status-label" />
@@ -363,7 +368,18 @@
             <TextBlock Text="{Binding DopplerDownlinkText}"
                        Classes="ft4-mono" />
           </StackPanel>
-        </StackPanel>
+          <StackPanel Orientation="Horizontal"
+                      Spacing="4"
+                      VerticalAlignment="Center"
+                      ToolTip.Tip="{loc:Localize Key=Ft4.EchoTrim.Tip}">
+            <TextBlock Text="{loc:Localize Key=Ft4.EchoTrim}"
+                       Classes="ft4-status-label" />
+            <TextBlock Text="{Binding EchoTrimText}"
+                       Classes="ft4-mono"
+                       Classes.ft4-echo-active="{Binding EchoTrimActive}"
+                       MinWidth="88" />
+          </StackPanel>
+        </WrapPanel>
 
         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
           <TextBlock Grid.Column="0"

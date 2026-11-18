@@ -5268,6 +5268,15 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.DopplerDownlink">
     <value>Downlink:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>Eco:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>Trim de uplink salvo para este satélite e transponder FT4. Zero significa nenhum trim. Qualquer outro valor desloca a frequência de transmissão até você limpá-lo em Definições.</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>Decodificações</value>
   </data>

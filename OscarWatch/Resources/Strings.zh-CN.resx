@@ -5268,6 +5268,15 @@
   <data name="Ft4.DopplerDownlink">
     <value>下行:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>回波:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>此卫星和 FT4 转发器已保存的上行微调。零表示没有微调。其他数值会偏移发射频率，直到在设置中清除。</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>解码</value>
   </data>

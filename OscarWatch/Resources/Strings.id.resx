@@ -5272,6 +5272,15 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.DopplerDownlink">
     <value>Downlink:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>Echo:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>Trim uplink tersimpan untuk satelit dan transponder FT4 ini. Nol berarti tidak ada trim. Nilai lain menggeser frekuensi pancar sampai Anda menghapusnya di Pengaturan.</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>Dekode</value>
   </data>

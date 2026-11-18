@@ -5272,6 +5272,15 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.DopplerDownlink">
     <value>Downlink:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>Echo:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>Gespeicherter Uplink-Trim für diesen Satelliten und FT4-Transponder. Null bedeutet kein Trim. Jeder andere Wert verschiebt die Sendefrequenz, bis Sie ihn in den Einstellungen löschen.</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>Dekodierungen</value>
   </data>

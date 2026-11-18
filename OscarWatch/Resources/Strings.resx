@@ -5268,6 +5268,15 @@ Latest: {1} ({2})</value>
   <data name="Ft4.DopplerDownlink">
     <value>Downlink:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>Echo:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>Saved uplink trim for this satellite and FT4 transponder. Zero means no trim. Any other value shifts your transmit frequency until you clear it in Settings.</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>Decodes</value>
   </data>

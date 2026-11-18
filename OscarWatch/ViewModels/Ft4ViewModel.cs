@@ -162,6 +162,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         SlotClockText = "-";
         DopplerUplinkText = "-";
         DopplerDownlinkText = "-";
+        RefreshEchoTrimReadout();
 
         RefreshAudioDevices();
         RefreshPttPorts();
@@ -273,6 +274,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isTxSlot;
     [ObservableProperty] private string _dopplerUplinkText = "";
     [ObservableProperty] private string _dopplerDownlinkText = "";
+
+    /// <summary>Stored uplink trim for the focused satellite and FT4 transponder, with units.</summary>
+    [ObservableProperty] private string _echoTrimText = "";
+
+    /// <summary>True when the focused transponder has a non-zero stored trim.</summary>
+    [ObservableProperty] private bool _echoTrimActive;
     [ObservableProperty] private string _currentTxMessage = "";
     [ObservableProperty] private string _manualPttPrompt = "";
     [ObservableProperty] private string _statusLine = "";
@@ -780,6 +787,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
         ApplyEchoCalibrationKHzToEntry(SelectedEchoCalibrationEntry, clamped / 1000.0);
         _settings.RequestSave();
+        RefreshEchoTrimReadout();
         ClearEchoCalibrationCommand.NotifyCanExecuteChanged();
         ClearAllEchoCalibrationsCommand.NotifyCanExecuteChanged();
     }
@@ -1491,6 +1499,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         ApplyEchoCalibrationKHzToEntry(SelectedEchoCalibrationEntry, 0);
         _settings.RequestSave();
         RefreshEchoCalibration();
+        RefreshEchoTrimReadout();
         StatusLine = _l.Get("Ft4.Status.EchoCleared", label);
     }
 
@@ -1504,6 +1513,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.Current.Ft4.UplinkCalibrationKHzBySatellite.Clear();
         _settings.RequestSave();
         RefreshEchoCalibration();
+        RefreshEchoTrimReadout();
         StatusLine = _l.Get("Ft4.Status.EchoClearedAll");
     }
 
@@ -1531,6 +1541,23 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         {
             _loadingEchoCalibration = wasLoading;
         }
+    }
+
+    /// <summary>
+    /// Cumulative trim that is applied now, not the last correction.
+    /// A trim on another satellite, or on a non-FT4 row, stays at zero.
+    /// </summary>
+    private void RefreshEchoTrimReadout()
+    {
+        var khz = 0d;
+        var sat = ResolveFocusedSatelliteName();
+        var mode = _frequencyOverlay.SelectedMode;
+        if (sat is not null && Ft4SlotGate.IsFt4Transponder(mode))
+            khz = _settings.Current.Ft4.GetUplinkCalibrationKHz(sat, mode);
+
+        var signed = Ft4UplinkCalibration.FormatSignedHz(khz);
+        EchoTrimText = _l.Get("Ft4.EchoTrim.Value", signed);
+        EchoTrimActive = signed != "0";
     }
 
     private string? ResolveFocusedTransponderKey()
@@ -1953,6 +1980,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             ? "-"
             : _frequencyOverlay.RadioReceiveText;
         OnPropertyChanged(nameof(HasDoppler));
+        RefreshEchoTrimReadout();
 
         if (_modem.IsRunning)
         {

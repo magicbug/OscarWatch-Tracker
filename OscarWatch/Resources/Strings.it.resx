@@ -5272,6 +5272,15 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.DopplerDownlink">
     <value>Downlink:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>Eco:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Hz</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>Correzione uplink salvata per questo satellite e transponder FT4. Zero significa nessuna correzione. Qualsiasi altro valore sposta la frequenza di trasmissione finché non la cancelli in Impostazioni.</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>Decodifiche</value>
   </data>

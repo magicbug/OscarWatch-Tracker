@@ -5272,6 +5272,15 @@ LOS: {2}
   <data name="Ft4.DopplerDownlink">
     <value>Даунлинк:</value>
   </data>
+  <data name="Ft4.EchoTrim">
+    <value>Эхо:</value>
+  </data>
+  <data name="Ft4.EchoTrim.Value">
+    <value>{0} Гц</value>
+  </data>
+  <data name="Ft4.EchoTrim.Tip">
+    <value>Сохранённая поправка аплинка для этого спутника и транспондера FT4. Ноль значит, что поправки нет. Любое другое значение сдвигает частоту передачи, пока вы не сбросите её в настройках.</value>
+  </data>
   <data name="Ft4.Decodes">
     <value>Декоды</value>
   </data>
