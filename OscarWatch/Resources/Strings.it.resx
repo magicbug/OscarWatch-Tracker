@@ -312,7 +312,7 @@ Durata: {4}</value>
     <value>Durata: {0}</value>
   </data>
   <data name="Pass.MaxElevation">
-    <value>Elevazione massima: {0}</value>
+    <value>ELEV. MAX: {0}</value>
   </data>
   <data name="Pass.DurationMinutes">
     <value>{0} min</value>

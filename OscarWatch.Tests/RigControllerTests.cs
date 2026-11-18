@@ -2260,7 +2260,10 @@ public class RigControllerTests
         controller.Update(settings, Build(9.8));
         var rxAfterOffset = rig.MainHz;
 
-        rig.MainHz = rxAfterOffset + 35;
+        // Under the 30 Hz knob threshold. Wait out the post-write ignore window first, so a slow
+        // runner cannot fail this by letting that window expire and treating the read as a tune.
+        rig.MainHz = rxAfterOffset + (KnobTuneCapturePolicy.LinearThresholdHz - 10);
+        Thread.Sleep(400);
         for (var i = 0; i < 14; i++)
             controller.RunTrackingLoopOnce();
 

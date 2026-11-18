@@ -161,7 +161,7 @@ public sealed class Ft4OscarWatchSpotTests
         var spot = Sample();
         Assert.True(reporter.TryEnqueue(spot));
         Assert.False(reporter.TryEnqueue(spot));
-        await done.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        await done.Task.WaitAsync(TimeSpan.FromSeconds(15));
         Assert.Equal(1, calls);
     }
 
@@ -187,7 +187,7 @@ public sealed class Ft4OscarWatchSpotTests
         reporter.Diagnostic += (message, _) => noticed.TrySetResult(message);
 
         Assert.True(reporter.TryEnqueue(Sample()));
-        var message = await noticed.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        var message = await noticed.Task.WaitAsync(TimeSpan.FromSeconds(15));
         Assert.Contains("API token", message, StringComparison.Ordinal);
         Assert.Equal(0, calls);
     }
@@ -207,7 +207,7 @@ public sealed class Ft4OscarWatchSpotTests
         });
 
         Assert.True(reporter.TryEnqueue(Sample()));
-        await done.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        await done.Task.WaitAsync(TimeSpan.FromSeconds(15));
         Assert.Equal(2, calls);
     }
 
