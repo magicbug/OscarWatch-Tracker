@@ -4889,7 +4889,7 @@ Aktuell: {1} ({2})</value>
     <value>Slot-Trenner anzeigen</value>
   </data>
   <data name="Ft4.ShowSlotDividers.Note">
-    <value>Kennzeichnet die erste Decodierung jedes 7,5-Sekunden-Slots mit Gerade oder Ungerade, damit Zyklen leichter zu unterscheiden sind. Gilt auch für Ruft mich im erweiterten Layout.</value>
+    <value>Zieht eine dünne Linie über die erste Decodierung jedes 7,5-Sekunden-Slots, damit Zyklen leichter zu unterscheiden sind. Gilt auch für Ruft mich im erweiterten Layout.</value>
   </data>
   <data name="Ft4.NewestDecodesAtBottom">
     <value>Neueste Decodes unten</value>
@@ -4911,12 +4911,6 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Bandaktivität</value>
-  </data>
-  <data name="Ft4.Decodes.Even">
-    <value>Gerade</value>
-  </data>
-  <data name="Ft4.Decodes.Odd">
-    <value>Ungerade</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Ruft mich</value>

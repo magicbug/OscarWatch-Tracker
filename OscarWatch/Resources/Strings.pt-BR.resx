@@ -4885,7 +4885,7 @@ Mais recente: {1} ({2})</value>
     <value>Mostrar divisores de slot</value>
   </data>
   <data name="Ft4.ShowSlotDividers.Note">
-    <value>Marca o primeiro decode de cada slot de 7,5 segundos com Par ou Ímpar para facilitar a distinção dos ciclos. Também se aplica a Chamando-me no layout avançado.</value>
+    <value>Desenha uma linha fina acima do primeiro decode de cada slot de 7,5 segundos para facilitar a distinção dos ciclos. Também se aplica a Chamando-me no layout avançado.</value>
   </data>
   <data name="Ft4.NewestDecodesAtBottom">
     <value>Decodes mais recentes em baixo</value>
@@ -4907,12 +4907,6 @@ Mais recente: {1} ({2})</value>
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Atividade na banda</value>
-  </data>
-  <data name="Ft4.Decodes.Even">
-    <value>Par</value>
-  </data>
-  <data name="Ft4.Decodes.Odd">
-    <value>Ímpar</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Chamando você</value>

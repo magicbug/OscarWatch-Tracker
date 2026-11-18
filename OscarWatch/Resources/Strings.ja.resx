@@ -4885,7 +4885,7 @@
     <value>スロット区切りを表示</value>
   </data>
   <data name="Ft4.ShowSlotDividers.Note">
-    <value>各 7.5 秒スロットの最初のデコードに偶数／奇数を付け、サイクルを見分けやすくします。詳細レイアウトの「呼び出し」にも適用されます。</value>
+    <value>各 7.5 秒スロットの最初のデコードの上に細い罫線を引き、サイクルを見分けやすくします。詳細レイアウトの「呼び出し」にも適用されます。</value>
   </data>
   <data name="Ft4.NewestDecodesAtBottom">
     <value>新しいデコードを下に表示</value>
@@ -4907,12 +4907,6 @@
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>バンドの動き</value>
-  </data>
-  <data name="Ft4.Decodes.Even">
-    <value>偶数</value>
-  </data>
-  <data name="Ft4.Decodes.Odd">
-    <value>奇数</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>自局宛て</value>

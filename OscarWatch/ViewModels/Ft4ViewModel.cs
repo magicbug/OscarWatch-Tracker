@@ -302,7 +302,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     /// <summary>Show the DT column using the WSJT-X convention (0.5 s slot start removed).</summary>
     [ObservableProperty] private bool _showDtWsjtxConvention = true;
 
-    /// <summary>Show an Even/Odd header on the first decode of each slot in Band activity and Calling me.</summary>
+    /// <summary>Draw a thin rule above the first decode of each slot in Band activity and Calling me.</summary>
     [ObservableProperty] private bool _showSlotDividers = true;
 
     /// <summary>When true, Band activity and Calling me put new decodes at the bottom.</summary>

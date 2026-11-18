@@ -4889,7 +4889,7 @@ LOS: {2}
     <value>Показывать разделители слотов</value>
   </data>
   <data name="Ft4.ShowSlotDividers.Note">
-    <value>Отмечает первую декодировку каждого 7,5-секундного слота как Чётный или Нечётный, чтобы циклы было проще различать. Также применяется к «Вызывают меня» в расширенном виде.</value>
+    <value>Проводит тонкую линию над первой декодировкой каждого 7,5-секундного слота, чтобы циклы было проще различать. Также применяется к «Вызывают меня» в расширенном виде.</value>
   </data>
   <data name="Ft4.NewestDecodesAtBottom">
     <value>Новые декоды внизу</value>
@@ -4911,12 +4911,6 @@ LOS: {2}
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>Активность на диапазоне</value>
-  </data>
-  <data name="Ft4.Decodes.Even">
-    <value>Чётный</value>
-  </data>
-  <data name="Ft4.Decodes.Odd">
-    <value>Нечётный</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>Зовут меня</value>

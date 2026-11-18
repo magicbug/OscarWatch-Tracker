@@ -94,12 +94,8 @@
     <Style Selector="Border.ft4-slot-header">
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
       <Setter Property="BorderThickness" Value="0,1,0,0" />
-      <Setter Property="Padding" Value="4,4,4,2" />
+      <Setter Property="Padding" Value="0" />
       <Setter Property="Margin" Value="0,2,0,0" />
-    </Style>
-    <Style Selector="Border.ft4-slot-header TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
-      <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
   </Window.Styles>
 
@@ -157,24 +153,10 @@
              Class setters keep each list's header independent of the other list. -->
         <Border Classes="ft4-slot-header"
                 Classes.band="{Binding StartsBandSlot}"
-                IsHitTestVisible="False">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Even}"
-                       IsVisible="{Binding IsEvenSlot}" />
-            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Odd}"
-                       IsVisible="{Binding !IsEvenSlot}" />
-          </StackPanel>
-        </Border>
+                IsHitTestVisible="False" />
         <Border Classes="ft4-slot-header"
                 Classes.calling="{Binding StartsCallsToMeSlot}"
-                IsHitTestVisible="False">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Even}"
-                       IsVisible="{Binding IsEvenSlot}" />
-            <TextBlock Text="{loc:Localize Key=Ft4.Decodes.Odd}"
-                       IsVisible="{Binding !IsEvenSlot}" />
-          </StackPanel>
-        </Border>
+                IsHitTestVisible="False" />
         <Grid ColumnSpacing="10" Margin="4,2"
               Background="{Binding RowBackground}"
               PointerPressed="OnDecodeRowPointerPressed">

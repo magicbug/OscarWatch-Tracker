@@ -4885,7 +4885,7 @@
     <value>显示时隙分隔</value>
   </data>
   <data name="Ft4.ShowSlotDividers.Note">
-    <value>在每个 7.5 秒时隙的第一条解码上标注偶数或奇数，便于区分周期。高级布局中的“呼叫我”也会显示。</value>
+    <value>在每个 7.5 秒时隙的第一条解码上方画一条细线，便于区分周期。高级布局中的“呼叫我”也会显示。</value>
   </data>
   <data name="Ft4.NewestDecodesAtBottom">
     <value>最新解码显示在底部</value>
@@ -4907,12 +4907,6 @@
   </data>
   <data name="Ft4.Decodes.BandActivity">
     <value>频段活动</value>
-  </data>
-  <data name="Ft4.Decodes.Even">
-    <value>偶数</value>
-  </data>
-  <data name="Ft4.Decodes.Odd">
-    <value>奇数</value>
   </data>
   <data name="Ft4.Decodes.CallingMe">
     <value>呼叫我</value>
