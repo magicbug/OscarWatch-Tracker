@@ -258,6 +258,89 @@ public sealed class RigControllerDualRadioTests
     }
 
     /// <summary>
+    /// TX fixed keeps the uplink on the CQ spot while Doppler moves the downlink. A receive-dial
+    /// retune still has to program the new uplink, and later Doppler must not walk it off that spot.
+    /// </summary>
+    [Fact]
+    public void Dual_linear_tx_fixed_holds_uplink_through_doppler_and_follows_rx_dial()
+    {
+        var downRig = new RecordingRigDriver();
+        var upRig = new RecordingRigDriver();
+        var controller = new RigController(
+            endpointFactory: ep => ep.Port == "COM_DL" ? downRig : upRig);
+
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            DualRadioEnabled = true,
+            DopplerThresholdLinearHz = 50,
+            InteractiveDialSettleMs = 200,
+            Downlink = new RigEndpointSettings { Type = RigType.YaesuFt817, Port = "COM_DL", CatDelayMs = 0 },
+            Uplink = new RigEndpointSettings { Type = RigType.YaesuFt818, Port = "COM_UL", CatDelayMs = 0 }
+        };
+
+        var mode = new SatelliteTransponderMode
+        {
+            DownlinkKHz = 145_960,
+            UplinkKHz = 435_250,
+            DownlinkMode = "USB",
+            UplinkMode = "LSB",
+            Doppler = "REV"
+        };
+
+        RigTrackingContext Build(double rangeRateKmPerSec) => new()
+        {
+            TrackState = new SatelliteTrackState
+            {
+                Name = "RS-44",
+                NoradId = "44909",
+                Subpoint = new GeoCoordinate(0, 0),
+                LookAngles = new LookAngles(180, 30, 800, rangeRateKmPerSec)
+            },
+            Mode = mode,
+            Corrected = DopplerFrequencyCalculator.Compute(
+                mode, rangeRateKmPerSec, 0, 0, 0, 0, DopplerStrategy.DownlinkOnly),
+            DopplerStrategy = DopplerStrategy.DownlinkOnly
+        };
+
+        controller.Update(settings, Build(0));
+        Thread.Sleep(650);
+
+        var rxAfterInit = downRig.MainHz;
+        var txAfterInit = upRig.MainHz;
+
+        controller.PublishContext(settings, Build(4.2), reinitializePass: false);
+        for (var i = 0; i < 4; i++)
+            controller.RunTrackingLoopOnce();
+
+        Assert.NotEqual(rxAfterInit, downRig.MainHz);
+        Assert.Equal(txAfterInit, upRig.MainHz);
+
+        Thread.Sleep(400);
+        for (var i = 0; i < 3; i++)
+            controller.RunTrackingLoopOnce();
+        Assert.Equal(txAfterInit, upRig.MainHz);
+
+        downRig.MainHz += 2_000;
+        for (var i = 0; i < 12; i++)
+            controller.RunTrackingLoopOnce();
+
+        var status = controller.GetStatus();
+        Assert.InRange(status.ManualReceiveAdjustKHz, 1.9, 2.1);
+        Assert.InRange(status.ManualTransmitAdjustKHz, -2.1, -1.9);
+        Assert.InRange(upRig.MainHz, txAfterInit - 2_100, txAfterInit - 1_900);
+
+        var txAfterTune = upRig.MainHz;
+        var rxAfterTune = downRig.MainHz;
+        controller.PublishContext(settings, Build(6.0), reinitializePass: false);
+        for (var i = 0; i < 4; i++)
+            controller.RunTrackingLoopOnce();
+
+        Assert.Equal(txAfterTune, upRig.MainHz);
+        Assert.NotEqual(rxAfterTune, downRig.MainHz);
+    }
+
+    /// <summary>
     /// While the operator spins RX, dual mode still writes uplink Doppler. Those TX-only CAT writes must
     /// not refresh the RX dial settle window, or passband capture never runs and uplink stays untrimmed.
     /// </summary>

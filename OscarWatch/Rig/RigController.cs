@@ -1471,8 +1471,9 @@ public sealed class RigController : IRigController, IDisposable
         var thresholdHz = ResolveWriteThresholdHz(settings, context);
         var strategy = context.DopplerStrategy;
         var catPaused = _cachedCatPausedOverride ?? settings.CatUpdatesPaused;
-        // Downlink-only leaves the uplink alone after the first successful program. If that
-        // write never landed (mode change while the radio rejected CI-V), keep trying.
+        // TX fixed omits uplink Doppler from the computed frequency, so satellite motion does not
+        // move it. Dial trim, an offset, or switching into TX fixed does change it, and that new
+        // frequency still has to reach the radio. A first uplink write that never landed is retried.
         var uplinkNeedsProgram = !_isBeaconOnly && txHz > 0 && _lastRigTxHz <= 0;
         if (!forceApply && !uplinkNeedsProgram && !ShouldWrite(thresholdHz, rxHz, txHz, strategy))
             return false;
@@ -1490,7 +1491,13 @@ public sealed class RigController : IRigController, IDisposable
         var correctRx = strategy != DopplerStrategy.UplinkOnly;
         var correctTx = !_isBeaconOnly && strategy != DopplerStrategy.DownlinkOnly;
         var writeRx = correctRx && (forceApply || rxDelta > thresholdHz || thresholdHz == 0);
+        // Any change in the Doppler-free uplink is a retune. forceApply covers a sub-threshold nudge.
+        var txFixedWriteAboveHz = forceApply ? 0 : thresholdHz;
+        var writeTxFixedRetune = strategy == DopplerStrategy.DownlinkOnly
+            && txHz > 0
+            && txDelta > txFixedWriteAboveHz;
         var writeTx = uplinkNeedsProgram
+            || writeTxFixedRetune
             || (correctTx && (forceApply || txDelta > thresholdHz || thresholdHz == 0));
 
         if (holdDownlinkCatWrites)
@@ -2965,7 +2972,8 @@ public sealed class RigController : IRigController, IDisposable
             return strategy switch
             {
                 DopplerStrategy.UplinkOnly => txDelta > 0,
-                DopplerStrategy.DownlinkOnly => rxDelta > 0,
+                // TX fixed: txHz has no Doppler term, so a TX delta is a retune, not satellite motion.
+                DopplerStrategy.DownlinkOnly => rxDelta > 0 || txDelta > 0,
                 _ => rxDelta > 0 || txDelta > 0
             };
         }
@@ -2973,7 +2981,7 @@ public sealed class RigController : IRigController, IDisposable
         return strategy switch
         {
             DopplerStrategy.UplinkOnly => txDelta > thresholdHz,
-            DopplerStrategy.DownlinkOnly => rxDelta > thresholdHz,
+            DopplerStrategy.DownlinkOnly => rxDelta > thresholdHz || txDelta > thresholdHz,
             _ => rxDelta > thresholdHz || txDelta > thresholdHz
         };
     }
