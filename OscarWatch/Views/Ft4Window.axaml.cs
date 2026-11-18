@@ -21,6 +21,7 @@ public partial class Ft4Window : Window
     private const double AdvancedMinWidth = 960;
     private const double AdvancedWidth = 1180;
     private const double MinDecodeColumnWidth = 300;
+    private const double ScrollEdgeEpsilon = 2;
 
     private bool _closeConfirmed;
     private Ft4DecodeRowViewModel? _contextRow;
@@ -94,8 +95,26 @@ public partial class Ft4Window : Window
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(Ft4ViewModel.IsAdvancedDecodeLayout) && sender is Ft4ViewModel vm)
+        if (sender is not Ft4ViewModel vm)
+            return;
+
+        if (e.PropertyName == nameof(Ft4ViewModel.IsAdvancedDecodeLayout))
             ApplyDecodeLayout(vm, widen: true);
+        else if (e.PropertyName == nameof(Ft4ViewModel.NewestDecodesAtBottom))
+            Dispatcher.UIThread.Post(() => ScrollListsToNewest(vm), DispatcherPriority.Background);
+    }
+
+    /// <summary>
+    /// True when the list is scrolled to its last row. Call this from a collection change, before
+    /// layout runs, so it still describes the list as the operator left it.
+    /// </summary>
+    private static bool WasAtBottom(ListBox list)
+    {
+        if (list.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault() is not { } scroll)
+            return true;
+
+        var max = Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height);
+        return scroll.Offset.Y >= max - ScrollEdgeEpsilon;
     }
 
     /// <summary>
@@ -133,14 +152,41 @@ public partial class Ft4Window : Window
     private void OnCallsToMeRowsChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
         ScrollToNewest(CallsToMeList, e);
 
-    private static void ScrollToNewest(ListBox list, NotifyCollectionChangedEventArgs e)
+    private void ScrollToNewest(ListBox list, NotifyCollectionChangedEventArgs e)
     {
+        if (e.Action != NotifyCollectionChangedAction.Add || DataContext is not Ft4ViewModel vm)
+            return;
+
+        if (vm.NewestDecodesAtBottom)
+        {
+            // Decide now, before the new row is laid out and the extent grows.
+            if (!WasAtBottom(list))
+                return;
+
+            Dispatcher.UIThread.Post(() => ScrollToBottom(list), DispatcherPriority.Background);
+            return;
+        }
+
         // Newest lines are inserted at the top. The list keeps its scroll offset,
-        // so each cycle appears above the viewport until the operator scrolls up.
-        if (e.Action != NotifyCollectionChangedAction.Add || e.NewStartingIndex != 0)
+        // so each cycle appears above the viewport until we pull it back.
+        if (e.NewStartingIndex != 0)
             return;
 
         Dispatcher.UIThread.Post(() => ScrollToTop(list), DispatcherPriority.Background);
+    }
+
+    private void ScrollListsToNewest(Ft4ViewModel vm)
+    {
+        if (vm.NewestDecodesAtBottom)
+        {
+            ScrollToBottom(DecodeList);
+            ScrollToBottom(CallsToMeList);
+        }
+        else
+        {
+            ScrollToTop(DecodeList);
+            ScrollToTop(CallsToMeList);
+        }
     }
 
     private static void ScrollToTop(ListBox list)
@@ -151,6 +197,20 @@ public partial class Ft4Window : Window
         list.ScrollIntoView(0);
         if (list.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault() is { } scroll)
             scroll.Offset = new Vector(scroll.Offset.X, 0);
+    }
+
+    private static void ScrollToBottom(ListBox list)
+    {
+        if (list.ItemCount == 0)
+            return;
+
+        var last = list.ItemCount - 1;
+        list.ScrollIntoView(last);
+        if (list.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault() is { } scroll)
+        {
+            var max = Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height);
+            scroll.Offset = new Vector(scroll.Offset.X, max);
+        }
     }
 
     private async void OnClosing(object? sender, WindowClosingEventArgs e)

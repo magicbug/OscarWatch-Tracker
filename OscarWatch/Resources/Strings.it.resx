@@ -4891,6 +4891,12 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.ShowSlotDividers.Note">
     <value>Segna la prima decodifica di ogni slot da 7,5 secondi con Pari o Dispari, così i cicli si distinguono più facilmente. Vale anche per Mi chiama nel layout avanzato.</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>Decodifiche più recenti in basso</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>Attività di banda e Mi chiama aggiungono le nuove righe in basso e le seguono, come in WSJT-X. Lascia deselezionato per tenere le nuove righe in alto. Se hai scorruto per leggere righe più vecchie, l'elenco resta fermo finché non torni indietro.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Disposizione</value>
   </data>

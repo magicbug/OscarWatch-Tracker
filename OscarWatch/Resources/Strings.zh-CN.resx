@@ -4887,6 +4887,12 @@
   <data name="Ft4.ShowSlotDividers.Note">
     <value>在每个 7.5 秒时隙的第一条解码上标注偶数或奇数，便于区分周期。高级布局中的“呼叫我”也会显示。</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>最新解码显示在底部</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>波段活动和“呼叫我”会像 WSJT-X 一样把新行加在底部并跟随滚动。不勾选则新行仍在顶部。若已向上滚动阅读旧行，列表会保持当前位置，直到你滚回。</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>布局</value>
   </data>

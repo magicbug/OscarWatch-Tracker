@@ -4887,6 +4887,12 @@ Latest: {1} ({2})</value>
   <data name="Ft4.ShowSlotDividers.Note">
     <value>Marks the first decode of each 7.5 second slot with Even or Odd so cycles are easier to tell apart. Also applies to Calling me in the advanced layout.</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>Newest decodes at the bottom</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>Band activity and Calling me add new lines at the bottom and follow them, as in WSJT-X. Leave this unticked to keep new lines at the top. If you have scrolled away to read older lines, the list stays put until you scroll back.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Layout</value>
   </data>

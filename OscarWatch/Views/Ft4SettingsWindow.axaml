@@ -375,6 +375,11 @@
             <TextBlock Classes="ft4-note"
                        Margin="24,0,0,0"
                        Text="{loc:Localize Key=Ft4.ShowSlotDividers.Note}" />
+            <CheckBox Content="{loc:Localize Key=Ft4.NewestDecodesAtBottom}"
+                      IsChecked="{Binding NewestDecodesAtBottom}" />
+            <TextBlock Classes="ft4-note"
+                       Margin="24,0,0,0"
+                       Text="{loc:Localize Key=Ft4.NewestDecodesAtBottom.Note}" />
             <TextBlock Classes="ft4-note"
                        Text="{loc:Localize Key=Ft4.Decode.ColourNote}" />
             <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">

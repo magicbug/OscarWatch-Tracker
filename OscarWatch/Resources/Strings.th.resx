@@ -4891,6 +4891,12 @@ LOS: {2}
   <data name="Ft4.ShowSlotDividers.Note">
     <value>ทำเครื่องหมายการถอดรหัสแรกของแต่ละสล็อต 7.5 วินาทีด้วย คู่ หรือ คี่ เพื่อแยกวัฏจักรได้ง่ายขึ้น ใช้กับ คอล์ลหาฉัน ในเลย์เอาต์ขั้นสูงด้วย</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>แสดงการถอดรหัสล่าสุดด้านล่าง</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>กิจกรรมแบนด์และ คอล์ลหาฉัน เพิ่มบรรทัดใหม่ด้านล่างและติดตามตามแบบ WSJT-X ปล่อยว่างไว้เพื่อให้บรรทัดใหม่อยู่ด้านบน หากเลื่อนไปอ่านบรรทัดเก่า รายการจะอยู่ที่เดิมจนกว่าจะเลื่อนกลับ</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>รูปแบบ</value>
   </data>

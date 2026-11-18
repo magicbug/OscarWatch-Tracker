@@ -4891,6 +4891,12 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.ShowSlotDividers.Note">
     <value>Kennzeichnet die erste Decodierung jedes 7,5-Sekunden-Slots mit Gerade oder Ungerade, damit Zyklen leichter zu unterscheiden sind. Gilt auch für Ruft mich im erweiterten Layout.</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>Neueste Decodes unten</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>Bandaktivität und Ruft mich fügen neue Zeilen unten hinzu und folgen ihnen, wie in WSJT-X. Unmarkiert bleiben neue Zeilen oben. Wenn Sie weggescrollt haben, um ältere Zeilen zu lesen, bleibt die Liste stehen, bis Sie zurückscrollen.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Layout</value>
   </data>

@@ -4887,6 +4887,12 @@
   <data name="Ft4.ShowSlotDividers.Note">
     <value>各 7.5 秒スロットの最初のデコードに偶数／奇数を付け、サイクルを見分けやすくします。詳細レイアウトの「呼び出し」にも適用されます。</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>新しいデコードを下に表示</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>バンドアクティビティと「呼び出し」は、WSJT-X と同様に新しい行を下に追加して追従します。オフのままにすると新しい行は上に付きます。古い行を読むためにスクロールした場合は、戻るまでその位置を保ちます。</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>レイアウト</value>
   </data>

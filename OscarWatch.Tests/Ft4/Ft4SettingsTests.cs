@@ -41,6 +41,7 @@ public sealed class Ft4SettingsTests
         Assert.True(settings.ParallelTxEchoDecode);
         Assert.True(settings.ShowDtWsjtxConvention);
         Assert.True(settings.ShowSlotDividers);
+        Assert.False(settings.NewestDecodesAtBottom);
         Assert.Equal(Ft4TxWatchdog.DefaultMinutes, settings.TxWatchdogMinutes);
         Assert.False(settings.PskReporterEnabled);
         Assert.False(settings.OscarWatchSpotsEnabled);
@@ -173,5 +174,29 @@ public sealed class Ft4SettingsTests
         })!;
 
         Assert.True(settings.ShowSlotDividers);
+    }
+
+    [Fact]
+    public void Missing_newest_at_bottom_stays_off()
+    {
+        var settings = JsonSerializer.Deserialize<Ft4Settings>("{}", new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        })!;
+
+        Assert.False(settings.NewestDecodesAtBottom);
+    }
+
+    [Fact]
+    public void Newest_at_bottom_round_trips()
+    {
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        var json = JsonSerializer.Serialize(new Ft4Settings { NewestDecodesAtBottom = true }, options);
+        var settings = JsonSerializer.Deserialize<Ft4Settings>(json, options)!;
+
+        Assert.True(settings.NewestDecodesAtBottom);
     }
 }

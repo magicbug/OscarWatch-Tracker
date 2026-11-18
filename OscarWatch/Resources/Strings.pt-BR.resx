@@ -4887,6 +4887,12 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.ShowSlotDividers.Note">
     <value>Marca o primeiro decode de cada slot de 7,5 segundos com Par ou Ímpar para facilitar a distinção dos ciclos. Também se aplica a Chamando-me no layout avançado.</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>Decodes mais recentes em baixo</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>Atividade da banda e Chamando-me acrescentam linhas novas em baixo e as seguem, como no WSJT-X. Deixe desmarcado para manter as linhas novas no topo. Se você rolou para ler linhas antigas, a lista fica no lugar até você voltar.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Layout</value>
   </data>

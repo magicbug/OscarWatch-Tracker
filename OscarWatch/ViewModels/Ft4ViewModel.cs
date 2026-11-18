@@ -104,6 +104,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _saveSlotAudio = ft4.SaveSlotAudio;
         _showDtWsjtxConvention = ft4.ShowDtWsjtxConvention;
         _showSlotDividers = ft4.ShowSlotDividers;
+        _newestDecodesAtBottom = ft4.NewestDecodesAtBottom;
         _txWatchdogMinutes = Ft4TxWatchdog.ClampMinutes(ft4.TxWatchdogMinutes);
         _pskReporterEnabled = ft4.PskReporterEnabled;
         _oscarWatchSpotsTokenAvailable = Ft4OscarWatchSpots.HasApiToken(_settings.Current.SatelliteStatus.ApiToken);
@@ -304,6 +305,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     /// <summary>Show an Even/Odd header on the first decode of each slot in Band activity and Calling me.</summary>
     [ObservableProperty] private bool _showSlotDividers = true;
 
+    /// <summary>When true, Band activity and Calling me put new decodes at the bottom.</summary>
+    [ObservableProperty] private bool _newestDecodesAtBottom;
+
     [ObservableProperty] private int _txWatchdogMinutes = Ft4TxWatchdog.DefaultMinutes;
     [ObservableProperty] private bool _pskReporterEnabled;
 
@@ -481,6 +485,13 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _settings.Current.Ft4.ShowSlotDividers = value;
         _settings.RequestSave();
         MarkSlotDividers();
+    }
+
+    partial void OnNewestDecodesAtBottomChanged(bool value)
+    {
+        _settings.Current.Ft4.NewestDecodesAtBottom = value;
+        _settings.RequestSave();
+        SyncDecodeRows();
     }
 
     [RelayCommand]
@@ -1747,10 +1758,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Keep one row per modem message. New lines are inserted in place with their
     /// background already set, so existing rows are not thrown away and repainted later.
+    /// Modem storage stays newest-first; the display may reverse that when
+    /// <see cref="NewestDecodesAtBottom"/> is on.
     /// </summary>
     private void SyncDecodeRows()
     {
-        var messages = _modem.Decodes;
+        var messages = Ft4DecodeDisplayOrder.ForDisplay(_modem.Decodes, NewestDecodesAtBottom);
         var live = new HashSet<Ft4DecodedMessage>(messages, ReferenceEqualityComparer.Instance);
         for (var i = Decodes.Count - 1; i >= 0; i--)
         {
@@ -1758,20 +1771,31 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 Decodes.RemoveAt(i);
         }
 
-        var rowIndex = 0;
-        for (var messageIndex = 0; messageIndex < messages.Count; messageIndex++)
+        for (var i = 0; i < messages.Count; i++)
         {
-            var message = messages[messageIndex];
-            if (rowIndex < Decodes.Count && ReferenceEquals(Decodes[rowIndex].Message, message))
+            var message = messages[i];
+            if (i < Decodes.Count && ReferenceEquals(Decodes[i].Message, message))
+                continue;
+
+            var existing = -1;
+            for (var j = i; j < Decodes.Count; j++)
             {
-                rowIndex++;
+                if (ReferenceEquals(Decodes[j].Message, message))
+                {
+                    existing = j;
+                    break;
+                }
+            }
+
+            if (existing >= 0)
+            {
+                Decodes.Move(existing, i);
                 continue;
             }
 
             var row = new Ft4DecodeRowViewModel(message, ShowDtWsjtxConvention);
             ApplyHighlight(row);
-            Decodes.Insert(rowIndex, row);
-            rowIndex++;
+            Decodes.Insert(i, row);
         }
 
         while (Decodes.Count > messages.Count)

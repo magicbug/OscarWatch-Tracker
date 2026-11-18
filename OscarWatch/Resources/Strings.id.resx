@@ -4891,6 +4891,12 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.ShowSlotDividers.Note">
     <value>Menandai decode pertama setiap slot 7,5 detik dengan Genap atau Ganjil agar siklus lebih mudah dibedakan. Juga berlaku untuk Memanggil saya pada tata letak lanjutan.</value>
   </data>
+  <data name="Ft4.NewestDecodesAtBottom">
+    <value>Decode terbaru di bawah</value>
+  </data>
+  <data name="Ft4.NewestDecodesAtBottom.Note">
+    <value>Aktivitas pita dan Memanggil saya menambahkan baris baru di bawah dan mengikutinya, seperti di WSJT-X. Biarkan tidak dicentang agar baris baru tetap di atas. Jika Anda menggulir untuk membaca baris lama, daftar tetap di tempat sampai Anda kembali.</value>
+  </data>
   <data name="Ft4.DecodeLayout">
     <value>Tata letak</value>
   </data>

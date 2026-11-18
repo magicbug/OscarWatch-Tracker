@@ -146,6 +146,12 @@ public sealed class Ft4Settings
     /// </summary>
     public bool ShowSlotDividers { get; set; } = true;
 
+    /// <summary>
+    /// When true, Band activity and Calling me append new decodes at the bottom (WSJT-X style).
+    /// When false (default), new decodes stay at the top.
+    /// </summary>
+    public bool NewestDecodesAtBottom { get; set; }
+
     /// <summary>When true, receive decodes are reported to PSK Reporter. Off by default.</summary>
     public bool PskReporterEnabled { get; set; }
 
