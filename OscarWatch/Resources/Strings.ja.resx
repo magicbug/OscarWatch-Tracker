@@ -3063,6 +3063,24 @@
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>失敗したアップロードを再試行しています…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>すべての QSO を Cloudlog に送信</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>このログブックの QSO のうち、OscarWatch がまだ Cloudlog に送信していないものを古い順にすべて送信します。送信済みの QSO はスキップされます。保存済みの局の場所を使用します。</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>QSO {0} / {1} を Cloudlog に送信中…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>{0} 件の QSO を Cloudlog に送信しました。{1} 件は失敗しました。Cloudlog 列を確認してください。</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>このログブックのすべての QSO は Cloudlog に送信済みです。</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>すべての QSO を送信する前に、局の場所を選択してログブックを保存してください。</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>ステーション位置を {0} 件読み込みました。</value>
   </data>

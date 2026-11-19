@@ -104,6 +104,15 @@
                          FontSize="11"
                          Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
             </StackPanel>
+            <StackPanel Spacing="4">
+              <Button Content="{loc:Localize Key=Logbook.Settings.Cloudlog.SendAll}"
+                      Command="{Binding SendAllToCloudlogCommand}"
+                      HorizontalAlignment="Left" />
+              <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cloudlog.SendAllNote}"
+                         TextWrapping="Wrap"
+                         FontSize="11"
+                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            </StackPanel>
             <Button Content="{loc:Localize Key=Logbook.Settings.Cloudlog.RetryFailed}"
                     Command="{Binding RetryFailedUploadsCommand}"
                     HorizontalAlignment="Left"

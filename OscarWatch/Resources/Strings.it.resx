@@ -1594,6 +1594,24 @@ Continuare?</value>
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>Nuovo tentativo dei caricamenti non riusciti…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>Invia tutti i QSO a Cloudlog</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>Invia ogni QSO di questo registro che OscarWatch non ha ancora inviato a Cloudlog, dal più vecchio. I QSO già inviati vengono saltati. Usa la posizione di stazione salvata.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>Invio del QSO {0} di {1} a Cloudlog…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>Inviati {0} QSO a Cloudlog. {1} non riusciti; vedi la colonna Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>Tutti i QSO di questo registro sono già stati inviati a Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>Scegli una posizione di stazione e salva il registro prima di inviare tutti i QSO.</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>{0} ubicazioni di stazione caricate.</value>
   </data>

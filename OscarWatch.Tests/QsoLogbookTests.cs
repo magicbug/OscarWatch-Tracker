@@ -814,6 +814,51 @@ public class QsoLogbookRepositoryTests : IDisposable
         Assert.Equal(0, reloaded.CloudlogUploadAttempts);
     }
 
+    [Fact]
+    public async Task Lists_only_qsos_not_yet_sent_to_cloudlog_for_one_logbook_oldest_first()
+    {
+        await _repository.InitializeAsync();
+
+        var logbook = await _repository.CreateLogbookAsync(new QsoLogbookCreateRequest
+        {
+            Name = "Bulk send",
+            MyCallsign = "2M0SQL",
+            MyGridSquare = "IO87IP"
+        });
+        var otherLogbook = await _repository.CreateLogbookAsync(new QsoLogbookCreateRequest
+        {
+            Name = "Other",
+            MyCallsign = "2M0SQL",
+            MyGridSquare = "IO87IP"
+        });
+
+        var now = DateTime.UtcNow;
+        var none = await AddCloudlogQsoAsync(logbook.Id, now.AddHours(-3), "G0AAA", CloudlogUploadStatus.None);
+        await AddCloudlogQsoAsync(logbook.Id, now.AddHours(-2), "G0BBB", CloudlogUploadStatus.Sent);
+        var failed = await AddCloudlogQsoAsync(logbook.Id, now.AddHours(-1), "G0CCC", CloudlogUploadStatus.Pending);
+        await _repository.UpdateQsoCloudlogUploadStateAsync(
+            failed.Id,
+            CloudlogUploadStatus.Failed,
+            1,
+            "Network error",
+            null);
+        var pending = await AddCloudlogQsoAsync(logbook.Id, now, "G0DDD", CloudlogUploadStatus.Pending);
+        await AddCloudlogQsoAsync(otherLogbook.Id, now, "G0EEE", CloudlogUploadStatus.None);
+
+        var toSend = await _repository.ListQsosNotSentToCloudlogAsync(logbook.Id);
+
+        Assert.Equal(new[] { none.Id, failed.Id, pending.Id }, toSend.Select(q => q.Id).ToArray());
+    }
+
+    private async Task<QsoRecord> AddCloudlogQsoAsync(long logbookId, DateTime qsoUtc, string call, CloudlogUploadStatus status) =>
+        await _repository.AddQsoAsync(new QsoRecordCreateRequest
+        {
+            LogbookId = logbookId,
+            QsoUtc = qsoUtc,
+            Call = call,
+            CloudlogUploadStatus = status
+        });
+
     public void Dispose()
     {
         _repository.Dispose();

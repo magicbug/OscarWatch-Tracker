@@ -672,6 +672,24 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
         return await ReadQsosAsync(command, cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<QsoRecord>> ListQsosNotSentToCloudlogAsync(
+        long logbookId,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = OpenConnection();
+        await using var command = connection.CreateCommand();
+        command.CommandText = $"""
+            SELECT {QsoSelectColumnsFromAlias}
+            FROM qsos q
+            WHERE q.logbook_id = $logbookId
+              AND q.cloudlog_upload_status <> 'sent'
+            ORDER BY datetime(q.qso_utc) ASC, q.id ASC
+            """;
+        command.Parameters.AddWithValue("$logbookId", logbookId);
+        return await ReadQsosAsync(command, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task ResetFailedCloudlogUploadsAsync(long logbookId, CancellationToken cancellationToken = default)
     {
         await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);

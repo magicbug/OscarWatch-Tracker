@@ -1594,6 +1594,24 @@ Fortfahren?</value>
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>Fehlgeschlagene Uploads werden wiederholt…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>Alle QSOs an Cloudlog senden</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>Sendet jedes QSO dieses Logbuchs, das OscarWatch noch nicht an Cloudlog gesendet hat, beginnend mit dem ältesten. Bereits gesendete QSOs werden übersprungen. Verwendet den gespeicherten Stationsstandort.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>Sende QSO {0} von {1} an Cloudlog…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>{0} QSOs an Cloudlog gesendet. {1} fehlgeschlagen; siehe Spalte Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>Alle QSOs in diesem Logbuch wurden bereits an Cloudlog gesendet.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>Wähle einen Stationsstandort und speichere das Logbuch, bevor du alle QSOs sendest.</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>{0} Stationsstandort(e) geladen.</value>
   </data>

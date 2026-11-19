@@ -86,6 +86,11 @@ public interface IQsoLogbookRepository
 
     Task ResetFailedCloudlogUploadsAsync(long logbookId, CancellationToken cancellationToken = default);
 
+    /// <summary>QSOs in one logbook that are not yet sent to Cloudlog (none, pending or failed), oldest first.</summary>
+    Task<IReadOnlyList<QsoRecord>> ListQsosNotSentToCloudlogAsync(
+        long logbookId,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Distinct worked callsigns and 4-character Maidenhead fields from every logbook,
     /// for FT4 decode shading of new stations and new grids.

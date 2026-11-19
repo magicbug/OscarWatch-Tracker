@@ -1587,6 +1587,24 @@
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>正在重试失败的上传…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>将所有 QSO 发送到 Cloudlog</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>发送本日志中尚未由 OscarWatch 发送到 Cloudlog 的每条 QSO，从最早的开始。已发送的 QSO 会被跳过。使用已保存的电台位置。</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>正在发送第 {0} 条（共 {1} 条）QSO 到 Cloudlog…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>已发送 {0} 条 QSO 到 Cloudlog，{1} 条失败；请查看 Cloudlog 列。</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>本日志中的所有 QSO 都已发送到 Cloudlog。</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>发送所有 QSO 前，请先选择电台位置并保存日志。</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>已加载 {0} 个台站位置。</value>
   </data>

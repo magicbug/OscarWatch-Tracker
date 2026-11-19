@@ -293,6 +293,12 @@ public sealed class TerminalUhmHorizonTests : IDisposable
         public Task ProcessRetryQueueAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
         public Task ResetFailedUploadsForRetryAsync(long logbookId, CancellationToken cancellationToken = default) =>
             Task.CompletedTask;
+
+        public Task<CloudlogBulkUploadResult> SendAllToCloudlogAsync(
+            long logbookId,
+            IProgress<(int Done, int Total)>? progress = null,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(CloudlogBulkUploadResult.Blocked(CloudlogBulkUploadOutcome.NotConfigured));
     }
 
     private sealed class NoOpSatelliteLink : ISatelliteLinkBroadcastService

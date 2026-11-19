@@ -50,7 +50,12 @@ public partial class LogbookSettingsViewModel : ViewModelBase
     private string _cloudlogUrlSummary = "";
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendAllToCloudlogCommand))]
     private bool _cloudlogConfigured;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SendAllToCloudlogCommand))]
+    private bool _isSendingAllToCloudlog;
 
     [ObservableProperty]
     private bool _cloudlogAutoUpload;
@@ -201,6 +206,40 @@ public partial class LogbookSettingsViewModel : ViewModelBase
         await _upload.ResetFailedUploadsForRetryAsync(_logbookId).ConfigureAwait(true);
         StatusText = _l.Get("Logbook.Settings.Cloudlog.RetryStarted");
     }
+
+    [RelayCommand(CanExecute = nameof(CanSendAllToCloudlog))]
+    private async Task SendAllToCloudlogAsync()
+    {
+        ErrorText = "";
+        StatusText = "";
+        IsSendingAllToCloudlog = true;
+        try
+        {
+            var progress = new Progress<(int Done, int Total)>(p =>
+                StatusText = _l.Get("Logbook.Settings.Cloudlog.SendAllProgress", p.Done, p.Total));
+            var result = await _upload.SendAllToCloudlogAsync(_logbookId, progress).ConfigureAwait(true);
+            switch (result.Outcome)
+            {
+                case CloudlogBulkUploadOutcome.NotConfigured:
+                    ErrorText = _l.Get("Logbook.Settings.Cloudlog.ConfigureIntegrationsFirst");
+                    break;
+                case CloudlogBulkUploadOutcome.NoStationProfile:
+                    ErrorText = _l.Get("Logbook.Settings.Cloudlog.SendAllNeedsSave");
+                    break;
+                default:
+                    StatusText = result.Total == 0
+                        ? _l.Get("Logbook.Settings.Cloudlog.SendAllNothing")
+                        : _l.Get("Logbook.Settings.Cloudlog.SendAllDone", result.Sent, result.Failed);
+                    break;
+            }
+        }
+        finally
+        {
+            IsSendingAllToCloudlog = false;
+        }
+    }
+
+    private bool CanSendAllToCloudlog => CloudlogConfigured && !IsSendingAllToCloudlog;
 
     [RelayCommand]
     private async Task TestQrzAsync()

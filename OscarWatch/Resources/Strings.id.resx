@@ -1594,6 +1594,24 @@ Lanjutkan?</value>
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>Mengulangi unggahan yang gagal…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>Kirim semua QSO ke Cloudlog</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>Mengirim setiap QSO di logbook ini yang belum dikirim OscarWatch ke Cloudlog, dimulai dari yang paling lama. QSO yang sudah terkirim dilewati. Menggunakan lokasi stasiun yang tersimpan.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>Mengirim QSO {0} dari {1} ke Cloudlog…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>Terkirim {0} QSO ke Cloudlog. {1} gagal; lihat kolom Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>Semua QSO di logbook ini sudah terkirim ke Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>Pilih lokasi stasiun dan simpan logbook sebelum mengirim semua QSO.</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>{0} lokasi stasiun dimuat.</value>
   </data>

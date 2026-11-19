@@ -48,6 +48,52 @@ public sealed class CloudlogQsoUploadService : ICloudlogQsoUploadService
         _ = ProcessRetryQueueInternalAsync(CancellationToken.None);
     }
 
+    public async Task<CloudlogBulkUploadResult> SendAllToCloudlogAsync(
+        long logbookId,
+        IProgress<(int Done, int Total)>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        var logbook = await _repository.GetLogbookByIdAsync(logbookId, cancellationToken).ConfigureAwait(false);
+        if (logbook is null || !logbook.CloudlogStationProfileId.HasValue)
+            return CloudlogBulkUploadResult.Blocked(CloudlogBulkUploadOutcome.NoStationProfile);
+        if (!_lookup.CanUploadQsos(_settings.Current.Cloudlog))
+            return CloudlogBulkUploadResult.Blocked(CloudlogBulkUploadOutcome.NotConfigured);
+
+        var qsos = await _repository.ListQsosNotSentToCloudlogAsync(logbookId, cancellationToken).ConfigureAwait(false);
+        var sent = 0;
+        var failed = 0;
+        progress?.Report((0, qsos.Count));
+        for (var i = 0; i < qsos.Count; i++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (await SendOneForBulkAsync(qsos[i].Id, cancellationToken).ConfigureAwait(false))
+                sent++;
+            else
+                failed++;
+            progress?.Report((i + 1, qsos.Count));
+        }
+
+        return new CloudlogBulkUploadResult(CloudlogBulkUploadOutcome.Completed, qsos.Count, sent, failed);
+    }
+
+    /// <summary>One QSO at a time, under the same gate as the background queue, so nothing is posted twice.</summary>
+    private async Task<bool> SendOneForBulkAsync(long qsoId, CancellationToken cancellationToken)
+    {
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var current = await _repository.GetQsoByIdAsync(qsoId, cancellationToken).ConfigureAwait(false);
+            if (current?.CloudlogUploadStatus == CloudlogUploadStatus.Sent)
+                return true;
+
+            return await TryUploadQsoAsync(qsoId, cancellationToken, manual: true).ConfigureAwait(false);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     private async Task UploadInBackgroundAsync(long qsoId, bool manual)
     {
         try
@@ -119,18 +165,19 @@ public sealed class CloudlogQsoUploadService : ICloudlogQsoUploadService
         }
     }
 
-    private async Task TryUploadQsoAsync(long qsoId, CancellationToken cancellationToken, bool manual)
+    /// <summary>Returns true only when Cloudlog accepted the QSO.</summary>
+    private async Task<bool> TryUploadQsoAsync(long qsoId, CancellationToken cancellationToken, bool manual)
     {
         var qso = await _repository.GetQsoByIdAsync(qsoId, cancellationToken).ConfigureAwait(false);
         if (qso is null)
-            return;
+            return false;
 
         if (!manual && qso.CloudlogUploadStatus is CloudlogUploadStatus.Sent or CloudlogUploadStatus.None)
-            return;
+            return false;
 
         var logbook = await _repository.GetLogbookByIdAsync(qso.LogbookId, cancellationToken).ConfigureAwait(false);
         if (logbook is null)
-            return;
+            return false;
 
         if (!logbook.CloudlogStationProfileId.HasValue)
         {
@@ -144,11 +191,11 @@ public sealed class CloudlogQsoUploadService : ICloudlogQsoUploadService
                 NotifyUploadStateChanged(qsoId);
             }
 
-            return;
+            return false;
         }
 
         if (!manual && !logbook.CloudlogAutoUpload)
-            return;
+            return false;
 
         var cloudlog = _settings.Current.Cloudlog;
         if (!_lookup.CanUploadQsos(cloudlog))
@@ -159,7 +206,7 @@ public sealed class CloudlogQsoUploadService : ICloudlogQsoUploadService
                 "Enter your Cloudlog URL and API key in Settings → Integrations first.",
                 cancellationToken).ConfigureAwait(false);
             NotifyUploadStateChanged(qsoId);
-            return;
+            return false;
         }
 
         var adif = AdifExporter.ExportRecord(logbook, qso);
@@ -180,7 +227,7 @@ public sealed class CloudlogQsoUploadService : ICloudlogQsoUploadService
                 DateTime.UtcNow,
                 cancellationToken).ConfigureAwait(false);
             NotifyUploadStateChanged(qsoId);
-            return;
+            return true;
         }
 
         await MarkFailedAsync(
@@ -189,6 +236,7 @@ public sealed class CloudlogQsoUploadService : ICloudlogQsoUploadService
             error ?? "Upload failed.",
             cancellationToken).ConfigureAwait(false);
         NotifyUploadStateChanged(qsoId);
+        return false;
     }
 
     private void NotifyUploadStateChanged(long qsoId) =>

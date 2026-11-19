@@ -1594,6 +1594,24 @@ LOS: {2}
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>กำลังลองอัปโหลดที่ล้มเหลวอีกครั้ง…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>ส่ง QSO ทั้งหมดไป Cloudlog</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>ส่ง QSO ทุกรายการในสมุดบันทึกนี้ที่ OscarWatch ยังไม่เคยส่งไป Cloudlog เรียงจากเก่าสุดไปใหม่สุด รายการที่ส่งแล้วจะถูกข้าม ใช้ตำแหน่งสถานีที่บันทึกไว้</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>กำลังส่ง QSO ที่ {0} จาก {1} ไป Cloudlog…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>ส่ง QSO ไป Cloudlog แล้ว {0} รายการ ล้มเหลว {1} รายการ ดูคอลัมน์ Cloudlog</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>QSO ทั้งหมดในสมุดบันทึกนี้ถูกส่งไป Cloudlog แล้ว</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>เลือกตำแหน่งสถานีและบันทึกสมุดบันทึกก่อนส่ง QSO ทั้งหมด</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>โหลดตำแหน่งสถานี {0} แห่งแล้ว</value>
   </data>

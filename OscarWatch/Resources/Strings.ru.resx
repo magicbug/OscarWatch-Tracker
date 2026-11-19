@@ -1594,6 +1594,24 @@ LOS: {2}
   <data name="Logbook.Settings.Cloudlog.RetryStarted">
     <value>Повтор неудачных отправок…</value>
   </data>
+  <data name="Logbook.Settings.Cloudlog.SendAll">
+    <value>Отправить все QSO в Cloudlog</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNote">
+    <value>Отправляет в Cloudlog каждое QSO из этого журнала, которое OscarWatch ещё не отправлял, начиная с самого старого. Уже отправленные QSO пропускаются. Используется сохранённое местоположение станции.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllProgress">
+    <value>Отправка QSO {0} из {1} в Cloudlog…</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllDone">
+    <value>Отправлено QSO в Cloudlog: {0}. Не удалось: {1}. См. столбец Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNothing">
+    <value>Все QSO из этого журнала уже отправлены в Cloudlog.</value>
+  </data>
+  <data name="Logbook.Settings.Cloudlog.SendAllNeedsSave">
+    <value>Выберите местоположение станции и сохраните журнал, прежде чем отправлять все QSO.</value>
+  </data>
   <data name="Logbook.Settings.Cloudlog.ProfilesLoaded">
     <value>Загружено мест станции: {0}.</value>
   </data>
