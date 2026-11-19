@@ -170,8 +170,10 @@ public partial class MainWindow : Window
     private void OnPassesContextMenuOpening(object? sender, CancelEventArgs e)
     {
         _passListContextRow ??= PassesListBox.SelectedItem as PassRowViewModel;
-        if (_passListContextRow is null)
+        // Every item in this menu is for satellite passes, so a Moon row has no menu.
+        if (_passListContextRow is null || _passListContextRow.IsCelestialBody)
         {
+            _passListContextRow = null;
             e.Cancel = true;
             return;
         }

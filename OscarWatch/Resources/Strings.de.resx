@@ -160,6 +160,9 @@
   <data name="Main.Passes">
     <value>Nächste Überflüge</value>
   </data>
+  <data name="Body.Moon">
+    <value>Mond</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Elevationsverlauf ausblenden</value>
   </data>
@@ -2796,6 +2799,21 @@ Fortfahren?</value>
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 zeigt jeden Überflug über der Mindesthöhe und der Horizontmaske. Der Überflugplaner hat eine eigene Mindestlänge.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Auf- und Untergang des Mondes in den nächsten Überflügen anzeigen</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Elevationsgrenze für den Mond (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Maximale Elevation des Mondes (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Horizontmaske auch auf den Mond anwenden</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>Auf- und Untergang sind der Zeitpunkt, an dem die Mitte des Mondes die unten eingestellte Elevationsgrenze erreicht (standardmäßig 0°). Das weicht um einige Minuten von gedruckten Almanachzeiten ab (Oberrand, mit Refraktion). Die Einstellung für die minimale Elevation der Satelliten wird nicht angewendet, damit der Mond am Horizont aufgeführt wird. Diese Einträge dienen der Information und lassen sich nicht als Ziel auswählen.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Beim Start auf Updates der Transponderdatenbank prüfen</value>
@@ -6985,5 +7003,245 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Cw.Worked.Grid">
     <value>Schon gearbeitet: Sie haben eine Verbindung in diesem Feld.</value>
+  </data>
+  <data name="Menu.Window.Moon">
+    <value>_Mond (EME)</value>
+  </data>
+  <data name="Window.Moon.Title">
+    <value>Mond (EME)</value>
+  </data>
+  <data name="Moon.Accessible.Name">
+    <value>Mond (EME)</value>
+  </data>
+  <data name="Moon.Empty.NoPosition">
+    <value>Die Position des Mondes kann nicht berechnet werden. Prüfen Sie die Stationsposition in den Einstellungen.</value>
+  </data>
+  <data name="Moon.FrequencyInvalid">
+    <value>Geben Sie eine Frequenz von 30 MHz bis 100 GHz ein. Doppler und Streckendämpfung werden bis dahin nicht angezeigt.</value>
+  </data>
+  <data name="Moon.Band">
+    <value>Band</value>
+  </data>
+  <data name="Moon.Frequency">
+    <value>Frequenz (MHz)</value>
+  </data>
+  <data name="Moon.Beamwidth">
+    <value>Strahlbreite (°)</value>
+  </data>
+  <data name="Moon.Circular">
+    <value>Zirkulare Polarisation</value>
+  </data>
+  <data name="Moon.LargeDigits">
+    <value>Große Ziffern</value>
+  </data>
+  <data name="Moon.Copy">
+    <value>Kopieren</value>
+  </data>
+  <data name="Moon.Section.Position">
+    <value>Position</value>
+  </data>
+  <data name="Moon.Section.Echo">
+    <value>Echo und Streckendämpfung</value>
+  </data>
+  <data name="Moon.Section.Moon">
+    <value>Der Mond heute</value>
+  </data>
+  <data name="Moon.Section.Visibility">
+    <value>Auf- und Untergang</value>
+  </data>
+  <data name="Moon.Label.Azimuth">
+    <value>Azimut</value>
+  </data>
+  <data name="Moon.Label.Elevation">
+    <value>Elevation</value>
+  </data>
+  <data name="Moon.Label.HourAngle">
+    <value>Stundenwinkel</value>
+  </data>
+  <data name="Moon.Label.GreenwichHourAngle">
+    <value>Greenwich-Stundenwinkel</value>
+  </data>
+  <data name="Moon.Label.Declination">
+    <value>Deklination</value>
+  </data>
+  <data name="Moon.Label.Sublunar">
+    <value>Subpunkt des Mondes</value>
+  </data>
+  <data name="Moon.Label.Distance">
+    <value>Entfernung</value>
+  </data>
+  <data name="Moon.Label.RangeRate">
+    <value>Entfernungsänderung</value>
+  </data>
+  <data name="Moon.Label.EchoDelay">
+    <value>Echolaufzeit</value>
+  </data>
+  <data name="Moon.Label.OwnEcho">
+    <value>Verschiebung des eigenen Echos</value>
+  </data>
+  <data name="Moon.Label.ExtraLoss">
+    <value>Zusätzliche Streckendämpfung</value>
+  </data>
+  <data name="Moon.Label.AbsoluteLoss">
+    <value>Streckendämpfung</value>
+  </data>
+  <data name="Moon.Label.Phase">
+    <value>Phase</value>
+  </data>
+  <data name="Moon.Label.Diameter">
+    <value>Durchmesser</value>
+  </data>
+  <data name="Moon.Label.NextPerigee">
+    <value>Nächstes Perigäum</value>
+  </data>
+  <data name="Moon.Label.NextApogee">
+    <value>Nächstes Apogäum</value>
+  </data>
+  <data name="Moon.Label.LastApsis">
+    <value>Letzte Apsis</value>
+  </data>
+  <data name="Moon.Label.SunSeparation">
+    <value>Mond zur Sonne</value>
+  </data>
+  <data name="Moon.Label.GalacticSeparation">
+    <value>Mond zum Zentrum der Milchstraße</value>
+  </data>
+  <data name="Moon.Label.Status">
+    <value>Status</value>
+  </data>
+  <data name="Moon.Label.Next">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="Moon.Label.Time">
+    <value>Zeit</value>
+  </data>
+  <data name="Moon.Value.Degrees">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.Position">
+    <value>{0:F1}°, {1:F1}°</value>
+  </data>
+  <data name="Moon.Value.Kilometres">
+    <value>{0:N0} km</value>
+  </data>
+  <data name="Moon.Value.RangeRate">
+    <value>{0:+0.000;-0.000} km/s</value>
+  </data>
+  <data name="Moon.Value.Seconds">
+    <value>{0:F3} s</value>
+  </data>
+  <data name="Moon.Value.Hertz">
+    <value>{0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Moon.Value.Decibels">
+    <value>{0:F1} dB</value>
+  </data>
+  <data name="Moon.Value.ExtraLoss">
+    <value>{0:F1} dB, {1}</value>
+  </data>
+  <data name="Moon.Value.Phase">
+    <value>{0}, {1:F0} % beleuchtet</value>
+  </data>
+  <data name="Moon.Value.Diameter">
+    <value>{0:F1}′</value>
+  </data>
+  <data name="Moon.Value.Apsis">
+    <value>{0}, {1:N0} km</value>
+  </data>
+  <data name="Moon.Value.LastApsis">
+    <value>{0}, vor {1:F1} Tagen</value>
+  </data>
+  <data name="Moon.Value.Separation">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.SeparationFlag">
+    <value>{0:F1}°. {1}</value>
+  </data>
+  <data name="Moon.Value.TimeUtc">
+    <value>{0} UTC</value>
+  </data>
+  <data name="Moon.Flag.Sun">
+    <value>Zu nah an der Sonne: ihr Rauschen kann ein Echo überdecken.</value>
+  </data>
+  <data name="Moon.Flag.Galactic">
+    <value>Vor der Milchstraße: das Hintergrundrauschen ist höher.</value>
+  </data>
+  <data name="Moon.Note.NewMoon">
+    <value>Neumond: der Mond steht nahe der Sonne am Himmel. Kontakte auf niedrigen Bändern gelingen trotzdem.</value>
+  </data>
+  <data name="Moon.Note.FreeSpace">
+    <value>Freiraumwerte für isotrope Antennen, keine Link-Bilanz. Die Reflektivität von 6,5 % ist eine Annahme.</value>
+  </data>
+  <data name="Moon.Status.Up">
+    <value>Sichtbar (bei oder über {0:F1}°)</value>
+  </data>
+  <data name="Moon.Status.Down">
+    <value>Unter der Grenze von {0:F1}°</value>
+  </data>
+  <data name="Moon.Short.Up">
+    <value>Oben</value>
+  </data>
+  <data name="Moon.Short.Down">
+    <value>Unten</value>
+  </data>
+  <data name="Moon.Next.Rise">
+    <value>Aufgang um {0}</value>
+  </data>
+  <data name="Moon.Next.Set">
+    <value>Untergang um {0}</value>
+  </data>
+  <data name="Moon.Next.None">
+    <value>Kein Auf- oder Untergang in den nächsten 3 Tagen</value>
+  </data>
+  <data name="Moon.Apsis.Perigee">
+    <value>Perigäum</value>
+  </data>
+  <data name="Moon.Apsis.Apogee">
+    <value>Apogäum</value>
+  </data>
+  <data name="Moon.Class.Good">
+    <value>gut</value>
+  </data>
+  <data name="Moon.Class.Fair">
+    <value>mittel</value>
+  </data>
+  <data name="Moon.Class.Poor">
+    <value>schwach</value>
+  </data>
+  <data name="Moon.Class.Bad">
+    <value>schlecht</value>
+  </data>
+  <data name="Moon.Phase.New">
+    <value>Neumond</value>
+  </data>
+  <data name="Moon.Phase.WaxingCrescent">
+    <value>Zunehmende Sichel</value>
+  </data>
+  <data name="Moon.Phase.FirstQuarter">
+    <value>Erstes Viertel</value>
+  </data>
+  <data name="Moon.Phase.WaxingGibbous">
+    <value>Zunehmender Mond</value>
+  </data>
+  <data name="Moon.Phase.Full">
+    <value>Vollmond</value>
+  </data>
+  <data name="Moon.Phase.WaningGibbous">
+    <value>Abnehmender Mond</value>
+  </data>
+  <data name="Moon.Phase.LastQuarter">
+    <value>Letztes Viertel</value>
+  </data>
+  <data name="Moon.Phase.WaningCrescent">
+    <value>Abnehmende Sichel</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Up">
+    <value>Mond sichtbar. Azimut {0:F1} Grad, Elevation {1:F1} Grad. Zusätzliche Streckendämpfung {2:F1} dB, {3}.</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Down">
+    <value>Mond unter der Grenze. Azimut {0:F1} Grad, Elevation {1:F1} Grad. Zusätzliche Streckendämpfung {2:F1} dB, {3}.</value>
+  </data>
+  <data name="Moon.Copy.Header">
+    <value>Mond (EME), {0}</value>
   </data>
 </root>

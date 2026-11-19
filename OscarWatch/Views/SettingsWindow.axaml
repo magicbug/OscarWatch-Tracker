@@ -178,6 +178,21 @@
                        FontSize="11"
                        TextWrapping="Wrap"
                        Text="{loc:Localize Key=Settings.Tracking.UpcomingPassesMinDurationNote}" />
+            <CheckBox Content="{loc:Localize Key=Settings.Tracking.ShowMoonPasses}"
+                      IsChecked="{Binding ShowMoonInPasses, Mode=TwoWay}"
+                      Margin="0,8,0,0" />
+            <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       FontSize="11"
+                       TextWrapping="Wrap"
+                       Text="{loc:Localize Key=Settings.Tracking.CelestialPassesNote}" />
+            <TextBlock Text="{loc:Localize Key=Settings.Tracking.MoonElevationLimit}" />
+            <NumericUpDown Value="{Binding MoonElevationLimitDeg, Mode=TwoWay}"
+                           Minimum="-10" Maximum="90" FormatString="F1" />
+            <TextBlock Text="{loc:Localize Key=Settings.Tracking.MoonMaxElevation}" />
+            <NumericUpDown Value="{Binding MoonMaximumElevationDeg, Mode=TwoWay}"
+                           Minimum="-10" Maximum="90" FormatString="F1" />
+            <CheckBox Content="{loc:Localize Key=Settings.Tracking.MoonUseHorizonMask}"
+                      IsChecked="{Binding MoonUseHorizonMask, Mode=TwoWay}" />
             <CheckBox Content="{loc:Localize Key=Settings.Tracking.TransponderCheck}"
                       IsChecked="{Binding TransponderDatabaseCheckOnStartup, Mode=TwoWay}"
                       Margin="0,8,0,0" />
