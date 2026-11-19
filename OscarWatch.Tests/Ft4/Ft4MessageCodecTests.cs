@@ -137,6 +137,53 @@ public sealed class Ft4MessageCodecTests
         Assert.Null(extra);
     }
 
+    [Theory]
+    [InlineData(null, "CQ MM9SQL IO85")]
+    [InlineData("", "CQ MM9SQL IO85")]
+    [InlineData("POTA", "CQ POTA MM9SQL IO85")]
+    [InlineData("dx", "CQ DX MM9SQL IO85")]
+    [InlineData("CQ sota", "CQ SOTA MM9SQL IO85")]
+    [InlineData("290", "CQ 290 MM9SQL IO85")]
+    [InlineData("POTA1", "CQ MM9SQL IO85")]
+    [InlineData("12", "CQ MM9SQL IO85")]
+    public void BuildCq_puts_a_valid_word_between_cq_and_the_call(string? modifier, string expected) =>
+        Assert.Equal(expected, Ft4MessageCodec.BuildCq("mm9sql", "io85", modifier));
+
+    [Fact]
+    public void BuildCq_with_a_compound_call_has_no_room_for_the_word()
+    {
+        Assert.Equal("CQ MM9SQL/M", Ft4MessageCodec.BuildCq("MM9SQL/M", "IO85", "POTA"));
+    }
+
+    [Theory]
+    [InlineData("POTA", true)]
+    [InlineData("DX", true)]
+    [InlineData("A", true)]
+    [InlineData("290", true)]
+    [InlineData("", false)]
+    [InlineData("WWFFX", false)]
+    [InlineData("POTA1", false)]
+    [InlineData("DX/", false)]
+    [InlineData("12", false)]
+    [InlineData("1234", false)]
+    public void IsCqModifier_follows_the_77_bit_rule(string word, bool valid) =>
+        Assert.Equal(valid, Ft4MessageCodec.IsCqModifier(word));
+
+    [Theory]
+    [InlineData("CQ POTA MM9SQL IO85", "MM9SQL", "IO85")]
+    [InlineData("CQ DX W1AW FN20", "W1AW", "FN20")]
+    [InlineData("CQ 290 K1ABC FN42", "K1ABC", "FN42")]
+    [InlineData("CQ POTA W1AW", "W1AW", null)]
+    [InlineData("CQ MM9SQL IO85", "MM9SQL", "IO85")]
+    [InlineData("CQ W1AW", "W1AW", null)]
+    public void TryParse_directed_cq_is_a_cq_from_the_call_after_the_word(string text, string de, string? grid)
+    {
+        Assert.True(Ft4MessageCodec.TryParse(text, out var callTo, out var callDe, out var extra));
+        Assert.Equal("CQ", callTo);
+        Assert.Equal(de, callDe);
+        Assert.Equal(grid, extra);
+    }
+
     [Fact]
     public void Their_compound_call_is_bracketed_when_ours_is_standard()
     {

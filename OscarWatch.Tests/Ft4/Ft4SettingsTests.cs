@@ -199,4 +199,27 @@ public sealed class Ft4SettingsTests
 
         Assert.True(settings.NewestDecodesAtBottom);
     }
+
+    [Fact]
+    public void Cq_modifier_is_empty_by_default_and_round_trips()
+    {
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        Assert.Equal("", JsonSerializer.Deserialize<Ft4Settings>("{}", options)!.CqModifier);
+
+        var json = JsonSerializer.Serialize(new Ft4Settings { CqModifier = "pota" }, options);
+        Assert.Equal("POTA", JsonSerializer.Deserialize<Ft4Settings>(json, options)!.CqModifier);
+    }
+
+    [Theory]
+    [InlineData("CQ POTA", "POTA")]
+    [InlineData(" dx ", "DX")]
+    [InlineData("290", "290")]
+    [InlineData("POTA1", "")]
+    [InlineData("WWFFX", "")]
+    [InlineData("CQ", "")]
+    public void Cq_modifier_keeps_only_a_word_that_can_be_sent(string value, string expected) =>
+        Assert.Equal(expected, new Ft4Settings { CqModifier = value }.CqModifier);
 }

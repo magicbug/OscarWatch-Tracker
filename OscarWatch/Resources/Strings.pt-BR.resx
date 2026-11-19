@@ -5061,6 +5061,33 @@ Mais recente: {1} ({2})</value>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.CallCq.Directed">
+    <value>CQ {0}</value>
+  </data>
+  <data name="Ft4.CqModifier">
+    <value>Palavra do CQ</value>
+  </data>
+  <data name="Ft4.CqModifier.None">
+    <value>(nenhuma)</value>
+  </data>
+  <data name="Ft4.CqModifier.Custom">
+    <value>Personalizada</value>
+  </data>
+  <data name="Ft4.CqModifier.CustomPlaceholder">
+    <value>EU</value>
+  </data>
+  <data name="Ft4.CqModifier.Preview">
+    <value>Próximo CQ:</value>
+  </data>
+  <data name="Ft4.CqModifier.Note">
+    <value>A palavra vai entre CQ e o seu indicativo, por exemplo CQ POTA. Use de 1 a 4 letras ou 3 dígitos. As estações respondem como a qualquer outro CQ.</value>
+  </data>
+  <data name="Ft4.CqModifier.Invalid">
+    <value>“{0}” não pode ser enviada. Use de 1 a 4 letras ou 3 dígitos. O próximo CQ continua {1}.</value>
+  </data>
+  <data name="Ft4.CqModifier.CompoundCall">
+    <value>{0} não é enviada. Um indicativo composto ocupa o espaço da palavra e do grid.</value>
+  </data>
   <data name="Ft4.SendReport">
     <value>Reporte</value>
   </data>

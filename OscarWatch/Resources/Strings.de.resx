@@ -5065,6 +5065,33 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.CallCq.Directed">
+    <value>CQ {0}</value>
+  </data>
+  <data name="Ft4.CqModifier">
+    <value>CQ-Wort</value>
+  </data>
+  <data name="Ft4.CqModifier.None">
+    <value>(keines)</value>
+  </data>
+  <data name="Ft4.CqModifier.Custom">
+    <value>Eigenes</value>
+  </data>
+  <data name="Ft4.CqModifier.CustomPlaceholder">
+    <value>EU</value>
+  </data>
+  <data name="Ft4.CqModifier.Preview">
+    <value>Nächster CQ:</value>
+  </data>
+  <data name="Ft4.CqModifier.Note">
+    <value>Das Wort steht zwischen CQ und Ihrem Rufzeichen, etwa CQ POTA. Erlaubt sind 1 bis 4 Buchstaben oder 3 Ziffern. Stationen antworten wie auf jeden anderen CQ.</value>
+  </data>
+  <data name="Ft4.CqModifier.Invalid">
+    <value>„{0}“ kann nicht gesendet werden. Erlaubt sind 1 bis 4 Buchstaben oder 3 Ziffern. Der nächste CQ bleibt {1}.</value>
+  </data>
+  <data name="Ft4.CqModifier.CompoundCall">
+    <value>{0} wird nicht gesendet. Ein zusammengesetztes Rufzeichen belegt den Platz für das Wort und den Locator.</value>
+  </data>
   <data name="Ft4.SendReport">
     <value>Rapport</value>
   </data>

@@ -310,7 +310,8 @@ public sealed class Ft4ModemService : IDisposable
             () => _settings.Current.Ft4.SkipRrr,
             () => _settings.Current.Ft4.HoldTxFrequency,
             () => _settings.Current.Ft4.AutoReply,
-            call => Ft4BlockedCallsigns.Matches(_settings.Current.Ft4.BlockedCallsigns, call));
+            call => Ft4BlockedCallsigns.Matches(_settings.Current.Ft4.BlockedCallsigns, call),
+            () => _settings.Current.Ft4.CqModifier);
         _sequencer.TxAudioHz = Math.Clamp(_settings.Current.Ft4.TxAudioHz, 200, 3000);
         RxAudioHz = _sequencer.TxAudioHz;
         _lastLoggedKey = null;

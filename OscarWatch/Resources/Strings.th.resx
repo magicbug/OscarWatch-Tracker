@@ -5065,6 +5065,33 @@ LOS: {2}
   <data name="Ft4.CallCq">
     <value>CQ</value>
   </data>
+  <data name="Ft4.CallCq.Directed">
+    <value>CQ {0}</value>
+  </data>
+  <data name="Ft4.CqModifier">
+    <value>คำ CQ</value>
+  </data>
+  <data name="Ft4.CqModifier.None">
+    <value>(ไม่มี)</value>
+  </data>
+  <data name="Ft4.CqModifier.Custom">
+    <value>กำหนดเอง</value>
+  </data>
+  <data name="Ft4.CqModifier.CustomPlaceholder">
+    <value>EU</value>
+  </data>
+  <data name="Ft4.CqModifier.Preview">
+    <value>CQ ถัดไป:</value>
+  </data>
+  <data name="Ft4.CqModifier.Note">
+    <value>คำนี้อยู่ระหว่าง CQ กับสัญญาณเรียกขานของคุณ เช่น CQ POTA ใช้ตัวอักษร 1 ถึง 4 ตัว หรือตัวเลข 3 หลัก สถานีอื่นตอบได้เหมือน CQ ทั่วไป</value>
+  </data>
+  <data name="Ft4.CqModifier.Invalid">
+    <value>ไม่สามารถส่ง "{0}" ได้ ใช้ตัวอักษร 1 ถึง 4 ตัว หรือตัวเลข 3 หลัก CQ ถัดไปยังคงเป็น {1}</value>
+  </data>
+  <data name="Ft4.CqModifier.CompoundCall">
+    <value>ไม่ได้ส่ง {0} เพราะสัญญาณเรียกขานแบบผสมใช้พื้นที่ของคำและกริด</value>
+  </data>
   <data name="Ft4.SendReport">
     <value>รายงาน</value>
   </data>

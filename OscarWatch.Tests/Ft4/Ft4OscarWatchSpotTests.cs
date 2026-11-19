@@ -84,11 +84,13 @@ public sealed class Ft4OscarWatchSpotTests
         Assert.Equal("MM9SQL/P", spot.HeardCallsign);
     }
 
-    [Theory]
-    [InlineData("CQ DX W1AW")]
-    [InlineData("CQ POTA")]
-    public void Cq_modifier_is_not_a_callsign(string text) =>
-        Assert.False(Ft4OscarWatchSpots.TryCreate(Decode(text), Snapshot(), "MM9SQL", "client", out _));
+    [Fact]
+    public void Cq_modifier_is_not_a_callsign()
+    {
+        Assert.False(Ft4OscarWatchSpots.TryCreate(Decode("CQ POTA"), Snapshot(), "MM9SQL", "client", out _));
+        Assert.True(Ft4OscarWatchSpots.TryCreate(Decode("CQ DX W1AW"), Snapshot(), "MM9SQL", "client", out var spot));
+        Assert.Equal("W1AW", spot.HeardCallsign);
+    }
 
     [Theory]
     [InlineData("ISS", "FM", "FM", null)]

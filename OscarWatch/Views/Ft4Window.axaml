@@ -486,7 +486,7 @@
       <!-- TX -->
       <Border Grid.Row="1" Classes="ft4-panel" Padding="10">
         <StackPanel Spacing="8">
-          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="10">
             <TextBlock Grid.Column="0"
                        Text="{loc:Localize Key=Ft4.TxMessage}"
                        VerticalAlignment="Center"
@@ -495,7 +495,31 @@
                      Text="{Binding CurrentTxMessage, Mode=TwoWay}"
                      FontFamily="Consolas,Courier New,monospace"
                      Watermark="{Binding TxMessageWatermark}" />
+            <TextBlock Grid.Column="2"
+                       Text="{loc:Localize Key=Ft4.CqModifier}"
+                       VerticalAlignment="Center" />
+            <ComboBox Grid.Column="3"
+                      ItemsSource="{Binding CqModifierOptions}"
+                      SelectedItem="{Binding SelectedCqModifier, Mode=TwoWay}"
+                      ToolTip.Tip="{loc:Localize Key=Ft4.CqModifier.Note}"
+                      AutomationProperties.Name="{loc:Localize Key=Ft4.CqModifier}"
+                      MinWidth="110"
+                      VerticalAlignment="Center" />
+            <TextBox Grid.Column="4"
+                     IsVisible="{Binding IsCustomCqModifier}"
+                     Text="{Binding CustomCqModifier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Watermark="{loc:Localize Key=Ft4.CqModifier.CustomPlaceholder}"
+                     AutomationProperties.Name="{loc:Localize Key=Ft4.CqModifier.Custom}"
+                     FontFamily="Consolas,Courier New,monospace"
+                     MaxLength="8"
+                     Width="80"
+                     VerticalAlignment="Center" />
           </Grid>
+          <TextBlock Text="{Binding CqModifierNote}"
+                     IsVisible="{Binding HasCqModifierNote}"
+                     Foreground="{DynamicResource ThemeSecondaryForegroundBrush}"
+                     FontSize="12"
+                     TextWrapping="Wrap" />
 
           <StackPanel Orientation="Horizontal" Spacing="8">
             <Button Content="{loc:Localize Key=Ft4.EnableTx}"
@@ -509,7 +533,7 @@
                     Command="{Binding TuneCommand}"
                     Classes.accent="{Binding IsTuning}"
                     MinWidth="88" />
-            <Button Content="{loc:Localize Key=Ft4.CallCq}"
+            <Button Content="{Binding CallCqLabel}"
                     Command="{Binding StartCqCommand}"
                     MinWidth="100" />
             <Button Content="{loc:Localize Key=Ft4.SendReport}"

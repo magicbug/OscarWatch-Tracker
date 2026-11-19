@@ -51,6 +51,24 @@ public sealed class Ft8NativeRoundTripTests
     }
 
     [Theory]
+    [InlineData("MM9SQL", "IO85", "POTA", "CQ POTA MM9SQL IO85")]
+    [InlineData("W1AW", "FN20", "DX", "CQ DX W1AW FN20")]
+    [InlineData("K1ABC", "FN42", "290", "CQ 290 K1ABC FN42")]
+    [InlineData("MM9SQL/M", "IO85", "POTA", "CQ MM9SQL/M")]
+    public void Directed_cq_round_trips_as_built(string call, string grid, string modifier, string expected)
+    {
+        if (!RequireNativeOrReturn())
+            return;
+
+        var message = Ft4MessageCodec.BuildCq(call, grid, modifier);
+        Assert.Equal(expected, message);
+        Assert.True(Ft8Native.TryEncodeFt4(message, 1500f, 12000, out var pcm, out var error), error);
+
+        var decoded = Ft8Native.DecodeFt4(pcm!, 12000, centreHz: 1500);
+        Assert.Contains(decoded, d => d.text == expected && d.ap == 0);
+    }
+
+    [Theory]
     [InlineData("<R0CM/4> MM9SQL RR73")]
     [InlineData("<R0CM/4> MM9SQL R-12")]
     [InlineData("R0CM/4 MM9SQL IO87")]

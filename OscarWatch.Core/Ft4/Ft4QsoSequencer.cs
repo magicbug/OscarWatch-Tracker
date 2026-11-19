@@ -19,6 +19,7 @@ public sealed class Ft4QsoSequencer
     private readonly Func<bool> _holdTxFrequency;
     private readonly Func<bool> _autoReply;
     private readonly Func<string, bool> _isBlockedCall;
+    private readonly Func<string> _cqModifier;
     private readonly object _gate = new();
     private readonly Dictionary<string, string> _heardLocators = new(StringComparer.OrdinalIgnoreCase);
     private bool? _autoReplyOverride;
@@ -32,7 +33,8 @@ public sealed class Ft4QsoSequencer
         Func<bool> skipRrr,
         Func<bool>? holdTxFrequency = null,
         Func<bool>? autoReply = null,
-        Func<string, bool>? isBlockedCall = null)
+        Func<string, bool>? isBlockedCall = null,
+        Func<string>? cqModifier = null)
     {
         _myCall = myCall;
         _myGrid = myGrid;
@@ -40,7 +42,10 @@ public sealed class Ft4QsoSequencer
         _holdTxFrequency = holdTxFrequency ?? (() => true);
         _autoReply = autoReply ?? (() => true);
         _isBlockedCall = isBlockedCall ?? (_ => false);
+        _cqModifier = cqModifier ?? (() => "");
     }
+
+    private string BuildOwnCq() => Ft4MessageCodec.BuildCq(_myCall(), _myGrid(), _cqModifier());
 
     /// <summary>True when this callsign is on the block list. Does not change the contact.</summary>
     public bool IsBlockedCall(string? call) =>
@@ -114,7 +119,7 @@ public sealed class Ft4QsoSequencer
         lock (_gate)
         {
             PreferEvenSlot = evenSlot;
-            CurrentTxMessage = Ft4MessageCodec.BuildCq(_myCall(), _myGrid());
+            CurrentTxMessage = BuildOwnCq();
             BeginFreshCq(keepMessage: true);
         }
     }
@@ -212,7 +217,7 @@ public sealed class Ft4QsoSequencer
     private void EnableTxCore()
     {
         if (string.IsNullOrWhiteSpace(CurrentTxMessage))
-            CurrentTxMessage = Ft4MessageCodec.BuildCq(_myCall(), _myGrid());
+            CurrentTxMessage = BuildOwnCq();
 
         // A CQ in the box is a new call. Leaving the previous contact in place
         // meant auto reply ignored the station that answered this CQ.
@@ -258,7 +263,7 @@ public sealed class Ft4QsoSequencer
         _weSent73 = false;
         _theySent73 = false;
         if (!keepMessage || string.IsNullOrWhiteSpace(CurrentTxMessage))
-            CurrentTxMessage = Ft4MessageCodec.BuildCq(_myCall(), _myGrid());
+            CurrentTxMessage = BuildOwnCq();
         TransmitEnabled = true;
     }
 
@@ -771,7 +776,7 @@ public sealed class Ft4QsoSequencer
         Phase = Ft4QsoPhase.Finished;
         QsoCompletedUtc = DateTime.UtcNow;
         // Leave the box on CQ so the next enable does not send the old 73.
-        CurrentTxMessage = Ft4MessageCodec.BuildCq(_myCall(), _myGrid());
+        CurrentTxMessage = BuildOwnCq();
     }
 
     public bool CanLog() =>

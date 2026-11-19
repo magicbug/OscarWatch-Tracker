@@ -69,10 +69,14 @@ public sealed class Ft4PskReporterTests
     }
 
     [Theory]
-    [InlineData("CQ DX W1AW FN31")]
-    [InlineData("CQ POTA W1AW")]
-    public void Cq_modifier_is_not_treated_as_a_callsign(string text) =>
-        Assert.False(Ft4PskReporterSpots.TryCreateSpot(Decode(text), Snapshot(), out _));
+    [InlineData("CQ DX W1AW FN31", "FN31")]
+    [InlineData("CQ POTA W1AW", null)]
+    public void Cq_modifier_is_not_treated_as_a_callsign(string text, string? locator)
+    {
+        Assert.True(Ft4PskReporterSpots.TryCreateSpot(Decode(text), Snapshot(), out var spot));
+        Assert.Equal("W1AW", spot.SenderCallsign);
+        Assert.Equal(locator, spot.SenderLocator);
+    }
 
     [Fact]
     public void Receiver_antenna_is_satellite_name()

@@ -181,6 +181,38 @@
           <StackPanel Spacing="8">
             <TextBlock Classes="ft4-section"
                        Text="{loc:Localize Key=Ft4.Settings.Group.Contacts}" />
+            <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="10">
+              <TextBlock Grid.Column="0"
+                         Text="{loc:Localize Key=Ft4.CqModifier}"
+                         VerticalAlignment="Center" />
+              <ComboBox Grid.Column="1"
+                        ItemsSource="{Binding CqModifierOptions}"
+                        SelectedItem="{Binding SelectedCqModifier, Mode=TwoWay}"
+                        AutomationProperties.Name="{loc:Localize Key=Ft4.CqModifier}"
+                        MinWidth="140" />
+              <TextBox Grid.Column="2"
+                       IsVisible="{Binding IsCustomCqModifier}"
+                       Text="{Binding CustomCqModifier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                       Watermark="{loc:Localize Key=Ft4.CqModifier.CustomPlaceholder}"
+                       AutomationProperties.Name="{loc:Localize Key=Ft4.CqModifier.Custom}"
+                       FontFamily="Consolas,Courier New,monospace"
+                       MaxLength="8"
+                       Width="96" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <TextBlock Grid.Column="0"
+                         Text="{loc:Localize Key=Ft4.CqModifier.Preview}"
+                         VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1"
+                         Text="{Binding NextCqPreview}"
+                         FontFamily="Consolas,Courier New,monospace"
+                         VerticalAlignment="Center" />
+            </Grid>
+            <TextBlock Classes="ft4-note"
+                       Text="{Binding CqModifierNote}"
+                       IsVisible="{Binding HasCqModifierNote}" />
+            <TextBlock Classes="ft4-note"
+                       Text="{loc:Localize Key=Ft4.CqModifier.Note}" />
             <CheckBox Content="{loc:Localize Key=Ft4.AutoReply}"
                       IsChecked="{Binding AutoReply, Mode=TwoWay}" />
             <TextBlock Classes="ft4-note"

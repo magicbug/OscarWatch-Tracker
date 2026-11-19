@@ -27,10 +27,12 @@ public static partial class Ft4MessageCodec
         if (parts[0].Equals("CQ", StringComparison.OrdinalIgnoreCase))
         {
             callTo = "CQ";
-            if (parts.Length >= 2)
-                callDe = NormalizeCall(parts[1]);
-            if (parts.Length >= 3)
-                extra = parts[2].ToUpperInvariant();
+            // A directed CQ (CQ POTA, CQ DX, CQ 290) is still a CQ from the call after the word.
+            var at = parts.Length >= 3 && IsCqModifier(parts[1]) ? 2 : 1;
+            if (parts.Length > at)
+                callDe = NormalizeCall(parts[at]);
+            if (parts.Length > at + 1)
+                extra = parts[at + 1].ToUpperInvariant();
             return callDe is not null;
         }
 
@@ -152,11 +154,44 @@ public static partial class Ft4MessageCodec
     // Grids and reports need the standard message, which only carries such a call as a hash.
     // That is the WSJT-X sequence, so a non-standard own call reaches the other station in full.
 
-    /// <summary>CQ with no grid when <paramref name="myCall"/> is non-standard: the full call takes the room.</summary>
-    public static string BuildCq(string myCall, string myGrid)
+    /// <summary>
+    /// CQ with no grid when <paramref name="myCall"/> is non-standard: the full call takes the room.
+    /// A valid <paramref name="modifier"/> goes between CQ and the call (CQ POTA MM9SQL IO85).
+    /// The full-call message has only a CQ flag, so a non-standard call sends no modifier either.
+    /// </summary>
+    public static string BuildCq(string myCall, string myGrid, string? modifier = null)
     {
         var my = NormalizeCall(myCall);
-        return IsHashedCall(my) ? $"CQ {my}" : $"CQ {my} {NormalizeGrid(myGrid)}";
+        if (IsHashedCall(my))
+            return $"CQ {my}";
+
+        var word = NormalizeCqModifier(modifier);
+        var cq = word.Length > 0 && IsCqModifier(word) ? $"CQ {word}" : "CQ";
+        return $"{cq} {my} {NormalizeGrid(myGrid)}";
+    }
+
+    /// <summary>
+    /// True for a word a standard message can carry after CQ: 1 to 4 letters, or exactly 3 digits
+    /// (the ft8_lib and WSJT-X rule).
+    /// </summary>
+    public static bool IsCqModifier(string? word)
+    {
+        if (string.IsNullOrEmpty(word))
+            return false;
+        if (word.Length == 3 && word.All(char.IsAsciiDigit))
+            return true;
+        return word.Length <= 4 && word.All(char.IsAsciiLetter);
+    }
+
+    /// <summary>Trim, upper case, and drop a leading CQ so a pasted "CQ POTA" reads as POTA.</summary>
+    public static string NormalizeCqModifier(string? text)
+    {
+        var word = (text ?? "").Trim().ToUpperInvariant();
+        if (word == "CQ")
+            return "";
+        if (word.StartsWith("CQ ", StringComparison.Ordinal))
+            word = word[3..].Trim();
+        return word;
     }
 
     public static string BuildGridReply(string theirCall, string myCall, string myGrid)

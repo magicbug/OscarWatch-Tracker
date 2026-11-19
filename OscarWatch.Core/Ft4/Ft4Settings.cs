@@ -96,6 +96,22 @@ public sealed class Ft4Settings
     /// </summary>
     public List<string> BlockedCallsigns { get; set; } = [];
 
+    private string _cqModifier = "";
+
+    /// <summary>
+    /// Word sent between CQ and the callsign (POTA, DX, 290). Empty sends a plain CQ.
+    /// Only 1 to 4 letters or exactly 3 digits are kept; anything else is stored as empty.
+    /// </summary>
+    public string CqModifier
+    {
+        get => _cqModifier;
+        set
+        {
+            var word = Ft4MessageCodec.NormalizeCqModifier(value);
+            _cqModifier = Ft4MessageCodec.IsCqModifier(word) ? word : "";
+        }
+    }
+
     /// <summary>
     /// When true, FT4 sets the radio's RF power to <see cref="Ft4RfPowerLimit.MaxWatts"/>
     /// before transmitting if the radio reports a higher setting. ICOM uses CI-V.

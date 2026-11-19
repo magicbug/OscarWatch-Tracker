@@ -87,7 +87,18 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             new Ft4DecodeLayoutOption(Ft4DecodeLayout.Advanced, _l.Get("Ft4.DecodeLayout.Advanced")),
         ];
 
+        CqModifierOptions =
+        [
+            new Ft4CqModifierOption("", _l.Get("Ft4.CqModifier.None")),
+            .. CqModifierPresets.Select(w => new Ft4CqModifierOption(w, w)),
+            new Ft4CqModifierOption(null, _l.Get("Ft4.CqModifier.Custom")),
+        ];
+
         var ft4 = _settings.Current.Ft4;
+        var savedWord = ft4.CqModifier;
+        _selectedCqModifier = CqModifierOptions.FirstOrDefault(o => o.Word == savedWord)
+            ?? CqModifierOptions[^1];
+        _customCqModifier = _selectedCqModifier.IsCustom ? savedWord : "";
         _skipRrr = ft4.SkipRrr;
         _apEnabled = ft4.ApEnabled;
         _txAudioHz = Math.Clamp(ft4.TxAudioHz, 200, 3000);
@@ -232,17 +243,125 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     public string StationGrid =>
         (_settings.Current.GroundStation.GridSquare ?? "").Trim().ToUpperInvariant();
 
-    /// <summary>Example CQ using Settings â†’ Station (not the old CALL/GRID placeholders).</summary>
-    public string TxMessageWatermark
+    /// <summary>Example CQ using Settings → Station (not the old CALL/GRID placeholders).</summary>
+    public string TxMessageWatermark => BuildStationCq() ?? _l.Get("Ft4.TxMessage.Watermark");
+
+    /// <summary>The CQ that Call CQ sends next, or null until the station has a call and grid.</summary>
+    private string? BuildStationCq()
+    {
+        var call = StationCallsign;
+        var grid = StationGrid;
+        if (call.Length == 0 || grid.Length < 4)
+            return null;
+        return Ft4MessageCodec.BuildCq(call, grid[..4], _settings.Current.Ft4.CqModifier);
+    }
+
+    private static readonly string[] CqModifierPresets = ["POTA", "SOTA", "DX", "TEST"];
+
+    public IReadOnlyList<Ft4CqModifierOption> CqModifierOptions { get; }
+
+    [ObservableProperty] private Ft4CqModifierOption? _selectedCqModifier;
+    [ObservableProperty] private string _customCqModifier = "";
+
+    public bool IsCustomCqModifier => SelectedCqModifier?.IsCustom == true;
+
+    /// <summary>Call CQ caption: CQ, or CQ POTA when a word is set.</summary>
+    public string CallCqLabel
     {
         get
         {
-            var call = StationCallsign;
-            var grid = StationGrid;
-            if (call.Length == 0 || grid.Length < 4)
-                return _l.Get("Ft4.TxMessage.Watermark");
-            return Ft4MessageCodec.BuildCq(call, grid[..4]);
+            var word = _settings.Current.Ft4.CqModifier;
+            return word.Length == 0 || Ft4MessageCodec.IsHashedCall(StationCallsign)
+                ? _l.Get("Ft4.CallCq")
+                : _l.Get("Ft4.CallCq.Directed", word);
         }
+    }
+
+    /// <summary>Full next CQ for the settings preview.</summary>
+    public string NextCqPreview => BuildStationCq() ?? "-";
+
+    /// <summary>Why the CQ word is not being sent as typed. Empty when there is nothing to say.</summary>
+    public string CqModifierNote
+    {
+        get
+        {
+            if (IsCustomCqModifier)
+            {
+                var draft = Ft4MessageCodec.NormalizeCqModifier(CustomCqModifier);
+                if (draft.Length > 0 && !Ft4MessageCodec.IsCqModifier(draft))
+                    return _l.Get("Ft4.CqModifier.Invalid", draft, NextCqPreview);
+            }
+
+            var word = _settings.Current.Ft4.CqModifier;
+            if (word.Length > 0 && Ft4MessageCodec.IsHashedCall(StationCallsign))
+                return _l.Get("Ft4.CqModifier.CompoundCall", word);
+            return "";
+        }
+    }
+
+    public bool HasCqModifierNote => CqModifierNote.Length > 0;
+
+    partial void OnSelectedCqModifierChanged(Ft4CqModifierOption? value) => ApplyCqModifier();
+
+    partial void OnCustomCqModifierChanged(string value)
+    {
+        if (IsCustomCqModifier)
+            ApplyCqModifier();
+    }
+
+    private void ApplyCqModifier()
+    {
+        var option = SelectedCqModifier;
+        var word = option is null
+            ? ""
+            : option.IsCustom
+                ? Ft4MessageCodec.NormalizeCqModifier(CustomCqModifier)
+                : option.Word!;
+
+        // An unpackable word is never stored, so Call CQ keeps the last one that can be sent.
+        if (word.Length == 0 || Ft4MessageCodec.IsCqModifier(word))
+        {
+            var ft4 = _settings.Current.Ft4;
+            if (!string.Equals(ft4.CqModifier, word, StringComparison.Ordinal))
+            {
+                var previousCq = BuildStationCq();
+                ft4.CqModifier = word;
+                _settings.RequestSave();
+                RefreshIdleCq(previousCq);
+            }
+        }
+
+        RefreshCqModifierDisplay();
+    }
+
+    /// <summary>
+    /// Put the new CQ in the box when it still holds the old CQ or nothing. A contact in
+    /// progress keeps its report or 73.
+    /// </summary>
+    private void RefreshIdleCq(string? previousCq)
+    {
+        var next = BuildStationCq();
+        var seq = _modem.Sequencer;
+        if (next is null || seq is null || seq.Phase == Ft4QsoPhase.InQso)
+            return;
+
+        var current = seq.CurrentTxMessage.Trim();
+        if (current.Length > 0
+            && !(previousCq is not null && current.Equals(previousCq, StringComparison.OrdinalIgnoreCase)))
+            return;
+
+        seq.SetTxMessage(next);
+        CurrentTxMessage = next;
+    }
+
+    private void RefreshCqModifierDisplay()
+    {
+        OnPropertyChanged(nameof(IsCustomCqModifier));
+        OnPropertyChanged(nameof(TxMessageWatermark));
+        OnPropertyChanged(nameof(CallCqLabel));
+        OnPropertyChanged(nameof(NextCqPreview));
+        OnPropertyChanged(nameof(CqModifierNote));
+        OnPropertyChanged(nameof(HasCqModifierNote));
     }
 
     public bool ShowHandshakePttOptions =>
@@ -1939,7 +2058,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         OnPropertyChanged(nameof(StationCallsign));
         OnPropertyChanged(nameof(StationGrid));
-        OnPropertyChanged(nameof(TxMessageWatermark));
+        RefreshCqModifierDisplay();
         SyncCallsToMeRows();
         if (_windowOpen && !_modem.IsRunning)
             StartSession();
@@ -2051,6 +2170,14 @@ public sealed record Ft4WaterfallSpeedOption(int Value, string Label)
 
 public sealed record Ft4DecodeLayoutOption(Ft4DecodeLayout Value, string Label)
 {
+    public override string ToString() => Label;
+}
+
+/// <summary>A CQ word preset. <see cref="Word"/> is null for Custom.</summary>
+public sealed record Ft4CqModifierOption(string? Word, string Label)
+{
+    public bool IsCustom => Word is null;
+
     public override string ToString() => Label;
 }
 
