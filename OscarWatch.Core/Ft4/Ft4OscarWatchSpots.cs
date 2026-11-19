@@ -22,17 +22,19 @@ public static class Ft4OscarWatchSpots
         LiveTrackerSnapshot snapshot,
         string? myCallsign,
         string? client,
-        out OscarWatchSatelliteSpot spot) =>
-        TryCreate(decode, snapshot, myCallsign, client, noradId: null, out spot);
+        out OscarWatchSatelliteSpot spot,
+        string mode = Mode) =>
+        TryCreate(decode, snapshot, myCallsign, client, noradId: null, out spot, mode);
 
-    /// <inheritdoc cref="TryCreate(Ft4DecodedMessage, LiveTrackerSnapshot, string?, string?, out OscarWatchSatelliteSpot)"/>
+    /// <inheritdoc cref="TryCreate(Ft4DecodedMessage, LiveTrackerSnapshot, string?, string?, out OscarWatchSatelliteSpot, string)"/>
     public static bool TryCreate(
         Ft4DecodedMessage decode,
         LiveTrackerSnapshot snapshot,
         string? myCallsign,
         string? client,
         string? noradId,
-        out OscarWatchSatelliteSpot spot)
+        out OscarWatchSatelliteSpot spot,
+        string mode = Mode)
     {
         spot = null!;
         if (!decode.IsReceiveActivity || decode.IsRejected)
@@ -70,7 +72,8 @@ public static class Ft4OscarWatchSpots
             FrequencyOrNull(snapshot.DownlinkHz),
             heardAt,
             TrimTo(decode.Text, 64),
-            TrimTo(client, 128));
+            TrimTo(client, 128),
+            mode);
         return true;
     }
 

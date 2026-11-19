@@ -26,6 +26,15 @@ public static class Ft4SlotClock
 
     public const double Ft8SlotSeconds = 15.0;
 
+    /// <summary>FT8 on-air burst length (79 symbols × 0.160 s), used for TX pre-comp slope.</summary>
+    public const double Ft8SymbolBurstSeconds = 12.64;
+
+    /// <summary>
+    /// Seconds into an FT8 RX slot before the early decode. The burst ends at 0.5 s lead-in
+    /// plus 12.64 s, and this keeps the same 0.46 s margin that FT4 uses after its burst.
+    /// </summary>
+    public const double Ft8EarlyDecodeSeconds = 13.6;
+
     /// <summary>
     /// How far into a transmit period a click can still start that period.
     /// WSJT-X does the same for about the first two seconds: the missing start

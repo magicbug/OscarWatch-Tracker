@@ -5,7 +5,7 @@
         xmlns:loc="using:OscarWatch.Localization"
         x:Class="OscarWatch.Views.Ft4Window"
         x:DataType="vm:Ft4ViewModel"
-        Title="{loc:Localize Key=Window.Ft4.Title}"
+        Title="{Binding WindowTitle}"
         Width="900" Height="720"
         MinWidth="720" MinHeight="540"
         WindowStartupLocation="CenterOwner">

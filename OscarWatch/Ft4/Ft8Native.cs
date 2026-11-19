@@ -228,11 +228,13 @@ internal static class Ft8Native
         float slopeHzPerSec,
         float gain,
         out float[]? pcm,
-        out string error)
+        out string error,
+        Ft4ProtocolProfile? profile = null)
     {
         pcm = null;
         error = "";
-        // Portable/hashed calls are valid FT4 (e.g. MM9SQL/M). Force ASCII '/' for pack77.
+        var p = profile ?? Ft4ProtocolProfile.Ft4;
+        // Portable/hashed calls are valid (e.g. MM9SQL/M). Force ASCII '/' for pack77.
         var text = NormalizeMessageForPack(message);
         if (text.Length == 0)
         {
@@ -240,8 +242,8 @@ internal static class Ft8Native
             return false;
         }
 
-        // Plenty of headroom beyond the 7.5 s slot (lead-in + burst + tail).
-        var capacity = Math.Max(sampleRate * 8 + 256, 16);
+        // Headroom beyond one slot: lead-in + burst + tail, sized from the protocol's slot length.
+        var capacity = p.EncodeCapacity(sampleRate);
         var buffer = new float[capacity];
         int rc;
         int count;
@@ -251,11 +253,11 @@ internal static class Ft8Native
             // Native hashtable locking allows encode/decode to run on parallel TX slots.
             RememberHashedTokens(text);
             rc = ow_ft8_encode_pcm_ex(
-                text, freqHz, isFt4: 1, slopeHzPerSec, gain, buffer, capacity, sampleRate, out count);
+                text, freqHz, isFt4: p.IsFt4 ? 1 : 0, slopeHzPerSec, gain, buffer, capacity, sampleRate, out count);
         }
         catch (DllNotFoundException)
         {
-            error = "Native FT4 library not found.";
+            error = "Native digital mode library not found.";
             return false;
         }
         catch (Exception ex)
@@ -268,7 +270,7 @@ internal static class Ft8Native
         {
             error = rc switch
             {
-                -2 => $"Could not pack \"{text}\" as FT4 (check callsign/grid format).",
+                -2 => $"Could not pack \"{text}\" as {p.Mode} (check callsign/grid format).",
                 -3 => "Encode ran out of memory.",
                 -4 => "Encode buffer too small.",
                 _ => $"Encode failed (code {rc}) for \"{text}\"."
@@ -373,15 +375,17 @@ internal static class Ft8Native
         float fMaxHz,
         bool deep,
         string? apHints,
-        float apCentreHz)
+        float apCentreHz,
+        Ft4ProtocolProfile? profile = null)
     {
+        var isFt4 = (profile ?? Ft4ProtocolProfile.Ft4).IsFt4 ? 1 : 0;
         var output = new Decode[50];
         var n = string.IsNullOrEmpty(apHints)
             ? ow_ft8_decode_pcm(
                 samples,
                 samples.Length,
                 sampleRate,
-                isFt4: 1,
+                isFt4,
                 fMinHz,
                 fMaxHz,
                 output,
@@ -391,7 +395,7 @@ internal static class Ft8Native
                 samples,
                 samples.Length,
                 sampleRate,
-                isFt4: 1,
+                isFt4,
                 fMinHz,
                 fMaxHz,
                 output,
@@ -418,17 +422,18 @@ internal static class Ft8Native
         string? apHints,
         float apCentreHz,
         float maxResidualHzPerSec,
-        int driftSteps)
+        int driftSteps,
+        Ft4ProtocolProfile? profile = null)
     {
         if (driftSteps <= 0 || !(maxResidualHzPerSec > 0))
-            return DecodeFt4(samples, sampleRate, fMinHz, fMaxHz, deep, apHints, apCentreHz);
+            return DecodeFt4(samples, sampleRate, fMinHz, fMaxHz, deep, apHints, apCentreHz, profile);
 
         var output = new Decode[50];
         var n = ow_ft8_decode_pcm_drift(
             samples,
             samples.Length,
             sampleRate,
-            isFt4: 1,
+            isFt4: (profile ?? Ft4ProtocolProfile.Ft4).IsFt4 ? 1 : 0,
             fMinHz,
             fMaxHz,
             output,

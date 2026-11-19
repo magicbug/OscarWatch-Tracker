@@ -611,7 +611,7 @@ LOS: {2}
     <value>ล็อกบุ๊ก OscarWatch(_O)</value>
   </data>
   <data name="Menu.Tools.Ft4">
-    <value>_OscarWatch FT4</value>
+    <value>_OscarWatch FT4 / FT8</value>
   </data>
   <data name="Menu.Tools.Sstv">
     <value>_OscarWatch SSTV</value>
@@ -4863,6 +4863,9 @@ LOS: {2}
   </data>
   <data name="Window.Ft4.Title">
     <value>OscarWatch FT4</value>
+  </data>
+  <data name="Window.Ft8.Title">
+    <value>OscarWatch FT8</value>
   </data>
   <data name="Window.Ft4Settings.Title">
     <value>การตั้งค่า OscarWatch FT4</value>

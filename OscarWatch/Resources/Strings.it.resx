@@ -611,7 +611,7 @@ Continuare?</value>
     <value>_OscarWatch Logbook</value>
   </data>
   <data name="Menu.Tools.Ft4">
-    <value>OscarWatch _FT4</value>
+    <value>OscarWatch _FT4 / FT8</value>
   </data>
   <data name="Menu.Tools.Sstv">
     <value>OscarWatch _SSTV</value>
@@ -4863,6 +4863,9 @@ Ultima versione: {1} ({2})</value>
   </data>
   <data name="Window.Ft4.Title">
     <value>OscarWatch FT4</value>
+  </data>
+  <data name="Window.Ft8.Title">
+    <value>OscarWatch FT8</value>
   </data>
   <data name="Window.Ft4Settings.Title">
     <value>Impostazioni OscarWatch FT4</value>

@@ -446,7 +446,12 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     private bool _waterfallSlotLines = true;
 
     /// <summary>Slot length for the waterfall's slot lines, or 0 when they are turned off.</summary>
-    public double WaterfallSlotSeconds => WaterfallSlotLines ? Ft4SlotClock.Ft4SlotSeconds : 0;
+    public double WaterfallSlotSeconds => WaterfallSlotLines ? _modem.Profile.SlotSeconds : 0;
+
+    /// <summary>Window title for the mode the session runs: FT4 or FT8.</summary>
+    public string WindowTitle => _modem.Profile.IsFt4
+        ? _l.Get("Window.Ft4.Title")
+        : _l.Get("Window.Ft8.Title");
 
     [ObservableProperty] private Ft4WaterfallSpeedOption? _selectedWaterfallSpeed;
     [ObservableProperty] private Ft4DecodeLayoutOption? _selectedDecodeLayout;
@@ -1682,7 +1687,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         var khz = 0d;
         var sat = ResolveFocusedSatelliteName();
         var mode = _frequencyOverlay.SelectedMode;
-        if (sat is not null && Ft4SlotGate.IsFt4Transponder(mode))
+        if (sat is not null && Ft4SlotGate.IsModemTransponder(mode))
             khz = _settings.Current.Ft4.GetUplinkCalibrationKHz(sat, mode);
 
         var signed = Ft4UplinkCalibration.FormatSignedHz(khz);
@@ -1694,7 +1699,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         var sat = ResolveFocusedSatelliteName();
         var mode = _frequencyOverlay.SelectedMode;
-        if (sat is null || !Ft4SlotGate.IsFt4Transponder(mode))
+        if (sat is null || !Ft4SlotGate.IsModemTransponder(mode))
             return null;
 
         var key = Ft4UplinkCalibration.FormatTransponderKey(sat, mode);
@@ -1832,6 +1837,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         Dispatcher.UIThread.Post(() =>
         {
+            OnPropertyChanged(nameof(WindowTitle));
+            OnPropertyChanged(nameof(WaterfallSlotSeconds));
             if (!string.IsNullOrWhiteSpace(_modem.Status))
                 StatusLine = _modem.Status;
             CurrentTxMessage = _modem.Sequencer?.CurrentTxMessage ?? CurrentTxMessage;
@@ -1912,7 +1919,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 continue;
             }
 
-            var row = new Ft4DecodeRowViewModel(message, ShowDtWsjtxConvention);
+            var row = new Ft4DecodeRowViewModel(message, ShowDtWsjtxConvention, _modem.Profile.SlotSeconds);
             ApplyHighlight(row);
             Decodes.Insert(i, row);
         }
@@ -2098,9 +2105,10 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
         SyncOscarWatchSpotAvailability();
         var utc = Ft4Clock.UtcNow;
-        var slotStart = Ft4SlotClock.SlotStartUtc(utc, Ft4SlotClock.Ft4SlotSeconds);
-        var into = Ft4SlotClock.SecondsIntoSlot(utc, Ft4SlotClock.Ft4SlotSeconds);
-        var even = Ft4SlotClock.IsEvenSlot(slotStart, Ft4SlotClock.Ft4SlotSeconds);
+        var slotSeconds = _modem.Profile.SlotSeconds;
+        var slotStart = Ft4SlotClock.SlotStartUtc(utc, slotSeconds);
+        var into = Ft4SlotClock.SecondsIntoSlot(utc, slotSeconds);
+        var even = Ft4SlotClock.IsEvenSlot(slotStart, slotSeconds);
         SlotClockText = $"{slotStart:HH:mm:ss.f} UTC  +{into:0.0}s  {(even ? "even" : "odd")}";
         ClockSourceText = Ft4Clock.MeasuredOffset is not { } measured
             ? _l.Get("Ft4.ClockSource.Pc")
@@ -2108,7 +2116,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
                 ? _l.Get("Ft4.ClockSource.Gps", -measured.TotalSeconds)
                 : _l.Get("Ft4.ClockSource.PcGpsAgrees");
 
-        var progress = Math.Clamp(100.0 * into / Ft4SlotClock.Ft4SlotSeconds, 0, 100);
+        var progress = Math.Clamp(100.0 * into / slotSeconds, 0, 100);
         SlotProgressPercent = progress;
         SlotProgressText = $"{progress:0}%";
         IsTxSlot = _modem.IsLiveTransmitSlot(utc);

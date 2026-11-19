@@ -80,6 +80,8 @@ public sealed class Ft4ModemService : IDisposable
     private DateTime _txWatchdogResetUtc = DateTime.UtcNow;
     private int _tuning; // 0 off, 1 on
     private Ft4QsoSequencer? _sequencer;
+    // Slot timing and protocol for the selected transponder. Changes only between sessions.
+    private Ft4ProtocolProfile _profile = Ft4ProtocolProfile.Ft4;
 
     public Ft4ModemService(
         ISettingsService settings,
@@ -128,7 +130,10 @@ public sealed class Ft4ModemService : IDisposable
         _frequencies.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(FrequencyOverlayViewModel.SelectedMode))
+            {
                 SyncSlotGate(IsRunning);
+                OnSelectedModeChanged();
+            }
         };
     }
 
@@ -151,7 +156,7 @@ public sealed class Ft4ModemService : IDisposable
         try
         {
             var snap = _snapshot.GetCurrent();
-            if (!Ft4PskReporterSpots.TryCreateSpot(msg, snap, out var spot))
+            if (!Ft4PskReporterSpots.TryCreateSpot(msg, snap, out var spot, _profile.Mode))
                 return;
 
             var station = _settings.Current.GroundStation;
@@ -183,7 +188,7 @@ public sealed class Ft4ModemService : IDisposable
             var norad = !string.IsNullOrWhiteSpace(_snapshot.FocusedNoradId)
                 ? _snapshot.FocusedNoradId
                 : _tracking.FocusedNoradId;
-            if (!Ft4OscarWatchSpots.TryCreate(msg, snap, station.Callsign, _spotClientId, norad, out var spot))
+            if (!Ft4OscarWatchSpots.TryCreate(msg, snap, station.Callsign, _spotClientId, norad, out var spot, _profile.Mode))
                 return;
 
             _spotReporter.TryEnqueue(spot);
@@ -300,6 +305,7 @@ public sealed class Ft4ModemService : IDisposable
             return;
         }
 
+        _profile = Ft4ProtocolProfile.For(_frequencies.SelectedMode);
         _sequencer = new Ft4QsoSequencer(
             () => Ft4MessageCodec.NormalizeCall(_settings.Current.GroundStation.Callsign ?? ""),
             () =>
@@ -384,6 +390,42 @@ public sealed class Ft4ModemService : IDisposable
         IsRunning = true;
         Status = _l.Get("Ft4.Status.Listening");
         Changed?.Invoke();
+    }
+
+    /// <summary>Public view of the protocol the session uses (FT4 or FT8), for the window.</summary>
+    public Ft4ProtocolProfile Profile => _profile;
+
+    /// <summary>
+    /// The selected transponder changed to an FT4 or FT8 row: switch the protocol. Other rows
+    /// keep the current protocol. A running session restarts, so no slot, transmit, or QSO
+    /// state carries over from the old protocol.
+    /// </summary>
+    private void OnSelectedModeChanged()
+    {
+        var mode = _frequencies.SelectedMode;
+        if (!Ft4SlotGate.IsModemTransponder(mode))
+            return;
+
+        var next = Ft4ProtocolProfile.For(mode);
+        if (next.Mode == _profile.Mode)
+            return;
+
+        if (IsRunning)
+        {
+            _ = RestartForProtocolAsync(next);
+            return;
+        }
+
+        _profile = next;
+        Changed?.Invoke();
+    }
+
+    private async Task RestartForProtocolAsync(Ft4ProtocolProfile next)
+    {
+        await StopAsync().ConfigureAwait(true);
+        _profile = next;
+        ClearDecodes();
+        Start();
     }
 
     /// <summary>The FT4 window opened or closed. The session stops when that window closes.</summary>
@@ -790,7 +832,7 @@ public sealed class Ft4ModemService : IDisposable
         if (!EnsureSatelliteAllowed())
             return false;
 
-        var even = Ft4SlotClock.IsEvenSlot(decode.SlotUtc, Ft4SlotClock.Ft4SlotSeconds);
+        var even = Ft4SlotClock.IsEvenSlot(decode.SlotUtc, _profile.SlotSeconds);
         _sequencer.StartAnswer(decode, oppositeEvenSlot: !even);
         _lastLoggedKey = null;
         _txWatchdogResetUtc = DateTime.UtcNow;
@@ -1011,7 +1053,7 @@ public sealed class Ft4ModemService : IDisposable
         DateTime? kicked = ticks == 0 ? null : new DateTime(ticks, DateTimeKind.Utc);
         return Ft4SlotClock.IsLiveTransmitSlot(
             utc,
-            Ft4SlotClock.Ft4SlotSeconds,
+            _profile.SlotSeconds,
             transmitEnabled: true,
             seq.PreferEvenSlot,
             kicked);
@@ -1027,7 +1069,7 @@ public sealed class Ft4ModemService : IDisposable
             try
             {
                 var now = Ft4Clock.UtcNow;
-                var slotStart = Ft4SlotClock.SlotStartUtc(now, Ft4SlotClock.Ft4SlotSeconds);
+                var slotStart = Ft4SlotClock.SlotStartUtc(now, _profile.SlotSeconds);
                 // Forward only: a GPS clock correction stepping back must not reopen the previous slot.
                 if (slotStart > _currentSlotStart)
                 {
@@ -1052,7 +1094,7 @@ public sealed class Ft4ModemService : IDisposable
                     {
                         var keepForRedecode = previousSlot != DateTime.MinValue && !previousWasTx;
                         if ((needEndDecode || recordSlot || keepForRedecode)
-                            && _slotBuffer.Count >= (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
+                            && _slotBuffer.Count >= _profile.HalfSlotSamples(12000))
                             previousSamples = _slotBuffer.ToArray();
                         _slotBuffer.Clear();
                         _lastRxSlotStart = keepForRedecode ? previousSlot : DateTime.MinValue;
@@ -1091,7 +1133,7 @@ public sealed class Ft4ModemService : IDisposable
                         KickTransmit(slotStart, ct);
                     SyncSlotGate(sessionRunning: true);
                     if (!CatTransmitOwnsTheRig(slotStart)
-                        && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
+                        && Ft4SlotGate.IsModemTransponder(_frequencies.SelectedMode))
                         _rig.ForceFt4DopplerStep();
                     RefreshClockFromGps();
 
@@ -1256,7 +1298,7 @@ public sealed class Ft4ModemService : IDisposable
         if (!EnsureSatelliteAllowed())
             return;
 
-        if (Ft4SlotClock.IsEvenSlot(slotStart, Ft4SlotClock.Ft4SlotSeconds) != seq.PreferEvenSlot)
+        if (Ft4SlotClock.IsEvenSlot(slotStart, _profile.SlotSeconds) != seq.PreferEvenSlot)
             return;
 
         if (Interlocked.CompareExchange(ref _txRunning, 1, 0) != 0)
@@ -1334,7 +1376,7 @@ public sealed class Ft4ModemService : IDisposable
         // Native encode pads to a full 7.5 s slot (silence tail). Key only for lead-in + burst
         // so VOX/CAT unkey before the opposite RX slot.
         const double leadInSeconds = 0.5;
-        var keySeconds = leadInSeconds + Ft4SlotClock.Ft4SymbolBurstSeconds + 0.15;
+        var keySeconds = leadInSeconds + _profile.BurstSeconds + 0.15;
         var keyedUntil = slotStart.AddSeconds(keySeconds);
 
         // Without a prepared buffer, build before the lead-in wait. CAT PTT is already queued
@@ -1504,9 +1546,9 @@ public sealed class Ft4ModemService : IDisposable
 
     private void WaitAndKickTransmit(DateTime slot, CancellationToken ct, CancellationToken loopCt)
     {
-        if (CatPttSharesRig() && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
+        if (CatPttSharesRig() && Ft4SlotGate.IsModemTransponder(_frequencies.SelectedMode))
         {
-            var dopplerAt = slot - Ft4SlotClock.PreTransmitCatLead;
+            var dopplerAt = slot - _profile.PreTransmitCatLead;
             Ft4SlotWait.UntilUtc(dopplerAt, ct);
             if (ct.IsCancellationRequested)
                 return;
@@ -1537,7 +1579,7 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         KickTransmit(slot, loopCt);
-        if (!CatPttSharesRig() && Ft4SlotGate.IsFt4Transponder(_frequencies.SelectedMode))
+        if (!CatPttSharesRig() && Ft4SlotGate.IsModemTransponder(_frequencies.SelectedMode))
             _rig.ForceFt4DopplerStep();
     }
 
@@ -1652,7 +1694,7 @@ public sealed class Ft4ModemService : IDisposable
             return;
         }
 
-        var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, Ft4SlotClock.Ft4SlotSeconds, seq.PreferEvenSlot);
+        var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, _profile.SlotSeconds, seq.PreferEvenSlot);
         if (next == _currentSlotStart && Volatile.Read(ref _txRunning) == 1)
         {
             MaybeRetargetLiveTransmit(next);
@@ -1702,7 +1744,7 @@ public sealed class Ft4ModemService : IDisposable
             return;
         }
 
-        var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, Ft4SlotClock.Ft4SlotSeconds, seq.PreferEvenSlot);
+        var next = Ft4SlotClock.NextTransmitSlotStart(utcNow, _profile.SlotSeconds, seq.PreferEvenSlot);
         if (_txThisSlot && next == _currentSlotStart)
             return;
 
@@ -1845,7 +1887,7 @@ public sealed class Ft4ModemService : IDisposable
     {
         var slope = 0.0;
         if (UseAudioDopplerTx
-            && TryGetDopplerSlopeHzPerSec(slotStart, Ft4SlotClock.Ft4SymbolBurstSeconds, out _, out var ulSlope))
+            && TryGetDopplerSlopeHzPerSec(slotStart, _profile.BurstSeconds, out _, out var ulSlope))
         {
             var uplinkMode = _frequencies.SelectedMode is null
                 ? null
@@ -1857,7 +1899,7 @@ public sealed class Ft4ModemService : IDisposable
 
         lock (_encodeGate)
         {
-            return Ft8Native.TryEncodeFt4(message, audioHz, sampleRate, (float)slope, gain, out pcm, out encodeError)
+            return Ft8Native.TryEncodeFt4(message, audioHz, sampleRate, (float)slope, gain, out pcm, out encodeError, _profile)
                 && pcm is not null;
         }
     }
@@ -1922,13 +1964,13 @@ public sealed class Ft4ModemService : IDisposable
             return;
 
         var into = (utcNow - _currentSlotStart).TotalSeconds;
-        if (into < Ft4SlotClock.Ft4EarlyDecodeSeconds)
+        if (into < _profile.EarlyDecodeSeconds)
             return;
 
         float[] snapshot;
         lock (_gate)
         {
-            var minSamples = (int)(12000 * Ft4SlotClock.Ft4EarlyDecodeSeconds * 0.92);
+            var minSamples = (int)(12000 * _profile.EarlyDecodeSeconds * 0.92);
             if (_slotBuffer.Count < minSamples)
                 return;
             snapshot = _slotBuffer.ToArray();
@@ -1960,7 +2002,7 @@ public sealed class Ft4ModemService : IDisposable
         }
 
         if (samples is null
-            || slot != _currentSlotStart - TimeSpan.FromSeconds(Ft4SlotClock.Ft4SlotSeconds))
+            || slot != _currentSlotStart - TimeSpan.FromSeconds(_profile.SlotSeconds))
             return false;
 
         QueueDecode(slot, samples, txSlot: false, fullSlotPass: true, forceDeep: true);
@@ -2024,7 +2066,7 @@ public sealed class Ft4ModemService : IDisposable
     /// </param>
     private void DecodeSamples(DateTime slotStart, float[] samples, bool txSlot, bool fullSlotPass = false, bool forceDeep = false)
     {
-        if (samples.Length < (int)(12000 * Ft4SlotClock.Ft4SlotSeconds / 2))
+        if (samples.Length < _profile.HalfSlotSamples(12000))
             return;
 
         var raw = samples;
@@ -2033,7 +2075,7 @@ public sealed class Ft4ModemService : IDisposable
         var drift = default(DriftRange);
         // Slope over the on-air burst: the symbols the decoder uses, not the quiet end of the slot.
         if (UseAudioDopplerRx
-            && TryGetDopplerSlopeHzPerSec(slotStart, Ft4SlotClock.Ft4SymbolBurstSeconds, out var dl, out var ul))
+            && TryGetDopplerSlopeHzPerSec(slotStart, _profile.BurstSeconds, out var dl, out var ul))
         {
             // Stations whose uplink slides while they transmit: one native pass searches the
             // leftover slope on both sides instead of a decode per slope.
@@ -2196,8 +2238,8 @@ public sealed class Ft4ModemService : IDisposable
         }
 
         var decoded = drift.IsActive && !ownOnly
-            ? Ft8Native.DecodeFt4Drift(samples, 12000, fMin, fMax, deep, apHints, apHz, (float)drift.MaxResidualHzPerSec, drift.Steps)
-            : Ft8Native.DecodeFt4(samples, 12000, fMin, fMax, deep, apHints, apHz);
+            ? Ft8Native.DecodeFt4Drift(samples, 12000, fMin, fMax, deep, apHints, apHz, (float)drift.MaxResidualHzPerSec, drift.Steps, _profile)
+            : Ft8Native.DecodeFt4(samples, 12000, fMin, fMax, deep, apHints, apHz, _profile);
         decodedCount = decoded.Length;
         if (!ownOnly && !txSlot && timeShiftSec == 0)
             RecordPass(slotStart, samples.Length, dopplerSlopeHzPerSec, deep, fMin, fMax, apHints, apHz, drift, decoded);
@@ -2596,7 +2638,7 @@ public sealed class Ft4ModemService : IDisposable
 
         var sat = ResolveCalibrationSatellite();
         var mode = _frequencies.SelectedMode;
-        if (sat is null || !Ft4SlotGate.IsFt4Transponder(mode))
+        if (sat is null || !Ft4SlotGate.IsModemTransponder(mode))
             return;
 
         // Positive audio error (echo above the marker) needs a higher uplink dial on a
@@ -2658,9 +2700,9 @@ public sealed class Ft4ModemService : IDisposable
                 Ft4MessageCodec.NormalizeSnrReport(seq.ReportSent),
                 Ft4MessageCodec.NormalizeSnrReport(seq.ReportReceived),
                 seq.TheirGrid ?? "",
-                "FT4",
-                "FT4",
-                manual ? "FT4 manual log" : "")).ConfigureAwait(false);
+                _profile.Mode,
+                _profile.Mode,
+                manual ? $"{_profile.Mode} manual log" : "")).ConfigureAwait(false);
 
             _lastLoggedKey = key;
             Status = manual

@@ -610,7 +610,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     private double GetEffectiveTransmitOffsetKHz()
     {
         var txOffset = TransmitOffsetKHz;
-        if (Ft4SlotGate.IsFt4Transponder(SelectedMode)
+        if (Ft4SlotGate.IsModemTransponder(SelectedMode)
             && !string.IsNullOrWhiteSpace(_currentSatelliteName))
         {
             txOffset += _settings.Current.Ft4.GetUplinkCalibrationKHz(_currentSatelliteName, SelectedMode);

@@ -9,12 +9,15 @@ namespace OscarWatch.ViewModels;
 /// <summary>One decode list row, with a background that tracks the current QSO partner.</summary>
 public sealed partial class Ft4DecodeRowViewModel : ObservableObject
 {
-    public Ft4DecodeRowViewModel(Ft4DecodedMessage message, bool dtWsjtxConvention = true)
+    public Ft4DecodeRowViewModel(
+        Ft4DecodedMessage message,
+        bool dtWsjtxConvention = true,
+        double slotSeconds = Ft4SlotClock.Ft4SlotSeconds)
     {
         Message = message;
         _dtWsjtxConvention = dtWsjtxConvention;
         _dtText = FormatDt(message, dtWsjtxConvention);
-        IsEvenSlot = Ft4SlotClock.IsEvenSlot(message.SlotUtc, Ft4SlotClock.Ft4SlotSeconds);
+        IsEvenSlot = Ft4SlotClock.IsEvenSlot(message.SlotUtc, slotSeconds);
     }
 
     public Ft4DecodedMessage Message { get; }

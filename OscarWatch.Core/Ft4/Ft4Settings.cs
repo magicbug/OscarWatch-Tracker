@@ -326,7 +326,7 @@ public sealed class Ft4Settings
 
     public double GetUplinkCalibrationKHz(string? satelliteName, SatelliteTransponderMode? mode = null)
     {
-        if (mode is not null && Ft4SlotGate.IsFt4Transponder(mode)
+        if (mode is not null && Ft4SlotGate.IsModemTransponder(mode)
             && !string.IsNullOrWhiteSpace(satelliteName))
         {
             var transponderKey = Ft4UplinkCalibration.FormatTransponderKey(satelliteName, mode);
@@ -346,7 +346,7 @@ public sealed class Ft4Settings
     public void SetUplinkCalibrationKHz(string? satelliteName, double khz, SatelliteTransponderMode? mode = null)
     {
         string key;
-        var perTransponder = mode is not null && Ft4SlotGate.IsFt4Transponder(mode)
+        var perTransponder = mode is not null && Ft4SlotGate.IsModemTransponder(mode)
             && !string.IsNullOrWhiteSpace(satelliteName);
         if (perTransponder)
         {

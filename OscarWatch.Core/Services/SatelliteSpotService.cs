@@ -38,7 +38,7 @@ public sealed class SatelliteSpotService : ISatelliteSpotService
         var payload = new SpotBody
         {
             Satellite = spot.Satellite.Trim(),
-            Mode = "FT4",
+            Mode = string.IsNullOrWhiteSpace(spot.Mode) ? "FT4" : spot.Mode.Trim().ToUpperInvariant(),
             HeardCallsign = spot.HeardCallsign.Trim(),
             HeardGrid = string.IsNullOrWhiteSpace(spot.HeardGrid) ? null : spot.HeardGrid.Trim(),
             SnrDb = Math.Clamp(spot.SnrDb, -50, 50),

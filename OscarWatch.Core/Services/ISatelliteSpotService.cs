@@ -2,7 +2,7 @@ using OscarWatch.Core.Models;
 
 namespace OscarWatch.Core.Services;
 
-/// <summary>One FT4 decode to post to OscarWatch.org satellite spots.</summary>
+/// <summary>One FT4 or FT8 decode to post to OscarWatch.org satellite spots.</summary>
 public sealed record OscarWatchSatelliteSpot(
     string Satellite,
     string HeardCallsign,
@@ -12,7 +12,8 @@ public sealed record OscarWatchSatelliteSpot(
     long? DownlinkHz,
     DateTime HeardAtUtc,
     string? Message,
-    string? Client);
+    string? Client,
+    string Mode = "FT4");
 
 public sealed record SatelliteSpotResult(bool Accepted, string Message, int HttpStatusCode);
 

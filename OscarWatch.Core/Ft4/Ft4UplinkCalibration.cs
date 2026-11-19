@@ -81,6 +81,6 @@ public static class Ft4UplinkCalibration
 
         mode.DownlinkKHz = down;
         mode.UplinkKHz = up;
-        return satelliteName.Length > 0 && Ft4SlotGate.IsFt4Transponder(mode);
+        return satelliteName.Length > 0 && Ft4SlotGate.IsModemTransponder(mode);
     }
 }
