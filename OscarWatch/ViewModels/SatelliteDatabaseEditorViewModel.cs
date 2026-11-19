@@ -610,6 +610,12 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
             Name = source.Name,
             NoradId = source.NoradId,
             AlternativeNames = source.AlternativeNames?.ToList() ?? [],
+            Notices = source.Notices?.Select(n => new SatelliteOperatingNotice
+            {
+                Message = n.Message,
+                DaysOfWeekUtc = n.DaysOfWeekUtc?.ToList(),
+                ModeTypes = n.ModeTypes?.ToList()
+            }).ToList(),
             Modes = source.Modes.Select(CloneMode).ToList()
         };
 
@@ -623,6 +629,7 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
             UplinkMode = source.UplinkMode,
             Doppler = source.Doppler,
             CtcssHz = source.CtcssHz,
-            CtcssArmHz = source.CtcssArmHz
+            CtcssArmHz = source.CtcssArmHz,
+            SstvModes = source.SstvModes?.ToList()
         };
 }

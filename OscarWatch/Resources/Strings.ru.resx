@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -253,6 +253,9 @@ LOS: {2}
   </data>
   <data name="Pass.ElementAge.Automation">
     <value>Старый TLE для {0}: {1} дн.</value>
+  </data>
+  <data name="Pass.Notice.Automation">
+    <value>Операционное уведомление для {0}: {1}</value>
   </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Убрать этот пролёт из расписания</value>
@@ -4510,6 +4513,9 @@ LOS: {2}
   <data name="DbMerge.PreferredNameUpdates">
     <value>Переименования спутников</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>Операционные уведомления</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>Новые режимы транспондера</value>
   </data>
@@ -4552,6 +4558,9 @@ LOS: {2}
   <data name="DbMerge.Intro.Renames">
     <value>У этих спутников в опубликованной базе новое предпочтительное имя (например обозначение OSCAR). Нажмите «Применить выбранное», чтобы переименовать локально.</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>Эти операционные уведомления будут добавлены, обновлены или удалены в вашей локальной базе. Нажмите «Применить выбранное».</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Ваша база транспондеров совпадает с {0}.</value>
   </data>
@@ -4585,6 +4594,12 @@ LOS: {2}
   <data name="DbMerge.Summary.ManyRenames">
     <value>{0} переименования спутников</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>{0} операционное уведомление</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>{0} операционных уведомлений</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> из {0}.</value>
   </data>
@@ -4602,6 +4617,15 @@ LOS: {2}
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}: {1} уведомлений</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}: удалить операционные уведомления</value>
   </data>
   <data name="DbAdd.Title">
     <value>Добавить спутник</value>

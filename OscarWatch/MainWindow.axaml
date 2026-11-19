@@ -349,6 +349,13 @@
               <Setter Property="CornerRadius" Value="6" />
               <Setter Property="Padding" Value="10,8" />
             </Style>
+            <Style Selector="Border.satellite-notice">
+              <Setter Property="Background" Value="{DynamicResource SatelliteNoticeBackgroundBrush}" />
+              <Setter Property="BorderBrush" Value="{DynamicResource SatelliteNoticeBorderBrush}" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Setter Property="CornerRadius" Value="6" />
+              <Setter Property="Padding" Value="8,6" />
+            </Style>
             <Style Selector="Button.live-sidebar-action.standbyengaged">
               <Setter Property="Background" Value="{DynamicResource StandbyActionBackgroundBrush}" />
               <Setter Property="Foreground" Value="{DynamicResource StandbyActionForegroundBrush}" />
@@ -441,6 +448,24 @@
                            FontWeight="SemiBold"
                            TextWrapping="Wrap"
                            Foreground="{DynamicResource PassHighlightBrush}" />
+                <Border Classes="satellite-notice"
+                        IsVisible="{Binding ShowSatelliteNotice}"
+                        Margin="0,2,0,0">
+                  <DockPanel LastChildFill="True">
+                    <TextBlock DockPanel.Dock="Left"
+                               Text="⚠"
+                               FontSize="12"
+                               Margin="0,0,6,0"
+                               VerticalAlignment="Top"
+                               Foreground="{DynamicResource SatelliteNoticeForegroundBrush}" />
+                    <TextBlock Text="{Binding SatelliteNoticeText}"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource SatelliteNoticeForegroundBrush}"
+                               AutomationProperties.Name="{Binding SatelliteNoticeText}" />
+                  </DockPanel>
+                </Border>
               </StackPanel>
             </Border>
 
@@ -752,6 +777,16 @@
                                    Foreground="{DynamicResource StaleTleForegroundBrush}"
                                    ToolTip.Tip="{Binding ElementAgeToolTip}"
                                    AutomationProperties.Name="{Binding ElementAgeAutomationName}" />
+                        <TextBlock DockPanel.Dock="Right"
+                                   Margin="6,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Text="⚠"
+                                   IsVisible="{Binding ShowNotice}"
+                                   Foreground="{DynamicResource StaleTleForegroundBrush}"
+                                   ToolTip.Tip="{Binding NoticeToolTip}"
+                                   AutomationProperties.Name="{Binding NoticeAutomationName}" />
                         <TextBlock Text="{Binding SatelliteName}"
                                    FontWeight="SemiBold"
                                    FontSize="16"

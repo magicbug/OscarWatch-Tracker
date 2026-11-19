@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -249,6 +249,9 @@
   </data>
   <data name="Pass.ElementAge.Automation">
     <value>{0} 的旧 TLE：{1} 天</value>
+  </data>
+  <data name="Pass.Notice.Automation">
+    <value>{0} 的操作通知：{1}</value>
   </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>从此过境安排中移除</value>
@@ -4506,6 +4509,9 @@
   <data name="DbMerge.PreferredNameUpdates">
     <value>卫星重命名</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>操作通知</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>新转发器模式</value>
   </data>
@@ -4548,6 +4554,9 @@
   <data name="DbMerge.Intro.Renames">
     <value>这些卫星在已发布数据库中有了新的首选名称（例如 OSCAR 编号）。点击“应用所选”以在本地重命名。</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>这些操作通知将在您的本地数据库中添加、更新或清除。请点击“应用所选”。</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>您的转发器数据库与 {0} 匹配。</value>
   </data>
@@ -4581,6 +4590,12 @@
   <data name="DbMerge.Summary.ManyRenames">
     <value>{0} 个卫星重命名</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>{0} 条操作通知</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>{0} 条操作通知</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value>来自 {0}。</value>
   </data>
@@ -4598,6 +4613,15 @@
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}：{1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}：{1} 条通知</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}：清除操作通知</value>
   </data>
   <data name="DbAdd.Title">
     <value>添加卫星</value>

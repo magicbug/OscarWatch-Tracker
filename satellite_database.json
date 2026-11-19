@@ -999,6 +999,12 @@
     "name": "SO-131",
     "norad_id": "101101",
     "alternative_names": ["UNNE-1B"],
+    "notices": [
+      {
+        "message": "Wednesdays (UTC): SO-131 repeater is dedicated to FSK digital modes (AMSAT-EA).",
+        "days_of_week_utc": ["Wednesday"]
+      }
+    ],
     "modes": [
       {
         "type": "FM Repeater",

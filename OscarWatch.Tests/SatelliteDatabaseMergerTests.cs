@@ -498,6 +498,108 @@ public class SatelliteDatabaseMergerTests
         Assert.Contains(entry.AlternativeNames ?? [], a => a == "HADES-L");
     }
 
+    [Fact]
+    public void BuildPlan_and_Apply_sync_operating_notices()
+    {
+        var local = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "SO-131",
+                NoradId = "101101",
+                Modes = [Mode("FM Repeater", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM")]
+            }
+        };
+
+        var remote = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "SO-131",
+                NoradId = "101101",
+                Modes = [Mode("FM Repeater", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM")],
+                Notices =
+                [
+                    new SatelliteOperatingNotice
+                    {
+                        Message = "Wednesdays (UTC): UNNE-1B repeater is dedicated to FSK digital modes (AMSAT-EA).",
+                        DaysOfWeekUtc = ["Wednesday"]
+                    }
+                ]
+            }
+        };
+
+        var plan = SatelliteDatabaseMerger.BuildPlan(local, remote);
+        Assert.Empty(plan.NewSatellites);
+        Assert.Empty(plan.NewModes);
+        Assert.Empty(plan.Conflicts);
+        Assert.Single(plan.NoticeUpdates);
+        Assert.Equal("SO-131", plan.NoticeUpdates[0].SatelliteName);
+        Assert.Single(plan.NoticeUpdates[0].Notices);
+
+        var merged = SatelliteDatabaseMerger.Apply(local, plan, new SatelliteDatabaseMergeSelection());
+        var entry = Assert.Single(merged);
+        var notice = Assert.Single(entry.Notices!);
+        Assert.Contains("FSK", notice.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(["Wednesday"], notice.DaysOfWeekUtc);
+    }
+
+    [Fact]
+    public void Applied_SO131_notice_is_not_offered_again_on_the_next_startup_check()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), $"ow-notices-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        var userPath = Path.Combine(directory, "user.json");
+        var bundledPath = Path.Combine(directory, "bundled.json");
+
+        try
+        {
+            var remote = new List<SatelliteRadioEntry>
+            {
+                new()
+                {
+                    Name = "SO-131",
+                    NoradId = "101101",
+                    Modes = [Mode("FM Repeater", 436_888, 145_925, downlinkMode: "FM", uplinkMode: "FM")],
+                    Notices =
+                    [
+                        new SatelliteOperatingNotice
+                        {
+                            Message = "Wednesdays (UTC): SO-131 repeater is dedicated to FSK digital modes (AMSAT-EA).",
+                            DaysOfWeekUtc = ["Wednesday"]
+                        }
+                    ]
+                }
+            };
+
+            SatelliteDatabaseFile.Save(bundledPath, []);
+            SatelliteDatabaseFile.Save(userPath, remote.Select(e => new SatelliteRadioEntry
+            {
+                Name = e.Name,
+                NoradId = e.NoradId,
+                Modes = e.Modes
+            }).ToList());
+
+            var database = new SatelliteDatabaseService(bundledPath, userPath);
+            var editor = new SatelliteDatabaseEditor(database, bundledPath, userPath);
+            var firstPlan = SatelliteDatabaseMerger.BuildPlan(editor.LoadForEditing(), remote);
+            Assert.Single(firstPlan.NoticeUpdates);
+
+            editor.Save(SatelliteDatabaseMerger.Apply(editor.LoadForEditing(), firstPlan, new SatelliteDatabaseMergeSelection()));
+
+            var secondPlan = SatelliteDatabaseMerger.BuildPlan(editor.LoadForEditing(), remote);
+            Assert.Empty(secondPlan.NoticeUpdates);
+            Assert.False(secondPlan.HasChanges);
+
+            var saved = Assert.Single(SatelliteDatabaseFile.Load(userPath));
+            Assert.Contains("FSK", Assert.Single(saved.Notices!).Message, StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     private static SatelliteRadioEntry Entry(string name, params SatelliteTransponderMode[] modes) =>
         new() { Name = name, Modes = modes.ToList() };
 

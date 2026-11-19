@@ -38,6 +38,10 @@ public static class AccessibilityThemeResources
     public const string StandbyActionForegroundKey = "StandbyActionForegroundBrush";
     public const string StandbyActionHoverBackgroundKey = "StandbyActionHoverBackgroundBrush";
     public const string StandbyActionPressedBackgroundKey = "StandbyActionPressedBackgroundBrush";
+    /// <summary>Same amber callout as standby; aliased so satellite notices stay theme-aware.</summary>
+    public const string SatelliteNoticeBackgroundKey = "SatelliteNoticeBackgroundBrush";
+    public const string SatelliteNoticeForegroundKey = "SatelliteNoticeForegroundBrush";
+    public const string SatelliteNoticeBorderKey = "SatelliteNoticeBorderBrush";
 
     public static void Install()
     {
@@ -113,5 +117,8 @@ public static class AccessibilityThemeResources
             isDark ? Color.Parse("#F0B040") : Color.Parse("#D4890C"));
         resources[StandbyActionPressedBackgroundKey] = new SolidColorBrush(
             isDark ? Color.Parse("#C48412") : Color.Parse("#B8730A"));
+        resources[SatelliteNoticeBackgroundKey] = resources[StandbyBannerBackgroundKey];
+        resources[SatelliteNoticeForegroundKey] = resources[StandbyBannerForegroundKey];
+        resources[SatelliteNoticeBorderKey] = resources[StandbyBannerBorderKey];
     }
 }

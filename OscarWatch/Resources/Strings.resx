@@ -250,6 +250,9 @@
   <data name="Pass.ElementAge.Automation">
     <value>Old TLE for {0}: {1} days</value>
   </data>
+  <data name="Pass.Notice.Automation">
+    <value>Operating notice for {0}: {1}</value>
+  </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Remove this pass from the schedule</value>
   </data>
@@ -4506,6 +4509,9 @@ Continue?</value>
   <data name="DbMerge.PreferredNameUpdates">
     <value>Satellite renames</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>Operating notices</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>New transponder modes</value>
   </data>
@@ -4548,6 +4554,9 @@ Continue?</value>
   <data name="DbMerge.Intro.Renames">
     <value>These satellites have a new preferred name in the published database (for example an OSCAR designation). Click Apply selected to rename them locally.</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>These operating notices will be added, updated, or cleared on satellites in your local database. Click Apply selected to update.</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Your transponder database matches {0}.</value>
   </data>
@@ -4581,6 +4590,12 @@ Continue?</value>
   <data name="DbMerge.Summary.ManyRenames">
     <value>{0} satellite renames</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>{0} operating notice</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>{0} operating notices</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> from {0}.</value>
   </data>
@@ -4598,6 +4613,15 @@ Continue?</value>
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}: {1} notices</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}: clear operating notices</value>
   </data>
   <data name="DbAdd.Title">
     <value>Add satellite</value>

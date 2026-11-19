@@ -63,6 +63,87 @@ public class SatelliteDatabaseFileTests
     }
 
     [Fact]
+    public void ValidateEntries_rejects_unrecognised_notice_weekday()
+    {
+        var entries = new List<SatelliteRadioEntry>
+        {
+            new()
+            {
+                Name = "SO-131",
+                Modes =
+                [
+                    new SatelliteTransponderMode
+                    {
+                        Type = "FM Repeater",
+                        DownlinkKHz = 436_888,
+                        UplinkKHz = 145_925,
+                        DownlinkMode = "FM",
+                        UplinkMode = "FM"
+                    }
+                ],
+                Notices =
+                [
+                    new SatelliteOperatingNotice
+                    {
+                        Message = "Bad day",
+                        DaysOfWeekUtc = ["Wed"]
+                    }
+                ]
+            }
+        };
+
+        var error = SatelliteDatabaseFile.ValidateEntries(entries);
+        Assert.NotNull(error);
+        Assert.Contains("weekday", error, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Save_and_load_round_trip_preserves_notices()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"ow-db-notice-{Guid.NewGuid():N}.json");
+        try
+        {
+            var entries = new List<SatelliteRadioEntry>
+            {
+                new()
+                {
+                    Name = "SO-131",
+                    Modes =
+                    [
+                        new SatelliteTransponderMode
+                        {
+                            Type = "FM Repeater",
+                            DownlinkKHz = 436_888,
+                            UplinkKHz = 145_925,
+                            DownlinkMode = "FM",
+                            UplinkMode = "FM"
+                        }
+                    ],
+                    Notices =
+                    [
+                        new SatelliteOperatingNotice
+                        {
+                            Message = "Wednesdays (UTC): FSK digital modes.",
+                            DaysOfWeekUtc = ["wednesday"]
+                        }
+                    ]
+                }
+            };
+
+            SatelliteDatabaseFile.Save(path, entries);
+            var loaded = SatelliteDatabaseFile.Load(path);
+            var notice = Assert.Single(loaded[0].Notices!);
+            Assert.Equal("Wednesdays (UTC): FSK digital modes.", notice.Message);
+            Assert.Equal(["Wednesday"], notice.DaysOfWeekUtc);
+        }
+        finally
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+    }
+
+    [Fact]
     public void NormalizeEntry_zero_pads_norad_id()
     {
         var entry = new SatelliteRadioEntry

@@ -29,6 +29,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     private bool _isLoadingSelection;
     private double _lastRangeRateKmPerSec;
     private SatelliteTrackState? _lastTrackState;
+    private DateTime _displayUtc = DateTime.UtcNow;
     private double _rigPassbandDownlinkAdjustKHz;
     private double _rigPassbandUplinkAdjustKHz;
     private bool _passbandSyncSuspended;
@@ -216,6 +217,12 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     private bool _canReportSatelliteStatus;
 
     [ObservableProperty]
+    private bool _showSatelliteNotice;
+
+    [ObservableProperty]
+    private string _satelliteNoticeText = "";
+
+    [ObservableProperty]
     private bool _showCommunityStatus;
 
     [ObservableProperty]
@@ -312,6 +319,38 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     public void ClearCommunityStatus() =>
         ApplyCommunityStatus(false, SatelliteCommunityStatusKind.Unknown, "?", "", false);
 
+    private void RefreshSatelliteNotice()
+    {
+        if (string.IsNullOrWhiteSpace(_currentSatelliteName) && string.IsNullOrWhiteSpace(_currentNoradId))
+        {
+            ClearSatelliteNotice();
+            return;
+        }
+
+        var entry = _database.TryGetEntry(_currentSatelliteName ?? "", _currentNoradId);
+        var text = SatelliteNoticeEvaluator.FormatActiveNoticeText(
+            entry,
+            _displayUtc,
+            SelectedMode?.Type);
+        var show = !string.IsNullOrWhiteSpace(text);
+        var previousShow = ShowSatelliteNotice;
+
+        ShowSatelliteNotice = show;
+        SatelliteNoticeText = show ? text : "";
+
+        if (previousShow != show)
+            RequestOverlayReclamp();
+    }
+
+    private void ClearSatelliteNotice()
+    {
+        var previousShow = ShowSatelliteNotice;
+        ShowSatelliteNotice = false;
+        SatelliteNoticeText = "";
+        if (previousShow)
+            RequestOverlayReclamp();
+    }
+
     private void UpdateCanReportSatelliteStatus()
     {
         var cfg = _settings.Current.SatelliteStatus;
@@ -397,12 +436,21 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
 
         LoadModesForSatellite(_currentSatelliteName, _currentNoradId);
         if (_lastTrackState is not null)
-            Update(_lastTrackState);
+            Update(_lastTrackState, _displayUtc);
+        else
+            RefreshSatelliteNotice();
     }
 
-    public void Update(SatelliteTrackState? state)
+    public void Update(SatelliteTrackState? state, DateTime? displayUtc = null)
     {
         _lastTrackState = state;
+        if (displayUtc.HasValue)
+            _displayUtc = displayUtc.Value.Kind == DateTimeKind.Utc
+                ? displayUtc.Value
+                : DateTime.SpecifyKind(displayUtc.Value, DateTimeKind.Utc);
+        else if (_displayUtc == default)
+            _displayUtc = DateTime.UtcNow;
+
         if (state is null)
         {
             SatelliteName = "—";
@@ -413,6 +461,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
             HasTransponderData = false;
             EmptyStateMessage = _l.Get("Freq.SelectSatelliteHint");
             ClearFrequencyDisplay();
+            ClearSatelliteNotice();
             UpdateCanReportSatelliteStatus();
             return;
         }
@@ -438,6 +487,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
             HasTransponderData = false;
             EmptyStateMessage = _l.Get("Freq.NoTransponder");
             ClearFrequencyDisplay();
+            RefreshSatelliteNotice();
             UpdateCanReportSatelliteStatus();
             return;
         }
@@ -452,6 +502,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         // must not overwrite a Store Offset confirmation.
         if (satelliteChanged)
             UpdateOffsetAppliedHint();
+        RefreshSatelliteNotice();
         UpdateCanReportSatelliteStatus();
     }
 
@@ -689,6 +740,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
             PersistSelection();
 
         OffsetsChanged?.Invoke(this, true);
+        RefreshSatelliteNotice();
         RequestOverlayReclamp();
         StoreOffsetCommand.NotifyCanExecuteChanged();
         UpdateCanReportSatelliteStatus();

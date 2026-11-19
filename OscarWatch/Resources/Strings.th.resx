@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -253,6 +253,9 @@ LOS: {2}
   </data>
   <data name="Pass.ElementAge.Automation">
     <value>TLE เก่าของ {0}: {1} วัน</value>
+  </data>
+  <data name="Pass.Notice.Automation">
+    <value>ประกาศการใช้งานสำหรับ {0}: {1}</value>
   </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>นำพาสนี้ออกจากตาราง</value>
@@ -4510,6 +4513,9 @@ LOS: {2}
   <data name="DbMerge.PreferredNameUpdates">
     <value>การเปลี่ยนชื่อดาวเทียม</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>ประกาศการใช้งาน</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>โหมดทรานสปอนเดอร์ใหม่</value>
   </data>
@@ -4552,6 +4558,9 @@ LOS: {2}
   <data name="DbMerge.Intro.Renames">
     <value>ดาวเทียมเหล่านี้มีชื่อที่ต้องการใหม่ในฐานข้อมูลที่เผยแพร่ (เช่น รหัส OSCAR) กดใช้รายการที่เลือกเพื่อเปลี่ยนชื่อในเครื่อง</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>ประกาศการใช้งานเหล่านี้จะถูกเพิ่ม อัปเดต หรือลบในฐานข้อมูลในเครื่องของคุณ คลิกใช้รายการที่เลือก</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>ฐานข้อมูลทรานสปอนเดอร์ของคุณตรงกับ {0}</value>
   </data>
@@ -4585,6 +4594,12 @@ LOS: {2}
   <data name="DbMerge.Summary.ManyRenames">
     <value>การเปลี่ยนชื่อดาวเทียม {0} รายการ</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>ประกาศการใช้งาน {0} รายการ</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>ประกาศการใช้งาน {0} รายการ</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> จาก {0}</value>
   </data>
@@ -4602,6 +4617,15 @@ LOS: {2}
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}: {1} ประกาศ</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}: ล้างประกาศการใช้งาน</value>
   </data>
   <data name="DbAdd.Title">
     <value>เพิ่มดาวเทียม</value>

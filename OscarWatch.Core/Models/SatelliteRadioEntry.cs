@@ -18,6 +18,14 @@ public sealed class SatelliteRadioEntry
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public List<string>? AlternativeNames { get; set; }
 
+    /// <summary>
+    /// Optional operator notices (recurring schedules, temporary mode restrictions, and similar).
+    /// Synced from the published database when present.
+    /// </summary>
+    [JsonPropertyName("notices")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<SatelliteOperatingNotice>? Notices { get; set; }
+
     [JsonPropertyName("modes")]
     public List<SatelliteTransponderMode> Modes { get; set; } = [];
 }

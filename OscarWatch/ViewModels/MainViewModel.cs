@@ -120,6 +120,12 @@ public partial class MainViewModel : ViewModelBase
     private string _nextPassText = "—";
 
     [ObservableProperty]
+    private bool _showSatelliteNotice;
+
+    [ObservableProperty]
+    private string _satelliteNoticeText = "";
+
+    [ObservableProperty]
     private bool _showRotatorStatus;
 
     [ObservableProperty]
@@ -1023,12 +1029,12 @@ public partial class MainViewModel : ViewModelBase
 
         if (ShowComPortConflict || !_settings.Current.Rig.Enabled)
         {
-            Frequencies.Update(focusedForDisplay);
+            Frequencies.Update(focusedForDisplay, MapDisplayUtc);
             return;
         }
 
         SyncOverlayPassbandFromRig();
-        Frequencies.Update(focusedForDisplay);
+        Frequencies.Update(focusedForDisplay, MapDisplayUtc);
         UpdateRigDisplay();
         if (IsMapTimeScrubbing)
         {
@@ -1098,6 +1104,53 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    private void UpdateSatelliteNotice(string? satelliteName, string? noradId)
+    {
+        if (string.IsNullOrWhiteSpace(satelliteName) && string.IsNullOrWhiteSpace(noradId))
+        {
+            ClearSatelliteNotice();
+            return;
+        }
+
+        var entry = _satelliteDatabase.TryGetEntry(satelliteName ?? "", noradId);
+        var text = SatelliteNoticeEvaluator.FormatActiveNoticeText(entry, MapDisplayUtc);
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            ClearSatelliteNotice();
+            return;
+        }
+
+        ShowSatelliteNotice = true;
+        SatelliteNoticeText = text;
+    }
+
+    private void ClearSatelliteNotice()
+    {
+        ShowSatelliteNotice = false;
+        SatelliteNoticeText = "";
+    }
+
+    /// <summary>
+    /// Shows a warning icon on upcoming-pass rows whose AOS falls on a day with an active
+    /// satellite operating notice (for example SO-131 Wednesday UTC FSK).
+    /// </summary>
+    private void UpdatePassNoticeDisplays()
+    {
+        var rows = Passes.OfType<PassRowViewModel>().ToList();
+        if (rows.Count == 0)
+            return;
+
+        foreach (var row in rows)
+        {
+            var entry = _satelliteDatabase.TryGetEntry(row.SatelliteName, row.NoradId);
+            var text = SatelliteNoticeEvaluator.FormatActiveNoticeText(entry, row.AosUtc);
+            if (string.IsNullOrWhiteSpace(text))
+                row.ClearNotice();
+            else
+                row.ApplyNotice(text);
+        }
+    }
+
     private void RefreshPassTimeDisplay()
     {
         var clockFormat = PassDisplayFormat.FromSettings(_settings.Current.Use24HourClock);
@@ -1130,6 +1183,7 @@ public partial class MainViewModel : ViewModelBase
         ReplacePassList(items);
         UpdateCommunityStatusDisplays();
         UpdateElementAgeDisplays();
+        UpdatePassNoticeDisplays();
     }
 
     private void RefreshHamsAtRoveClockDisplay()
@@ -2305,6 +2359,7 @@ public partial class MainViewModel : ViewModelBase
             RangeText = "—";
             AltitudeText = "—";
             ShowSunlightStatus = false;
+            ClearSatelliteNotice();
             return;
         }
 
@@ -2312,6 +2367,7 @@ public partial class MainViewModel : ViewModelBase
         AltitudeText = $"{target.Subpoint.AltitudeKm:F0} km";
         ShowSunlightStatus = true;
         IsSatelliteSunlit = target.IsSunlit;
+        UpdateSatelliteNotice(target.Name, target.NoradId);
 
         if (target.LookAngles is not { } la)
         {
@@ -2373,7 +2429,7 @@ public partial class MainViewModel : ViewModelBase
 
         UpdateLiveTelemetry(states);
         var focused = GetFocusedTrackState(states, noradId);
-        Frequencies.Update(focused);
+        Frequencies.Update(focused, MapDisplayUtc);
         DxStation.Update(focused);
         PushCloudlogRadio(focused);
         PushSatelliteLink(focused, force: true);
@@ -3517,6 +3573,7 @@ public partial class MainViewModel : ViewModelBase
 
         await window.ShowDialog<bool?>(App.MainWindow);
         Frequencies.ReloadFromDatabase();
+        RefreshFocusedSatelliteNotice();
         Tick();
         await RefreshPassesAsync();
     }
@@ -3525,6 +3582,15 @@ public partial class MainViewModel : ViewModelBase
     private async Task UpdateTransponderDatabaseAsync()
     {
         await CheckTransponderDatabaseUpdatesAsync(showWhenUpToDate: true);
+    }
+
+    private void RefreshFocusedSatelliteNotice()
+    {
+        var focused = GetFocusedTrackState(_liveTracking.GetSnapshot(), FocusedNoradId);
+        if (focused is null)
+            ClearSatelliteNotice();
+        else
+            UpdateSatelliteNotice(focused.Name, focused.NoradId);
     }
 
     private async Task CheckTransponderDatabaseUpdatesAsync(bool showWhenUpToDate)
@@ -3549,6 +3615,7 @@ public partial class MainViewModel : ViewModelBase
             if (await TransponderDatabaseMergeDialog.TryShowAsync(App.MainWindow, plan, _transponderDatabaseSync))
             {
                 Frequencies.ReloadFromDatabase();
+                RefreshFocusedSatelliteNotice();
                 Tick();
                 await RefreshPassesAsync();
                 StatusText = _l.Get("Status.TransponderUpdated");
@@ -3643,6 +3710,7 @@ public partial class MainViewModel : ViewModelBase
 
                 UpdateCommunityStatusDisplays();
                 UpdateElementAgeDisplays();
+                UpdatePassNoticeDisplays();
 
                 // Update the timeline passes for the elevation timeline control
                 TimelinePasses = merged.Take(50).ToList();
@@ -3710,6 +3778,15 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
     private string _elementAgeToolTip = "";
     [ObservableProperty]
     private string _elementAgeAutomationName = "";
+
+    [ObservableProperty]
+    private bool _showNotice;
+
+    [ObservableProperty]
+    private string _noticeToolTip = "";
+
+    [ObservableProperty]
+    private string _noticeAutomationName = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ScheduleGlyph))]
@@ -3789,6 +3866,21 @@ public partial class PassRowViewModel : ObservableObject, IPassListItem
         ElementAgeText = L.Get("Pass.ElementAge.Label", days);
         ElementAgeToolTip = L.Get("Pass.ElementAge.ToolTip", SatelliteName, days, epochUtc);
         ElementAgeAutomationName = L.Get("Pass.ElementAge.Automation", SatelliteName, days);
+    }
+
+    public void ClearNotice()
+    {
+        ShowNotice = false;
+        NoticeToolTip = "";
+        NoticeAutomationName = "";
+    }
+
+    /// <summary>Marks this pass because an operating notice applies at AOS (UTC day / schedule).</summary>
+    public void ApplyNotice(string noticeText)
+    {
+        ShowNotice = true;
+        NoticeToolTip = noticeText;
+        NoticeAutomationName = L.Get("Pass.Notice.Automation", SatelliteName, noticeText);
     }
 
     public void UpdateDisplay(DateTime utcNow, TimeSpan imminentWindow, bool isRecording)

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -253,6 +253,9 @@ Durasi: {4}</value>
   </data>
   <data name="Pass.ElementAge.Automation">
     <value>TLE lama untuk {0}: {1} hari</value>
+  </data>
+  <data name="Pass.Notice.Automation">
+    <value>Pemberitahuan operasi untuk {0}: {1}</value>
   </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Hapus lintasan ini dari jadwal</value>
@@ -4510,6 +4513,9 @@ Lanjutkan?</value>
   <data name="DbMerge.PreferredNameUpdates">
     <value>Penggantian nama satelit</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>Pemberitahuan operasi</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>Mode transponder baru</value>
   </data>
@@ -4552,6 +4558,9 @@ Lanjutkan?</value>
   <data name="DbMerge.Intro.Renames">
     <value>Satelit ini memiliki nama pilihan baru di basis data terbitan (misalnya designation OSCAR). Klik Terapkan yang dipilih untuk mengganti nama secara lokal.</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>Pemberitahuan operasi ini akan ditambahkan, diperbarui, atau dihapus di basis data lokal Anda. Klik Terapkan yang dipilih.</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Basis data transponder Anda cocok dengan {0}.</value>
   </data>
@@ -4585,6 +4594,12 @@ Lanjutkan?</value>
   <data name="DbMerge.Summary.ManyRenames">
     <value>{0} penggantian nama satelit</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>{0} pemberitahuan operasi</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>{0} pemberitahuan operasi</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> dari {0}.</value>
   </data>
@@ -4602,6 +4617,15 @@ Lanjutkan?</value>
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}: {1} pemberitahuan</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}: hapus pemberitahuan operasi</value>
   </data>
   <data name="DbAdd.Title">
     <value>Tambah satelit</value>

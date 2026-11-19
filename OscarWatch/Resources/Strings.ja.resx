@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -231,6 +231,9 @@
   </data>
   <data name="Pass.ElementAge.Automation">
     <value>{0} の古いTLE: {1}日</value>
+  </data>
+  <data name="Pass.Notice.Automation">
+    <value>{0}の運用告知: {1}</value>
   </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>このパスをスケジュールから削除します</value>
@@ -4503,6 +4506,9 @@
   <data name="DbMerge.PreferredNameUpdates">
     <value>衛星の改名</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>運用告知</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>新しいトランスポンダモード</value>
   </data>
@@ -4545,6 +4551,9 @@
   <data name="DbMerge.Intro.Renames">
     <value>公開データベースでこれらの衛星の表示名が新しくなりました（例: OSCAR 呼称）。「選択を適用」でローカル側も改名します。</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>これらの運用告知はローカルデータベースに追加・更新・削除されます。「選択を適用」をクリックしてください。</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>トランスポンダデータベースは {0} と一致しています。</value>
   </data>
@@ -4578,6 +4587,12 @@
   <data name="DbMerge.Summary.ManyRenames">
     <value>衛星の改名 {0} 件</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>運用告知 {0} 件</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>運用告知 {0} 件</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value>（{0} より）。</value>
   </data>
@@ -4595,6 +4610,15 @@
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}: 告知 {1} 件</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}: 運用告知を削除</value>
   </data>
   <data name="DbAdd.Title">
     <value>衛星を追加</value>

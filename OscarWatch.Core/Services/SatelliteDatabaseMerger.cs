@@ -19,6 +19,7 @@ public static class SatelliteDatabaseMerger
         var conflicts = new List<SatelliteDatabaseMergeConflict>();
         var noradIdBackfills = new List<SatelliteDatabaseNoradIdBackfill>();
         var preferredNameUpdates = new List<SatelliteDatabasePreferredNameUpdate>();
+        var noticeUpdates = new List<SatelliteDatabaseNoticeUpdate>();
 
         foreach (var remoteEntry in remoteEntries)
         {
@@ -53,6 +54,16 @@ public static class SatelliteDatabaseMerger
                 {
                     SatelliteName = localName,
                     NoradId = normalizedRemote.NoradId!.Trim()
+                });
+            }
+
+            var localNotices = SatelliteDatabaseFile.NormalizeNotices(localEntry.Notices);
+            if (!SatelliteNoticeEvaluator.NoticesEqual(localNotices, normalizedRemote.Notices))
+            {
+                noticeUpdates.Add(new SatelliteDatabaseNoticeUpdate
+                {
+                    SatelliteName = localName,
+                    Notices = CloneNotices(normalizedRemote.Notices)
                 });
             }
 
@@ -92,7 +103,8 @@ public static class SatelliteDatabaseMerger
             NewModes = newModes,
             Conflicts = conflicts,
             NoradIdBackfills = noradIdBackfills,
-            PreferredNameUpdates = preferredNameUpdates
+            PreferredNameUpdates = preferredNameUpdates,
+            NoticeUpdates = noticeUpdates
         };
     }
 
@@ -124,7 +136,8 @@ public static class SatelliteDatabaseMerger
             NewModes = plan.NewModes,
             Conflicts = conflicts,
             NoradIdBackfills = plan.NoradIdBackfills,
-            PreferredNameUpdates = plan.PreferredNameUpdates
+            PreferredNameUpdates = plan.PreferredNameUpdates,
+            NoticeUpdates = plan.NoticeUpdates
         };
     }
 
@@ -253,6 +266,16 @@ public static class SatelliteDatabaseMerger
                 ConcatDistinctAliases(entry.AlternativeNames, currentName));
             byName.Remove(currentName);
             byName[newName] = entry;
+        }
+
+        foreach (var noticeUpdate in plan.NoticeUpdates)
+        {
+            if (!byName.TryGetValue(noticeUpdate.SatelliteName.Trim(), out var entry))
+                continue;
+
+            entry.Notices = CloneNotices(noticeUpdate.Notices);
+            if (entry.Notices is { Count: 0 })
+                entry.Notices = null;
         }
 
         return result
@@ -461,6 +484,7 @@ public static class SatelliteDatabaseMerger
             Name = source.Name,
             NoradId = source.NoradId,
             AlternativeNames = source.AlternativeNames?.ToList() ?? [],
+            Notices = CloneNotices(source.Notices),
             Modes = source.Modes.Select(CloneMode).ToList()
         };
 
@@ -474,6 +498,24 @@ public static class SatelliteDatabaseMerger
             UplinkMode = source.UplinkMode,
             Doppler = source.Doppler,
             CtcssHz = source.CtcssHz,
-            CtcssArmHz = source.CtcssArmHz
+            CtcssArmHz = source.CtcssArmHz,
+            SstvModes = source.SstvModes?.ToList()
+        };
+
+    private static List<SatelliteOperatingNotice> CloneNotices(
+        IReadOnlyList<SatelliteOperatingNotice>? notices)
+    {
+        if (notices is null || notices.Count == 0)
+            return [];
+
+        return notices.Select(CloneNotice).ToList();
+    }
+
+    private static SatelliteOperatingNotice CloneNotice(SatelliteOperatingNotice source) =>
+        new()
+        {
+            Message = source.Message,
+            DaysOfWeekUtc = source.DaysOfWeekUtc?.ToList(),
+            ModeTypes = source.ModeTypes?.ToList()
         };
 }

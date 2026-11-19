@@ -379,6 +379,14 @@
                       Spacing="6"
                       IsVisible="{Binding IsCollapsed}"
                       VerticalAlignment="Center">
+            <TextBlock Text="⚠"
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="#FFFFD27A"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding ShowSatelliteNotice}"
+                       ToolTip.Tip="{Binding SatelliteNoticeText}"
+                       AutomationProperties.Name="{Binding SatelliteNoticeText}" />
             <Ellipse Classes="doppler-lead-dot"
                      Classes.active="{Binding IsDopplerLeadActive}"
                      Classes.idle="{Binding !IsDopplerLeadActive}"
@@ -497,6 +505,28 @@
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
+
+          <Border IsVisible="{Binding ShowSatelliteNotice}"
+                  Background="#FF3A2A12"
+                  BorderBrush="#FFE09A20"
+                  BorderThickness="1"
+                  CornerRadius="6"
+                  Padding="8,6">
+            <DockPanel LastChildFill="True">
+              <TextBlock DockPanel.Dock="Left"
+                         Text="⚠"
+                         FontSize="12"
+                         Margin="0,0,6,0"
+                         VerticalAlignment="Top"
+                         Foreground="#FFFFD27A" />
+              <TextBlock Text="{Binding SatelliteNoticeText}"
+                         FontSize="12"
+                         FontWeight="SemiBold"
+                         TextWrapping="Wrap"
+                         Foreground="#FFFFD27A"
+                         AutomationProperties.Name="{Binding SatelliteNoticeText}" />
+            </DockPanel>
+          </Border>
         </StackPanel>
 
         <Grid IsVisible="{Binding HasTransponderData}"

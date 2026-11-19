@@ -55,6 +55,19 @@
           </ItemsControl>
         </StackPanel>
 
+        <StackPanel Spacing="6" IsVisible="{Binding HasNoticeUpdates}">
+          <TextBlock Text="{loc:Localize Key=DbMerge.NoticeUpdates}" FontWeight="SemiBold" />
+          <ItemsControl ItemsSource="{Binding NoticeUpdates}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:MergeNoticeUpdateItem">
+                <TextBlock Text="{Binding Label}"
+                           Margin="0,2"
+                           TextWrapping="Wrap" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
         <StackPanel Spacing="6" IsVisible="{Binding HasNewSatellites}">
           <TextBlock Text="{loc:Localize Key=DbMerge.NewSatellites}" FontWeight="SemiBold" />
           <ItemsControl ItemsSource="{Binding NewSatellites}">

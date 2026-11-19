@@ -7,11 +7,11 @@ public sealed class SatelliteDatabaseEditor : ISatelliteDatabaseEditor
     private readonly ISatelliteDatabaseService _database;
     private readonly string _bundledPath;
 
-    public SatelliteDatabaseEditor(ISatelliteDatabaseService database, string bundledPath)
+    public SatelliteDatabaseEditor(ISatelliteDatabaseService database, string bundledPath, string? userPath = null)
     {
         _database = database;
         _bundledPath = bundledPath;
-        UserPath = SatelliteDatabasePaths.UserDatabasePath;
+        UserPath = userPath ?? SatelliteDatabasePaths.UserDatabasePath;
     }
 
     public string BundledPath => _bundledPath;
@@ -52,6 +52,7 @@ public sealed class SatelliteDatabaseEditor : ISatelliteDatabaseEditor
             Name = source.Name,
             NoradId = source.NoradId,
             AlternativeNames = source.AlternativeNames?.ToList() ?? [],
+            Notices = CloneNotices(source.Notices),
             Modes = source.Modes.Select(CloneMode).ToList()
         };
 
@@ -65,6 +66,20 @@ public sealed class SatelliteDatabaseEditor : ISatelliteDatabaseEditor
             UplinkMode = source.UplinkMode,
             Doppler = source.Doppler,
             CtcssHz = source.CtcssHz,
-            CtcssArmHz = source.CtcssArmHz
+            CtcssArmHz = source.CtcssArmHz,
+            SstvModes = source.SstvModes?.ToList()
         };
+
+    private static List<SatelliteOperatingNotice>? CloneNotices(IReadOnlyList<SatelliteOperatingNotice>? notices)
+    {
+        if (notices is not { Count: > 0 })
+            return null;
+
+        return notices.Select(source => new SatelliteOperatingNotice
+        {
+            Message = source.Message,
+            DaysOfWeekUtc = source.DaysOfWeekUtc?.ToList(),
+            ModeTypes = source.ModeTypes?.ToList()
+        }).ToList();
+    }
 }

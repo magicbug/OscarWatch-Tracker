@@ -9,13 +9,15 @@ public sealed class SatelliteDatabaseMergePlan
     public required List<SatelliteDatabaseMergeConflict> Conflicts { get; init; }
     public required List<SatelliteDatabaseNoradIdBackfill> NoradIdBackfills { get; init; }
     public required List<SatelliteDatabasePreferredNameUpdate> PreferredNameUpdates { get; init; }
+    public required List<SatelliteDatabaseNoticeUpdate> NoticeUpdates { get; init; }
 
     public bool HasChanges =>
         NewSatellites.Count > 0
         || NewModes.Count > 0
         || Conflicts.Count > 0
         || NoradIdBackfills.Count > 0
-        || PreferredNameUpdates.Count > 0;
+        || PreferredNameUpdates.Count > 0
+        || NoticeUpdates.Count > 0;
 }
 
 public sealed class SatelliteDatabaseNoradIdBackfill
@@ -36,6 +38,18 @@ public sealed class SatelliteDatabasePreferredNameUpdate
     public required string NewPreferredName { get; init; }
 
     public string Key => CurrentName.Trim();
+}
+
+/// <summary>
+/// Published operator notices differ from the local entry (added, changed, or cleared).
+/// Applied automatically like NORAD backfills so schedules sync without mode conflicts.
+/// </summary>
+public sealed class SatelliteDatabaseNoticeUpdate
+{
+    public required string SatelliteName { get; init; }
+    public required List<SatelliteOperatingNotice> Notices { get; init; }
+
+    public string Key => SatelliteName.Trim();
 }
 
 public sealed class SatelliteDatabaseNewSatellite

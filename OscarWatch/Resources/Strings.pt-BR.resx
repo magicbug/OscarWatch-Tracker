@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -249,6 +249,9 @@
   </data>
   <data name="Pass.ElementAge.Automation">
     <value>TLE antigo de {0}: {1} dias</value>
+  </data>
+  <data name="Pass.Notice.Automation">
+    <value>Aviso operacional para {0}: {1}</value>
   </data>
   <data name="Pass.Schedule.RemoveTooltip">
     <value>Remover esta passagem da agenda</value>
@@ -4506,6 +4509,9 @@ Continuar?</value>
   <data name="DbMerge.PreferredNameUpdates">
     <value>Renomeações de satélites</value>
   </data>
+  <data name="DbMerge.NoticeUpdates">
+    <value>Avisos operacionais</value>
+  </data>
   <data name="DbMerge.NewModes">
     <value>Novos modos de transmissores/transponders</value>
   </data>
@@ -4548,6 +4554,9 @@ Continuar?</value>
   <data name="DbMerge.Intro.Renames">
     <value>Estes satélites têm um novo nome preferido na base publicada (por exemplo uma designação OSCAR). Clique em Aplicar selecionados para renomeá-los localmente.</value>
   </data>
+  <data name="DbMerge.Intro.Notices">
+    <value>Estes avisos operacionais serão adicionados, atualizados ou removidos na sua base de dados local. Clique em Aplicar selecionados.</value>
+  </data>
   <data name="DbMerge.Summary.Matches">
     <value>Seu banco de dados de transmissores/transponders corresponde a {0}.</value>
   </data>
@@ -4581,6 +4590,12 @@ Continuar?</value>
   <data name="DbMerge.Summary.ManyRenames">
     <value>{0} renomeações de satélites</value>
   </data>
+  <data name="DbMerge.Summary.OneNotice">
+    <value>{0} aviso operacional</value>
+  </data>
+  <data name="DbMerge.Summary.ManyNotices">
+    <value>{0} avisos operacionais</value>
+  </data>
   <data name="DbMerge.Summary.FromSuffix">
     <value> de {0}.</value>
   </data>
@@ -4598,6 +4613,15 @@ Continuar?</value>
   </data>
   <data name="DbMerge.Item.PreferredNameLine">
     <value>{0} → {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeLine">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="DbMerge.Item.NoticeMany">
+    <value>{0}: {1} avisos</value>
+  </data>
+  <data name="DbMerge.Item.NoticeCleared">
+    <value>{0}: limpar avisos operacionais</value>
   </data>
   <data name="DbAdd.Title">
     <value>Adicionar satélite</value>

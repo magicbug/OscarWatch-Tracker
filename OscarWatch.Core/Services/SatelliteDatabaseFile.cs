@@ -71,6 +71,7 @@ public static class SatelliteDatabaseFile
         entry.AlternativeNames = NormalizeAlternativeNames(entry.Name, entry.AlternativeNames);
         if (entry.AlternativeNames is { Count: 0 })
             entry.AlternativeNames = null;
+        entry.Notices = NormalizeNotices(entry.Notices);
         entry.Modes = entry.Modes
             .Where(m => !string.IsNullOrWhiteSpace(m.Type) || m.DownlinkKHz > 0 || m.UplinkKHz > 0)
             .ToList();
@@ -88,6 +89,75 @@ public static class SatelliteDatabaseFile
         }
 
         return entry;
+    }
+
+    public static List<SatelliteOperatingNotice>? NormalizeNotices(
+        IEnumerable<SatelliteOperatingNotice>? notices)
+    {
+        if (notices is null)
+            return null;
+
+        var result = new List<SatelliteOperatingNotice>();
+        foreach (var notice in notices)
+        {
+            if (string.IsNullOrWhiteSpace(notice.Message))
+                continue;
+
+            var days = NormalizeDayList(notice.DaysOfWeekUtc);
+            var modes = NormalizeStringList(notice.ModeTypes);
+            result.Add(new SatelliteOperatingNotice
+            {
+                Message = notice.Message.Trim(),
+                DaysOfWeekUtc = days,
+                ModeTypes = modes
+            });
+        }
+
+        return result.Count == 0 ? null : result;
+    }
+
+    private static List<string>? NormalizeDayList(IEnumerable<string>? days)
+    {
+        if (days is null)
+            return null;
+
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var result = new List<string>();
+        foreach (var raw in days)
+        {
+            var canonical = SatelliteNoticeEvaluator.CanonicalizeDayOfWeek(raw);
+            if (canonical is null)
+                continue;
+
+            if (!seen.Add(canonical))
+                continue;
+
+            result.Add(canonical);
+        }
+
+        return result.Count == 0 ? null : result;
+    }
+
+    private static List<string>? NormalizeStringList(IEnumerable<string>? values)
+    {
+        if (values is null)
+            return null;
+
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var result = new List<string>();
+        foreach (var raw in values)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                continue;
+
+            var trimmed = raw.Trim();
+            if (!seen.Add(trimmed))
+                continue;
+
+            result.Add(trimmed);
+        }
+
+        return result.Count == 0 ? null : result;
     }
 
     public static List<string> NormalizeAlternativeNames(string name, IEnumerable<string>? alternativeNames)
@@ -144,6 +214,21 @@ public static class SatelliteDatabaseFile
 
                 if (!seenNames.Add(trimmedAlias))
                     return $"Duplicate satellite name or alternative name: {trimmedAlias}";
+            }
+
+            foreach (var notice in entry.Notices ?? [])
+            {
+                if (string.IsNullOrWhiteSpace(notice.Message))
+                    return $"{entry.Name}: every notice needs a message.";
+
+                foreach (var day in notice.DaysOfWeekUtc ?? [])
+                {
+                    if (string.IsNullOrWhiteSpace(day))
+                        continue;
+
+                    if (!SatelliteNoticeEvaluator.TryParseDayOfWeek(day, out _))
+                        return $"{entry.Name}: unrecognised notice weekday '{day.Trim()}' (use Sunday…Saturday).";
+                }
             }
         }
 
