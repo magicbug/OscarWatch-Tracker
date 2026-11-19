@@ -7066,4 +7066,31 @@
   <data name="Cw.Worked.Grid">
     <value>已通联：你在此网格有通联记录。</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>WSJT-X UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>将日志中的每个新联络作为 WSJT-X UDP 数据报发出，供其他日志软件接收。这与 Satellite Link 无关。没有其他软件在监听时请保持关闭。</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>通过 UDP 发送新的 QSO</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>服务器</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>端口</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>常用地址是 127.0.0.1 端口 2237，也就是 WSJT-X 发送日志数据包的地址。只发送新联络。即使没有程序在监听，联络仍会保存。</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>请输入服务器地址。</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>请输入 1 到 65535 之间的端口。</value>
+  </data>
 </root>

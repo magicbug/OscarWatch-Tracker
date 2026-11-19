@@ -11,6 +11,7 @@ using OscarWatch.Core.Terminal.Uhm;
 using OscarWatch.Localization;
 using OscarWatch.Services;
 using OscarWatch.Terminal;
+using OscarWatch.Tests;
 using OscarWatch.ViewModels;
 
 namespace OscarWatch.Tests.Terminal;
@@ -166,6 +167,7 @@ public sealed class TerminalUhmHorizonTests : IDisposable
             _repository,
             new NoOpCloudlogUpload(),
             new NoOpSatelliteLink(),
+            new NoOpWsjtxUdp(),
             new EmptySnapshotProvider(),
             tracking,
             frequencies,

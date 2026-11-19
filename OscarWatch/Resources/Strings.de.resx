@@ -7070,4 +7070,31 @@ Aktuell: {1} ({2})</value>
   <data name="Cw.Worked.Grid">
     <value>Schon gearbeitet: Sie haben eine Verbindung in diesem Feld.</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>WSJT-X-UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>Jeden neuen Logbucheintrag als WSJT-X-UDP-Datagramm senden, damit andere Logprogramme ihn übernehmen können. Das ist unabhängig von Satellite Link. Ausgeschaltet lassen, wenn keine andere Anwendung zuhört.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>Neue QSOs über UDP senden</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>Server</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>Port</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>Die übliche Adresse ist 127.0.0.1 Port 2237. Dorthin sendet auch WSJT-X seine Logpakete. Es werden nur neue Verbindungen gesendet. Hört niemand zu, wird der Kontakt trotzdem gespeichert.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>Geben Sie eine Serveradresse ein.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>Geben Sie einen Port von 1 bis 65535 ein.</value>
+  </data>
 </root>

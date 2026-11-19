@@ -7070,4 +7070,31 @@ LOS: {2}
   <data name="Cw.Worked.Grid">
     <value>เคยติดต่อแล้ว: คุณมี QSO ในช่องกริดนี้</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>UDP ของ WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>ส่งทุกการติดต่อใหม่ในสมุดบันทึกเป็นดาตาแกรม UDP แบบ WSJT-X เพื่อให้โปรแกรมบันทึกอื่นรับไปได้ แยกจาก Satellite Link หากไม่มีโปรแกรมอื่นรอรับ ให้ปิดไว้</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>ส่ง QSO ใหม่ทาง UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>เซิร์ฟเวอร์</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>พอร์ต</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>ที่อยู่ปกติคือ 127.0.0.1 พอร์ต 2237 ซึ่งเป็นปลายทางแพ็กเก็ตบันทึกของ WSJT-X ส่งเฉพาะการติดต่อใหม่ หากไม่มีใครรับ การติดต่อยังถูกบันทึก</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>ป้อนที่อยู่เซิร์ฟเวอร์</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>ป้อนพอร์ตตั้งแต่ 1 ถึง 65535</value>
+  </data>
 </root>

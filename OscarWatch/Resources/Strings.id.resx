@@ -7070,4 +7070,31 @@ Terbaru: {1} ({2})</value>
   <data name="Cw.Worked.Grid">
     <value>Pernah dikontak: Anda punya QSO di kotak grid ini.</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>UDP WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>Kirim setiap kontak baru di buku log sebagai datagram UDP WSJT-X agar aplikasi log lain dapat mencatatnya. Ini terpisah dari Satellite Link. Biarkan nonaktif jika tidak ada aplikasi lain yang mendengarkan.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>Kirim QSO baru lewat UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>Server</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>Port</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>Alamat yang biasa dipakai adalah 127.0.0.1 port 2237, yaitu tujuan paket log WSJT-X. Hanya kontak baru yang dikirim. Jika tidak ada yang mendengarkan, kontak tetap tersimpan.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>Masukkan alamat server.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>Masukkan port dari 1 sampai 65535.</value>
+  </data>
 </root>

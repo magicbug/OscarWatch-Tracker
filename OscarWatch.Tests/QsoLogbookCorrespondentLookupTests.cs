@@ -262,6 +262,7 @@ public class QsoLogbookCorrespondentLookupTests
             new FakeSettings(),
             new FakeCloudlogUpload(),
             new FakeSatelliteLink(),
+            new NoOpWsjtxUdp(),
             new FakeSatelliteStatus(),
             new FakeDxcc(),
             new FakeQrz(),

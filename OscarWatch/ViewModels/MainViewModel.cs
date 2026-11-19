@@ -47,6 +47,7 @@ public partial class MainViewModel : ViewModelBase
     private readonly ICloudlogRadioSyncService _cloudlog;
     private readonly ICloudlogLookupService _cloudlogLookup;
     private readonly ISatelliteLinkBroadcastService _satelliteLink;
+    private readonly IWsjtxUdpBroadcastService _wsjtxUdp;
     private readonly ISatelliteDatabaseSyncService _transponderDatabaseSync;
     private readonly IGitHubReleaseService _githubRelease;
     private readonly IHamsAtRovesService _hamsAtRoves;
@@ -433,6 +434,7 @@ public partial class MainViewModel : ViewModelBase
         ICloudlogRadioSyncService cloudlog,
         ICloudlogLookupService cloudlogLookup,
         ISatelliteLinkBroadcastService satelliteLink,
+        IWsjtxUdpBroadcastService wsjtxUdp,
         ISatelliteDatabaseSyncService transponderDatabaseSync,
         IGitHubReleaseService githubRelease,
         IHamsAtRovesService hamsAtRoves,
@@ -464,6 +466,7 @@ public partial class MainViewModel : ViewModelBase
         _cloudlog = cloudlog;
         _cloudlogLookup = cloudlogLookup;
         _satelliteLink = satelliteLink;
+        _wsjtxUdp = wsjtxUdp;
         _cloudlog.StateChanged += OnCloudlogStateChanged;
         _satelliteLink.StateChanged += OnSatelliteLinkStateChanged;
         _transponderDatabaseSync = transponderDatabaseSync;
@@ -844,6 +847,7 @@ public partial class MainViewModel : ViewModelBase
 
         _gps.Update(_settings.Current.Gps);
         ApplySatelliteLinkSettings();
+        ApplyWsjtxUdpSettings();
         _liveTracking.Start();
         _liveTracking.RequestReload();
         Tick();
@@ -1270,6 +1274,11 @@ public partial class MainViewModel : ViewModelBase
     {
         _satelliteLink.ApplySettings(_settings.Current.SatelliteLink ?? new SatelliteLinkSettings());
         UpdateSatelliteLinkStatusDisplay();
+    }
+
+    private void ApplyWsjtxUdpSettings()
+    {
+        _wsjtxUdp.ApplySettings(_settings.Current.WsjtxUdp ?? new WsjtxUdpSettings());
     }
 
     private void OnSatelliteLinkStateChanged()
@@ -3165,6 +3174,7 @@ public partial class MainViewModel : ViewModelBase
         _gps.Disconnect();
         _gps.Update(_settings.Current.Gps);
         ApplySatelliteLinkSettings();
+        ApplyWsjtxUdpSettings();
         _cloudlog.ResetThrottle();
         if (!_settings.Current.PassRecording.Enabled && _recording.IsRecording)
             await _recording.StopAsync();

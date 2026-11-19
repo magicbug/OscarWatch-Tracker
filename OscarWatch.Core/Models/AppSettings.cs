@@ -110,6 +110,8 @@ public sealed class AppSettings
     public QrzSettings Qrz { get; set; } = new();
     public HamQthSettings HamQth { get; set; } = new();
     public SatelliteLinkSettings SatelliteLink { get; set; } = new();
+    /// <summary>Optional WSJT-X UDP feed of newly logged contacts. Edited from Logbook Settings.</summary>
+    public WsjtxUdpSettings WsjtxUdp { get; set; } = new();
     public PassRecordingSettings PassRecording { get; set; } = new();
     public Ft4Settings Ft4 { get; set; } = new();
     public OscarWatch.Core.Sstv.SstvSettings Sstv { get; set; } = new();

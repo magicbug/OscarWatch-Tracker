@@ -22,6 +22,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
     private readonly ISettingsService _settings;
     private readonly ICloudlogQsoUploadService _cloudlogUpload;
     private readonly ISatelliteLinkBroadcastService _satelliteLink;
+    private readonly IWsjtxUdpBroadcastService _wsjtxUdp;
     private readonly ISatelliteStatusReportService _satelliteStatus;
     private readonly IDxccLookupService _dxccLookup;
     private readonly IQrzCallbookService _qrz;
@@ -52,6 +53,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         ISettingsService settings,
         ICloudlogQsoUploadService cloudlogUpload,
         ISatelliteLinkBroadcastService satelliteLink,
+        IWsjtxUdpBroadcastService wsjtxUdp,
         ISatelliteStatusReportService satelliteStatus,
         IDxccLookupService dxccLookup,
         IQrzCallbookService qrz,
@@ -71,6 +73,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         _settings = settings;
         _cloudlogUpload = cloudlogUpload;
         _satelliteLink = satelliteLink;
+        _wsjtxUdp = wsjtxUdp;
         _satelliteStatus = satelliteStatus;
         _dxccLookup = dxccLookup;
         _qrz = qrz;
@@ -534,6 +537,8 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
             await _cloudlogUpload.QueueUploadIfEnabledAsync(record.Id).ConfigureAwait(true);
 
         PublishQsoEvent(record, SatelliteLinkQsoEventKind.Logged);
+        if (SelectedLogbook is { } loggedBook)
+            _wsjtxUdp.PublishLoggedQso(record, loggedBook);
         _ = TryAutoReportSatelliteStatusAsync(record, snapshot);
 
         await ReloadQsosAsync().ConfigureAwait(true);

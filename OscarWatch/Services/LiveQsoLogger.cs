@@ -19,7 +19,8 @@ public sealed record LiveQsoEntry(
 
 /// <summary>
 /// Saves a live contact to the default logbook with the focused satellite and frequencies,
-/// queues the Cloudlog upload when enabled, and publishes it on Satellite Link.
+/// queues the Cloudlog upload when enabled, publishes it on Satellite Link, and
+/// sends it on the WSJT-X UDP feed when that option is on.
 /// </summary>
 public sealed class LiveQsoLogger
 {
@@ -27,6 +28,7 @@ public sealed class LiveQsoLogger
     private readonly IQsoLogbookRepository _logbook;
     private readonly ICloudlogQsoUploadService _cloudlogUpload;
     private readonly ISatelliteLinkBroadcastService _satelliteLink;
+    private readonly IWsjtxUdpBroadcastService _wsjtxUdp;
     private readonly ILiveTrackerSnapshotProvider _snapshot;
     private readonly ILiveTrackingService _tracking;
     private readonly FrequencyOverlayViewModel _frequencies;
@@ -38,6 +40,7 @@ public sealed class LiveQsoLogger
         IQsoLogbookRepository logbook,
         ICloudlogQsoUploadService cloudlogUpload,
         ISatelliteLinkBroadcastService satelliteLink,
+        IWsjtxUdpBroadcastService wsjtxUdp,
         ILiveTrackerSnapshotProvider snapshot,
         ILiveTrackingService tracking,
         FrequencyOverlayViewModel frequencies,
@@ -48,6 +51,7 @@ public sealed class LiveQsoLogger
         _logbook = logbook;
         _cloudlogUpload = cloudlogUpload;
         _satelliteLink = satelliteLink;
+        _wsjtxUdp = wsjtxUdp;
         _snapshot = snapshot;
         _tracking = tracking;
         _frequencies = frequencies;
@@ -98,6 +102,7 @@ public sealed class LiveQsoLogger
             await _cloudlogUpload.QueueUploadIfEnabledAsync(record.Id).ConfigureAwait(false);
 
         _satelliteLink.PublishQso(record, book, SatelliteLinkQsoEventKind.Logged, _tracking.FocusedNoradId);
+        _wsjtxUdp.PublishLoggedQso(record, book);
         return record;
     }
 

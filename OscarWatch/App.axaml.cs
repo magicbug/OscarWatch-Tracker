@@ -21,6 +21,7 @@ using OscarWatch.Gps;
 using OscarWatch.Rig;
 using OscarWatch.Rotator;
 using OscarWatch.SatelliteLink;
+using OscarWatch.Wsjtx;
 using OscarWatch.Services;
 using OscarWatch.Speech;
 using OscarWatch.Theme;
@@ -72,6 +73,8 @@ public partial class App : Application
         services.AddSingleton<IGpsService, GpsService>();
         services.AddSingleton<ICloudlogRadioSyncService, CloudlogRadioSyncService>();
         services.AddSingleton<ISatelliteLinkBroadcastService, SatelliteLinkBroadcastService>();
+        services.AddSingleton<IWsjtxUdpSender, UdpWsjtxSender>();
+        services.AddSingleton<IWsjtxUdpBroadcastService, WsjtxUdpBroadcastService>();
         services.AddSingleton<ICloudlogLookupService, CloudlogLookupService>();
         services.AddSingleton<IQrzCallbookService, QrzCallbookService>();
         services.AddSingleton<IHamQthCallbookService, HamQthCallbookService>();
@@ -268,6 +271,9 @@ public partial class App : Application
             WaitForShutdownTask(
                 Services.GetService<ISatelliteLinkBroadcastService>()?.StopAsync(),
                 "Satellite Link");
+            WaitForShutdownTask(
+                Services.GetService<IWsjtxUdpBroadcastService>()?.StopAsync(),
+                "WSJT-X UDP");
 
             // Flush pending settings save on shutdown
             var settings = Services.GetService<ISettingsService>();

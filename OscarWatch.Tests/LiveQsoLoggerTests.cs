@@ -118,6 +118,7 @@ public class LiveQsoLoggerTests : IDisposable
             repository,
             new NoOpCloudlogUpload(),
             new NoOpSatelliteLink(),
+            new NoOpWsjtxUdp(),
             new EmptySnapshotProvider(),
             new StubLiveTracking(),
             frequencies,

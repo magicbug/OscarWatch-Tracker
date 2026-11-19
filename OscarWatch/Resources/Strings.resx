@@ -7065,4 +7065,31 @@ Latest: {1} ({2})</value>
   <data name="Cw.Worked.Grid">
     <value>Worked before: you have a QSO in this grid field.</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>WSJT-X UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>Send each new logbook contact as a WSJT-X UDP datagram so other logging applications can record it. This is separate from Satellite Link. Leave it off unless another application is listening.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>Send new QSOs over UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>Server</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>Port</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>The usual address is 127.0.0.1 port 2237, which is where WSJT-X sends its log packets. Only new contacts are sent. If nothing is listening, the contact is still saved.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>Enter a server address.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>Enter a port from 1 to 65535.</value>
+  </data>
 </root>

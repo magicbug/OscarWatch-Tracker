@@ -7065,4 +7065,31 @@ Mais recente: {1} ({2})</value>
   <data name="Cw.Worked.Grid">
     <value>Já trabalhado: você tem um QSO neste quadrado.</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>UDP do WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>Envia cada novo contato do livro como um datagrama UDP do WSJT-X para que outros aplicativos de registro possam anotá-lo. Isto é separado do Satellite Link. Deixe desligado se nenhum outro aplicativo estiver escutando.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>Enviar QSOs novos por UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>Servidor</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>Porta</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>O endereço usual é 127.0.0.1 porta 2237, para onde o WSJT-X envia os pacotes de log. Somente contatos novos são enviados. Se ninguém estiver escutando, o contato ainda é gravado.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>Informe um endereço de servidor.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>Informe uma porta de 1 a 65535.</value>
+  </data>
 </root>

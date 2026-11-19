@@ -28,6 +28,40 @@ public sealed class SettingsServiceTests
     }
 
     [Fact]
+    public void TryParse_round_trips_wsjtx_udp_settings()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"oscarwatch-wsjtx-{Guid.NewGuid():N}.json");
+        var service = new SettingsService(path);
+        service.Current.WsjtxUdp = new WsjtxUdpSettings
+        {
+            Enabled = true,
+            Host = "192.168.1.20",
+            Port = 2237
+        };
+
+        var json = service.SerializeCurrent();
+        Assert.True(SettingsService.TryParse(json, out var parsed, out var error));
+        Assert.Null(error);
+        Assert.True(parsed.WsjtxUdp.Enabled);
+        Assert.Equal("192.168.1.20", parsed.WsjtxUdp.Host);
+        Assert.Equal(2237, parsed.WsjtxUdp.Port);
+    }
+
+    [Fact]
+    public void TryParse_leaves_wsjtx_udp_off_when_the_setting_is_absent()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"oscarwatch-wsjtx-old-{Guid.NewGuid():N}.json");
+        var service = new SettingsService(path);
+        var json = service.SerializeCurrent().Replace("\"wsjtxUdp\"", "\"ignoredWsjtxUdp\"", StringComparison.Ordinal);
+
+        Assert.True(SettingsService.TryParse(json, out var parsed, out var error));
+        Assert.Null(error);
+        Assert.False(parsed.WsjtxUdp.Enabled);
+        Assert.Equal(WsjtxUdpSettings.DefaultHost, parsed.WsjtxUdp.Host);
+        Assert.Equal(WsjtxUdpSettings.DefaultPort, parsed.WsjtxUdp.Port);
+    }
+
+    [Fact]
     public void Load_persists_ground_station_callsign_via_saved_stations()
     {
         var path = Path.Combine(Path.GetTempPath(), $"oscarwatch-callsign-{Guid.NewGuid():N}.json");

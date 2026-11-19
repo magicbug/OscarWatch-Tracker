@@ -7066,4 +7066,31 @@
   <data name="Cw.Worked.Grid">
     <value>交信済み: このグリッドでの交信があります。</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>WSJT-X UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>ログブックの新しい交信を WSJT-X の UDP データグラムとして送り、ほかのログソフトが受け取れるようにします。Satellite Link とは別です。待っているソフトがなければオフのままにしてください。</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>新しい QSO を UDP で送る</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>サーバー</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>ポート</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>通常の宛先は 127.0.0.1 のポート 2237 で、WSJT-X がログパケットを送る先と同じです。送られるのは新しい交信だけです。受信側がいなくても交信は保存されます。</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>サーバーのアドレスを入力してください。</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>1 から 65535 のポートを入力してください。</value>
+  </data>
 </root>

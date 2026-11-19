@@ -7070,4 +7070,31 @@ LOS: {2}
   <data name="Cw.Worked.Grid">
     <value>Уже проведена связь: в этом квадрате у вас есть связь.</value>
   </data>
+  <data name="Logbook.Settings.Wsjtx.Tab">
+    <value>WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Section">
+    <value>UDP WSJT-X</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Intro">
+    <value>Отправлять каждый новый контакт журнала датаграммой UDP в формате WSJT-X, чтобы другие программы журнала могли его принять. Это отдельно от Satellite Link. Оставьте выключенным, если никто не слушает.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Enable">
+    <value>Отправлять новые QSO по UDP</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Host">
+    <value>Сервер</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Port">
+    <value>Порт</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.Note">
+    <value>Обычный адрес: 127.0.0.1, порт 2237. Туда же WSJT-X шлёт пакеты журнала. Отправляются только новые связи. Если никто не слушает, связь всё равно сохраняется.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.HostRequired">
+    <value>Введите адрес сервера.</value>
+  </data>
+  <data name="Logbook.Settings.Wsjtx.PortInvalid">
+    <value>Введите порт от 1 до 65535.</value>
+  </data>
 </root>
