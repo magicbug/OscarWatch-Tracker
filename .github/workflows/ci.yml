@@ -2,14 +2,38 @@
 # Complements publish.yml, which builds, tests, and (on a version tag) runs the
 # WA8LMF TNC benchmark before publishing. Windows compiles System.IO.Ports /
 # System.Speech paths that Linux CI does not exercise.
+#
+# paths-ignore skips a run only when every changed file is in the list. Those
+# files are not compiled, copied into the app, or read by tests. A commit that
+# also touches code, resources, the bundled satellite database, or a workflow
+# still builds and tests. Workflow files are not ignored.
+#
+# The SSTV picture tests take about six minutes. Build and test still compiles
+# them, then runs every other test. The SSTV job executes them only when the
+# push touches the SSTV tree or this workflow. A release tag still runs the
+# full suite from publish.yml.
 
 name: CI
 
 on:
   pull_request:
     branches: [main]
+    paths-ignore: &non-build
+      - "supporters.md"
+      - "README.md"
+      - "CREDITS.md"
+      - "LICENSE.md"
+      - "TODO.md"
+      - "OscarWatch-Tracker.code-workspace"
+      - ".github/RELEASE_NOTES.md"
+      - ".github/FUNDING.yml"
+      - ".github/ISSUE_TEMPLATE/**"
+      - "docs/**"
+      - "documents/**"
+      - "screenshots/**"
   push:
     branches: [main]
+    paths-ignore: *non-build
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,4 +63,42 @@ jobs:
 
       - run: dotnet build OscarWatch.slnx -c Release
 
-      - run: dotnet test OscarWatch.slnx -c Release --no-build
+      - run: dotnet test OscarWatch.slnx -c Release --no-build --filter "FullyQualifiedName!~OscarWatch.Tests.Sstv"
+
+  sstv:
+    name: SSTV tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          elif [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "No previous commit on this branch. Running SSTV tests."
+            exit 0
+          else
+            base="${{ github.event.before }}"
+          fi
+          pattern='^(OscarWatch\.Core/Sstv/|OscarWatch/Sstv/|OscarWatch/ViewModels/Sstv|OscarWatch/Views/Sstv|OscarWatch/Controls/SstvSpectrumControl\.cs|OscarWatch\.Core/Services/SstvPictureShareService\.cs|OscarWatch\.Tests/Sstv/|\.github/workflows/ci\.yml)'
+          if git diff --name-only "$base" "${{ github.sha }}" | grep -Eq "$pattern"; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "SSTV paths changed. Running SSTV tests."
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No SSTV paths changed. Skipping SSTV tests."
+          fi
+
+      - uses: actions/setup-dotnet@v4
+        if: steps.scope.outputs.changed == 'true'
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - if: steps.scope.outputs.changed == 'true'
+        run: dotnet test OscarWatch.slnx -c Release --filter "FullyQualifiedName~OscarWatch.Tests.Sstv"
