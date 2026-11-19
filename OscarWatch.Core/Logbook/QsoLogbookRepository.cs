@@ -12,21 +12,21 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
 
     private const string LogbookSelectColumns = """
         id, name, created_utc, started_utc, ended_utc, my_callsign, my_grid_square, notes,
-        cloudlog_auto_upload, cloudlog_station_profile_id
+        cloudlog_auto_upload, cloudlog_station_profile_id, pota_ref, sota_ref, wwff_ref
         """;
 
     private const string QsoSelectColumns = """
         id, logbook_id, qso_utc, call, rst_sent, rst_rcvd, grid_square, name, comment,
         sat_name, mode, mode_rx, freq_hz, freq_rx_hz, band, band_rx, prop_mode, created_utc,
         cloudlog_upload_status, cloudlog_upload_attempts, cloudlog_upload_last_error, cloudlog_upload_sent_utc,
-        dxcc, country
+        dxcc, country, pota_ref, sota_ref, wwff_ref
         """;
 
     private const string QsoSelectColumnsFromAlias = """
         q.id, q.logbook_id, q.qso_utc, q.call, q.rst_sent, q.rst_rcvd, q.grid_square, q.name, q.comment,
         q.sat_name, q.mode, q.mode_rx, q.freq_hz, q.freq_rx_hz, q.band, q.band_rx, q.prop_mode, q.created_utc,
         q.cloudlog_upload_status, q.cloudlog_upload_attempts, q.cloudlog_upload_last_error, q.cloudlog_upload_sent_utc,
-        q.dxcc, q.country
+        q.dxcc, q.country, q.pota_ref, q.sota_ref, q.wwff_ref
         """;
 
     private readonly SemaphoreSlim _gate = new(1, 1);
@@ -143,9 +143,12 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
         var createdUtc = DateTime.UtcNow;
         await using var connection = OpenConnection();
         await using var command = connection.CreateCommand();
+        var (pota, sota, wwff) = StoredActivationRefs(request.PotaRef, request.SotaRef, request.WwffRef);
         command.CommandText = """
-            INSERT INTO logbooks (name, created_utc, started_utc, ended_utc, my_callsign, my_grid_square, notes)
-            VALUES ($name, $createdUtc, $startedUtc, $endedUtc, $myCallsign, $myGridSquare, $notes);
+            INSERT INTO logbooks (name, created_utc, started_utc, ended_utc, my_callsign, my_grid_square, notes,
+              pota_ref, sota_ref, wwff_ref)
+            VALUES ($name, $createdUtc, $startedUtc, $endedUtc, $myCallsign, $myGridSquare, $notes,
+              $potaRef, $sotaRef, $wwffRef);
             SELECT last_insert_rowid();
             """;
         command.Parameters.AddWithValue("$name", request.Name.Trim());
@@ -155,6 +158,9 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
         command.Parameters.AddWithValue("$myCallsign", MaidenheadLocator.NormalizeCallsign(request.MyCallsign));
         command.Parameters.AddWithValue("$myGridSquare", MaidenheadLocator.NormalizeGrids(request.MyGridSquare));
         command.Parameters.AddWithValue("$notes", request.Notes.Trim());
+        command.Parameters.AddWithValue("$potaRef", pota);
+        command.Parameters.AddWithValue("$sotaRef", sota);
+        command.Parameters.AddWithValue("$wwffRef", wwff);
 
         var id = (long)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? 0L);
         return new QsoLogbook
@@ -166,7 +172,10 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             EndedUtc = request.EndedUtc,
             MyCallsign = MaidenheadLocator.NormalizeCallsign(request.MyCallsign),
             MyGridSquare = MaidenheadLocator.NormalizeGrids(request.MyGridSquare),
-            Notes = request.Notes.Trim()
+            Notes = request.Notes.Trim(),
+            PotaRef = pota,
+            SotaRef = sota,
+            WwffRef = wwff
         };
     }
 
@@ -179,15 +188,20 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
 
         await using var connection = OpenConnection();
         await using var command = connection.CreateCommand();
+        var (pota, sota, wwff) = StoredActivationRefs(request.PotaRef, request.SotaRef, request.WwffRef);
         command.CommandText = """
             UPDATE logbooks
-            SET name = $name, my_callsign = $myCallsign, my_grid_square = $myGridSquare
+            SET name = $name, my_callsign = $myCallsign, my_grid_square = $myGridSquare,
+              pota_ref = $potaRef, sota_ref = $sotaRef, wwff_ref = $wwffRef
             WHERE id = $id
             """;
         command.Parameters.AddWithValue("$id", request.Id);
         command.Parameters.AddWithValue("$name", request.Name.Trim());
         command.Parameters.AddWithValue("$myCallsign", MaidenheadLocator.NormalizeCallsign(request.MyCallsign));
         command.Parameters.AddWithValue("$myGridSquare", MaidenheadLocator.NormalizeGrids(request.MyGridSquare));
+        command.Parameters.AddWithValue("$potaRef", pota);
+        command.Parameters.AddWithValue("$sotaRef", sota);
+        command.Parameters.AddWithValue("$wwffRef", wwff);
         var rows = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         if (rows == 0)
             throw new InvalidOperationException($"Logbook {request.Id} was not found.");
@@ -408,13 +422,17 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             INSERT INTO qsos (
               logbook_id, qso_utc, call, rst_sent, rst_rcvd, grid_square, name, comment,
               sat_name, mode, mode_rx, freq_hz, freq_rx_hz, band, band_rx, prop_mode, created_utc,
-              cloudlog_upload_status, dxcc, country)
+              cloudlog_upload_status, dxcc, country, pota_ref, sota_ref, wwff_ref)
             VALUES (
               $logbookId, $qsoUtc, $call, $rstSent, $rstRcvd, $gridSquare, $name, $comment,
               $satName, $mode, $modeRx, $freqHz, $freqRxHz, $band, $bandRx, $propMode, $createdUtc,
-              $cloudlogUploadStatus, $dxcc, $country);
+              $cloudlogUploadStatus, $dxcc, $country, $potaRef, $sotaRef, $wwffRef);
             SELECT last_insert_rowid();
             """;
+        var (pota, sota, wwff) = StoredActivationRefs(request.PotaRef, request.SotaRef, request.WwffRef);
+        command.Parameters.AddWithValue("$potaRef", pota);
+        command.Parameters.AddWithValue("$sotaRef", sota);
+        command.Parameters.AddWithValue("$wwffRef", wwff);
         command.Parameters.AddWithValue("$logbookId", request.LogbookId);
         command.Parameters.AddWithValue("$qsoUtc", FormatUtc(qsoUtc));
         command.Parameters.AddWithValue("$call", call);
@@ -458,6 +476,9 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             PropMode = CleanPropMode(request.PropMode),
             Dxcc = request.Dxcc,
             Country = Clean(request.Country),
+            PotaRef = pota,
+            SotaRef = sota,
+            WwffRef = wwff,
             CreatedUtc = createdUtc,
             CloudlogUploadStatus = request.CloudlogUploadStatus
         };
@@ -494,10 +515,17 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
               band_rx = $bandRx,
               prop_mode = $propMode,
               dxcc = $dxcc,
-              country = $country
+              country = $country,
+              pota_ref = $potaRef,
+              sota_ref = $sotaRef,
+              wwff_ref = $wwffRef
             WHERE id = $id
             """;
         command.Parameters.AddWithValue("$id", request.Id);
+        var (pota, sota, wwff) = StoredActivationRefs(request.PotaRef, request.SotaRef, request.WwffRef);
+        command.Parameters.AddWithValue("$potaRef", pota);
+        command.Parameters.AddWithValue("$sotaRef", sota);
+        command.Parameters.AddWithValue("$wwffRef", wwff);
         command.Parameters.AddWithValue("$qsoUtc", FormatUtc(qsoUtc));
         command.Parameters.AddWithValue("$call", MaidenheadLocator.NormalizeCallsign(request.Call));
         command.Parameters.AddWithValue("$rstSent", Clean(request.RstSent));
@@ -766,7 +794,10 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
                 MyGridSquare = reader.GetString(6),
                 Notes = reader.GetString(7),
                 CloudlogAutoUpload = !reader.IsDBNull(8) && reader.GetInt64(8) != 0,
-                CloudlogStationProfileId = reader.IsDBNull(9) ? null : reader.GetInt32(9)
+                CloudlogStationProfileId = reader.IsDBNull(9) ? null : reader.GetInt32(9),
+                PotaRef = reader.IsDBNull(10) ? "" : reader.GetString(10),
+                SotaRef = reader.IsDBNull(11) ? "" : reader.GetString(11),
+                WwffRef = reader.IsDBNull(12) ? "" : reader.GetString(12)
             });
         }
 
@@ -807,12 +838,21 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
                 CloudlogUploadLastError = reader.IsDBNull(20) ? "" : reader.GetString(20),
                 CloudlogUploadSentUtc = ParseNullableUtc(reader.IsDBNull(21) ? null : reader.GetString(21)),
                 Dxcc = reader.FieldCount > 22 && !reader.IsDBNull(22) ? reader.GetInt32(22) : null,
-                Country = reader.FieldCount > 23 && !reader.IsDBNull(23) ? reader.GetString(23) : ""
+                Country = reader.FieldCount > 23 && !reader.IsDBNull(23) ? reader.GetString(23) : "",
+                PotaRef = reader.FieldCount > 24 && !reader.IsDBNull(24) ? reader.GetString(24) : "",
+                SotaRef = reader.FieldCount > 25 && !reader.IsDBNull(25) ? reader.GetString(25) : "",
+                WwffRef = reader.FieldCount > 26 && !reader.IsDBNull(26) ? reader.GetString(26) : ""
             });
         }
 
         return list;
     }
+
+    /// <summary>Normalised POTA, SOTA, and WWFF references that pass format checks; anything else is stored as empty.</summary>
+    private static (string Pota, string Sota, string Wwff) StoredActivationRefs(string? pota, string? sota, string? wwff) =>
+        (ActivationReferences.ToStored(ActivationProgramme.Pota, pota),
+         ActivationReferences.ToStored(ActivationProgramme.Sota, sota),
+         ActivationReferences.ToStored(ActivationProgramme.Wwff, wwff));
 
     private static string FormatUtc(DateTime utc) =>
         utc.ToUniversalTime().ToString("O", System.Globalization.CultureInfo.InvariantCulture);
@@ -857,6 +897,12 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
         await TryAddColumnAsync(connection, "qsos", "cloudlog_upload_sent_utc", "TEXT", cancellationToken).ConfigureAwait(false);
         await TryAddColumnAsync(connection, "qsos", "dxcc", "INTEGER", cancellationToken).ConfigureAwait(false);
         await TryAddColumnAsync(connection, "qsos", "country", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
+        await TryAddColumnAsync(connection, "logbooks", "pota_ref", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
+        await TryAddColumnAsync(connection, "logbooks", "sota_ref", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
+        await TryAddColumnAsync(connection, "logbooks", "wwff_ref", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
+        await TryAddColumnAsync(connection, "qsos", "pota_ref", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
+        await TryAddColumnAsync(connection, "qsos", "sota_ref", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
+        await TryAddColumnAsync(connection, "qsos", "wwff_ref", "TEXT NOT NULL DEFAULT ''", cancellationToken).ConfigureAwait(false);
         await TryCreateIndexAsync(
             connection,
             "idx_qsos_logbook_dxcc",

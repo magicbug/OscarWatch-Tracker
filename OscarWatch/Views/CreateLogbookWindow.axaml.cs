@@ -18,6 +18,8 @@ public partial class CreateLogbookWindow : Window
     {
         Opened -= OnOpened;
         await Dispatcher.UIThread.InvokeAsync(() => NameTextBox?.Focus());
+        if (DataContext is CreateLogbookViewModel vm)
+            _ = vm.LoadDirectoriesAsync();
     }
 
     private void OnCreateClick(object? sender, RoutedEventArgs e)

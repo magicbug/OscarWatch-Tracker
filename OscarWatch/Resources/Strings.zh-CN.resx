@@ -1821,6 +1821,63 @@
   <data name="Logbook.Error.NameRequired">
     <value>请输入日志名称。</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>POTA 公园</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>一个公园，或用逗号分隔多个。不进行公园活动时请留空。</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>SOTA 山峰</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>不进行山峰活动时请留空。</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>WWFF 参考编号</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>不进行 WWFF 活动时请留空。</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>POTA 参考编号无效。请使用公园编号，例如 US-1356，多个请用逗号分隔。</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>SOTA 参考编号无效。请使用山峰编号，例如 W3/SV-001。</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>WWFF 参考编号无效。请使用参考编号，例如 KFF-4655。</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>正在加载 {0} 列表...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>{0} 列表暂不可用，仍可手动输入参考编号。</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>{0} 列表：{1} 条，更新于 {2}。</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>{0} 列表：使用已保存的副本，共 {1} 条，最后更新于 {2}。最近一次下载失败。</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>在此日志中找到之前的 QSO。</value>
   </data>

@@ -1828,6 +1828,63 @@ Lanjutkan?</value>
   <data name="Logbook.Error.NameRequired">
     <value>Masukkan nama logbook.</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>Taman POTA</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>Satu taman, atau beberapa dipisahkan koma. Kosongkan jika tidak mengaktifkan taman.</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>Puncak SOTA</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>Kosongkan jika tidak mengaktifkan puncak.</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>Referensi WWFF</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>Kosongkan jika tidak mengaktifkan referensi WWFF.</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>Referensi POTA tidak valid. Gunakan taman seperti US-1356, atau beberapa dipisahkan koma.</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>Referensi SOTA tidak valid. Gunakan puncak seperti W3/SV-001.</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>Referensi WWFF tidak valid. Gunakan referensi seperti KFF-4655.</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>Memuat daftar {0}...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>Daftar {0} belum tersedia. Anda tetap bisa mengetik referensinya.</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>Daftar {0}: {1} entri, diperbarui {2}.</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>Daftar {0}: {1} entri dari salinan tersimpan, terakhir diperbarui {2}. Unduhan terakhir gagal.</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>QSO sebelumnya ditemukan di logbook ini.</value>
   </data>

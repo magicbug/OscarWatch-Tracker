@@ -1828,6 +1828,63 @@ LOS: {2}
   <data name="Logbook.Error.NameRequired">
     <value>Введите имя журнала.</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>Парк POTA</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>Один парк или несколько через запятую. Оставьте пустым, если парк не активируется.</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>Вершина SOTA</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>Оставьте пустым, если вершина не активируется.</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>Ссылка WWFF</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>Оставьте пустым, если ссылка WWFF не активируется.</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>Ссылка POTA недействительна. Укажите парк, например US-1356, или несколько через запятую.</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>Ссылка SOTA недействительна. Укажите вершину, например W3/SV-001.</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>Ссылка WWFF недействительна. Укажите ссылку, например KFF-4655.</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>Загрузка списка {0}...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>Список {0} пока недоступен. Ссылку можно ввести вручную.</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>Список {0}: записей {1}, обновлён {2}.</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>Список {0}: записей {1} из сохранённой копии, последнее обновление {2}. Последняя загрузка не удалась.</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>В этом журнале уже есть QSO.</value>
   </data>

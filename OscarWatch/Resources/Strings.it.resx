@@ -1828,6 +1828,63 @@ Continuare?</value>
   <data name="Logbook.Error.NameRequired">
     <value>Inserisci un nome per il logbook.</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>Parco POTA</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>Un parco, o più parchi separati da virgole. Lasciare vuoto se non si attiva un parco.</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>Vetta SOTA</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>Lasciare vuoto se non si attiva una vetta.</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>Riferimento WWFF</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>Lasciare vuoto se non si attiva un riferimento WWFF.</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>Il riferimento POTA non è valido. Usare un parco come US-1356, o più parchi separati da virgole.</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>Il riferimento SOTA non è valido. Usare una vetta come W3/SV-001.</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>Il riferimento WWFF non è valido. Usare un riferimento come KFF-4655.</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>Caricamento dell'elenco {0}...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>L'elenco {0} non è ancora disponibile. È comunque possibile digitare il riferimento.</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>Elenco {0}: {1} voci, aggiornato il {2}.</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>Elenco {0}: {1} voci dalla copia salvata, ultimo aggiornamento il {2}. L'ultimo download non è riuscito.</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>Trovato un QSO precedente in questo logbook.</value>
   </data>

@@ -1828,6 +1828,63 @@ LOS: {2}
   <data name="Logbook.Error.NameRequired">
     <value>กรอกชื่อล็อกบุ๊ก</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>พาร์ค POTA</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>พาร์คเดียว หรือหลายพาร์คคั่นด้วยจุลภาค เว้นว่างไว้หากไม่ได้ออกอากาศจากพาร์ค</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>ยอดเขา SOTA</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>เว้นว่างไว้หากไม่ได้ออกอากาศจากยอดเขา</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>อ้างอิง WWFF</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>เว้นว่างไว้หากไม่ได้ออกอากาศจากพื้นที่ WWFF</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>รหัสอ้างอิง POTA ไม่ถูกต้อง ใช้พาร์ค เช่น US-1356 หรือหลายพาร์คคั่นด้วยจุลภาค</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>รหัสอ้างอิง SOTA ไม่ถูกต้อง ใช้ยอดเขา เช่น W3/SV-001</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>รหัสอ้างอิง WWFF ไม่ถูกต้อง ใช้อ้างอิง เช่น KFF-4655</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>กำลังโหลดรายการ {0}...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>ยังไม่มีรายการ {0} คุณยังพิมพ์รหัสอ้างอิงได้</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>รายการ {0}: {1} รายการ อัปเดตเมื่อ {2}</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>รายการ {0}: {1} รายการจากสำเนาที่บันทึกไว้ อัปเดตล่าสุดเมื่อ {2} การดาวน์โหลดล่าสุดล้มเหลว</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>พบ QSO ก่อนหน้าในล็อกบุ๊กนี้</value>
   </data>

@@ -12,6 +12,12 @@ public sealed class QsoLogbook
     public string Notes { get; init; } = "";
     public bool CloudlogAutoUpload { get; init; }
     public int? CloudlogStationProfileId { get; init; }
+    /// <summary>Operator's POTA park reference or comma-separated list, empty when not set.</summary>
+    public string PotaRef { get; init; } = "";
+    /// <summary>Operator's SOTA summit reference, empty when not set.</summary>
+    public string SotaRef { get; init; } = "";
+    /// <summary>Operator's WWFF reference, empty when not set.</summary>
+    public string WwffRef { get; init; } = "";
 }
 
 public sealed class QsoLogbookCreateRequest
@@ -22,6 +28,9 @@ public sealed class QsoLogbookCreateRequest
     public DateTime? StartedUtc { get; init; }
     public DateTime? EndedUtc { get; init; }
     public string Notes { get; init; } = "";
+    public string PotaRef { get; init; } = "";
+    public string SotaRef { get; init; } = "";
+    public string WwffRef { get; init; } = "";
 }
 
 public sealed class QsoLogbookUpdateRequest
@@ -30,6 +39,9 @@ public sealed class QsoLogbookUpdateRequest
     public required string Name { get; init; }
     public string MyCallsign { get; init; } = "";
     public string MyGridSquare { get; init; } = "";
+    public string PotaRef { get; init; } = "";
+    public string SotaRef { get; init; } = "";
+    public string WwffRef { get; init; } = "";
 }
 
 public sealed class QsoLogbookCloudlogSettingsRequest
@@ -46,4 +58,7 @@ public sealed class LogbookDetailsDialogResult
     public required string Name { get; init; }
     public string MyCallsign { get; init; } = "";
     public string MyGridSquare { get; init; } = "";
+    public string PotaRef { get; init; } = "";
+    public string SotaRef { get; init; } = "";
+    public string WwffRef { get; init; } = "";
 }

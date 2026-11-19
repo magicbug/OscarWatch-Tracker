@@ -56,6 +56,8 @@ public static class AdifExporter
             AppendField(sb, "STATION_CALLSIGN", MaidenheadLocator.NormalizeCallsign(logbook.MyCallsign));
         if (!string.IsNullOrWhiteSpace(logbook.MyGridSquare))
             AppendField(sb, "MY_GRIDSQUARE", MaidenheadLocator.NormalizeGrids(logbook.MyGridSquare));
+        if (!forLotw)
+            AppendActivationRefs(sb, qso);
 
         if (!string.IsNullOrWhiteSpace(qso.SatName))
         {
@@ -89,6 +91,29 @@ public static class AdifExporter
             AppendField(sb, "COUNTRY", qso.Country.Trim());
 
         sb.AppendLine("<EOR>");
+    }
+
+    /// <summary>
+    /// Writes the operator's own POTA, SOTA, and WWFF references. A value that fails the format check is
+    /// skipped rather than written. A WWFF reference also sets MY_SIG and MY_SIG_INFO, as WWFF asks for.
+    /// </summary>
+    private static void AppendActivationRefs(StringBuilder sb, QsoRecord qso)
+    {
+        var pota = ActivationReferences.ToStored(ActivationProgramme.Pota, qso.PotaRef);
+        if (pota.Length > 0)
+            AppendField(sb, ActivationReferences.AdifRefTag(ActivationProgramme.Pota), pota);
+
+        var sota = ActivationReferences.ToStored(ActivationProgramme.Sota, qso.SotaRef);
+        if (sota.Length > 0)
+            AppendField(sb, ActivationReferences.AdifRefTag(ActivationProgramme.Sota), sota);
+
+        var wwff = ActivationReferences.ToStored(ActivationProgramme.Wwff, qso.WwffRef);
+        if (wwff.Length > 0)
+        {
+            AppendField(sb, ActivationReferences.AdifRefTag(ActivationProgramme.Wwff), wwff);
+            AppendField(sb, "MY_SIG", "WWFF");
+            AppendField(sb, "MY_SIG_INFO", wwff);
+        }
     }
 
     private static string FormatFreqMhz(long hz) =>

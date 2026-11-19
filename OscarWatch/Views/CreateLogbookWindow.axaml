@@ -69,6 +69,55 @@
                  Text="{Binding MyGridSquare, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  MaxLength="40" />
       </StackPanel>
+      <StackPanel Spacing="4">
+        <TextBlock Text="{loc:Localize Key=Logbook.PotaRef}"
+                   FontSize="12"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <ctrl:ActivationReferenceBox Text="{Binding PotaRef, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Suggestions="{Binding PotaSuggestions}"
+                                     AllowList="True"
+                                     Watermark="{loc:Localize Key=Logbook.PotaRef.Watermark}" />
+        <TextBlock Text="{loc:Localize Key=Logbook.PotaRef.Hint}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <TextBlock Text="{Binding PotaListStatus}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
+      <StackPanel Spacing="4">
+        <TextBlock Text="{loc:Localize Key=Logbook.SotaRef}"
+                   FontSize="12"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <ctrl:ActivationReferenceBox Text="{Binding SotaRef, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Suggestions="{Binding SotaSuggestions}"
+                                     Watermark="{loc:Localize Key=Logbook.SotaRef.Watermark}" />
+        <TextBlock Text="{loc:Localize Key=Logbook.SotaRef.Hint}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <TextBlock Text="{Binding SotaListStatus}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
+      <StackPanel Spacing="4">
+        <TextBlock Text="{loc:Localize Key=Logbook.WwffRef}"
+                   FontSize="12"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <ctrl:ActivationReferenceBox Text="{Binding WwffRef, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Suggestions="{Binding WwffSuggestions}"
+                                     Watermark="{loc:Localize Key=Logbook.WwffRef.Watermark}" />
+        <TextBlock Text="{loc:Localize Key=Logbook.WwffRef.Hint}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <TextBlock Text="{Binding WwffListStatus}"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      </StackPanel>
     </StackPanel>
   </DockPanel>
 </Window>

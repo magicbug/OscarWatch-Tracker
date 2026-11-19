@@ -3297,6 +3297,63 @@
   <data name="Logbook.Error.NameRequired">
     <value>ログブック名を入力してください。</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>POTA パーク</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>1 か所、またはカンマで区切って複数指定できます。パークを運用しない場合は空欄のままにしてください。</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>SOTA サミット</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>サミットを運用しない場合は空欄のままにしてください。</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>WWFF リファレンス</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>WWFF リファレンスを運用しない場合は空欄のままにしてください。</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>POTA リファレンスが正しくありません。US-1356 のようなパークを指定するか、カンマで区切って複数指定してください。</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>SOTA リファレンスが正しくありません。W3/SV-001 のようなサミットを指定してください。</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>WWFF リファレンスが正しくありません。KFF-4655 のようなリファレンスを指定してください。</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>{0} の一覧を読み込み中...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>{0} の一覧はまだ利用できません。リファレンスは入力できます。</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>{0} の一覧: {1} 件、更新日 {2}。</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>{0} の一覧: 保存済みのコピー {1} 件、最終更新 {2}。最新のダウンロードは失敗しました。</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>このログブックに以前のQSOがあります。</value>
   </data>

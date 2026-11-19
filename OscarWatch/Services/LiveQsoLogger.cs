@@ -88,6 +88,9 @@ public sealed class LiveQsoLogger
             Comment = entry.Comment,
             Dxcc = dxcc,
             Country = country,
+            PotaRef = book.PotaRef,
+            SotaRef = book.SotaRef,
+            WwffRef = book.WwffRef,
             CloudlogUploadStatus = cloudlogUpload
         }).ConfigureAwait(false);
 

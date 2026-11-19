@@ -1821,6 +1821,63 @@ Continuar?</value>
   <data name="Logbook.Error.NameRequired">
     <value>Informe um nome para o livro.</value>
   </data>
+  <data name="Logbook.PotaRef">
+    <value>Parque POTA</value>
+  </data>
+  <data name="Logbook.PotaRef.Watermark">
+    <value>US-1356</value>
+  </data>
+  <data name="Logbook.PotaRef.Hint">
+    <value>Um parque, ou vários separados por vírgula. Deixe em branco se não estiver ativando um parque.</value>
+  </data>
+  <data name="Logbook.SotaRef">
+    <value>Cume SOTA</value>
+  </data>
+  <data name="Logbook.SotaRef.Watermark">
+    <value>W3/SV-001</value>
+  </data>
+  <data name="Logbook.SotaRef.Hint">
+    <value>Deixe em branco se não estiver ativando um cume.</value>
+  </data>
+  <data name="Logbook.WwffRef">
+    <value>Referência WWFF</value>
+  </data>
+  <data name="Logbook.WwffRef.Watermark">
+    <value>KFF-4655</value>
+  </data>
+  <data name="Logbook.WwffRef.Hint">
+    <value>Deixe em branco se não estiver ativando uma referência WWFF.</value>
+  </data>
+  <data name="Logbook.Error.PotaRef">
+    <value>A referência POTA não é válida. Use um parque como US-1356, ou vários separados por vírgula.</value>
+  </data>
+  <data name="Logbook.Error.SotaRef">
+    <value>A referência SOTA não é válida. Use um cume como W3/SV-001.</value>
+  </data>
+  <data name="Logbook.Error.WwffRef">
+    <value>A referência WWFF não é válida. Use uma referência como KFF-4655.</value>
+  </data>
+  <data name="Logbook.Refs.Loading">
+    <value>Carregando a lista {0}...</value>
+  </data>
+  <data name="Logbook.Refs.Unavailable">
+    <value>A lista {0} ainda não está disponível. Você ainda pode digitar a referência.</value>
+  </data>
+  <data name="Logbook.Refs.Ready">
+    <value>Lista {0}: {1} entradas, atualizada em {2}.</value>
+  </data>
+  <data name="Logbook.Refs.SavedCopy">
+    <value>Lista {0}: {1} entradas da cópia salva, última atualização em {2}. O último download falhou.</value>
+  </data>
+  <data name="Logbook.Refs.Pota.Short">
+    <value>POTA</value>
+  </data>
+  <data name="Logbook.Refs.Sota.Short">
+    <value>SOTA</value>
+  </data>
+  <data name="Logbook.Refs.Wwff.Short">
+    <value>WWFF</value>
+  </data>
   <data name="Logbook.CallHint.Previous">
     <value>QSO anterior encontrado neste livro.</value>
   </data>

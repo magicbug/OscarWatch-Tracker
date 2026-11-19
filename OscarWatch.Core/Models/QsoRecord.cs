@@ -28,6 +28,12 @@ public sealed class QsoRecord
     public int CloudlogUploadAttempts { get; init; }
     public string CloudlogUploadLastError { get; init; } = "";
     public DateTime? CloudlogUploadSentUtc { get; init; }
+    /// <summary>Operator's POTA reference or list copied onto this QSO, empty when not set.</summary>
+    public string PotaRef { get; init; } = "";
+    /// <summary>Operator's SOTA reference copied onto this QSO, empty when not set.</summary>
+    public string SotaRef { get; init; } = "";
+    /// <summary>Operator's WWFF reference copied onto this QSO, empty when not set.</summary>
+    public string WwffRef { get; init; } = "";
 }
 
 public sealed class QsoRecordCreateRequest
@@ -51,6 +57,9 @@ public sealed class QsoRecordCreateRequest
     public int? Dxcc { get; init; }
     public string Country { get; init; } = "";
     public CloudlogUploadStatus CloudlogUploadStatus { get; init; } = CloudlogUploadStatus.None;
+    public string PotaRef { get; init; } = "";
+    public string SotaRef { get; init; } = "";
+    public string WwffRef { get; init; } = "";
 }
 
 public sealed class QsoRecordUpdateRequest
@@ -73,4 +82,7 @@ public sealed class QsoRecordUpdateRequest
     public string PropMode { get; init; } = "SAT";
     public int? Dxcc { get; init; }
     public string Country { get; init; } = "";
+    public string PotaRef { get; init; } = "";
+    public string SotaRef { get; init; } = "";
+    public string WwffRef { get; init; } = "";
 }

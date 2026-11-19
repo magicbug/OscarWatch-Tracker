@@ -958,3 +958,77 @@ public class QsoLogbookSelectedExportTests
             use24Hour: true,
             LocalizationService.Instance);
 }
+
+public class ActivationReferenceAdifTests
+{
+    [Fact]
+    public void ExportLogbook_writes_pota_sota_and_wwff_references_with_wwff_signature()
+    {
+        var adif = AdifExporter.ExportLogbook(Logbook(), [Qso(pota: "US-1356,US-4516", sota: "W3/SV-001", wwff: "KFF-4655")]);
+
+        Assert.Contains("<MY_POTA_REF:15>US-1356,US-4516", adif, StringComparison.Ordinal);
+        Assert.Contains("<MY_SOTA_REF:9>W3/SV-001", adif, StringComparison.Ordinal);
+        Assert.Contains("<MY_WWFF_REF:8>KFF-4655", adif, StringComparison.Ordinal);
+        Assert.Contains("<MY_SIG:4>WWFF", adif, StringComparison.Ordinal);
+        Assert.Contains("<MY_SIG_INFO:8>KFF-4655", adif, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ExportLogbook_writes_no_signature_for_pota_only()
+    {
+        var adif = AdifExporter.ExportLogbook(Logbook(), [Qso(pota: "US-1356")]);
+
+        Assert.Contains("<MY_POTA_REF:7>US-1356", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_SIG", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_WWFF_REF", adif, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ExportLogbook_omits_every_reference_for_lotw()
+    {
+        var adif = AdifExporter.ExportLogbook(
+            Logbook(),
+            [Qso(pota: "US-1356", sota: "W3/SV-001", wwff: "KFF-4655")],
+            forLotw: true);
+
+        Assert.DoesNotContain("MY_POTA_REF", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_SOTA_REF", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_WWFF_REF", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_SIG", adif, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ExportLogbook_skips_a_reference_that_fails_the_format_check()
+    {
+        var adif = AdifExporter.ExportLogbook(Logbook(), [Qso(pota: "US1356", wwff: "KFF4655")]);
+
+        Assert.DoesNotContain("MY_POTA_REF", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_WWFF_REF", adif, StringComparison.Ordinal);
+        Assert.DoesNotContain("MY_SIG", adif, StringComparison.Ordinal);
+    }
+
+    private static QsoLogbook Logbook() => new()
+    {
+        Id = 1,
+        Name = "Portable",
+        CreatedUtc = DateTime.UtcNow,
+        MyCallsign = "MM9SQL",
+        MyGridSquare = "IO87IP"
+    };
+
+    private static QsoRecord Qso(string pota = "", string sota = "", string wwff = "") => new()
+    {
+        Id = 1,
+        LogbookId = 1,
+        QsoUtc = new DateTime(2026, 11, 19, 10, 0, 0, DateTimeKind.Utc),
+        Call = "G0ABC",
+        Mode = "SSB",
+        ModeRx = "SSB",
+        Band = "20m",
+        FreqHz = 14_250_000,
+        CreatedUtc = DateTime.UtcNow,
+        PotaRef = pota,
+        SotaRef = sota,
+        WwffRef = wwff
+    };
+}

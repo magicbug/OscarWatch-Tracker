@@ -322,6 +322,56 @@
                     MinWidth="88"
                     Click="OnCancelEditClick" />
           </Grid>
+          <Border Background="{DynamicResource ThemeInsetBackgroundBrush}"
+                  CornerRadius="4"
+                  Padding="8,6"
+                  HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{loc:Localize Key=Logbook.Refs.Pota.Short}"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           MinWidth="40"
+                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                <ctrl:ActivationReferenceBox Width="210"
+                                             Text="{Binding PotaRef, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Suggestions="{Binding PotaSuggestions}"
+                                             AllowList="True"
+                                             Watermark="{loc:Localize Key=Logbook.PotaRef.Watermark}"
+                                             ToolTip.Tip="{loc:Localize Key=Logbook.PotaRef.Hint}"
+                                             KeyDown="OnEntryKeyDown" />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{loc:Localize Key=Logbook.Refs.Sota.Short}"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           MinWidth="40"
+                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                <ctrl:ActivationReferenceBox Width="150"
+                                             Text="{Binding SotaRef, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Suggestions="{Binding SotaSuggestions}"
+                                             Watermark="{loc:Localize Key=Logbook.SotaRef.Watermark}"
+                                             ToolTip.Tip="{loc:Localize Key=Logbook.SotaRef.Hint}"
+                                             KeyDown="OnEntryKeyDown" />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{loc:Localize Key=Logbook.Refs.Wwff.Short}"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           MinWidth="40"
+                           Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                <ctrl:ActivationReferenceBox Width="140"
+                                             Text="{Binding WwffRef, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Suggestions="{Binding WwffSuggestions}"
+                                             Watermark="{loc:Localize Key=Logbook.WwffRef.Watermark}"
+                                             ToolTip.Tip="{loc:Localize Key=Logbook.WwffRef.Hint}"
+                                             KeyDown="OnEntryKeyDown" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
           <StackPanel Orientation="Horizontal" Spacing="8">
             <Border Classes="call-status-badge"
                     Classes.worked="{Binding DxccEntityIsWorked}"

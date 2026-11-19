@@ -93,6 +93,7 @@ public partial class App : Application
         services.AddSingleton<LiveTrackerSnapshotProvider>();
         services.AddSingleton<ILiveTrackerSnapshotProvider>(sp => sp.GetRequiredService<LiveTrackerSnapshotProvider>());
         services.AddSingleton<IQsoLogbookRepository, QsoLogbookRepository>();
+        services.AddSingleton<ActivationDirectoryService>();
         services.AddSingleton<IDxccLookupService, DxccLookupService>();
         services.AddSingleton<FrequencyOverlayViewModel>();
         services.AddSingleton<DxStationOverlayViewModel>();
