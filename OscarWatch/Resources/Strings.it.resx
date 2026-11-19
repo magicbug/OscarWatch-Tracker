@@ -4400,7 +4400,7 @@ Continuare?</value>
     <value>Attivazione CTCSS (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Imposta l'uplink a 0 per i soli beacon. Lascia CTCSS a 0 per disattivarlo. I modi FM utilizzano gli Hz (es. 67.0).</value>
+    <value>Le frequenze sono in kHz, anche le microonde (QO-100: uplink 2400245, downlink 10489745). Imposta l'uplink a 0 per i soli beacon. Lascia CTCSS a 0 per disattivarlo. I modi FM utilizzano gli Hz (es. 67.0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

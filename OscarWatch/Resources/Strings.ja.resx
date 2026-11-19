@@ -4393,7 +4393,7 @@
     <value>CTCSS アーム (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>ビーコンのみの場合はアップリンクを 0 に。CTCSS なしは 0 のまま。FM モードは Hz（例: 67.0）。</value>
+    <value>周波数は kHz です（マイクロ波も含む。QO-100 はアップリンク 2400245、ダウンリンク 10489745）。ビーコンのみの場合はアップリンクを 0 に。CTCSS なしは 0 のまま。FM モードは Hz（例: 67.0）。</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

@@ -4400,7 +4400,7 @@ Lanjutkan?</value>
     <value>CTCSS arm (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Setel uplink ke 0 untuk beacon saja. Biarkan CTCSS di 0 untuk tidak ada. Mode FM memakai Hz (mis. 67,0).</value>
+    <value>Frekuensi dalam kHz, termasuk gelombang mikro (QO-100: uplink 2400245, downlink 10489745). Setel uplink ke 0 untuk beacon saja. Biarkan CTCSS di 0 untuk tidak ada. Mode FM memakai Hz (mis. 67,0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

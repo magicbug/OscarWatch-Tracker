@@ -4400,7 +4400,7 @@ LOS: {2}
     <value>CTCSS arm (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>ตั้งอัปลิงก์เป็น 0 สำหรับบีคอนเท่านั้น เว้น CTCSS เป็น 0 หากไม่มี โหมด FM ใช้ Hz (เช่น 67.0)</value>
+    <value>ความถี่เป็น kHz รวมไมโครเวฟ (QO-100: อัปลิงก์ 2400245 ดาวน์ลิงก์ 10489745) ตั้งอัปลิงก์เป็น 0 สำหรับบีคอนเท่านั้น เว้น CTCSS เป็น 0 หากไม่มี โหมด FM ใช้ Hz (เช่น 67.0)</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

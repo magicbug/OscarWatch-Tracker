@@ -4400,7 +4400,7 @@ LOS: {2}
     <value>CTCSS взвод (Гц)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Аплинк 0: только маяк. CTCSS 0: без тона. Режимы FM в Гц (напр. 67.0).</value>
+    <value>Частоты в кГц, включая СВЧ (QO-100: аплинк 2400245, даунлинк 10489745). Аплинк 0: только маяк. CTCSS 0: без тона. Режимы FM в Гц (напр. 67.0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

@@ -4396,7 +4396,7 @@ Continuar?</value>
     <value>Arm CTCSS (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Defina uplink como 0 para somente beacon. Deixe CTCSS em 0 para nenhum. Modos FM usam Hz (ex.: 67.0).</value>
+    <value>Frequências em kHz, inclusive micro-ondas (QO-100: uplink 2400245, downlink 10489745). Defina uplink como 0 para somente beacon. Deixe CTCSS em 0 para nenhum. Modos FM usam Hz (ex.: 67.0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

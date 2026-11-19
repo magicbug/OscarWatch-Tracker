@@ -4396,7 +4396,7 @@
     <value>CTCSS de activación (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Pon la subida a 0 para baliza únicamente. Deja el CTCSS en 0 para ninguno. Los modos FM usan Hz (p. ej. 67,0).</value>
+    <value>Las frecuencias van en kHz, también microondas (QO-100: subida 2400245, bajada 10489745). Pon la subida a 0 para baliza únicamente. Deja el CTCSS en 0 para ninguno. Los modos FM usan Hz (p. ej. 67,0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

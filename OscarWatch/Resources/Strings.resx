@@ -4396,7 +4396,7 @@ Continue?</value>
     <value>CTCSS arm (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Set uplink to 0 for beacon-only. Leave CTCSS at 0 for none. FM modes use Hz (e.g. 67.0).</value>
+    <value>Frequencies are in kHz, including microwave (QO-100: uplink 2400245, downlink 10489745). Set uplink to 0 for beacon-only. Leave CTCSS at 0 for none. FM modes use Hz (e.g. 67.0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

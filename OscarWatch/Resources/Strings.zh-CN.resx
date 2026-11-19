@@ -4396,7 +4396,7 @@
     <value>CTCSS 激活 (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>对于卫星信标，将上行链路设置为 0。将 CTCSS 设置为 0 表示 无。 FM 模式使用 Hz（例如 67.0）。</value>
+    <value>频率单位为 kHz，包括微波（QO-100：上行 2400245，下行 10489745）。对于卫星信标，将上行链路设置为 0。将 CTCSS 设置为 0 表示无。FM 模式使用 Hz（例如 67.0）。</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

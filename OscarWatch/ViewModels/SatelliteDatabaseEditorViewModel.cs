@@ -13,6 +13,9 @@ namespace OscarWatch.ViewModels;
 
 public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
 {
+    /// <summary>Upper frequency bound in kHz (300 GHz), covering VHF/UHF/SHF/EHF amateur bands including QO-100.</summary>
+    public const decimal MaxFrequencyKHz = 300_000_000m;
+
     private readonly ISatelliteDatabaseEditor _editor;
     private readonly ISatelliteDatabaseSyncService _syncService;
     private readonly ITleService _tleService;

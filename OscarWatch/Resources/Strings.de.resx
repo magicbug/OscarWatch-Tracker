@@ -4400,7 +4400,7 @@ Fortfahren?</value>
     <value>CTCSS-Scharf (Hz)</value>
   </data>
   <data name="DbEditor.ModeHint">
-    <value>Uplink auf 0 für nur Bake. CTCSS auf 0 lassen für keines. FM-Modi nutzen Hz (z. B. 67.0).</value>
+    <value>Frequenzen in kHz, auch Mikrowelle (QO-100: Uplink 2400245, Downlink 10489745). Uplink auf 0 für nur Bake. CTCSS auf 0 lassen für keines. FM-Modi nutzen Hz (z. B. 67.0).</value>
   </data>
   <data name="DbEditor.FileType.Json">
     <value>JSON</value>

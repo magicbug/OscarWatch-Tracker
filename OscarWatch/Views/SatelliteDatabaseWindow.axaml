@@ -141,13 +141,13 @@
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{loc:Localize Key=DbEditor.DownlinkKhz}" VerticalAlignment="Center" />
                 <NumericUpDown Grid.Row="1" Grid.Column="1"
                                Value="{Binding DownlinkKHz, Mode=TwoWay}"
-                               Minimum="0" Maximum="1300000"
+                               Minimum="0" Maximum="{x:Static vm:SatelliteDatabaseEditorViewModel.MaxFrequencyKHz}"
                                Increment="1" FormatString="F3" />
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="{loc:Localize Key=DbEditor.UplinkKhz}" VerticalAlignment="Center" />
                 <NumericUpDown Grid.Row="2" Grid.Column="1"
                                Value="{Binding UplinkKHz, Mode=TwoWay}"
-                               Minimum="0" Maximum="1300000"
+                               Minimum="0" Maximum="{x:Static vm:SatelliteDatabaseEditorViewModel.MaxFrequencyKHz}"
                                Increment="1" FormatString="F3" />
 
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="{loc:Localize Key=DbEditor.DownlinkMode}" VerticalAlignment="Center" />
