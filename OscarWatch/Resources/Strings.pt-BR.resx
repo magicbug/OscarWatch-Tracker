@@ -1066,7 +1066,10 @@ Continuar?</value>
     <value>_Livro OscarWatch</value>
   </data>
   <data name="Menu.Tools.Ft4">
-    <value>_OscarWatch FT4 / FT8</value>
+    <value>_OscarWatch FT4</value>
+  </data>
+  <data name="Menu.Tools.Ft8">
+    <value>OscarWatch _FT8</value>
   </data>
   <data name="Menu.Tools.Sstv">
     <value>_OscarWatch SSTV</value>

@@ -283,6 +283,7 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OpenFt4Command))]
+    [NotifyCanExecuteChangedFor(nameof(OpenFt8Command))]
     private string? _focusedNoradId;
 
     private string? _ts2000SatlWarningPassKey;
@@ -482,6 +483,7 @@ public partial class MainViewModel : ViewModelBase
                 or nameof(FrequencyOverlayViewModel.SatelliteName))
             {
                 OpenFt4Command.NotifyCanExecuteChanged();
+                OpenFt8Command.NotifyCanExecuteChanged();
             }
         };
         Frequencies.OffsetsChanged += (_, reinitializePass) =>
@@ -2642,9 +2644,23 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanOpenFt4))]
-    private void OpenFt4()
+    private void OpenFt4() => OpenFt4Window(Ft4SlotGate.IsFt4Transponder);
+
+    [RelayCommand(CanExecute = nameof(CanOpenFt8))]
+    private void OpenFt8() => OpenFt4Window(Ft4SlotGate.IsFt8Transponder);
+
+    /// <summary>
+    /// Opens the shared FT4 / FT8 window. The protocol follows the selected transponder, so the
+    /// menu item first selects the matching transponder when the satellite has one. An open window
+    /// is reused and restarts its modem through the normal mode change path.
+    /// </summary>
+    private void OpenFt4Window(Func<SatelliteTransponderMode, bool> wantedTransponder)
     {
         _trackerSnapshot.FocusedNoradId = FocusedNoradId;
+        var wanted = Frequencies.AvailableModes.FirstOrDefault(wantedTransponder);
+        if (wanted is not null && !ReferenceEquals(Frequencies.SelectedMode, wanted))
+            Frequencies.SelectedMode = wanted;
+
         if (_openFt4Window is { IsVisible: true })
         {
             _openFt4Window.Activate();
@@ -2733,6 +2749,11 @@ public partial class MainViewModel : ViewModelBase
             Frequencies.SatelliteName,
             FocusedNoradId,
             Frequencies.SelectedMode);
+
+    private bool CanOpenFt8() =>
+        Frequencies.AvailableModes.Any(mode =>
+            Ft4SlotGate.IsFt8Transponder(mode)
+            && Ft4SatelliteEligibility.IsAllowed(Frequencies.SatelliteName, FocusedNoradId, mode));
 
     [RelayCommand]
     private async Task OpenSettingsAsync()

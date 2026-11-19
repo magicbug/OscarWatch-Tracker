@@ -611,7 +611,10 @@ Continuare?</value>
     <value>_OscarWatch Logbook</value>
   </data>
   <data name="Menu.Tools.Ft4">
-    <value>OscarWatch _FT4 / FT8</value>
+    <value>OscarWatch _FT4</value>
+  </data>
+  <data name="Menu.Tools.Ft8">
+    <value>OscarWatch _FT8</value>
   </data>
   <data name="Menu.Tools.Sstv">
     <value>OscarWatch _SSTV</value>
