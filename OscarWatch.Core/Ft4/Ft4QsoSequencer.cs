@@ -553,8 +553,12 @@ public sealed class Ft4QsoSequencer
         if (Ft4MessageCodec.IsGrid(extra))
         {
             TheirGrid = extra;
-            // We answered their CQ and still owe our grid: do not jump to a report.
-            if (IsPendingGridReply(my))
+            // We called them on our TX slot and still owe the opening grid. On the
+            // next slot they may call us (call, call, grid) instead of sending a
+            // report. That is the start of the contact, so send a report and stay
+            // on our slot. A hinted grid is left alone: their CQ shares the callsign
+            // and can score as that call.
+            if (decode.IsApriori && IsPendingGridReply(my))
                 return false;
 
             ReportSent = Ft4MessageCodec.FormatSnrReport(decode.SnrDb);
