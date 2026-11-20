@@ -160,6 +160,9 @@
   <data name="Main.Passes">
     <value>Nächste Überflüge</value>
   </data>
+  <data name="Body.Moon">
+    <value>Mond</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Elevationsverlauf ausblenden</value>
   </data>
@@ -2982,6 +2985,21 @@ Fortfahren?</value>
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 zeigt jeden Überflug über der Mindesthöhe und der Horizontmaske. Der Überflugplaner hat eine eigene Mindestlänge.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Auf- und Untergang des Mondes in den nächsten Überflügen anzeigen</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Elevationsgrenze für den Mond (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Maximale Elevation des Mondes (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Horizontmaske auch auf den Mond anwenden</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>Auf- und Untergang sind der Zeitpunkt, an dem die Mitte des Mondes die unten eingestellte Elevationsgrenze erreicht (standardmäßig 0°). Das weicht um einige Minuten von gedruckten Almanachzeiten ab (Oberrand, mit Refraktion). Die Einstellung für die minimale Elevation der Satelliten wird nicht angewendet, damit der Mond am Horizont aufgeführt wird. Diese Einträge dienen der Information und lassen sich nicht als Ziel auswählen.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Beim Start auf Updates der Transponderdatenbank prüfen</value>

@@ -142,6 +142,9 @@
   <data name="Main.Passes">
     <value>今後のパス</value>
   </data>
+  <data name="Body.Moon">
+    <value>月</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>パス仰角タイムラインを非表示</value>
   </data>
@@ -1445,6 +1448,21 @@
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 は最低仰角と地平マスクを超えるすべてのパスを表示します。パスプランナーには別の最短時間があります。</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>今後のパスに月の出と月の入りを表示する</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>月の仰角下限（°）</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>月の仰角上限（°）</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>月にも地平線マスクを適用する</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>出と入りは、月の中心の仰角が下の仰角下限（既定は0°）に達する時刻で、印刷された天文暦の時刻（上縁、大気差を含む）とは数分異なります。衛星の最小仰角の設定は適用されないため、地平線上の月も表示されます。これらの項目は情報用で、ターゲットとして選択することはできません。</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>起動時にトランスポンダーDBの更新を確認</value>

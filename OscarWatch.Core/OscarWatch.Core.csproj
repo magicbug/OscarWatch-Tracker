@@ -5,6 +5,7 @@
     <RootNamespace>OscarWatch.Core</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CosineKitty.AstronomyEngine" Version="2.1.19" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
     <!-- Override Microsoft.Data.Sqlite's 2.1.x bundle (GHSA-2m69-gcr7-jv3q) with SQLite 3.50+ natives. -->
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
