@@ -6767,6 +6767,12 @@ Terbaru: {1} ({2})</value>
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>Mencatat kontak saat pengiriman selesai.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>Kontak tidak dicatat. Periksa callsign, grid, dan apakah satelit sedang dipilih.</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>CW dihentikan.</value>
   </data>
@@ -6876,7 +6882,7 @@ Terbaru: {1} ({2})</value>
     <value>Pesan</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} atau * callsign Anda, {CALL} atau ! callsign lawan, {SENTRST} laporan terkirim, {SENTRSTCUT} laporan terkirim dengan angka singkat (599 menjadi 5NN), {RCVDRST} laporan diterima, {GRID} grid lawan, {MYGRID} grid Anda, {NAME} nama lawan, {SAT} satelit. Prosign: {AR} {SK} {BT} {KN}.</value>
+    <value>{MYCALL} atau * callsign Anda, {CALL} atau ! callsign lawan, {SENTRST} laporan terkirim, {SENTRSTCUT} laporan terkirim dengan angka singkat (599 menjadi 5NN), {RCVDRST} laporan diterima, {GRID} grid lawan, {MYGRID} grid Anda, {NAME} nama lawan, {SAT} satelit. Prosign: {AR} {SK} {BT} {KN}. {SAVEQSO} mencatat kontak saat pengiriman selesai..</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>Bantuan keyer CW</value>

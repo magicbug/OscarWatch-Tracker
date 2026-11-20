@@ -6766,6 +6766,12 @@ Ultima versione: {1} ({2})</value>
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>Registra il QSO al termine dell'invio.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>Il QSO non è stato registrato. Controllare il nominativo, il locator e che un satellite sia selezionato.</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>CW interrotto.</value>
   </data>
@@ -6875,7 +6881,7 @@ Ultima versione: {1} ({2})</value>
     <value>Messaggio</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} o * il tuo nominativo, {CALL} o ! il nominativo corrispondente, {SENTRST} rapporto inviato, {SENTRSTCUT} rapporto inviato con cifre abbreviate (599 come 5NN), {RCVDRST} rapporto ricevuto, {GRID} locator corrispondente, {MYGRID} il tuo locator, {NAME} nome corrispondente, {SAT} satellite. Prosegni: {AR} {SK} {BT} {KN}.</value>
+    <value>{MYCALL} o * il tuo nominativo, {CALL} o ! il nominativo corrispondente, {SENTRST} rapporto inviato, {SENTRSTCUT} rapporto inviato con cifre abbreviate (599 come 5NN), {RCVDRST} rapporto ricevuto, {GRID} locator corrispondente, {MYGRID} il tuo locator, {NAME} nome corrispondente, {SAT} satellite. Prosegni: {AR} {SK} {BT} {KN}. {SAVEQSO} registra il QSO al termine dell'invio.</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>Guida al keyer CW</value>

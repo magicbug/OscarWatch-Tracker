@@ -6767,6 +6767,12 @@ LOS: {2}
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>บันทึก QSO เมื่อส่งจบ</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>ไม่ได้บันทึก QSO โปรดตรวจคอลไซน์ กริด และดาวเทียมที่เลือก</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>หยุด CW แล้ว</value>
   </data>
@@ -6876,7 +6882,7 @@ LOS: {2}
     <value>ข้อความ</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} หรือ * คอลซายน์ของคุณ, {CALL} หรือ ! คอลซายน์คู่สถานี, {SENTRST} รายงานที่ส่ง, {SENTRSTCUT} รายงานที่ส่งแบบตัวเลขย่อ (599 เป็น 5NN), {RCVDRST} รายงานที่รับ, {GRID} กริดคู่สถานี, {MYGRID} กริดของคุณ, {NAME} ชื่อคู่สถานี, {SAT} ดาวเทียม เครื่องหมายพิเศษ: {AR} {SK} {BT} {KN}</value>
+    <value>{MYCALL} หรือ * คอลซายน์ของคุณ, {CALL} หรือ ! คอลซายน์คู่สถานี, {SENTRST} รายงานที่ส่ง, {SENTRSTCUT} รายงานที่ส่งแบบตัวเลขย่อ (599 เป็น 5NN), {RCVDRST} รายงานที่รับ, {GRID} กริดคู่สถานี, {MYGRID} กริดของคุณ, {NAME} ชื่อคู่สถานี, {SAT} ดาวเทียม เครื่องหมายพิเศษ: {AR} {SK} {BT} {KN} {SAVEQSO} บันทึก QSO เมื่อส่งจบ</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>วิธีใช้คีย์เยอร์ CW</value>

@@ -6762,6 +6762,12 @@ Latest: {1} ({2})</value>
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>Logs the contact when sending finishes.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>The contact was not logged. Check the callsign, the grid, and that a satellite is in focus.</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>CW stopped.</value>
   </data>
@@ -6871,7 +6877,7 @@ Latest: {1} ({2})</value>
     <value>Message</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} or * your call, {CALL} or ! their call, {SENTRST} report sent, {SENTRSTCUT} report sent with cut numbers (599 as 5NN), {RCVDRST} report received, {GRID} their grid, {MYGRID} your grid, {NAME} their name, {SAT} satellite. Prosigns: {AR} {SK} {BT} {KN}.</value>
+    <value>{MYCALL} or * your call, {CALL} or ! their call, {SENTRST} report sent, {SENTRSTCUT} report sent with cut numbers (599 as 5NN), {RCVDRST} report received, {GRID} their grid, {MYGRID} your grid, {NAME} their name, {SAT} satellite. Prosigns: {AR} {SK} {BT} {KN}. {SAVEQSO} logs the contact when sending finishes.</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>CW keyer help</value>

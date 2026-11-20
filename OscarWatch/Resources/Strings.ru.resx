@@ -6767,6 +6767,12 @@ LOS: {2}
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>Записывает QSO, когда передача заканчивается.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>QSO не записано. Проверьте позывной, локатор и что выбран спутник.</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>Передача CW прервана.</value>
   </data>
@@ -6876,7 +6882,7 @@ LOS: {2}
     <value>Сообщение</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} или * ваш позывной, {CALL} или ! позывной корреспондента, {SENTRST} переданный рапорт, {SENTRSTCUT} переданный рапорт с сокращёнными цифрами (599 как 5NN), {RCVDRST} принятый рапорт, {GRID} локатор корреспондента, {MYGRID} ваш локатор, {NAME} имя корреспондента, {SAT} спутник. Служебные знаки: {AR} {SK} {BT} {KN}.</value>
+    <value>{MYCALL} или * ваш позывной, {CALL} или ! позывной корреспондента, {SENTRST} переданный рапорт, {SENTRSTCUT} переданный рапорт с сокращёнными цифрами (599 как 5NN), {RCVDRST} принятый рапорт, {GRID} локатор корреспондента, {MYGRID} ваш локатор, {NAME} имя корреспондента, {SAT} спутник. Служебные знаки: {AR} {SK} {BT} {KN}. {SAVEQSO} записывает QSO, когда передача заканчивается.</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>Справка по CW-манипулятору</value>

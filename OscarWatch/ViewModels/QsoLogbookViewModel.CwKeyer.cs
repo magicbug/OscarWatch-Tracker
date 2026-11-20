@@ -125,11 +125,18 @@ public partial class QsoLogbookViewModel
         var expansion = CwMacroExpander.Expand(button.Template, BuildCwContext());
         if (expansion.Message.IsEmpty)
         {
-            StatusText = _l.Get("Logbook.Cw.Status.Empty", button.KeyName);
+            if (expansion.SaveQso)
+            {
+                if (CwSending)
+                    StopCw();
+                _ = SaveQsoFromCwAsync(showResult: true);
+            }
+            else
+                StatusText = _l.Get("Logbook.Cw.Status.Empty", button.KeyName);
             return;
         }
 
-        var result = _cwKeyer.Send(slot, expansion.Message);
+        var result = _cwKeyer.Send(slot, expansion.Message, expansion.SaveQso);
         if (result != CwKeyerStartResult.Started)
         {
             CwSending = false;
@@ -170,11 +177,22 @@ public partial class QsoLogbookViewModel
         Dispatcher.UIThread.Post(() =>
         {
             // A newer message may already be running; only that one owns the strip state.
-            if (_cwKeyer is null || _cwKeyer.ActiveSlot >= 0)
+            var stillSending = _cwKeyer is not null && _cwKeyer.ActiveSlot >= 0;
+            if (!stillSending)
+            {
+                CwSending = false;
+                SetActiveCwSlot(-1);
+            }
+
+            if (e.Finish == CwKeyerFinish.Completed && e.SaveQso)
+            {
+                _ = SaveQsoFromCwAsync(showResult: !stillSending);
+                return;
+            }
+
+            if (stillSending)
                 return;
 
-            CwSending = false;
-            SetActiveCwSlot(-1);
             var keyName = e.Slot >= 0 && e.Slot < CwButtons.Count ? CwButtons[e.Slot].KeyName : "";
             StatusText = e.Finish switch
             {
@@ -183,6 +201,35 @@ public partial class QsoLogbookViewModel
                 _ => StatusText
             };
         });
+
+    /// <summary>
+    /// Logs the entry row after a message that contains {SAVEQSO} has finished.
+    /// A message that is still going keeps its own status line.
+    /// </summary>
+    private async Task SaveQsoFromCwAsync(bool showResult)
+    {
+        if (!CanCommitQso)
+        {
+            if (showResult && !CwSending)
+                StatusText = _l.Get("Logbook.Cw.Status.NotLogged");
+            return;
+        }
+
+        await CommitQsoAsync().ConfigureAwait(true);
+        if (CwSending)
+            AnnounceActiveCw();
+    }
+
+    private void AnnounceActiveCw()
+    {
+        var slot = _cwKeyer?.ActiveSlot ?? -1;
+        if (slot < 0 || slot >= CwButtons.Count)
+            return;
+
+        var button = CwButtons[slot];
+        var expansion = CwMacroExpander.Expand(button.Template, BuildCwContext());
+        StatusText = _l.Get("Logbook.Cw.Status.Sending", button.KeyName, expansion.Message.DisplayText);
+    }
 
     private void SetActiveCwSlot(int slot)
     {
@@ -290,7 +337,12 @@ public sealed partial class CwMacroButtonViewModel : ObservableObject
         }
 
         var expansion = CwMacroExpander.Expand(Template, context);
-        ToolTip = l.Get("Logbook.Cw.ButtonToolTip", KeyName, expansion.Message.DisplayText);
+        var text = expansion.Message.DisplayText;
+        if (expansion.SaveQso)
+            text = string.IsNullOrEmpty(text)
+                ? l.Get("Logbook.Cw.SaveNote")
+                : text + " " + l.Get("Logbook.Cw.SaveNote");
+        ToolTip = l.Get("Logbook.Cw.ButtonToolTip", KeyName, text);
     }
 
     [RelayCommand(CanExecute = nameof(HasMessage))]

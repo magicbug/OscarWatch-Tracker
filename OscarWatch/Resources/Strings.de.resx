@@ -6767,6 +6767,12 @@ Aktuell: {1} ({2})</value>
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>Speichert das QSO, wenn das Senden endet.</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>Das QSO wurde nicht gespeichert. Prüfen Sie das Rufzeichen, den Locator und dass ein Satellit ausgewählt ist.</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>CW abgebrochen.</value>
   </data>
@@ -6876,7 +6882,7 @@ Aktuell: {1} ({2})</value>
     <value>Nachricht</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} oder * Ihr Rufzeichen, {CALL} oder ! Rufzeichen der Gegenstation, {SENTRST} gesendeter Rapport, {SENTRSTCUT} gesendeter Rapport mit Kurzziffern (599 als 5NN), {RCVDRST} empfangener Rapport, {GRID} Locator der Gegenstation, {MYGRID} Ihr Locator, {NAME} Name der Gegenstation, {SAT} Satellit. Betriebszeichen: {AR} {SK} {BT} {KN}.</value>
+    <value>{MYCALL} oder * Ihr Rufzeichen, {CALL} oder ! Rufzeichen der Gegenstation, {SENTRST} gesendeter Rapport, {SENTRSTCUT} gesendeter Rapport mit Kurzziffern (599 als 5NN), {RCVDRST} empfangener Rapport, {GRID} Locator der Gegenstation, {MYGRID} Ihr Locator, {NAME} Name der Gegenstation, {SAT} Satellit. Betriebszeichen: {AR} {SK} {BT} {KN}. {SAVEQSO} speichert das QSO, wenn das Senden endet.</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>Hilfe zum CW-Keyer</value>

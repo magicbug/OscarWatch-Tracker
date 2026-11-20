@@ -11,26 +11,28 @@ public sealed record CwMacroContext(
     string Name = "",
     string Satellite = "");
 
-/// <summary>An expanded message and any <c>{TOKEN}</c> this build does not know.</summary>
-public sealed record CwExpansion(CwMessage Message, IReadOnlyList<string> UnknownTokens);
+/// <summary>An expanded message, any <c>{TOKEN}</c> this build does not know, and whether to log the contact.</summary>
+public sealed record CwExpansion(CwMessage Message, IReadOnlyList<string> UnknownTokens, bool SaveQso = false);
 
 /// <summary>
 /// Expands N1MM-style macros: <c>{MYCALL}</c> and <c>*</c>, <c>{CALL}</c> and <c>!</c>,
 /// <c>{SENTRST}</c>, <c>{SENTRSTCUT}</c>, <c>{RCVDRST}</c>, <c>{GRID}</c>, <c>{MYGRID}</c>,
-/// <c>{NAME}</c>, <c>{SAT}</c>, and the prosigns <c>{AR}</c> <c>{SK}</c> <c>{BT}</c> <c>{KN}</c>.
+/// <c>{NAME}</c>, <c>{SAT}</c>, <c>{SAVEQSO}</c>, and the prosigns <c>{AR}</c> <c>{SK}</c> <c>{BT}</c> <c>{KN}</c>.
+/// <c>{SAVEQSO}</c> is not sent. It asks the logbook to store the contact when the message finishes.
 /// </summary>
 public static class CwMacroExpander
 {
     public static IReadOnlyList<string> KnownTokens { get; } =
     [
         "MYCALL", "CALL", "SENTRST", "SENTRSTCUT", "RCVDRST", "GRID", "MYGRID", "NAME", "SAT",
-        "AR", "SK", "BT", "KN"
+        "SAVEQSO", "AR", "SK", "BT", "KN"
     ];
 
     public static CwExpansion Expand(string? template, CwMacroContext context)
     {
         var symbols = new List<CwSymbol>();
         var unknown = new List<string>();
+        var saveQso = false;
         var text = template ?? "";
 
         for (var i = 0; i < text.Length; i++)
@@ -52,6 +54,12 @@ public static class CwMacroExpander
 
                     var token = text[(i + 1)..close].Trim().ToUpperInvariant();
                     i = close;
+                    if (token == "SAVEQSO")
+                    {
+                        saveQso = true;
+                        continue;
+                    }
+
                     if (!TryAppendToken(symbols, token, context) && token.Length > 0
                         && !unknown.Contains(token, StringComparer.Ordinal))
                     {
@@ -65,7 +73,7 @@ public static class CwMacroExpander
             symbols.Add(char.IsWhiteSpace(c) ? CwSymbol.WordGap : CwSymbol.Character(char.ToUpperInvariant(c)));
         }
 
-        return new CwExpansion(CwMessage.FromSymbols(symbols), unknown);
+        return new CwExpansion(CwMessage.FromSymbols(symbols), unknown, saveQso);
     }
 
     /// <summary>RST with every 9 sent as N, so 599 becomes 5NN.</summary>

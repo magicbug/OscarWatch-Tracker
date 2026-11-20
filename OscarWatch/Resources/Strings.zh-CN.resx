@@ -6763,6 +6763,12 @@
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}：{1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>发送结束后记录通联。</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>通联未记录。请检查呼号、网格，以及是否已选择卫星。</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>已停止 CW。</value>
   </data>
@@ -6872,7 +6878,7 @@
     <value>消息</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} 或 * 本台呼号，{CALL} 或 ! 对方呼号，{SENTRST} 发出的报告，{SENTRSTCUT} 使用缩写数字发出的报告（599 写作 5NN），{RCVDRST} 收到的报告，{GRID} 对方网格，{MYGRID} 本台网格，{NAME} 对方姓名，{SAT} 卫星。程序信号：{AR} {SK} {BT} {KN}。</value>
+    <value>{MYCALL} 或 * 本台呼号，{CALL} 或 ! 对方呼号，{SENTRST} 发出的报告，{SENTRSTCUT} 使用缩写数字发出的报告（599 写作 5NN），{RCVDRST} 收到的报告，{GRID} 对方网格，{MYGRID} 本台网格，{NAME} 对方姓名，{SAT} 卫星。程序信号：{AR} {SK} {BT} {KN}。{SAVEQSO} 在发送结束后记录通联。</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>CW 键控器帮助</value>

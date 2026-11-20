@@ -31,7 +31,7 @@ public enum CwKeyerFinish
     RigRejected
 }
 
-public sealed record CwKeyerFinishedEventArgs(int Slot, CwKeyerFinish Finish);
+public sealed record CwKeyerFinishedEventArgs(int Slot, CwKeyerFinish Finish, bool SaveQso = false);
 
 /// <summary>
 /// Sends logbook CW macros on the uplink: as text the radio keys itself (Kenwood <c>KY</c>, Icom <c>0x17</c>),
@@ -90,7 +90,7 @@ public sealed class CwKeyerService : IDisposable
         _ = Task.Run(() => _rig.TrySetCwSpeed(target));
     }
 
-    public CwKeyerStartResult Send(int slot, CwMessage message)
+    public CwKeyerStartResult Send(int slot, CwMessage message, bool saveQso = false)
     {
         if (message.IsEmpty)
             return CwKeyerStartResult.NothingToSend;
@@ -139,7 +139,7 @@ public sealed class CwKeyerService : IDisposable
         {
             _cts = cts;
             Volatile.Write(ref _activeSlot, slot);
-            _worker = new Thread(() => Run(slot, message, method, useRts, cts.Token))
+            _worker = new Thread(() => Run(slot, message, method, useRts, saveQso, cts.Token))
             {
                 IsBackground = true,
                 Name = "OscarWatch.CwKeyer",
@@ -202,7 +202,7 @@ public sealed class CwKeyerService : IDisposable
 
     public void Dispose() => ReleasePort();
 
-    private void Run(int slot, CwMessage message, CwKeyingMethod method, bool useRts, CancellationToken token)
+    private void Run(int slot, CwMessage message, CwKeyingMethod method, bool useRts, bool saveQso, CancellationToken token)
     {
         var finish = CwKeyerFinish.Completed;
         try
@@ -223,7 +223,7 @@ public sealed class CwKeyerService : IDisposable
             Interlocked.CompareExchange(ref _activeSlot, -1, slot);
         }
 
-        Finished?.Invoke(this, new CwKeyerFinishedEventArgs(slot, finish));
+        Finished?.Invoke(this, new CwKeyerFinishedEventArgs(slot, finish, saveQso));
     }
 
     private CwKeyerFinish RunText(CwMessage message, CwKeyingMethod method, CancellationToken token)

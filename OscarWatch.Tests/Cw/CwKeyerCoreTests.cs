@@ -24,6 +24,8 @@ public sealed class CwKeyerCoreTests
     [InlineData("cq de *", "CQ DE MM9SQL")]
     [InlineData("{rcvdrst} {grid} {name} {sat}", "579 IO91 BOB RS-44")]
     [InlineData("TU {MYCALL} {SK}", "TU MM9SQL <SK>")]
+    [InlineData("TU 73 {SAVEQSO}", "TU 73")]
+    [InlineData("TU {SAVEQSO} 73", "TU 73")]
     [InlineData("{AR} {BT} {KN}", "+ = <KN>")]
     [InlineData("  CQ    CQ  ", "CQ CQ")]
     public void Macros_expand_like_n1mm(string template, string expected)
@@ -31,6 +33,17 @@ public sealed class CwKeyerCoreTests
         var expansion = CwMacroExpander.Expand(template, Context);
 
         Assert.Equal(expected, expansion.Message.DisplayText);
+        Assert.Empty(expansion.UnknownTokens);
+        Assert.Equal(template.Contains("{SAVEQSO}", StringComparison.OrdinalIgnoreCase), expansion.SaveQso);
+    }
+
+    [Fact]
+    public void Saveqso_alone_sends_nothing_and_asks_for_a_log()
+    {
+        var expansion = CwMacroExpander.Expand("{saveqso}", Context);
+
+        Assert.True(expansion.Message.IsEmpty);
+        Assert.True(expansion.SaveQso);
         Assert.Empty(expansion.UnknownTokens);
     }
 

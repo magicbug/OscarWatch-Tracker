@@ -6763,6 +6763,12 @@
   <data name="Logbook.Cw.ButtonToolTip">
     <value>{0}: {1}</value>
   </data>
+  <data name="Logbook.Cw.SaveNote">
+    <value>送信が終わると交信を記録します。</value>
+  </data>
+  <data name="Logbook.Cw.Status.NotLogged">
+    <value>交信は記録されませんでした。コールサイン、グリッド、衛星が選ばれているかを確認してください。</value>
+  </data>
   <data name="Logbook.Cw.Status.Stopped">
     <value>CW を停止しました。</value>
   </data>
@@ -6872,7 +6878,7 @@
     <value>メッセージ</value>
   </data>
   <data name="Logbook.Settings.Cw.Tokens">
-    <value>{MYCALL} または * 自局コール、{CALL} または ! 相手局コール、{SENTRST} 送ったレポート、{SENTRSTCUT} カットナンバーで送るレポート（599 を 5NN）、{RCVDRST} 受けたレポート、{GRID} 相手局グリッド、{MYGRID} 自局グリッド、{NAME} 相手局の名前、{SAT} 衛星。略符号: {AR} {SK} {BT} {KN}。</value>
+    <value>{MYCALL} または * 自局コール、{CALL} または ! 相手局コール、{SENTRST} 送ったレポート、{SENTRSTCUT} カットナンバーで送るレポート（599 を 5NN）、{RCVDRST} 受けたレポート、{GRID} 相手局グリッド、{MYGRID} 自局グリッド、{NAME} 相手局の名前、{SAT} 衛星。略符号: {AR} {SK} {BT} {KN}。{SAVEQSO} は送信が終わると交信を記録します。</value>
   </data>
   <data name="Logbook.Settings.Cw.Help">
     <value>CW キーヤーのヘルプ</value>
