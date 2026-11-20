@@ -24,8 +24,7 @@ public static class QsoLogbookExportRange
         if (qsoUtcValues.Count == 0)
             return (today, today);
 
-        var min = qsoUtcValues.Min(QsoLogbookTime.NormalizeToUtc).Date;
-        var max = qsoUtcValues.Max(QsoLogbookTime.NormalizeToUtc).Date;
-        return (min, max);
+        var latest = qsoUtcValues.Max(QsoLogbookTime.NormalizeToUtc).Date;
+        return (latest, latest);
     }
 }

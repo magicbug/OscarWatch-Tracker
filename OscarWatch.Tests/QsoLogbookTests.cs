@@ -679,6 +679,42 @@ public class QsoLogbookRepositoryTests : IDisposable
     }
 
     [Fact]
+    public void QsoLogbookExportRange_defaults_empty_log_to_today_utc()
+    {
+        var today = DateTime.UtcNow.Date;
+        var (from, to) = QsoLogbookExportRange.DefaultUtcDates([]);
+        Assert.Equal(today, from);
+        Assert.Equal(today, to);
+    }
+
+    [Fact]
+    public void QsoLogbookExportRange_defaults_single_day_log_to_that_utc_date()
+    {
+        var day = new DateTime(2026, 7, 12);
+        var (from, to) = QsoLogbookExportRange.DefaultUtcDates(
+        [
+            new DateTime(2026, 7, 12, 8, 15, 0, DateTimeKind.Utc),
+            new DateTime(2026, 7, 12, 21, 40, 0, DateTimeKind.Utc)
+        ]);
+        Assert.Equal(day, from);
+        Assert.Equal(day, to);
+    }
+
+    [Fact]
+    public void QsoLogbookExportRange_defaults_multi_day_log_to_latest_utc_date()
+    {
+        var latest = new DateTime(2026, 7, 13);
+        var (from, to) = QsoLogbookExportRange.DefaultUtcDates(
+        [
+            new DateTime(2026, 7, 11, 18, 0, 0, DateTimeKind.Utc),
+            new DateTime(2026, 7, 13, 9, 15, 0, DateTimeKind.Utc),
+            new DateTime(2026, 7, 12, 23, 59, 0, DateTimeKind.Utc)
+        ]);
+        Assert.Equal(latest, from);
+        Assert.Equal(latest, to);
+    }
+
+    [Fact]
     public async Task UpdateLogbookAsync_updates_name_callsign_and_grid()
     {
         await _repository.InitializeAsync();
