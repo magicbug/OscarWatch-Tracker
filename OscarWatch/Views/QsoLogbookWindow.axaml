@@ -5,7 +5,7 @@
         xmlns:ctrl="using:OscarWatch.Controls"
         x:Class="OscarWatch.Views.QsoLogbookWindow"
         x:DataType="vm:QsoLogbookViewModel"
-        Title="{loc:Localize Key=Window.Logbook.Title}"
+        Title="{Binding WindowTitle}"
         Width="980" Height="640"
         MinWidth="760" MinHeight="480"
         WindowStartupLocation="CenterOwner">
@@ -45,6 +45,23 @@
   </Window.Styles>
   <DockPanel Margin="12">
     <Menu DockPanel.Dock="Top">
+      <MenuItem Header="{loc:Localize Key=Menu.File}">
+        <MenuItem Header="{loc:Localize Key=Logbook.ImportAdif}"
+                  Click="OnImportAdifClick"
+                  IsEnabled="{Binding CanImport}" />
+        <MenuItem Header="{loc:Localize Key=Logbook.ExportAdif}"
+                  Click="OnExportAdifClick"
+                  IsEnabled="{Binding CanExport}" />
+        <Separator />
+        <MenuItem Header="{loc:Localize Key=Logbook.Menu.Settings}"
+                  Click="OnSettingsClick"
+                  IsEnabled="{Binding CanEditLogbook}" />
+        <MenuItem Header="{loc:Localize Key=Logbook.Menu.UpdateCountryFile}"
+                  Command="{Binding UpdateCountryFileCommand}" />
+        <Separator />
+        <MenuItem Header="{loc:Localize Key=Menu.File.Close}"
+                  Click="OnCloseClick" />
+      </MenuItem>
       <MenuItem Header="{loc:Localize Key=Logbook.Menu.Logbook}">
         <MenuItem Header="{Binding CurrentLogbookDisplayName}" IsEnabled="False" />
         <Separator />
@@ -57,15 +74,17 @@
                   Click="OnDeleteLogbookClick"
                   IsEnabled="{Binding CanDeleteLogbook}" />
         <Separator />
-        <MenuItem ItemsSource="{Binding LogbookSwitchItems}">
-          <MenuItem.DataTemplates>
-            <DataTemplate DataType="vm:LogbookSwitchMenuItemViewModel">
-              <MenuItem Header="{Binding Name}"
-                        Command="{Binding SelectCommand}"
-                        ToggleType="Radio"
-                        IsChecked="{Binding IsChecked}" />
-            </DataTemplate>
-          </MenuItem.DataTemplates>
+        <MenuItem Header="{loc:Localize Key=Logbook.Menu.Switch}"
+                  ItemsSource="{Binding LogbookSwitchItems}">
+          <MenuItem.Styles>
+            <Style Selector="MenuItem" x:DataType="vm:LogbookSwitchMenuItemViewModel">
+              <Setter Property="Header" Value="{Binding Name}" />
+              <Setter Property="Command" Value="{Binding SelectCommand}" />
+              <Setter Property="ToggleType" Value="Radio" />
+              <Setter Property="GroupName" Value="ActiveLogbook" />
+              <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=OneWay}" />
+            </Style>
+          </MenuItem.Styles>
         </MenuItem>
       </MenuItem>
       <MenuItem Header="{loc:Localize Key=Logbook.Menu.Edit}">
@@ -75,21 +94,6 @@
                   Click="OnDeleteQsoClick"
                   IsEnabled="{Binding CanDeleteQso}" />
       </MenuItem>
-      <MenuItem Header="{loc:Localize Key=Logbook.Menu.Import}">
-        <MenuItem Header="{loc:Localize Key=Logbook.ImportAdif}"
-                  Click="OnImportAdifClick"
-                  IsEnabled="{Binding CanImport}" />
-      </MenuItem>
-      <MenuItem Header="{loc:Localize Key=Logbook.Menu.Export}">
-        <MenuItem Header="{loc:Localize Key=Logbook.ExportAdif}"
-                  Click="OnExportAdifClick"
-                  IsEnabled="{Binding CanExport}" />
-      </MenuItem>
-      <MenuItem Header="{loc:Localize Key=Logbook.Menu.Settings}"
-                Click="OnSettingsClick"
-                IsEnabled="{Binding CanEditLogbook}" />
-      <MenuItem Header="{loc:Localize Key=Logbook.Menu.UpdateCountryFile}"
-                Command="{Binding UpdateCountryFileCommand}" />
     </Menu>
 
     <Border DockPanel.Dock="Bottom"

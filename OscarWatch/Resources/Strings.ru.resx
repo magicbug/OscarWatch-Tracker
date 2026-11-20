@@ -1552,14 +1552,14 @@ LOS: {2}
   <data name="Logbook.Menu.NoLogbook">
     <value>Журнал не выбран</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>Текущий: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>Сменить журнал</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>Правка</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>Импорт</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>Экспорт</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>Настройки</value>

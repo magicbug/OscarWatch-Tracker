@@ -1552,14 +1552,14 @@ LOS: {2}
   <data name="Logbook.Menu.NoLogbook">
     <value>ยังไม่ได้เลือกล็อกบุ๊ก</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>ปัจจุบัน: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>สลับสมุดบันทึก</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>แก้ไข</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>นำเข้า</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>ส่งออก</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>การตั้งค่า</value>

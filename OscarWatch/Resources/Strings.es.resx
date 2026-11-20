@@ -1545,14 +1545,14 @@
   <data name="Logbook.Menu.NoLogbook">
     <value>Ningún libro seleccionado</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>Actual: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>Cambiar libro</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>Editar</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>Importar</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>Exportar</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>Ajustes</value>

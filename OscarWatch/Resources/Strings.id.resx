@@ -1552,14 +1552,14 @@ Lanjutkan?</value>
   <data name="Logbook.Menu.NoLogbook">
     <value>Tidak ada logbook yang dipilih</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>Saat ini: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>Ganti buku log</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>Sunting</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>Impor</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>Ekspor</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>Pengaturan</value>

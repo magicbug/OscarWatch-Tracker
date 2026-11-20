@@ -3021,14 +3021,14 @@
   <data name="Logbook.Menu.NoLogbook">
     <value>ログブック未選択</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>現在: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>ログブックを切り替え</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>編集</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>インポート</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>エクスポート</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>設定</value>

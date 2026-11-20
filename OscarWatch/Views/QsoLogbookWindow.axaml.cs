@@ -271,6 +271,8 @@ public partial class QsoLogbookWindow : Window
             CallTextBox?.Focus();
     }
 
+    private void OnCloseClick(object? sender, RoutedEventArgs e) => Close();
+
     private async void OnImportAdifClick(object? sender, RoutedEventArgs e) =>
         await RunImportAdifAsync().ConfigureAwait(true);
 

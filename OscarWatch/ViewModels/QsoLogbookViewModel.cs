@@ -292,7 +292,18 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
             : "";
 
     public string CurrentLogbookDisplayName =>
-        SelectedLogbook?.Name ?? _l.Get("Logbook.Menu.NoLogbook");
+        _l.Get("Logbook.Menu.Current", SelectedLogbook?.Name ?? _l.Get("Logbook.Menu.NoLogbook"));
+
+    /// <summary>Window title, with the selected logbook name in brackets when one is open.</summary>
+    public string WindowTitle
+    {
+        get
+        {
+            var baseTitle = _l.Get("Window.Logbook.Title");
+            var name = SelectedLogbook?.Name;
+            return string.IsNullOrWhiteSpace(name) ? baseTitle : string.Format("{0} ({1})", baseTitle, name);
+        }
+    }
 
     public bool ShowDxccBadge =>
         ResolvedDxcc.HasValue
@@ -993,6 +1004,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanExport));
         OnPropertyChanged(nameof(CanImport));
         OnPropertyChanged(nameof(CurrentLogbookDisplayName));
+        OnPropertyChanged(nameof(WindowTitle));
         OnPropertyChanged(nameof(QsoCountText));
         OnPropertyChanged(nameof(ShowQsoCountText));
         RefreshLogbookSwitchItems();
@@ -1468,6 +1480,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
         RefreshLogbookSwitchItems();
         OnPropertyChanged(nameof(CurrentLogbookDisplayName));
+        OnPropertyChanged(nameof(WindowTitle));
     }
 
     private void RefreshLogbookSwitchItems()

@@ -1548,14 +1548,14 @@ Continue?</value>
   <data name="Logbook.Menu.NoLogbook">
     <value>No logbook selected</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>Current: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>Switch logbook</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>Edit</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>Import</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>Export</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>Settings</value>

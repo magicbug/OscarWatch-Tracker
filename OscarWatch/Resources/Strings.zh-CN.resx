@@ -1545,14 +1545,14 @@
   <data name="Logbook.Menu.NoLogbook">
     <value>未选择日志</value>
   </data>
+  <data name="Logbook.Menu.Current">
+    <value>当前: {0}</value>
+  </data>
+  <data name="Logbook.Menu.Switch">
+    <value>切换日志</value>
+  </data>
   <data name="Logbook.Menu.Edit">
     <value>编辑</value>
-  </data>
-  <data name="Logbook.Menu.Import">
-    <value>导入</value>
-  </data>
-  <data name="Logbook.Menu.Export">
-    <value>导出</value>
   </data>
   <data name="Logbook.Menu.Settings">
     <value>设置</value>
