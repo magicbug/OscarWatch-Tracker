@@ -1,0 +1,8 @@
+ADIF Export from WSJT-X
+<ADIF_VER:5>3.1.1
+<PROGRAMID:6>WSJT-X
+<PROGRAMVERSION:5>2.7.0
+<EOH>
+<call:5>G0ABC<gridsquare:6>IO91WM<mode:4>MFSK<submode:3>FT4<rst_sent:3>-10<rst_rcvd:2>R-<qso_date:8>20251118<time_on:6>143015<band:4>70cm<freq:10>435.600000<station_callsign:6>MM9SQL<my_gridsquare:6>IO87IP<sat_name:6>QO-100<prop_mode:3>SAT<comment:11>FT4 via QO-<eor>
+<call:5>PA3EK<gridsquare:6>JO22AA<mode:3>FT8<rst_sent:3>-12<rst_rcvd:3>-08<qso_date:8>20251118<time_on:4>1500<band:3>20m<freq:8>14.074000<station_callsign:6>MM9SQL<my_gridsquare:6>IO87IP<eor>
+<call:5>W1AW <qso_date:8>20251118<time_on:6>160000<mode:2>CW<band:3>40m<eor>

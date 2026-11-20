@@ -271,11 +271,79 @@ public partial class QsoLogbookWindow : Window
             CallTextBox?.Focus();
     }
 
+    private async void OnImportAdifClick(object? sender, RoutedEventArgs e) =>
+        await RunImportAdifAsync().ConfigureAwait(true);
+
     private async void OnExportAdifClick(object? sender, RoutedEventArgs e) =>
         await RunExportAdifAsync(QsoAdifExportScope.All).ConfigureAwait(true);
 
     private async void OnExportSelectedAdifClick(object? sender, RoutedEventArgs e) =>
         await RunExportAdifAsync(QsoAdifExportScope.Selected).ConfigureAwait(true);
+
+    private async Task RunImportAdifAsync()
+    {
+        if (DataContext is not QsoLogbookViewModel vm || vm.SelectedLogbook is null)
+            return;
+
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = LocalizationService.Instance.Get("Logbook.ImportAdif.Picker.Title"),
+            AllowMultiple = false,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("ADIF files") { Patterns = ["*.adi", "*.adif"] }
+            ]
+        }).ConfigureAwait(true);
+
+        if (files.Count == 0)
+            return;
+
+        await using var stream = await files[0].OpenReadAsync().ConfigureAwait(true);
+        using var reader = new StreamReader(stream);
+        var adifText = await reader.ReadToEndAsync().ConfigureAwait(true);
+
+        var parsed = AdifImporter.Parse(adifText);
+        if (parsed.Records.Count == 0 && parsed.UnparsedCount == 0)
+        {
+            vm.StatusText = LocalizationService.Instance.Get("Logbook.ImportAdif.Status.EmptyFile");
+            return;
+        }
+
+        var keys = await App.Services.GetRequiredService<IQsoLogbookRepository>()
+            .ListQsoDuplicateKeysAsync(vm.SelectedLogbook.Id)
+            .ConfigureAwait(true);
+
+        var previewResult = await ImportAdifPreviewDialog.ShowAsync(
+            this,
+            parsed,
+            keys,
+            AdifImportClassifier.BuildPreview).ConfigureAwait(true);
+        if (previewResult is null)
+            return;
+
+        var toImport = new List<AdifImportedQso>(previewResult.Preview.NewQsos.Select(c => c.Qso));
+        var duplicates = previewResult.Preview.Duplicates;
+
+        if (duplicates.Count == 1)
+        {
+            var choice = await ImportAdifSingleDuplicateDialog.ShowAsync(this, duplicates[0].Qso)
+                .ConfigureAwait(true);
+            if (choice == ImportAdifSingleDuplicateDialog.Choice.Cancel)
+                return;
+            if (choice == ImportAdifSingleDuplicateDialog.Choice.ImportAnyway)
+                toImport.Add(duplicates[0].Qso);
+        }
+        else if (duplicates.Count > 1)
+        {
+            var chosen = await ImportAdifConflictsDialog.ShowAsync(this, duplicates).ConfigureAwait(true);
+            if (chosen is null)
+                return;
+            toImport.AddRange(chosen);
+        }
+
+        var imported = await vm.ImportAdifQsosAsync(toImport).ConfigureAwait(true);
+        vm.StatusText = vm.FormatImportStatusText(imported);
+    }
 
     private async Task RunExportAdifAsync(QsoAdifExportScope initialScope)
     {

@@ -75,6 +75,11 @@
                   Click="OnDeleteQsoClick"
                   IsEnabled="{Binding CanDeleteQso}" />
       </MenuItem>
+      <MenuItem Header="{loc:Localize Key=Logbook.Menu.Import}">
+        <MenuItem Header="{loc:Localize Key=Logbook.ImportAdif}"
+                  Click="OnImportAdifClick"
+                  IsEnabled="{Binding CanImport}" />
+      </MenuItem>
       <MenuItem Header="{loc:Localize Key=Logbook.Menu.Export}">
         <MenuItem Header="{loc:Localize Key=Logbook.ExportAdif}"
                   Click="OnExportAdifClick"

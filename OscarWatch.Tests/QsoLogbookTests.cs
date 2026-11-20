@@ -859,6 +859,53 @@ public class QsoLogbookRepositoryTests : IDisposable
             CloudlogUploadStatus = status
         });
 
+    [Fact]
+    public async Task AddQsosBatchAsync_preserves_blank_prop_mode_and_raises_once()
+    {
+        await _repository.InitializeAsync();
+        var logbook = await _repository.CreateLogbookAsync(new QsoLogbookCreateRequest
+        {
+            Name = "Import",
+            MyCallsign = "MM9SQL",
+            MyGridSquare = "IO87IP"
+        });
+
+        var changed = 0;
+        _repository.QsosChanged += _ => changed++;
+
+        var inserted = await _repository.AddQsosBatchAsync(
+        [
+            new QsoRecordCreateRequest
+            {
+                LogbookId = logbook.Id,
+                QsoUtc = new DateTime(2020, 2, 12, 17, 10, 0, DateTimeKind.Utc),
+                Call = "G0ABC",
+                Mode = "FT4",
+                SatName = "QO-100",
+                PropMode = "",
+                CloudlogUploadStatus = CloudlogUploadStatus.None
+            },
+            new QsoRecordCreateRequest
+            {
+                LogbookId = logbook.Id,
+                QsoUtc = new DateTime(2020, 2, 12, 18, 0, 0, DateTimeKind.Utc),
+                Call = "PA3EK",
+                Mode = "FT8",
+                PropMode = "",
+                CloudlogUploadStatus = CloudlogUploadStatus.None
+            }
+        ], preserveBlankPropMode: true);
+
+        Assert.Equal(2, inserted.Count);
+        Assert.Equal(1, changed);
+        Assert.All(inserted, q => Assert.Equal("", q.PropMode));
+        Assert.All(inserted, q => Assert.Equal(CloudlogUploadStatus.None, q.CloudlogUploadStatus));
+
+        var keys = await _repository.ListQsoDuplicateKeysAsync(logbook.Id);
+        Assert.Contains(AdifImporter.FormatDuplicateKey("G0ABC", new DateTime(2020, 2, 12, 17, 10, 45, DateTimeKind.Utc)), keys);
+        Assert.Contains(AdifImporter.FormatDuplicateKey("PA3EK", new DateTime(2020, 2, 12, 18, 0, 0, DateTimeKind.Utc)), keys);
+    }
+
     public void Dispose()
     {
         _repository.Dispose();

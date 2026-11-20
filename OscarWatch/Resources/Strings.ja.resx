@@ -3024,6 +3024,9 @@
   <data name="Logbook.Menu.Edit">
     <value>編集</value>
   </data>
+  <data name="Logbook.Menu.Import">
+    <value>インポート</value>
+  </data>
   <data name="Logbook.Menu.Export">
     <value>エクスポート</value>
   </data>
@@ -3194,6 +3197,111 @@
   </data>
   <data name="Logbook.Station.Unavailable">
     <value>衛星未選択またはモード未同期</value>
+  </data>
+  <data name="Logbook.ImportAdif">
+    <value>ADIFをインポート</value>
+  </data>
+  <data name="Logbook.ImportAdif.Picker.Title">
+    <value>ADIFをインポート</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Title">
+    <value>ADIFをインポート</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Intro">
+    <value>このログブックに書き込む前に、ファイル内の交信を確認してください。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.SatelliteOnly">
+    <value>衛星交信のみ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewNone">
+    <value>追加する新しいQSOはありません。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewOne">
+    <value>1件のQSOが追加されます。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewMany">
+    <value>{0}件のQSOが追加されます。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateOne">
+    <value>1件のQSOは既にログブック（またはファイル内の先の行）にあります。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateMany">
+    <value>{0}件のQSOは既にログブック（またはファイル内の先の行）にあります。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedOne">
+    <value>1件のレコードを読み取れませんでした。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedMany">
+    <value>{0}件のレコードを読み取れませんでした。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredOne">
+    <value>地上波のQSOを1件除外しました。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredMany">
+    <value>地上波のQSOを{0}件除外しました。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Import">
+    <value>インポート</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Title">
+    <value>重複するQSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Message">
+    <value>この交信は既にログブック（またはファイル内の先の行）にあります。両方を残すにはインポート、または無視してください。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.ImportAnyway">
+    <value>インポートする</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Ignore">
+    <value>無視</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Title">
+    <value>重複するQSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Intro">
+    <value>インポートする交信にチェックを付けてください。チェックのない行はスキップされます。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.SelectAll">
+    <value>すべての重複をインポート</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Call">
+    <value>コールサイン</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Utc">
+    <value>UTC</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Satellite">
+    <value>衛星</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Mode">
+    <value>モード</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Grid">
+    <value>グリッド</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source">
+    <value>一致</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.Logbook">
+    <value>ログブック内</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.File">
+    <value>ファイル内の先の行</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Import">
+    <value>インポート</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedOne">
+    <value>1件のQSOをインポートしました。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedMany">
+    <value>{0}件のQSOをインポートしました。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedNone">
+    <value>QSOはインポートされませんでした。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.EmptyFile">
+    <value>ファイルに読み取れるQSOがありません。</value>
   </data>
   <data name="Logbook.ExportSelectedAdif">
     <value>選択をADIFにエクスポート</value>

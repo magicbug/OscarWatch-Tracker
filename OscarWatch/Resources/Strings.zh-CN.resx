@@ -1548,6 +1548,9 @@
   <data name="Logbook.Menu.Edit">
     <value>编辑</value>
   </data>
+  <data name="Logbook.Menu.Import">
+    <value>导入</value>
+  </data>
   <data name="Logbook.Menu.Export">
     <value>导出</value>
   </data>
@@ -1718,6 +1721,111 @@
   </data>
   <data name="Logbook.Station.Unavailable">
     <value>未选择卫星或未同步模式</value>
+  </data>
+  <data name="Logbook.ImportAdif">
+    <value>导入 ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Picker.Title">
+    <value>导入 ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Title">
+    <value>导入 ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Intro">
+    <value>在写入此日志之前，请先核对文件中的通联。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.SatelliteOnly">
+    <value>仅卫星通联</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewNone">
+    <value>没有可添加的新 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewOne">
+    <value>将添加 1 条 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewMany">
+    <value>将添加 {0} 条 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateOne">
+    <value>有 1 条 QSO 已在日志中（或在文件前面出现过）。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateMany">
+    <value>有 {0} 条 QSO 已在日志中（或在文件前面出现过）。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedOne">
+    <value>有 1 条记录无法读取。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedMany">
+    <value>有 {0} 条记录无法读取。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredOne">
+    <value>已排除 1 条地面 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredMany">
+    <value>已排除 {0} 条地面 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Import">
+    <value>导入</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Title">
+    <value>重复的 QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Message">
+    <value>此通联已在日志中（或在文件前面出现过）。仍要导入以保留两条，或忽略。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.ImportAnyway">
+    <value>仍要导入</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Ignore">
+    <value>忽略</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Title">
+    <value>重复的 QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Intro">
+    <value>勾选仍要导入的通联。未勾选的将跳过。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.SelectAll">
+    <value>导入全部重复项</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Call">
+    <value>呼号</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Utc">
+    <value>UTC</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Satellite">
+    <value>卫星</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Mode">
+    <value>模式</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Grid">
+    <value>网格</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source">
+    <value>匹配</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.Logbook">
+    <value>已在日志中</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.File">
+    <value>文件前面</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Import">
+    <value>导入</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedOne">
+    <value>已导入 1 条 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedMany">
+    <value>已导入 {0} 条 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedNone">
+    <value>未导入任何 QSO。</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.EmptyFile">
+    <value>文件中没有可读的 QSO。</value>
   </data>
   <data name="Logbook.ExportSelectedAdif">
     <value>导出所选到 ADIF</value>

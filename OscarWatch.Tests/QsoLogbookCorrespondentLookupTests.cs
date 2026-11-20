@@ -328,6 +328,15 @@ public class QsoLogbookCorrespondentLookupTests
             Task.FromResult<QsoRecord?>(null);
         public Task<QsoRecord> AddQsoAsync(QsoRecordCreateRequest request, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
+        public Task<IReadOnlyList<QsoRecord>> AddQsosBatchAsync(
+            IReadOnlyList<QsoRecordCreateRequest> requests,
+            bool preserveBlankPropMode = false,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+        public Task<IReadOnlySet<string>> ListQsoDuplicateKeysAsync(
+            long logbookId,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlySet<string>>(new HashSet<string>(StringComparer.Ordinal));
         public QsoRecordUpdateRequest? LastUpdate { get; private set; }
 
         public Task<QsoRecord> UpdateQsoAsync(QsoRecordUpdateRequest request, CancellationToken cancellationToken = default)

@@ -264,6 +264,9 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
 
     public bool CanExport => SelectedLogbook is not null && QsoRows.Count > 0;
 
+    /// <summary>True when a logbook is selected and ADIF import can run.</summary>
+    public bool CanImport => SelectedLogbook is not null;
+
     public int SelectedQsoCount => _selectedQsos.Count;
 
     public bool CanExportSelected => SelectedLogbook is not null && SelectedQsoCount > 0;
@@ -816,6 +819,80 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         return AdifExporter.ExportLogbook(SelectedLogbook, qsos, options.ForLotw);
     }
 
+    /// <summary>
+    /// Builds an import preview for the given ADI text against the current logbook.
+    /// </summary>
+    public async Task<AdifImportPreview?> BuildAdifImportPreviewAsync(
+        string adifText,
+        bool satelliteOnly)
+    {
+        if (SelectedLogbook is null)
+            return null;
+
+        var parsed = AdifImporter.Parse(adifText);
+        var existing = await _repository.ListQsoDuplicateKeysAsync(SelectedLogbook.Id).ConfigureAwait(true);
+        return AdifImportClassifier.BuildPreview(parsed, existing, satelliteOnly);
+    }
+
+    /// <summary>
+    /// Writes imported QSOs in one batch. Does not queue Cloudlog, Satellite Link, or WSJT-X UDP.
+    /// </summary>
+    public async Task<int> ImportAdifQsosAsync(IReadOnlyList<AdifImportedQso> qsos)
+    {
+        if (SelectedLogbook is null || qsos.Count == 0)
+            return 0;
+
+        var logbookId = SelectedLogbook.Id;
+        var requests = new List<QsoRecordCreateRequest>(qsos.Count);
+        foreach (var qso in qsos)
+        {
+            var dxcc = qso.Dxcc;
+            var country = qso.Country;
+            if (dxcc is null || string.IsNullOrWhiteSpace(country))
+            {
+                ResolveDxccFields(qso.Call, out var resolvedDxcc, out var resolvedCountry);
+                dxcc ??= resolvedDxcc;
+                if (string.IsNullOrWhiteSpace(country))
+                    country = resolvedCountry;
+            }
+
+            requests.Add(new QsoRecordCreateRequest
+            {
+                LogbookId = logbookId,
+                QsoUtc = qso.QsoUtc,
+                Call = qso.Call,
+                RstSent = qso.RstSent,
+                RstRcvd = qso.RstRcvd,
+                GridSquare = qso.GridSquare,
+                Name = qso.Name,
+                Comment = qso.Comment,
+                SatName = qso.SatName,
+                Mode = qso.Mode,
+                ModeRx = qso.ModeRx,
+                FreqHz = qso.FreqHz,
+                FreqRxHz = qso.FreqRxHz,
+                Band = qso.Band,
+                BandRx = qso.BandRx,
+                PropMode = qso.PropMode,
+                Dxcc = dxcc,
+                Country = country,
+                CloudlogUploadStatus = CloudlogUploadStatus.None
+            });
+        }
+
+        var inserted = await _repository.AddQsosBatchAsync(requests, preserveBlankPropMode: true)
+            .ConfigureAwait(true);
+        return inserted.Count;
+    }
+
+    public string FormatImportStatusText(int importedCount) =>
+        importedCount switch
+        {
+            0 => _l.Get("Logbook.ImportAdif.Status.ImportedNone"),
+            1 => _l.Get("Logbook.ImportAdif.Status.ImportedOne"),
+            _ => _l.Get("Logbook.ImportAdif.Status.ImportedMany", importedCount)
+        };
+
     public string FormatExportStatusText(QsoAdifExportOptions options, int exportedCount)
     {
         if (options.Scope == QsoAdifExportScope.Selected)
@@ -914,6 +991,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanEditLogbook));
         OnPropertyChanged(nameof(CanDeleteLogbook));
         OnPropertyChanged(nameof(CanExport));
+        OnPropertyChanged(nameof(CanImport));
         OnPropertyChanged(nameof(CurrentLogbookDisplayName));
         OnPropertyChanged(nameof(QsoCountText));
         OnPropertyChanged(nameof(ShowQsoCountText));

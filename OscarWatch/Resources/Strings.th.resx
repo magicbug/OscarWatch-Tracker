@@ -1555,6 +1555,9 @@ LOS: {2}
   <data name="Logbook.Menu.Edit">
     <value>แก้ไข</value>
   </data>
+  <data name="Logbook.Menu.Import">
+    <value>นำเข้า</value>
+  </data>
   <data name="Logbook.Menu.Export">
     <value>ส่งออก</value>
   </data>
@@ -1725,6 +1728,111 @@ LOS: {2}
   </data>
   <data name="Logbook.Station.Unavailable">
     <value>ยังไม่ได้เลือกดาวเทียม หรือยังไม่ได้ซิงค์โหมด</value>
+  </data>
+  <data name="Logbook.ImportAdif">
+    <value>นำเข้า ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Picker.Title">
+    <value>นำเข้า ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Title">
+    <value>นำเข้า ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Intro">
+    <value>ตรวจทานรายการติดต่อจากไฟล์ก่อนบันทึกลงสมุดบันทึกนี้</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.SatelliteOnly">
+    <value>เฉพาะการติดต่อผ่านดาวเทียม</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewNone">
+    <value>ไม่มี QSO ใหม่ที่จะเพิ่ม</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewOne">
+    <value>จะเพิ่ม 1 QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewMany">
+    <value>จะเพิ่ม {0} QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateOne">
+    <value>มี 1 QSO อยู่ในสมุดบันทึกแล้ว (หรือก่อนหน้าในไฟล์)</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateMany">
+    <value>มี {0} QSO อยู่ในสมุดบันทึกแล้ว (หรือก่อนหน้าในไฟล์)</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedOne">
+    <value>อ่านระเบียนไม่ได้ 1 รายการ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedMany">
+    <value>อ่านระเบียนไม่ได้ {0} รายการ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredOne">
+    <value>ตัด QSO ภาคพื้นดินออก 1 รายการ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredMany">
+    <value>ตัด QSO ภาคพื้นดินออก {0} รายการ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Import">
+    <value>นำเข้า</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Title">
+    <value>QSO ซ้ำ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Message">
+    <value>รายการนี้มีอยู่ในสมุดบันทึกแล้ว (หรือก่อนหน้าในไฟล์) นำเข้าต่อไปเพื่อเก็บทั้งสองรายการ หรือข้าม</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.ImportAnyway">
+    <value>นำเข้าต่อไป</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Ignore">
+    <value>ข้าม</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Title">
+    <value>QSO ซ้ำ</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Intro">
+    <value>ติ๊กรายการที่ต้องการนำเข้า รายการที่ไม่ได้ติ๊กจะถูกข้าม</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.SelectAll">
+    <value>นำเข้าที่ซ้ำทั้งหมด</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Call">
+    <value>สัญญาณเรียกขาน</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Utc">
+    <value>UTC</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Satellite">
+    <value>ดาวเทียม</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Mode">
+    <value>โหมด</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Grid">
+    <value>กริด</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source">
+    <value>การจับคู่</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.Logbook">
+    <value>มีในสมุดบันทึกแล้ว</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.File">
+    <value>ก่อนหน้าในไฟล์</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Import">
+    <value>นำเข้า</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedOne">
+    <value>นำเข้า 1 QSO แล้ว</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedMany">
+    <value>นำเข้า {0} QSO แล้ว</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedNone">
+    <value>ไม่ได้นำเข้า QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.EmptyFile">
+    <value>ไฟล์ไม่มี QSO ที่อ่านได้</value>
   </data>
   <data name="Logbook.ExportSelectedAdif">
     <value>ส่งออกที่เลือกเป็น ADIF</value>

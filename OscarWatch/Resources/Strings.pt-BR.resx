@@ -1548,6 +1548,9 @@ Continuar?</value>
   <data name="Logbook.Menu.Edit">
     <value>Editar</value>
   </data>
+  <data name="Logbook.Menu.Import">
+    <value>Importar</value>
+  </data>
   <data name="Logbook.Menu.Export">
     <value>Exportar</value>
   </data>
@@ -1718,6 +1721,111 @@ Continuar?</value>
   </data>
   <data name="Logbook.Station.Unavailable">
     <value>Nenhum satélite selecionado ou modo não sincronizado</value>
+  </data>
+  <data name="Logbook.ImportAdif">
+    <value>Importar ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Picker.Title">
+    <value>Importar ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Title">
+    <value>Importar ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Intro">
+    <value>Revise os contatos do arquivo antes de os gravar neste livro de log.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.SatelliteOnly">
+    <value>Apenas contatos por satélite</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewNone">
+    <value>Não há QSOs novos a adicionar.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewOne">
+    <value>1 QSO será adicionado.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewMany">
+    <value>{0} QSOs serão adicionados.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateOne">
+    <value>1 QSO já está no livro (ou mais cedo no arquivo).</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateMany">
+    <value>{0} QSOs já estão no livro (ou mais cedo no arquivo).</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedOne">
+    <value>1 registro não pôde ser lido.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedMany">
+    <value>{0} registros não puderam ser lidos.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredOne">
+    <value>1 QSO terrestre foi omitido.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredMany">
+    <value>{0} QSOs terrestres foram omitidos.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Import">
+    <value>Importar</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Title">
+    <value>QSO duplicado</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Message">
+    <value>Este contacto já está no livro (ou mais cedo no arquivo). Importe mesmo assim para manter ambos, ou ignore.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.ImportAnyway">
+    <value>Importar mesmo assim</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Ignore">
+    <value>Ignorar</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Title">
+    <value>QSOs duplicados</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Intro">
+    <value>Marque os contatos a importar mesmo assim. Os não marcados são ignorados.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.SelectAll">
+    <value>Importar todos os duplicados</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Call">
+    <value>Indicativo</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Utc">
+    <value>UTC</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Satellite">
+    <value>Satélite</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Mode">
+    <value>Modo</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Grid">
+    <value>Grid</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source">
+    <value>Correspondência</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.Logbook">
+    <value>Já no livro</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.File">
+    <value>Mais cedo no arquivo</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Import">
+    <value>Importar</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedOne">
+    <value>Importado 1 QSO.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedMany">
+    <value>Importados {0} QSOs.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedNone">
+    <value>Nenhum QSO foi importado.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.EmptyFile">
+    <value>O arquivo não tem QSOs legíveis.</value>
   </data>
   <data name="Logbook.ExportSelectedAdif">
     <value>Exportar selecionados para ADIF</value>

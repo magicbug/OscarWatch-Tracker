@@ -26,6 +26,31 @@ public static class AdifModeHelper
         };
     }
 
+    /// <summary>
+    /// Maps an ADIF 3.1 <c>MODE</c> / <c>SUBMODE</c> pair back to an OscarWatch operating mode
+    /// (the reverse of <see cref="FromOperatingMode"/>).
+    /// </summary>
+    public static string ToOperatingMode(string? mode, string? submode)
+    {
+        var adifMode = mode?.Trim().ToUpperInvariant() ?? "";
+        var adifSub = submode?.Trim().ToUpperInvariant() ?? "";
+        if (adifMode.Length == 0)
+            return "";
+
+        return (adifMode, adifSub) switch
+        {
+            ("SSB", "LSB") => "LSB",
+            ("SSB", "USB") => "USB",
+            ("MFSK", "FT4") => "FT4",
+            ("FT8", _) => "FT8",
+            ("FM", _) => "FM",
+            ("CW", _) => "CW",
+            ("PKT", _) => "PKT",
+            (_, { Length: > 0 }) => adifSub,
+            _ => adifMode
+        };
+    }
+
     /// <summary>Human-readable mode label for comments (e.g. <c>USB</c>, <c>SSB</c>).</summary>
     public static string DescribeOperatingMode(string? mode)
     {

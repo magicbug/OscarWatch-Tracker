@@ -401,6 +401,9 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
     private static string CleanPropMode(string? value) =>
         string.IsNullOrWhiteSpace(value) ? "SAT" : value.Trim();
 
+    private static string CleanPropModeForImport(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? "" : value.Trim();
+
     public async Task<QsoRecord> AddQsoAsync(
         QsoRecordCreateRequest request,
         CancellationToken cancellationToken = default)
@@ -417,7 +420,124 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             grid = await FindLatestGridForCallAsync(connection, request.LogbookId, call, cancellationToken)
                 .ConfigureAwait(false);
 
+        var record = await InsertQsoAsync(
+                connection,
+                request,
+                call,
+                grid,
+                qsoUtc,
+                createdUtc,
+                preserveBlankPropMode: false,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        QsosChanged?.Invoke(request.LogbookId);
+        return record;
+    }
+
+    public async Task<IReadOnlyList<QsoRecord>> AddQsosBatchAsync(
+        IReadOnlyList<QsoRecordCreateRequest> requests,
+        bool preserveBlankPropMode = false,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(requests);
+        if (requests.Count == 0)
+            return [];
+
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+
+        var createdUtc = DateTime.UtcNow;
+        var inserted = new List<QsoRecord>(requests.Count);
+        long? logbookId = null;
+
+        await using var connection = OpenConnection();
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        try
+        {
+            foreach (var request in requests)
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(request.Call);
+                logbookId ??= request.LogbookId;
+                if (request.LogbookId != logbookId.Value)
+                    throw new ArgumentException("All QSOs in a batch must belong to the same logbook.");
+
+                var qsoUtc = QsoLogbookTime.NormalizeToUtc(request.QsoUtc);
+                var call = MaidenheadLocator.NormalizeCallsign(request.Call);
+                var grid = MaidenheadLocator.NormalizeGrids(request.GridSquare);
+
+                var record = await InsertQsoAsync(
+                        connection,
+                        request,
+                        call,
+                        grid,
+                        qsoUtc,
+                        createdUtc,
+                        preserveBlankPropMode,
+                        cancellationToken,
+                        transaction)
+                    .ConfigureAwait(false);
+                inserted.Add(record);
+            }
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            throw;
+        }
+
+        if (logbookId is long id)
+            QsosChanged?.Invoke(id);
+
+        return inserted;
+    }
+
+    public async Task<IReadOnlySet<string>> ListQsoDuplicateKeysAsync(
+        long logbookId,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureInitializedAsync(cancellationToken).ConfigureAwait(false);
+        await using var connection = OpenConnection();
         await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT call, qso_utc
+            FROM qsos
+            WHERE logbook_id = $logbookId;
+            """;
+        command.Parameters.AddWithValue("$logbookId", logbookId);
+
+        var keys = new HashSet<string>(StringComparer.Ordinal);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            var call = MaidenheadLocator.NormalizeCallsign(reader.GetString(0));
+            if (call.Length == 0)
+                continue;
+            var qsoUtc = ParseUtc(reader.GetString(1));
+            keys.Add(AdifImporter.FormatDuplicateKey(call, qsoUtc));
+        }
+
+        return keys;
+    }
+
+    private static async Task<QsoRecord> InsertQsoAsync(
+        SqliteConnection connection,
+        QsoRecordCreateRequest request,
+        string call,
+        string grid,
+        DateTime qsoUtc,
+        DateTime createdUtc,
+        bool preserveBlankPropMode,
+        CancellationToken cancellationToken,
+        SqliteTransaction? transaction = null)
+    {
+        await using var command = connection.CreateCommand();
+        if (transaction is not null)
+            command.Transaction = transaction;
+
         command.CommandText = """
             INSERT INTO qsos (
               logbook_id, qso_utc, call, rst_sent, rst_rcvd, grid_square, name, comment,
@@ -430,6 +550,9 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             SELECT last_insert_rowid();
             """;
         var (pota, sota, wwff) = StoredActivationRefs(request.PotaRef, request.SotaRef, request.WwffRef);
+        var propMode = preserveBlankPropMode
+            ? CleanPropModeForImport(request.PropMode)
+            : CleanPropMode(request.PropMode);
         command.Parameters.AddWithValue("$potaRef", pota);
         command.Parameters.AddWithValue("$sotaRef", sota);
         command.Parameters.AddWithValue("$wwffRef", wwff);
@@ -448,14 +571,14 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
         command.Parameters.AddWithValue("$freqRxHz", request.FreqRxHz);
         command.Parameters.AddWithValue("$band", Clean(request.Band));
         command.Parameters.AddWithValue("$bandRx", Clean(request.BandRx));
-        command.Parameters.AddWithValue("$propMode", CleanPropMode(request.PropMode));
+        command.Parameters.AddWithValue("$propMode", propMode);
         command.Parameters.AddWithValue("$createdUtc", FormatUtc(createdUtc));
         command.Parameters.AddWithValue("$cloudlogUploadStatus", CloudlogUploadStatusCodec.ToStorage(request.CloudlogUploadStatus));
         AddNullableIntParameter(command, "$dxcc", request.Dxcc);
         command.Parameters.AddWithValue("$country", Clean(request.Country));
 
         var id = (long)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? 0L);
-        var record = new QsoRecord
+        return new QsoRecord
         {
             Id = id,
             LogbookId = request.LogbookId,
@@ -473,7 +596,7 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             FreqRxHz = request.FreqRxHz,
             Band = Clean(request.Band),
             BandRx = Clean(request.BandRx),
-            PropMode = CleanPropMode(request.PropMode),
+            PropMode = propMode,
             Dxcc = request.Dxcc,
             Country = Clean(request.Country),
             PotaRef = pota,
@@ -482,9 +605,6 @@ public sealed class QsoLogbookRepository : IQsoLogbookRepository, IDisposable
             CreatedUtc = createdUtc,
             CloudlogUploadStatus = request.CloudlogUploadStatus
         };
-
-        QsosChanged?.Invoke(request.LogbookId);
-        return record;
     }
 
     public async Task<QsoRecord> UpdateQsoAsync(

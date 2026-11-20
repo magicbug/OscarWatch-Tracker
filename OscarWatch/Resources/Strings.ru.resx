@@ -1555,6 +1555,9 @@ LOS: {2}
   <data name="Logbook.Menu.Edit">
     <value>Правка</value>
   </data>
+  <data name="Logbook.Menu.Import">
+    <value>Импорт</value>
+  </data>
   <data name="Logbook.Menu.Export">
     <value>Экспорт</value>
   </data>
@@ -1725,6 +1728,111 @@ LOS: {2}
   </data>
   <data name="Logbook.Station.Unavailable">
     <value>Спутник не выбран или режим не синхронизирован</value>
+  </data>
+  <data name="Logbook.ImportAdif">
+    <value>Импорт ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Picker.Title">
+    <value>Импорт ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Title">
+    <value>Импорт ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Intro">
+    <value>Проверьте контакты из файла перед записью в этот журнал.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.SatelliteOnly">
+    <value>Только спутниковые QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewNone">
+    <value>Нет новых QSO для добавления.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewOne">
+    <value>Будет добавлен 1 QSO.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewMany">
+    <value>Будет добавлено QSO: {0}.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateOne">
+    <value>1 QSO уже есть в журнале (или раньше в файле).</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateMany">
+    <value>QSO уже есть в журнале (или раньше в файле): {0}.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedOne">
+    <value>Не удалось прочитать 1 запись.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedMany">
+    <value>Не удалось прочитать записей: {0}.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredOne">
+    <value>Пропущен 1 наземный QSO.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredMany">
+    <value>Пропущено наземных QSO: {0}.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Import">
+    <value>Импорт</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Title">
+    <value>Повторный QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Message">
+    <value>Этот контакт уже есть в журнале (или раньше в файле). Импортируйте всё равно, чтобы оставить оба, или пропустите.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.ImportAnyway">
+    <value>Импортировать всё равно</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Ignore">
+    <value>Пропустить</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Title">
+    <value>Повторные QSO</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Intro">
+    <value>Отметьте контакты для импорта. Неотмеченные будут пропущены.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.SelectAll">
+    <value>Импортировать все повторы</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Call">
+    <value>Позывной</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Utc">
+    <value>UTC</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Satellite">
+    <value>Спутник</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Mode">
+    <value>Режим</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Grid">
+    <value>Квадрат</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source">
+    <value>Совпадение</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.Logbook">
+    <value>Уже в журнале</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.File">
+    <value>Раньше в файле</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Import">
+    <value>Импорт</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedOne">
+    <value>Импортирован 1 QSO.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedMany">
+    <value>Импортировано QSO: {0}.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedNone">
+    <value>QSO не импортированы.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.EmptyFile">
+    <value>В файле нет читаемых QSO.</value>
   </data>
   <data name="Logbook.ExportSelectedAdif">
     <value>Экспорт выбранных в ADIF</value>

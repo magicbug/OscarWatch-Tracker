@@ -60,6 +60,23 @@ public interface IQsoLogbookRepository
 
     Task<QsoRecord> AddQsoAsync(QsoRecordCreateRequest request, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Inserts many QSOs in one transaction and raises <see cref="QsosChanged"/> once.
+    /// When <paramref name="preserveBlankPropMode"/> is true, an empty propagation mode stays empty
+    /// (used by ADIF import). Otherwise blank becomes <c>SAT</c>, matching a manual add.
+    /// </summary>
+    Task<IReadOnlyList<QsoRecord>> AddQsosBatchAsync(
+        IReadOnlyList<QsoRecordCreateRequest> requests,
+        bool preserveBlankPropMode = false,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Duplicate keys for ADIF import: normalised callsign plus UTC date and time to the minute.
+    /// </summary>
+    Task<IReadOnlySet<string>> ListQsoDuplicateKeysAsync(
+        long logbookId,
+        CancellationToken cancellationToken = default);
+
     Task<QsoRecord> UpdateQsoAsync(QsoRecordUpdateRequest request, CancellationToken cancellationToken = default);
 
     Task DeleteQsoAsync(long qsoId, CancellationToken cancellationToken = default);

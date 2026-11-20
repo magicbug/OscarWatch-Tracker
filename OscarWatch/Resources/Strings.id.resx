@@ -1555,6 +1555,9 @@ Lanjutkan?</value>
   <data name="Logbook.Menu.Edit">
     <value>Sunting</value>
   </data>
+  <data name="Logbook.Menu.Import">
+    <value>Impor</value>
+  </data>
   <data name="Logbook.Menu.Export">
     <value>Ekspor</value>
   </data>
@@ -1725,6 +1728,111 @@ Lanjutkan?</value>
   </data>
   <data name="Logbook.Station.Unavailable">
     <value>Tidak ada satelit yang dipilih atau mode belum tersinkron</value>
+  </data>
+  <data name="Logbook.ImportAdif">
+    <value>Impor ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Picker.Title">
+    <value>Impor ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Title">
+    <value>Impor ADIF</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Intro">
+    <value>Tinjau kontak dari berkas sebelum menulisnya ke buku log ini.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.SatelliteOnly">
+    <value>Hanya kontak satelit</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewNone">
+    <value>Tidak ada QSO baru untuk ditambahkan.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewOne">
+    <value>1 QSO akan ditambahkan.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.NewMany">
+    <value>{0} QSO akan ditambahkan.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateOne">
+    <value>1 QSO sudah ada di buku log (atau lebih awal dalam berkas).</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.DuplicateMany">
+    <value>{0} QSO sudah ada di buku log (atau lebih awal dalam berkas).</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedOne">
+    <value>1 rekaman tidak dapat dibaca.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.UnparsedMany">
+    <value>{0} rekaman tidak dapat dibaca.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredOne">
+    <value>1 QSO terestrial dikecualikan.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Count.FilteredMany">
+    <value>{0} QSO terestrial dikecualikan.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Dialog.Import">
+    <value>Impor</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Title">
+    <value>QSO duplikat</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Message">
+    <value>Kontak ini sudah ada di buku log (atau lebih awal dalam berkas). Impor saja untuk menyimpan keduanya, atau abaikan.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.ImportAnyway">
+    <value>Impor saja</value>
+  </data>
+  <data name="Logbook.ImportAdif.Duplicate.Ignore">
+    <value>Abaikan</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Title">
+    <value>QSO duplikat</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Intro">
+    <value>Centang kontak yang ingin diimpor. Yang tidak dicentang dilewati.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.SelectAll">
+    <value>Impor semua duplikat</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Call">
+    <value>Tanda panggilan</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Utc">
+    <value>UTC</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Satellite">
+    <value>Satelit</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Mode">
+    <value>Mode</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Grid">
+    <value>Grid</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source">
+    <value>Cocokan</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.Logbook">
+    <value>Sudah di buku log</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Source.File">
+    <value>Lebih awal dalam berkas</value>
+  </data>
+  <data name="Logbook.ImportAdif.Conflicts.Import">
+    <value>Impor</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedOne">
+    <value>1 QSO diimpor.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedMany">
+    <value>{0} QSO diimpor.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.ImportedNone">
+    <value>Tidak ada QSO yang diimpor.</value>
+  </data>
+  <data name="Logbook.ImportAdif.Status.EmptyFile">
+    <value>Berkas tidak memiliki QSO yang dapat dibaca.</value>
   </data>
   <data name="Logbook.ExportSelectedAdif">
     <value>Ekspor yang dipilih ke ADIF</value>
