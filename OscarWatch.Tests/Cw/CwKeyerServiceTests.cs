@@ -206,6 +206,103 @@ public sealed class CwKeyerServiceTests
         Assert.Equal(CwKeyerStartResult.RigNotConnected, keyer.Send(0, CwMessage.FromText("E")));
     }
 
+    [Fact]
+    public void Keyboard_line_keys_two_letters_with_a_character_gap()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw => cw.Wpm = 60);
+        using var keyer = new CwKeyerService(rig, settings);
+        var finished = new ManualResetEventSlim();
+        var progressed = new List<string>();
+        keyer.KeyboardProgress += (_, e) => progressed.Add(e.Symbol.Value);
+        keyer.Finished += (_, _) => finished.Set();
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.BeginKeyboard());
+        Assert.True(keyer.IsKeyboardSession);
+        Assert.True(keyer.Enqueue(CwSymbol.Character('E')));
+        Assert.True(keyer.Enqueue(CwSymbol.Character('T')));
+        // E = dit, T = dah; allow the session to drain then stop.
+        Assert.True(SpinWait.SpinUntil(() => progressed.Count >= 2, TimeSpan.FromSeconds(5)));
+        keyer.Stop();
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.Equal(["E", "T"], progressed);
+        Assert.Contains("cwkey:dtr:on", rig.Calls);
+        Assert.Equal("cwkey:dtr:off", rig.Calls[^1]);
+        Assert.False(keyer.IsSending);
+    }
+
+    [Fact]
+    public void Keyboard_line_word_gap_is_longer_than_a_character_gap()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw => cw.Wpm = 60);
+        using var keyer = new CwKeyerService(rig, settings);
+        var progressed = new List<string>();
+        keyer.KeyboardProgress += (_, e) => progressed.Add(e.Symbol.IsWordGap ? " " : e.Symbol.Value);
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.BeginKeyboard());
+        Assert.True(keyer.Enqueue(CwSymbol.Character('E')));
+        Assert.True(keyer.Enqueue(CwSymbol.WordGap));
+        Assert.True(keyer.Enqueue(CwSymbol.Character('T')));
+        Assert.True(SpinWait.SpinUntil(() => progressed.Count >= 3, TimeSpan.FromSeconds(5)));
+        keyer.Stop();
+
+        Assert.Equal(["E", " ", "T"], progressed);
+    }
+
+    [Fact]
+    public void Keyboard_backspace_drops_unsent_symbol()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw => cw.Wpm = 5);
+        using var keyer = new CwKeyerService(rig, settings);
+        var progressed = new List<string>();
+        var finished = new ManualResetEventSlim();
+        keyer.KeyboardProgress += (_, e) =>
+        {
+            progressed.Add(e.Symbol.Value);
+            // Hold the first symbol long enough to drop the second before it starts.
+            Thread.Sleep(200);
+        };
+        keyer.Finished += (_, _) => finished.Set();
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.BeginKeyboard());
+        Assert.True(keyer.Enqueue(CwSymbol.Character('E')));
+        Assert.True(keyer.Enqueue(CwSymbol.Character('T')));
+        Assert.True(SpinWait.SpinUntil(() => progressed.Count >= 1, TimeSpan.FromSeconds(5)));
+        Assert.True(keyer.TryDropLastUnsent());
+        keyer.Stop();
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.Equal(["E"], progressed);
+        Assert.Equal("cwkey:dtr:off", rig.Calls[^1]);
+    }
+
+    [Fact]
+    public void Keyboard_kenwood_sends_one_symbol_at_a_time_and_stop_clears()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.KenwoodTs590sg, cw => cw.Wpm = 60);
+        using var keyer = new CwKeyerService(rig, settings);
+        var finished = new ManualResetEventSlim();
+        keyer.Finished += (_, _) => finished.Set();
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.BeginKeyboard());
+        Assert.True(keyer.Enqueue(CwSymbol.Character('C')));
+        Assert.True(keyer.Enqueue(CwSymbol.Character('Q')));
+        Assert.True(SpinWait.SpinUntil(
+            () => rig.Calls.Count(c => c.StartsWith("cwtext:", StringComparison.Ordinal)) >= 2,
+            TimeSpan.FromSeconds(5)));
+        keyer.Stop();
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.Contains("cwspeed:60", rig.Calls);
+        Assert.Contains("cwtext:C", rig.Calls);
+        Assert.Contains("cwtext:Q", rig.Calls);
+        Assert.Contains("cwstop", rig.Calls);
+    }
+
     private static FakeSettings Settings(RigType type, Action<CwKeyerSettings>? configure = null)
     {
         var settings = new FakeSettings();

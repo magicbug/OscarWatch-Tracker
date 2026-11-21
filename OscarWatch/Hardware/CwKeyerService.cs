@@ -8,7 +8,7 @@ using Serilog;
 
 namespace OscarWatch.Hardware;
 
-/// <summary>Why <see cref="CwKeyerService.Send"/> did not start.</summary>
+/// <summary>Why <see cref="CwKeyerService.Send"/> or <see cref="CwKeyerService.BeginKeyboard"/> did not start.</summary>
 public enum CwKeyerStartResult
 {
     Started,
@@ -33,13 +33,21 @@ public enum CwKeyerFinish
 
 public sealed record CwKeyerFinishedEventArgs(int Slot, CwKeyerFinish Finish, bool SaveQso = false);
 
+/// <summary>A symbol the keyboard session has started keying.</summary>
+public sealed record CwKeyboardProgressEventArgs(CwSymbol Symbol);
+
 /// <summary>
 /// Sends logbook CW macros on the uplink: as text the radio keys itself (Kenwood <c>KY</c>, Icom <c>0x17</c>),
 /// or by timing DTR or RTS on the CAT port or a COM port of its own. One message at a time; a new
-/// message aborts the one in progress.
+/// message aborts the one in progress. A keyboard session queues symbols for type-ahead sending.
 /// </summary>
 public sealed class CwKeyerService : IDisposable
 {
+    /// <summary>Active slot while the live keyboard is sending (not one of the twelve macros).</summary>
+    public const int KeyboardSlot = -2;
+
+    private const int IdleSlot = -1;
+
     private static readonly ILogger Log = Serilog.Log.ForContext<CwKeyerService>();
 
     /// <summary>How long a CAT text piece may wait behind a Doppler write.</summary>
@@ -50,11 +58,15 @@ public sealed class CwKeyerService : IDisposable
     private readonly HandshakePortPool _portPool;
     private readonly object _gate = new();
     private readonly object _portGate = new();
+    private readonly object _keyboardGate = new();
+    private readonly Queue<KeyboardItem> _keyboardQueue = new();
+    private readonly ManualResetEventSlim _keyboardPulse = new(false);
     private HandshakePortLease? _port;
     private Thread? _worker;
     private CancellationTokenSource? _cts;
     private volatile int _wpm;
-    private int _activeSlot = -1;
+    private int _activeSlot = IdleSlot;
+    private bool _keyboardLastIsGap = true;
 
     public CwKeyerService(IRigController rig, ISettingsService settings, HandshakePortPool? portPool = null)
     {
@@ -67,9 +79,18 @@ public sealed class CwKeyerService : IDisposable
     /// <summary>Raised on the keyer thread when a message that started ends.</summary>
     public event EventHandler<CwKeyerFinishedEventArgs>? Finished;
 
-    public bool IsSending => Volatile.Read(ref _activeSlot) >= 0;
+    /// <summary>Raised on the keyer thread when the keyboard session starts keying a symbol.</summary>
+    public event EventHandler<CwKeyboardProgressEventArgs>? KeyboardProgress;
 
-    /// <summary>Message slot (0 to 11) being sent, or -1.</summary>
+    /// <summary>Raised on the keyer thread when a queued <c>{SAVEQSO}</c> marker is reached.</summary>
+    public event EventHandler? KeyboardSaveQsoRequested;
+
+    public bool IsSending => Volatile.Read(ref _activeSlot) != IdleSlot;
+
+    /// <summary>True while the live keyboard session owns the keyer.</summary>
+    public bool IsKeyboardSession => Volatile.Read(ref _activeSlot) == KeyboardSlot;
+
+    /// <summary>Message slot (0 to 11) being sent, <see cref="KeyboardSlot"/> for the keyboard, or -1.</summary>
     public int ActiveSlot => Volatile.Read(ref _activeSlot);
 
     public int Wpm => _wpm;
@@ -97,42 +118,9 @@ public sealed class CwKeyerService : IDisposable
 
         Stop();
 
-        var settings = _settings.Current;
-        var cw = settings.QsoLogbook.CwKeyer;
-        var method = CwKeyingRoute.Resolve(cw, settings.Rig);
-        var useRts = cw.KeyLine == PttLine.Rts;
-
-        if (method != CwKeyingMethod.SeparatePortLine)
-        {
-            lock (_portGate)
-                ClosePort();
-        }
-
-        switch (method)
-        {
-            case CwKeyingMethod.KenwoodText:
-            case CwKeyingMethod.IcomText:
-                if (!settings.Rig.Enabled)
-                    return CwKeyerStartResult.RigNotConnected;
-                break;
-
-            case CwKeyingMethod.CatPortLine:
-                if (!settings.Rig.Enabled)
-                    return CwKeyerStartResult.RigNotConnected;
-                if (CwKeyingRoute.CatPortRtsBlocked(cw, settings.Rig))
-                    return CwKeyerStartResult.RtsBlocked;
-                if (!_rig.TrySetCwKeyLine(useRts, assert: false))
-                    return CwKeyerStartResult.KeyLineUnavailable;
-                break;
-
-            case CwKeyingMethod.SeparatePortLine:
-            {
-                var portResult = EnsurePort(cw.SeparatePort, settings);
-                if (portResult != CwKeyerStartResult.Started)
-                    return portResult;
-                break;
-            }
-        }
+        var prepare = PrepareKeying(out var method, out var useRts);
+        if (prepare != CwKeyerStartResult.Started)
+            return prepare;
 
         var cts = new CancellationTokenSource();
         lock (_gate)
@@ -151,7 +139,126 @@ public sealed class CwKeyerService : IDisposable
         return CwKeyerStartResult.Started;
     }
 
-    /// <summary>Abort the message in progress and leave the key up.</summary>
+    /// <summary>
+    /// Start a type-ahead keyboard session. Aborts any message in progress. Symbols are added with
+    /// <see cref="Enqueue(CwSymbol)"/> until <see cref="Stop"/> ends the session.
+    /// </summary>
+    public CwKeyerStartResult BeginKeyboard()
+    {
+        Stop();
+
+        var prepare = PrepareKeying(out var method, out var useRts);
+        if (prepare != CwKeyerStartResult.Started)
+            return prepare;
+
+        lock (_keyboardGate)
+        {
+            _keyboardQueue.Clear();
+            _keyboardLastIsGap = true;
+            _keyboardPulse.Reset();
+        }
+
+        var cts = new CancellationTokenSource();
+        lock (_gate)
+        {
+            _cts = cts;
+            Volatile.Write(ref _activeSlot, KeyboardSlot);
+            _worker = new Thread(() => RunKeyboard(method, useRts, cts.Token))
+            {
+                IsBackground = true,
+                Name = "OscarWatch.CwKeyboard",
+                Priority = ThreadPriority.AboveNormal
+            };
+            _worker.Start();
+        }
+
+        return CwKeyerStartResult.Started;
+    }
+
+    /// <summary>Queue one symbol for the open keyboard session. Leading and doubled word gaps are dropped.</summary>
+    public bool Enqueue(CwSymbol symbol)
+    {
+        if (!IsKeyboardSession)
+            return false;
+
+        lock (_keyboardGate)
+        {
+            if (symbol.IsWordGap)
+            {
+                if (_keyboardLastIsGap)
+                    return false;
+                _keyboardLastIsGap = true;
+            }
+            else
+            {
+                _keyboardLastIsGap = false;
+            }
+
+            _keyboardQueue.Enqueue(KeyboardItem.ForSymbol(symbol));
+            _keyboardPulse.Set();
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Queue every symbol in <paramref name="message"/>, then an optional <c>{SAVEQSO}</c> marker.
+    /// </summary>
+    public bool Enqueue(CwMessage message, bool saveQso = false)
+    {
+        if (!IsKeyboardSession)
+            return false;
+
+        var added = false;
+        foreach (var symbol in message.Symbols)
+        {
+            if (Enqueue(symbol))
+                added = true;
+        }
+
+        if (saveQso)
+        {
+            lock (_keyboardGate)
+            {
+                _keyboardQueue.Enqueue(KeyboardItem.SaveQso);
+                _keyboardPulse.Set();
+            }
+
+            added = true;
+        }
+
+        return added;
+    }
+
+    /// <summary>Remove the last symbol the worker has not started. Returns false when the queue is empty.</summary>
+    public bool TryDropLastUnsent()
+    {
+        if (!IsKeyboardSession)
+            return false;
+
+        lock (_keyboardGate)
+        {
+            if (_keyboardQueue.Count == 0)
+                return false;
+
+            var items = _keyboardQueue.ToArray();
+            _keyboardQueue.Clear();
+            for (var i = 0; i < items.Length - 1; i++)
+                _keyboardQueue.Enqueue(items[i]);
+
+            _keyboardLastIsGap = true;
+            foreach (var item in _keyboardQueue)
+            {
+                if (item.IsSaveQso)
+                    continue;
+                _keyboardLastIsGap = item.Symbol!.Value.IsWordGap;
+            }
+
+            return true;
+        }
+    }
+
+    /// <summary>Abort the message or keyboard session in progress and leave the key up.</summary>
     public void Stop()
     {
         Thread? worker;
@@ -164,6 +271,13 @@ public sealed class CwKeyerService : IDisposable
             _cts = null;
         }
 
+        lock (_keyboardGate)
+        {
+            _keyboardQueue.Clear();
+            _keyboardLastIsGap = true;
+            _keyboardPulse.Set();
+        }
+
         if (cts is null)
             return;
 
@@ -171,6 +285,9 @@ public sealed class CwKeyerService : IDisposable
         if (worker is not null && worker != Thread.CurrentThread)
             worker.Join(TimeSpan.FromSeconds(4));
         cts.Dispose();
+
+        lock (_keyboardGate)
+            _keyboardPulse.Reset();
     }
 
     /// <summary>Release the keyer's separate COM port lease.</summary>
@@ -200,7 +317,49 @@ public sealed class CwKeyerService : IDisposable
         ReleasePort();
     }
 
-    public void Dispose() => ReleasePort();
+    public void Dispose()
+    {
+        ReleasePort();
+        _keyboardPulse.Dispose();
+    }
+
+    private CwKeyerStartResult PrepareKeying(out CwKeyingMethod method, out bool useRts)
+    {
+        var settings = _settings.Current;
+        var cw = settings.QsoLogbook.CwKeyer;
+        method = CwKeyingRoute.Resolve(cw, settings.Rig);
+        useRts = cw.KeyLine == PttLine.Rts;
+
+        if (method != CwKeyingMethod.SeparatePortLine)
+        {
+            lock (_portGate)
+                ClosePort();
+        }
+
+        switch (method)
+        {
+            case CwKeyingMethod.KenwoodText:
+            case CwKeyingMethod.IcomText:
+                if (!settings.Rig.Enabled)
+                    return CwKeyerStartResult.RigNotConnected;
+                return CwKeyerStartResult.Started;
+
+            case CwKeyingMethod.CatPortLine:
+                if (!settings.Rig.Enabled)
+                    return CwKeyerStartResult.RigNotConnected;
+                if (CwKeyingRoute.CatPortRtsBlocked(cw, settings.Rig))
+                    return CwKeyerStartResult.RtsBlocked;
+                if (!_rig.TrySetCwKeyLine(useRts, assert: false))
+                    return CwKeyerStartResult.KeyLineUnavailable;
+                return CwKeyerStartResult.Started;
+
+            case CwKeyingMethod.SeparatePortLine:
+                return EnsurePort(cw.SeparatePort, settings);
+
+            default:
+                return CwKeyerStartResult.KeyLineUnavailable;
+        }
+    }
 
     private void Run(int slot, CwMessage message, CwKeyingMethod method, bool useRts, bool saveQso, CancellationToken token)
     {
@@ -220,10 +379,42 @@ public sealed class CwKeyerService : IDisposable
         {
             if (!CwKeyingRoute.IsTextMethod(method))
                 SetLine(method, useRts, assert: false);
-            Interlocked.CompareExchange(ref _activeSlot, -1, slot);
+            Interlocked.CompareExchange(ref _activeSlot, IdleSlot, slot);
         }
 
         Finished?.Invoke(this, new CwKeyerFinishedEventArgs(slot, finish, saveQso));
+    }
+
+    private void RunKeyboard(CwKeyingMethod method, bool useRts, CancellationToken token)
+    {
+        var finish = CwKeyerFinish.Aborted;
+        try
+        {
+            finish = CwKeyingRoute.IsTextMethod(method)
+                ? RunKeyboardText(method, token)
+                : RunKeyboardLine(method, useRts, token);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "CW keyboard failed");
+            finish = CwKeyerFinish.RigRejected;
+        }
+        finally
+        {
+            if (!CwKeyingRoute.IsTextMethod(method))
+                SetLine(method, useRts, assert: false);
+            else if (token.IsCancellationRequested || finish != CwKeyerFinish.Completed)
+                _rig.TryStopCwText();
+
+            Interlocked.CompareExchange(ref _activeSlot, IdleSlot, KeyboardSlot);
+            lock (_keyboardGate)
+            {
+                _keyboardQueue.Clear();
+                _keyboardLastIsGap = true;
+            }
+        }
+
+        Finished?.Invoke(this, new CwKeyerFinishedEventArgs(KeyboardSlot, finish));
     }
 
     private CwKeyerFinish RunText(CwMessage message, CwKeyingMethod method, CancellationToken token)
@@ -257,6 +448,66 @@ public sealed class CwKeyerService : IDisposable
         return CwKeyerFinish.Aborted;
     }
 
+    private CwKeyerFinish RunKeyboardText(CwKeyingMethod method, CancellationToken token)
+    {
+        _rig.TrySetCwSpeed(_wpm);
+        var clock = Stopwatch.StartNew();
+        var readyAtMs = 0.0;
+        var sentAny = false;
+
+        while (!token.IsCancellationRequested)
+        {
+            if (!TryTakeKeyboardItem(out var item, token))
+                break;
+
+            if (item.IsSaveQso)
+            {
+                KeyboardSaveQsoRequested?.Invoke(this, EventArgs.Empty);
+                continue;
+            }
+
+            var symbol = item.Symbol!.Value;
+            KeyboardProgress?.Invoke(this, new CwKeyboardProgressEventArgs(symbol));
+
+            if (symbol.IsWordGap)
+            {
+                if (!sentAny)
+                    continue;
+
+                readyAtMs = Math.Max(readyAtMs, clock.Elapsed.TotalMilliseconds)
+                    + MorseCode.WordGapUnits * MorseCode.DotMs(_wpm);
+                if (!WaitUntil(clock, readyAtMs, token))
+                    return CwKeyerFinish.Aborted;
+                continue;
+            }
+
+            var piece = new CwMessage([symbol]);
+            var gapUnits = sentAny ? MorseCode.CharacterGapUnits : 0;
+            var startAt = Math.Max(readyAtMs, clock.Elapsed.TotalMilliseconds);
+            if (gapUnits > 0)
+            {
+                var gapTarget = readyAtMs + gapUnits * MorseCode.DotMs(_wpm);
+                startAt = Math.Max(gapTarget, clock.Elapsed.TotalMilliseconds);
+                if (!WaitUntil(clock, startAt, token))
+                    return CwKeyerFinish.Aborted;
+            }
+
+            if (!_rig.TrySendCwText(piece, TextCommandTimeout))
+            {
+                _rig.TryStopCwText();
+                return CwKeyerFinish.RigRejected;
+            }
+
+            readyAtMs = startAt + MorseCode.CountUnits(piece) * MorseCode.DotMs(_wpm);
+            if (!WaitUntil(clock, readyAtMs, token))
+                return CwKeyerFinish.Aborted;
+
+            sentAny = true;
+        }
+
+        return token.IsCancellationRequested ? CwKeyerFinish.Aborted : CwKeyerFinish.Completed;
+    }
+
     private CwKeyerFinish RunLine(CwMessage message, CwKeyingMethod method, bool useRts, CancellationToken token)
     {
         var events = MorseCode.BuildKeyEvents(message);
@@ -278,6 +529,99 @@ public sealed class CwKeyerService : IDisposable
         }
 
         return CwKeyerFinish.Completed;
+    }
+
+    private CwKeyerFinish RunKeyboardLine(CwKeyingMethod method, bool useRts, CancellationToken token)
+    {
+        using var timer = HighResolutionTimer.Begin();
+        var clock = Stopwatch.StartNew();
+        var dueMs = 0.0;
+        var sentAny = false;
+        var pendingGapUnits = 0;
+
+        while (!token.IsCancellationRequested)
+        {
+            if (!TryTakeKeyboardItem(out var item, token))
+                break;
+
+            if (item.IsSaveQso)
+            {
+                KeyboardSaveQsoRequested?.Invoke(this, EventArgs.Empty);
+                continue;
+            }
+
+            var symbol = item.Symbol!.Value;
+            KeyboardProgress?.Invoke(this, new CwKeyboardProgressEventArgs(symbol));
+
+            if (symbol.IsWordGap)
+            {
+                if (sentAny)
+                    pendingGapUnits = MorseCode.WordGapUnits;
+                continue;
+            }
+
+            if (sentAny)
+            {
+                var gapUnits = Math.Max(pendingGapUnits, MorseCode.CharacterGapUnits);
+                pendingGapUnits = 0;
+                SetLine(method, useRts, assert: false);
+                var gapTarget = dueMs + gapUnits * MorseCode.DotMs(_wpm);
+                var startAt = Math.Max(gapTarget, clock.Elapsed.TotalMilliseconds);
+                if (!WaitUntil(clock, startAt, token))
+                    return CwKeyerFinish.Aborted;
+                dueMs = startAt;
+            }
+
+            var events = MorseCode.BuildKeyEvents(new CwMessage([symbol]));
+            foreach (var keyEvent in events)
+            {
+                if (token.IsCancellationRequested)
+                    return CwKeyerFinish.Aborted;
+
+                if (!SetLine(method, useRts, keyEvent.KeyDown) && keyEvent.KeyDown)
+                    return CwKeyerFinish.RigRejected;
+
+                dueMs += keyEvent.Units * MorseCode.DotMs(_wpm);
+                if (!WaitUntil(clock, dueMs, token))
+                    return CwKeyerFinish.Aborted;
+            }
+
+            SetLine(method, useRts, assert: false);
+            sentAny = true;
+        }
+
+        return token.IsCancellationRequested ? CwKeyerFinish.Aborted : CwKeyerFinish.Completed;
+    }
+
+    private bool TryTakeKeyboardItem(out KeyboardItem item, CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            lock (_keyboardGate)
+            {
+                if (_keyboardQueue.Count > 0)
+                {
+                    item = _keyboardQueue.Dequeue();
+                    if (_keyboardQueue.Count == 0)
+                        _keyboardPulse.Reset();
+                    return true;
+                }
+
+                _keyboardPulse.Reset();
+            }
+
+            try
+            {
+                _keyboardPulse.Wait(token);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+        }
+
+        item = default;
+        return false;
     }
 
     /// <summary>
@@ -355,6 +699,13 @@ public sealed class CwKeyerService : IDisposable
         var port = _port;
         _port = null;
         port?.Dispose();
+    }
+
+    private readonly record struct KeyboardItem(CwSymbol? Symbol, bool IsSaveQso)
+    {
+        public static KeyboardItem ForSymbol(CwSymbol symbol) => new(symbol, false);
+
+        public static KeyboardItem SaveQso { get; } = new(null, true);
     }
 
     /// <summary>Raises the Windows timer resolution to 1 ms while a message is keyed.</summary>

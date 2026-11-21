@@ -6932,6 +6932,27 @@ Aktuell: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>Logbuch-Einstellungen öffnen, um die CW-Nachrichten zu ändern</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>Tastatur</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>CW-Tastatur öffnen (Strg+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>CW-Tastatur</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>Tippen zum Senden. Rücktaste löscht ungesendete Zeichen. Esc stoppt. Strg+K schließt.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>Tastatur: tippen zum Senden.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>Tastatur: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>Tastatur: {0}. Unbekannte Makros ausgelassen: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>Öffnen Sie das Logbuch, um die CW-Nachrichten zu bearbeiten.</value>
   </data>
@@ -6942,7 +6963,7 @@ Aktuell: {1} ({2})</value>
     <value>CW-Keyer</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Zwölf Nachrichtentasten erscheinen im Logbuch und im CW-Decoder, wenn der Uplink CW ist. Klicken Sie eine Taste oder drücken Sie F1 bis F12 zum Senden. Escape oder Stopp bricht ab.</value>
+    <value>Zwölf Nachrichtentasten erscheinen im Logbuch und im CW-Decoder, wenn der Uplink CW ist. Klicken Sie eine Taste oder drücken Sie F1 bis F12 zum Senden. Strg+K öffnet die Tastatur zum Tippen in Echtzeit. Escape oder Stopp bricht ab.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>CW-Keyer im Logbuch und CW-Decoder anzeigen</value>

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Avalonia.Controls;
 using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 
@@ -33,6 +34,10 @@ public partial class QsoLogbookViewModel
     /// <summary>Escape from the window. Returns true when it stopped a message.</summary>
     public bool TryHandleCwEscape() =>
         _cwKeyer?.TryHandleCwEscape() ?? false;
+
+    /// <summary>Ctrl+K from the window. Returns true when it toggled the CW keyboard.</summary>
+    public bool TryHandleCtrlK(Window owner) =>
+        _cwKeyer?.TryHandleCtrlK(owner) ?? false;
 
     /// <summary>Values for CW macros from the entry form and the station call / grid.</summary>
     public CwMacroContext BuildCwMacroContext()

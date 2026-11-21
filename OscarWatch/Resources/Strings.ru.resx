@@ -6932,6 +6932,27 @@ LOS: {2}
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>Открыть настройки журнала, чтобы изменить сообщения CW</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>Клавиатура</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>Открыть клавиатуру CW (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>Клавиатура CW</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>Печатайте для передачи. Backspace удаляет ещё не отправленные символы. Esc останавливает. Ctrl+K закрывает.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>Клавиатура: печатайте для передачи.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>Клавиатура: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>Клавиатура: {0}. Пропущены неизвестные макросы: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>Откройте журнал, чтобы изменить сообщения CW.</value>
   </data>
@@ -6942,7 +6963,7 @@ LOS: {2}
     <value>CW-манипулятор</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Двенадцать кнопок сообщений появляются в журнале и в декодере CW, когда uplink — CW. Нажмите кнопку или F1–F12 для передачи. Escape или Стоп прерывает.</value>
+    <value>Двенадцать кнопок сообщений появляются в журнале и в декодере CW, когда uplink — CW. Нажмите кнопку или F1–F12 для передачи. Ctrl+K открывает клавиатуру для набора в реальном времени. Escape или Стоп прерывает.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>Показывать CW-кейер в журнале и декодере CW</value>

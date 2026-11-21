@@ -6928,6 +6928,27 @@
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>ログブック設定を開いて CW メッセージを変更します</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>キーボード</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>CW キーボードを開く (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>CW キーボード</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>入力すると送信されます。Backspace は未送信の文字を削除します。Esc で停止。Ctrl+K で閉じます。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>キーボード: 入力して送信。</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>キーボード: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>キーボード: {0}。不明なマクロを省略: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>CW メッセージを編集するにはログブックを開いてください。</value>
   </data>
@@ -6938,7 +6959,7 @@
     <value>CW キーヤー</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>アップリンクが CW のとき、ログブックと CW デコーダーに 12 個のメッセージボタンが表示されます。ボタンをクリックするか F1〜F12 で送信します。Escape または Stop で中止します。</value>
+    <value>アップリンクが CW のとき、ログブックと CW デコーダーに 12 個のメッセージボタンが表示されます。ボタンをクリックするか F1〜F12 で送信します。Ctrl+K でキーボードを開き、リアルタイム入力できます。Escape または Stop で中止します。</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>ログブックと CW デコーダーに CW キーヤーを表示</value>

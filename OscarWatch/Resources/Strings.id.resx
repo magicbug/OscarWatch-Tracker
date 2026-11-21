@@ -6932,6 +6932,27 @@ Terbaru: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>Buka pengaturan Logbook untuk mengubah pesan CW</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>Keyboard</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>Buka keyboard CW (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>Keyboard CW</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>Ketik untuk mengirim. Backspace menghapus karakter yang belum terkirim. Esc menghentikan. Ctrl+K menutup.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>Keyboard: ketik untuk mengirim.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>Keyboard: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>Keyboard: {0}. Makro tidak dikenal diabaikan: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>Buka logbook untuk mengedit pesan CW.</value>
   </data>
@@ -6942,7 +6963,7 @@ Terbaru: {1} ({2})</value>
     <value>Keyer CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Dua belas tombol pesan muncul di logbook dan decoder CW ketika uplink adalah CW. Klik tombol atau tekan F1 sampai F12 untuk mengirim. Escape atau Stop membatalkan.</value>
+    <value>Dua belas tombol pesan muncul di logbook dan decoder CW ketika uplink adalah CW. Klik tombol atau tekan F1 sampai F12 untuk mengirim. Ctrl+K membuka keyboard untuk mengetik secara langsung. Escape atau Stop membatalkan.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>Tampilkan keyer CW di logbook dan decoder CW</value>

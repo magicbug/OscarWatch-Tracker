@@ -6927,6 +6927,27 @@ Mais recente: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>Abrir as definições do logbook para alterar as mensagens CW</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>Teclado</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>Abrir o teclado CW (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>Teclado CW</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>Digite para enviar. Backspace apaga caracteres ainda não enviados. Esc interrompe. Ctrl+K fecha.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>Teclado: digite para enviar.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>Teclado: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>Teclado: {0}. Macros desconhecidas omitidas: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>Abra o logbook para editar as mensagens CW.</value>
   </data>
@@ -6937,7 +6958,7 @@ Mais recente: {1} ({2})</value>
     <value>Manipulador CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Doze botões de mensagem aparecem no logbook e no decoder CW quando o uplink é CW. Clique num botão ou prima F1 a F12 para enviar. Escape ou Parar aborta.</value>
+    <value>Doze botões de mensagem aparecem no logbook e no decoder CW quando o uplink é CW. Clique num botão ou prima F1 a F12 para enviar. Ctrl+K abre o teclado para digitar em tempo real. Escape ou Parar aborta.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>Mostrar o keyer CW no logbook e no decoder CW</value>

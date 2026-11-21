@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        x:Class="OscarWatch.Views.CwKeyboardWindow"
+        x:DataType="vm:CwKeyboardViewModel"
+        Title="{loc:Localize Key=Logbook.Cw.Keyboard.Title}"
+        Width="520"
+        Height="220"
+        MinWidth="360"
+        MinHeight="160"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True">
+  <DockPanel Margin="14">
+    <StackPanel DockPanel.Dock="Bottom" Spacing="10">
+      <TextBlock Text="{Binding Hint}"
+                 FontSize="12"
+                 TextWrapping="Wrap"
+                 Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button Content="{loc:Localize Key=Common.Close}"
+                Classes="dialog-footer"
+                Command="{Binding CloseCommand}"
+                IsCancel="True"
+                MinWidth="100" />
+      </StackPanel>
+    </StackPanel>
+
+    <Border BorderBrush="{DynamicResource ThemeControlMidBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="10"
+            Background="{DynamicResource ThemeControlLowBrush}">
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+        <TextBlock FontFamily="Consolas, Cascadia Mono, Courier New, monospace"
+                   FontSize="20"
+                   TextWrapping="Wrap">
+          <Run Text="{Binding CommittedText}"
+               Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+          <Run Text="{Binding PendingText}"
+               Foreground="{DynamicResource ThemeForegroundBrush}" />
+          <Run Text="{Binding DraftText}"
+               Foreground="{DynamicResource ThemeForegroundBrush}" />
+        </TextBlock>
+      </ScrollViewer>
+    </Border>
+  </DockPanel>
+</Window>

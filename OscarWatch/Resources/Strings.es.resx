@@ -6927,6 +6927,27 @@ Está utilizando la versión {0}.
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>Abrir la configuración del libro de guardia para cambiar los mensajes CW</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>Teclado</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>Abrir el teclado CW (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>Teclado CW</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>Escriba para enviar. Retroceso borra caracteres no enviados. Esc detiene. Ctrl+K cierra.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>Teclado: escriba para enviar.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>Teclado: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>Teclado: {0}. Macros desconocidas omitidas: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>Abra el libro de guardia para editar los mensajes CW.</value>
   </data>
@@ -6937,7 +6958,7 @@ Está utilizando la versión {0}.
     <value>Manipulador CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Doce botones de mensaje aparecen en el libro de guardia y en el decodificador CW cuando el enlace ascendente es CW. Pulse un botón o F1 a F12 para enviar. Escape o Detener aborta.</value>
+    <value>Doce botones de mensaje aparecen en el libro de guardia y en el decodificador CW cuando el enlace ascendente es CW. Pulse un botón o F1 a F12 para enviar. Ctrl+K abre el teclado para escribir en tiempo real. Escape o Detener aborta.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>Mostrar el keyer CW en el libro de guardia y el decodificador CW</value>

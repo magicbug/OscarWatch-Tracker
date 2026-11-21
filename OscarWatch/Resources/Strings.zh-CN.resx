@@ -6928,6 +6928,27 @@
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>打开日志设置以更改 CW 消息</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>键盘</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>打开 CW 键盘 (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>CW 键盘</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>键入即可发送。Backspace 删除尚未发送的字符。Esc 停止。Ctrl+K 关闭。</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>键盘：键入即可发送。</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>键盘：{0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>键盘：{0}。已忽略未知宏：{1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>打开日志以编辑 CW 消息。</value>
   </data>
@@ -6938,7 +6959,7 @@
     <value>CW 键控器</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>当上行链路为 CW 时，日志簿和 CW 解码器会显示十二个消息按钮。单击按钮或按 F1 至 F12 发送。Escape 或停止可中止。</value>
+    <value>当上行链路为 CW 时，日志簿和 CW 解码器会显示十二个消息按钮。单击按钮或按 F1 至 F12 发送。Ctrl+K 打开键盘进行实时键入。Escape 或停止可中止。</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>在日志簿和 CW 解码器中显示 CW 键控器</value>

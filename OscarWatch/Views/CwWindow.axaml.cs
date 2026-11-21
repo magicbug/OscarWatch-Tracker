@@ -39,12 +39,20 @@ public partial class CwWindow : Window
     }
 
     /// <summary>
-    /// F1 to F12 and Escape drive the CW keyer. Ctrl with plus, minus or 0 changes the copy size.
+    /// F1 to F12 and Escape drive the CW keyer. Ctrl+K opens the keyboard.
+    /// Ctrl with plus, minus or 0 changes the copy size.
     /// </summary>
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
         if (DataContext is not CwViewModel vm)
             return;
+
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.Key == Key.K)
+        {
+            if (vm.CwKeyer.TryHandleCtrlK(this))
+                e.Handled = true;
+            return;
+        }
 
         if (e.KeyModifiers == KeyModifiers.None)
         {

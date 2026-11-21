@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,6 +9,7 @@ using OscarWatch.Core.Services;
 using OscarWatch.Hardware;
 using OscarWatch.Localization;
 using OscarWatch.Services;
+using OscarWatch.Views;
 
 namespace OscarWatch.ViewModels;
 
@@ -31,6 +33,8 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private readonly ILocalizationService _l;
     private readonly HashSet<CwKeyerHost> _hosts = [];
     private bool _suppressCwWpmSave;
+    private CwKeyboardViewModel? _keyboard;
+    private CwKeyboardWindow? _keyboardWindow;
 
     public CwKeyerPanelViewModel(
         CwKeyerService cwKeyer,
@@ -71,6 +75,9 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     [ObservableProperty]
     private string _statusText = "";
 
+    [ObservableProperty]
+    private bool _keyboardOpen;
+
     /// <summary>Raised when the operator asks to edit messages and a logbook is already open.</summary>
     public event EventHandler? EditMessagesRequested;
 
@@ -90,6 +97,7 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         if (_hosts.Count > 0)
             return;
 
+        CloseKeyboard();
         if (CwSending)
             StopCw();
         else
@@ -131,6 +139,12 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         if (!ShowCwKeyer || slot < 0 || slot >= CwButtons.Count)
             return false;
 
+        if (KeyboardOpen && _keyboard is not null)
+        {
+            AppendMacroToKeyboard(slot);
+            return true;
+        }
+
         SendCwMacro(slot);
         return true;
     }
@@ -138,10 +152,33 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     /// <summary>Escape from a host window. Returns true when it stopped a message.</summary>
     public bool TryHandleCwEscape()
     {
+        if (KeyboardOpen && _keyboard is not null)
+        {
+            if (!_cwKeyer.IsSending && string.IsNullOrEmpty(_keyboard.PendingText)
+                && string.IsNullOrEmpty(_keyboard.DraftText))
+                return false;
+
+            _keyboard.Abort();
+            CwSending = false;
+            SetActiveCwSlot(-1);
+            StatusText = _l.Get("Logbook.Cw.Status.Stopped");
+            return true;
+        }
+
         if (!CwSending)
             return false;
 
         StopCw();
+        return true;
+    }
+
+    /// <summary>Ctrl+K from a host window. Returns true when the key was used.</summary>
+    public bool TryHandleCtrlK(Window owner)
+    {
+        if (!ShowCwKeyer)
+            return false;
+
+        ToggleKeyboard(owner);
         return true;
     }
 
@@ -150,6 +187,15 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanStopCw))]
     private void StopCw()
     {
+        if (KeyboardOpen && _keyboard is not null)
+        {
+            _keyboard.Abort();
+            CwSending = false;
+            SetActiveCwSlot(-1);
+            StatusText = _l.Get("Logbook.Cw.Status.Stopped");
+            return;
+        }
+
         _cwKeyer.Stop();
         CwSending = false;
         SetActiveCwSlot(-1);
@@ -167,6 +213,37 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         }
 
         EditMessagesRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Open or close the keyboard from the strip button.</summary>
+    public void ToggleKeyboardFromStrip(Window owner)
+    {
+        if (!ShowCwKeyer)
+            return;
+
+        ToggleKeyboard(owner);
+    }
+
+    /// <summary>Test helper: attach a keyboard view model without opening a window.</summary>
+    internal void AttachKeyboardForTests(CwKeyboardViewModel keyboard)
+    {
+        _keyboard = keyboard;
+        KeyboardOpen = true;
+        CwSending = _cwKeyer.IsSending;
+        SetActiveCwSlot(-1);
+        StatusText = _l.Get("Logbook.Cw.Status.Keyboard");
+    }
+
+    /// <summary>Test helper: clear the keyboard view model without closing a window.</summary>
+    internal void DetachKeyboardForTests()
+    {
+        if (_keyboard is not null)
+        {
+            _keyboard.Dispose();
+            _keyboard = null;
+        }
+
+        KeyboardOpen = false;
     }
 
     partial void OnCwWpmChanged(decimal? value)
@@ -196,10 +273,163 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         _cwKeyer.SetWpm(wpm);
     }
 
+    private void ToggleKeyboard(Window owner)
+    {
+        if (KeyboardOpen)
+        {
+            CloseKeyboard();
+            return;
+        }
+
+        OpenKeyboard(owner);
+    }
+
+    private void OpenKeyboard(Window owner)
+    {
+        if (_keyboardWindow is not null)
+        {
+            _keyboardWindow.Activate();
+            return;
+        }
+
+        _keyboard = new CwKeyboardViewModel(_cwKeyer, BuildCwContext, _l);
+        _keyboard.CloseRequested += OnKeyboardCloseRequested;
+        _keyboard.SaveQsoRequested += OnKeyboardSaveQsoRequested;
+        _keyboard.SessionActive += OnKeyboardSessionActive;
+
+        var result = _keyboard.EnsureSession();
+        if (result != CwKeyerStartResult.Started)
+        {
+            StatusText = DescribeCwStartFailure(result);
+            _keyboard.Dispose();
+            _keyboard = null;
+            return;
+        }
+
+        CwSending = true;
+        SetActiveCwSlot(-1);
+        StatusText = _l.Get("Logbook.Cw.Status.Keyboard");
+        KeyboardOpen = true;
+
+        var window = new CwKeyboardWindow { DataContext = _keyboard };
+        window.Closed += OnKeyboardWindowClosed;
+        _keyboardWindow = window;
+        window.Show(owner);
+    }
+
+    private void CloseKeyboard()
+    {
+        if (_keyboardWindow is null && _keyboard is null)
+        {
+            KeyboardOpen = false;
+            return;
+        }
+
+        var window = _keyboardWindow;
+        _keyboardWindow = null;
+        if (window is not null)
+        {
+            window.Closed -= OnKeyboardWindowClosed;
+            window.Close();
+        }
+
+        DisposeKeyboard();
+        if (_cwKeyer.IsKeyboardSession)
+            _cwKeyer.Stop();
+
+        KeyboardOpen = false;
+        if (!_cwKeyer.IsSending)
+        {
+            CwSending = false;
+            SetActiveCwSlot(-1);
+        }
+    }
+
+    private void OnKeyboardCloseRequested(object? sender, EventArgs e) => CloseKeyboard();
+
+    private void OnKeyboardSessionActive(object? sender, EventArgs e)
+    {
+        CwSending = true;
+        SetActiveCwSlot(-1);
+        StatusText = _l.Get("Logbook.Cw.Status.Keyboard");
+    }
+
+    private void OnKeyboardWindowClosed(object? sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, _keyboardWindow) && _keyboardWindow is not null)
+            return;
+
+        _keyboardWindow = null;
+        DisposeKeyboard();
+        if (_cwKeyer.IsKeyboardSession)
+            _cwKeyer.Stop();
+
+        KeyboardOpen = false;
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (!_cwKeyer.IsSending)
+            {
+                CwSending = false;
+                SetActiveCwSlot(-1);
+                if (string.IsNullOrEmpty(StatusText) || StatusText == _l.Get("Logbook.Cw.Status.Keyboard"))
+                    StatusText = _l.Get("Logbook.Cw.Status.Stopped");
+            }
+        });
+    }
+
+    private void DisposeKeyboard()
+    {
+        if (_keyboard is null)
+            return;
+
+        _keyboard.CloseRequested -= OnKeyboardCloseRequested;
+        _keyboard.SaveQsoRequested -= OnKeyboardSaveQsoRequested;
+        _keyboard.SessionActive -= OnKeyboardSessionActive;
+        _keyboard.Dispose();
+        _keyboard = null;
+    }
+
+    private void OnKeyboardSaveQsoRequested(object? sender, EventArgs e) =>
+        _ = SaveQsoFromCwAsync(showResult: false);
+
+    private void AppendMacroToKeyboard(int slot)
+    {
+        if (_keyboard is null || slot < 0 || slot >= CwButtons.Count)
+            return;
+
+        var button = CwButtons[slot];
+        var expansion = CwMacroExpander.Expand(button.Template, BuildCwContext());
+        if (expansion.Message.IsEmpty && !expansion.SaveQso)
+        {
+            StatusText = _l.Get("Logbook.Cw.Status.Empty", button.KeyName);
+            return;
+        }
+
+        if (!_keyboard.AppendMacro(expansion))
+        {
+            StatusText = DescribeCwStartFailure(CwKeyerStartResult.RigNotConnected);
+            return;
+        }
+
+        CwSending = true;
+        StatusText = expansion.UnknownTokens.Count == 0
+            ? _l.Get("Logbook.Cw.Status.KeyboardSending", expansion.Message.DisplayText)
+            : _l.Get(
+                "Logbook.Cw.Status.KeyboardSendingUnknown",
+                expansion.Message.DisplayText,
+                string.Join(", ", expansion.UnknownTokens.Select(t => "{" + t + "}")));
+    }
+
     private void SendCwMacro(int slot)
     {
         if (slot < 0 || slot >= CwButtons.Count)
             return;
+
+        if (KeyboardOpen)
+        {
+            AppendMacroToKeyboard(slot);
+            return;
+        }
 
         var button = CwButtons[slot];
         var expansion = CwMacroExpander.Expand(button.Template, BuildCwContext());
@@ -257,21 +487,36 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             // A newer message may already be running; only that one owns the strip state.
-            var stillSending = _cwKeyer.ActiveSlot >= 0;
-            if (!stillSending)
+            var stillSending = _cwKeyer.IsSending;
+            if (!stillSending && !KeyboardOpen)
             {
+                CwSending = false;
+                SetActiveCwSlot(-1);
+            }
+            else if (!stillSending && KeyboardOpen)
+            {
+                // Esc/Stop aborted the keyboard session; the window stays open for corrections.
                 CwSending = false;
                 SetActiveCwSlot(-1);
             }
 
             if (e.Finish == CwKeyerFinish.Completed && e.SaveQso)
             {
-                _ = SaveQsoFromCwAsync(showResult: !stillSending);
+                _ = SaveQsoFromCwAsync(showResult: !stillSending && !KeyboardOpen);
                 return;
             }
 
-            if (stillSending)
+            if (stillSending || KeyboardOpen)
+            {
+                if (KeyboardOpen && !stillSending && e.Slot == CwKeyerService.KeyboardSlot)
+                    StatusText = e.Finish switch
+                    {
+                        CwKeyerFinish.RigRejected => _l.Get("Logbook.Cw.Status.Rejected"),
+                        CwKeyerFinish.Aborted => _l.Get("Logbook.Cw.Status.Stopped"),
+                        _ => StatusText
+                    };
                 return;
+            }
 
             var keyName = e.Slot >= 0 && e.Slot < CwButtons.Count ? CwButtons[e.Slot].KeyName : "";
             StatusText = e.Finish switch
@@ -303,6 +548,12 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
 
     private void AnnounceActiveCw()
     {
+        if (_cwKeyer.IsKeyboardSession)
+        {
+            StatusText = _l.Get("Logbook.Cw.Status.Keyboard");
+            return;
+        }
+
         var slot = _cwKeyer.ActiveSlot;
         if (slot < 0 || slot >= CwButtons.Count)
             return;
@@ -341,6 +592,7 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     {
         if (!value)
         {
+            CloseKeyboard();
             if (CwSending)
                 StopCw();
             _cwKeyer.ReleasePort();

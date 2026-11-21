@@ -29,7 +29,7 @@
                  TextWrapping="Wrap"
                  Margin="0,6,0,0"
                  IsVisible="{Binding $parent[controls:CwKeyerStrip].ShowStatus}" />
-      <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+      <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8">
         <ItemsControl Grid.Column="0" ItemsSource="{Binding CwButtons}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -84,6 +84,13 @@
                      FontWeight="SemiBold" />
         </StackPanel>
         <Button Grid.Column="3"
+                Content="{loc:Localize Key=Logbook.Cw.Keyboard}"
+                Click="OnKeyboardClick"
+                Focusable="False"
+                VerticalAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                ToolTip.Tip="{loc:Localize Key=Logbook.Cw.Keyboard.Tip}" />
+        <Button Grid.Column="4"
                 Content="{loc:Localize Key=Logbook.Cw.EditMessages}"
                 Command="{Binding EditMessagesCommand}"
                 Focusable="False"

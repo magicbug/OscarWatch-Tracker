@@ -35,7 +35,17 @@ public partial class QsoLogbookWindow : Window
 
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
-        if (DataContext is not QsoLogbookViewModel vm || e.KeyModifiers != KeyModifiers.None)
+        if (DataContext is not QsoLogbookViewModel vm)
+            return;
+
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.Key == Key.K)
+        {
+            if (vm.TryHandleCtrlK(this))
+                e.Handled = true;
+            return;
+        }
+
+        if (e.KeyModifiers != KeyModifiers.None)
             return;
 
         if (e.Key is >= Key.F1 and <= Key.F12)

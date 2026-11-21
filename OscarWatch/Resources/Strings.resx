@@ -6927,6 +6927,27 @@ Latest: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>Open Logbook settings to change the CW messages</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>Keyboard</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>Open the CW keyboard (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>CW keyboard</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>Type to send. Backspace deletes unsent characters. Esc stops. Ctrl+K closes.</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>Keyboard: type to send.</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>Keyboard: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>Keyboard: {0}. Left out unknown macros: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>Open the logbook to edit the CW messages.</value>
   </data>
@@ -6937,7 +6958,7 @@ Latest: {1} ({2})</value>
     <value>CW keyer</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Twelve message buttons appear in the logbook and on the CW decoder when the uplink is CW. Click a button or press F1 to F12 to send it. Escape or Stop aborts.</value>
+    <value>Twelve message buttons appear in the logbook and on the CW decoder when the uplink is CW. Click a button or press F1 to F12 to send it. Ctrl+K opens the keyboard for live typing. Escape or Stop aborts.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>Show the CW keyer in the logbook and CW decoder</value>

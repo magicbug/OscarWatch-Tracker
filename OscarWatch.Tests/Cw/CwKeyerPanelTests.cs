@@ -114,6 +114,55 @@ public sealed class CwKeyerPanelTests
         Assert.False(harness.Keyer.IsSending);
     }
 
+    [Fact]
+    public void Ctrl_k_is_ignored_when_the_strip_is_hidden()
+    {
+        var tracker = new FakeTracker("USB");
+        using var harness = Create(tracker);
+        harness.Panel.AttachHost(CwKeyerHost.Logbook);
+
+        Assert.False(harness.Panel.ShowCwKeyer);
+        Assert.False(harness.Panel.TryHandleCtrlK(null!));
+        Assert.False(harness.Panel.KeyboardOpen);
+    }
+
+    [Fact]
+    public void Function_key_during_keyboard_session_appends_instead_of_replacing()
+    {
+        var tracker = new FakeTracker("CW");
+        using var harness = Create(tracker, cw => cw.Wpm = 60);
+        harness.Panel.AttachHost(CwKeyerHost.Logbook);
+
+        var entry = new FakeEntrySource(
+            new CwMacroContext(MyCall: "MM9SQL", Call: "JE2WYA", RstSent: "599", MyGrid: "IO85"));
+        harness.Bridge.AttachKeyerEntry(entry);
+
+        Assert.Equal(CwKeyerStartResult.Started, harness.Keyer.BeginKeyboard());
+        var keyboard = new CwKeyboardViewModel(
+            harness.Keyer,
+            () => entry.BuildCwMacroContext(),
+            LocalizationService.Instance);
+        harness.Panel.AttachKeyboardForTests(keyboard);
+
+        var progressed = new List<string>();
+        harness.Keyer.KeyboardProgress += (_, e) =>
+            progressed.Add(e.Symbol.IsWordGap ? " " : e.Symbol.Value);
+
+        Assert.True(harness.Keyer.Enqueue(CwSymbol.Character('A')));
+        Assert.True(harness.Panel.TryHandleCwFunctionKey(1)); // F2 Call = {CALL} -> JE2WYA
+        Assert.True(SpinWait.SpinUntil(
+            () => progressed.Count >= 1 + "JE2WYA".Length,
+            TimeSpan.FromSeconds(5)));
+
+        Assert.Contains("A", progressed);
+        Assert.Contains("J", progressed);
+        Assert.Contains("Y", progressed);
+        Assert.DoesNotContain(harness.Panel.CwButtons, b => b.IsActive);
+
+        harness.Keyer.Stop();
+        harness.Panel.DetachKeyboardForTests();
+    }
+
     private static Harness Create(
         FakeTracker tracker,
         Action<CwKeyerSettings>? cw = null,

@@ -6932,6 +6932,27 @@ LOS: {2}
   <data name="Logbook.Cw.EditMessages.Tip">
     <value>เปิดการตั้งค่าสมุดบันทึกเพื่อเปลี่ยนข้อความ CW</value>
   </data>
+  <data name="Logbook.Cw.Keyboard">
+    <value>แป้นพิมพ์</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Tip">
+    <value>เปิดแป้นพิมพ์ CW (Ctrl+K)</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Title">
+    <value>แป้นพิมพ์ CW</value>
+  </data>
+  <data name="Logbook.Cw.Keyboard.Hint">
+    <value>พิมพ์เพื่อส่ง Backspace ลบตัวอักษรที่ยังไม่ส่ง Esc หยุด Ctrl+K ปิด</value>
+  </data>
+  <data name="Logbook.Cw.Status.Keyboard">
+    <value>แป้นพิมพ์: พิมพ์เพื่อส่ง</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSending">
+    <value>แป้นพิมพ์: {0}</value>
+  </data>
+  <data name="Logbook.Cw.Status.KeyboardSendingUnknown">
+    <value>แป้นพิมพ์: {0} ข้ามแมโครที่ไม่รู้จัก: {1}</value>
+  </data>
   <data name="Logbook.Cw.Status.OpenLogbookToEdit">
     <value>เปิดสมุดบันทึกเพื่อแก้ไขข้อความ CW</value>
   </data>
@@ -6942,7 +6963,7 @@ LOS: {2}
     <value>คีย์เยอร์ CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>ปุ่มข้อความสิบสองปุ่มจะปรากฏในสมุดบันทึกและตัวถอดรหัส CW เมื่ออัปลิงก์เป็น CW คลิกปุ่มหรือกด F1 ถึง F12 เพื่อส่ง Escape หรือ Stop เพื่อยกเลิก</value>
+    <value>ปุ่มข้อความสิบสองปุ่มจะปรากฏในสมุดบันทึกและตัวถอดรหัส CW เมื่ออัปลิงก์เป็น CW คลิกปุ่มหรือกด F1 ถึง F12 เพื่อส่ง Ctrl+K เปิดแป้นพิมพ์สำหรับพิมพ์แบบเรียลไทม์ Escape หรือ Stop เพื่อยกเลิก</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
     <value>แสดงคีย์เยอร์ CW ในสมุดบันทึกและตัวถอดรหัส CW</value>

@@ -1,5 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.VisualTree;
+using OscarWatch.ViewModels;
 
 namespace OscarWatch.Controls;
 
@@ -32,5 +35,17 @@ public partial class CwKeyerStrip : UserControl
     {
         get => GetValue(ShowStatusProperty);
         set => SetValue(ShowStatusProperty, value);
+    }
+
+    private void OnKeyboardClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not CwKeyerPanelViewModel panel)
+            return;
+
+        var owner = this.GetVisualRoot() as Window;
+        if (owner is null)
+            return;
+
+        panel.ToggleKeyboardFromStrip(owner);
     }
 }
