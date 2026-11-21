@@ -3133,6 +3133,9 @@ LOS: {2}
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>Оставьте включённым для встроенного слежения рации за частотой. Выключите, когда Доплером управляет OscarWatch (рекомендуется для CAT с ПК); если не уверены, попробуйте оба варианта.</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790: CAT 4800 8N2 через IF-232C (или совместимый USB). Выйдите из памяти в VFO, поставьте даунлинк в правое окно SUB и используйте только кросс-бэнд (MAIN передаёт, SUB принимает).</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>Регион</value>
   </data>

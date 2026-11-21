@@ -266,6 +266,36 @@ public class RigControllerTests
         controller.Dispose();
     }
 
+    [Fact]
+    public void Ts790_cross_band_pass_uses_dc_fa_without_sa()
+    {
+        var transport = new RecordingKenwoodCatTransport
+        {
+            FaHz = 145_850_000,
+            SubFaHz = 435_750_000
+        };
+        var driver = new KenwoodTs790Driver(transport, catDelayMs: 0);
+        var controller = new RigController(_ => driver);
+        var settings = new RigSettings
+        {
+            Enabled = true,
+            Type = RigType.KenwoodTs790,
+            Port = "COM1",
+            DopplerThresholdFmHz = 200,
+            CatDelayMs = 0
+        };
+
+        controller.Update(settings, CrossBandFmContext());
+        controller.DrainCommandQueueForTests();
+
+        Assert.Contains("DC0;", transport.SentCommands);
+        Assert.Contains("DC1;", transport.SentCommands);
+        Assert.Contains(transport.SentCommands, c => c.StartsWith("FA", StringComparison.Ordinal) && c.Length > 3);
+        Assert.DoesNotContain(transport.SentCommands, c => c.StartsWith("SA", StringComparison.Ordinal));
+        Assert.True(driver.IsSatelliteModeActive);
+        controller.Dispose();
+    }
+
     private static RigSettings CrossBandSettings(RigType type) => new()
     {
         Enabled = true,

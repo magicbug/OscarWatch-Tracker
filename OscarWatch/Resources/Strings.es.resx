@@ -3129,6 +3129,9 @@
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>Déjelo activado para el seguimiento de frecuencia de la radio. Desactívelo cuando OscarWatch gestiona el Doppler (recomendado con CAT desde el PC); pruebe ambos si no está seguro.</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790: CAT 4800 8N2 vía IF-232C (o interfaz USB compatible). Salga de memoria a VFO, ponga el downlink en la ventana SUB derecha y use solo modos cross-band (MAIN transmite, SUB recibe).</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>Región</value>
   </data>

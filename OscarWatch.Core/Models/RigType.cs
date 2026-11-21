@@ -21,6 +21,8 @@ public enum RigType
     YaesuFt991a,
     YaesuFtx1,
     KenwoodTs2000,
+    /// <summary>Kenwood TS-790A/E (single-radio full duplex; MAIN TX / SUB RX).</summary>
+    KenwoodTs790,
     KenwoodThD74,
     KenwoodThD75,
     /// <summary>SDR application rigctl TCP server (dual-radio downlink only).</summary>

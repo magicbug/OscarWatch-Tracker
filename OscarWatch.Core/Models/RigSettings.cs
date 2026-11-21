@@ -87,6 +87,9 @@ public sealed class RigSettings
     /// <summary>Typical CAT baud for the FT-847 and TS-2000.</summary>
     public const int Ft847Ts2000DefaultBaudRate = 57600;
 
+    /// <summary>IF-232C CAT baud for the TS-790A/E (4800 8N2).</summary>
+    public const int Ts790DefaultBaudRate = 4800;
+
     public static bool IsYaesuNewCatDualEndpoint(RigType type) =>
         type is RigType.YaesuFt991 or RigType.YaesuFt991a or RigType.YaesuFtx1;
 
@@ -132,7 +135,7 @@ public sealed class RigSettings
     public int BaudRate { get; set; } = 19200;
 
     /// <summary>
-    /// When true, Kenwood TS-2000 CAT asserts hardware RTS (required for replies on full cables).
+    /// When true, Kenwood TS-2000 / TS-790 CAT asserts hardware RTS (required for replies on full cables).
     /// Ignored for non-Kenwood rig types. Turn off for CAT cables that do not pass RTS/CTS.
     /// </summary>
     public bool KenwoodHardwareRtsEnabled { get; set; } = true;

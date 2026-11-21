@@ -2038,6 +2038,7 @@ public sealed class RigController : IRigController, IDisposable
         // Flex SmartSDR must defer modes until after slice pan bind, tune, and pan centre.
         var deferModeSetup = settings.Type is RigType.YaesuFt847 or RigType.FlexSmartSdr;
         var isKenwoodSat = settings.Type == RigType.KenwoodTs2000 && _useMainSub;
+        var isTs790Sat = settings.Type == RigType.KenwoodTs790 && _useMainSub;
         var isFlexSatPass = settings.Type == RigType.FlexSmartSdr && _useMainSub && !_isBeaconOnly;
         if (!deferModeSetup && !isKenwoodSat)
             ConfigureVfoModes(context);
@@ -2071,7 +2072,9 @@ public sealed class RigController : IRigController, IDisposable
 
         var initResult = isKenwoodSat && _driver is KenwoodTs2000Driver kenwoodInit
             ? InitializeKenwoodSatellitePass(settings, kenwoodInit, context, rxHz, txHz)
-            : WriteInitialFrequenciesWithBandRecovery(settings, context, rxHz, txHz, deferModeSetup);
+            : isTs790Sat && _driver is KenwoodTs790Driver ts790Init
+                ? InitializeTs790SatellitePass(ts790Init, rxHz, txHz)
+                : WriteInitialFrequenciesWithBandRecovery(settings, context, rxHz, txHz, deferModeSetup);
 
         if (!isFlexSatPass)
             ApplyCtcss(settings, context, force: true);
@@ -2379,8 +2382,8 @@ public sealed class RigController : IRigController, IDisposable
         if (UsesIcomSplitAbLayout(settings, context))
             return;
 
-        // TS-2000 SATL assigns downlink/uplink via FA/FB and SA P3, not ICOM-style Main/Sub exchange.
-        if (settings.Type == RigType.KenwoodTs2000)
+        // TS-2000 SATL and TS-790 DC/FA assign downlink/uplink without ICOM-style Main/Sub exchange.
+        if (settings.Type is RigType.KenwoodTs2000 or RigType.KenwoodTs790)
             return;
 
         var canExchange = _driver.SupportsVfoExchange;
@@ -2555,7 +2558,8 @@ public sealed class RigController : IRigController, IDisposable
 
     private static bool UsesMainSubSatelliteLayout(RigType type) =>
         type is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h
-            or RigType.YaesuFt847 or RigType.KenwoodTs2000 or RigType.FlexSmartSdr or RigType.Dummy;
+            or RigType.YaesuFt847 or RigType.KenwoodTs2000 or RigType.KenwoodTs790
+            or RigType.FlexSmartSdr or RigType.Dummy;
 
     private static bool UsesIcomSatelliteOnlyLayout(RigType type) =>
         type == RigType.IcomIc821h;
@@ -2638,7 +2642,7 @@ public sealed class RigController : IRigController, IDisposable
         }
 
         if (settings.Type is RigType.IcomIc910 or RigType.IcomIc9100 or RigType.IcomIc9700 or RigType.IcomIc821h
-            or RigType.YaesuFt847 or RigType.KenwoodTs2000)
+            or RigType.YaesuFt847 or RigType.KenwoodTs2000 or RigType.KenwoodTs790)
         {
             yield return RigVfo.Main;
             yield return RigVfo.Sub;
@@ -2705,6 +2709,21 @@ public sealed class RigController : IRigController, IDisposable
         else
             NoteKenwoodFrequencyWriteFailure();
         return new InitialFrequencyWriteResult(ok, ok && !_isBeaconOnly);
+    }
+
+    private InitialFrequencyWriteResult InitializeTs790SatellitePass(
+        KenwoodTs790Driver ts790,
+        long downlinkHz,
+        long uplinkHz)
+    {
+        if (_isBeaconOnly)
+        {
+            var beaconOk = ts790.ApplySatelliteBeaconPassFrequencies(downlinkHz);
+            return new InitialFrequencyWriteResult(beaconOk, TxWritten: true);
+        }
+
+        var ok = ts790.ApplySatellitePassFrequencies(downlinkHz, uplinkHz);
+        return new InitialFrequencyWriteResult(ok, ok);
     }
 
     private void NoteKenwoodFrequencyWriteSuccess() => _kenwoodFaFbFailCount = 0;
@@ -2823,7 +2842,7 @@ public sealed class RigController : IRigController, IDisposable
         || mode.Equals("NFM", StringComparison.OrdinalIgnoreCase);
 
     private static bool UsesEncodeOnlyUplinkCtcss(RigType rigType) =>
-        rigType is RigType.KenwoodTs2000 or RigType.YaesuFt847;
+        rigType is RigType.KenwoodTs2000 or RigType.KenwoodTs790 or RigType.YaesuFt847;
 
     private static RigVfo UplinkVfoForCtcss(RigSettings settings, RigTrackingContext context)
     {
@@ -2843,7 +2862,7 @@ public sealed class RigController : IRigController, IDisposable
                 : RigVfo.VfoB;
         }
 
-        if (settings.Type is RigType.YaesuFt847 or RigType.KenwoodTs2000)
+        if (settings.Type is RigType.YaesuFt847 or RigType.KenwoodTs2000 or RigType.KenwoodTs790)
             return RigVfo.Sub;
 
         return RigSatModeHelper.UseMainSubLayout(context.Mode.DownlinkKHz, context.Mode.UplinkKHz)

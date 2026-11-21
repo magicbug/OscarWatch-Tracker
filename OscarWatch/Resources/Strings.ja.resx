@@ -1599,6 +1599,9 @@
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>無線機側の周波数追従を使う場合はオン。OscarWatchがドップラーを管理する場合はオフ（PC CAT追跡向け）。不明な場合は両方試してください。</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790: CAT は IF-232C（または互換USB）で 4800 8N2。メモリを離れ VFO にし、ダウンリンクを右側の SUB 表示に置き、クロスバンドのみ使用（MAIN が送信、SUB が受信）。</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>地域</value>
   </data>

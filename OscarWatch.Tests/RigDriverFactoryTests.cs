@@ -246,6 +246,20 @@ public sealed class RigDriverFactoryTests
     }
 
     [Fact]
+    public void Create_settings_ts790_returns_driver()
+    {
+        var driver = RigDriverFactory.Create(new RigSettings
+        {
+            Type = RigType.KenwoodTs790,
+            Port = "COM3",
+            BaudRate = RigSettings.Ts790DefaultBaudRate
+        });
+
+        Assert.Equal(RigType.KenwoodTs790, driver.RigType);
+        Assert.False(driver.SupportsVfoExchange);
+    }
+
+    [Fact]
     public void Create_endpoint_flex_throws()
     {
         Assert.Throws<InvalidOperationException>(() =>

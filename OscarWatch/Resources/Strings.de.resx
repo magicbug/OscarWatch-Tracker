@@ -3133,6 +3133,9 @@ Fortfahren?</value>
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>Eingeschaltet lassen für die eingebaute Frequenznachführung des Funkgeräts. Ausschalten, wenn OscarWatch den Doppler steuert (empfohlen für PC-CAT-Nachführung); bei Unsicherheit beides versuchen.</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790: CAT 4800 8N2 über IF-232C (oder kompatible USB-Schnittstelle). Speicher verlassen und VFO nutzen, Downlink im rechten SUB-Fenster, nur Crossband-Modi (MAIN sendet, SUB empfängt).</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>Region</value>
   </data>

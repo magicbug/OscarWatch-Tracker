@@ -3133,6 +3133,9 @@ Lanjutkan?</value>
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>Biarkan aktif untuk pelacakan frekuensi bawaan radio. Matikan saat OscarWatch mengelola Doppler (disarankan untuk pelacakan CAT PC); coba keduanya jika ragu.</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790: CAT 4800 8N2 melalui IF-232C (atau antarmuka USB yang kompatibel). Keluar dari mode memori ke VFO, letakkan downlink di jendela SUB kanan, dan gunakan hanya mode lintas pita (MAIN memancar, SUB menerima).</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>Wilayah</value>
   </data>

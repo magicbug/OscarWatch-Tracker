@@ -68,7 +68,7 @@ public static class KenwoodCatCodec
 
         return body.ToUpperInvariant() switch
         {
-            "SA" or "RX" or "FR" => Math.Max(postDelayMs + 400, 600),
+            "SA" or "RX" or "FR" or "ID" or "DC" => Math.Max(postDelayMs + 400, 600),
             _ => Math.Max(postDelayMs + 200, 400)
         };
     }
@@ -82,7 +82,9 @@ public static class KenwoodCatCodec
         return body.Equals("SA", StringComparison.OrdinalIgnoreCase)
             || body.Equals("RX", StringComparison.OrdinalIgnoreCase)
             || body.Equals("FR", StringComparison.OrdinalIgnoreCase)
-            || body.Equals("PC", StringComparison.OrdinalIgnoreCase);
+            || body.Equals("PC", StringComparison.OrdinalIgnoreCase)
+            || body.Equals("ID", StringComparison.OrdinalIgnoreCase)
+            || body.Equals("DC", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

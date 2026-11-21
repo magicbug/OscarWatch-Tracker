@@ -3133,6 +3133,9 @@ LOS: {2}
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>เปิดไว้สำหรับการติดตามความถี่ในตัวของวิทยุ ปิดเมื่อ OscarWatch จัดการดอปเพลอร์ (แนะนำสำหรับการติดตาม CAT จากพีซี); ลองทั้งสองแบบหากไม่แน่ใจ</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790: CAT 4800 8N2 ผ่าน IF-232C (หรือ USB ที่เข้ากันได้) ออกจากหน่วยความจำไปใช้ VFO วางดาวน์ลิงก์ที่หน้าต่าง SUB ด้านขวา และใช้เฉพาะโหมดข้ามย่าน (MAIN ส่ง SUB รับ)</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>ภูมิภาค</value>
   </data>

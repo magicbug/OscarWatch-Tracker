@@ -30,6 +30,17 @@ public sealed class KenwoodCatTransportTests
         Assert.Equal(StopBits.One, port.StopBits);
     }
 
+    [Fact]
+    public void Serial_port_accepts_two_stop_bits_for_ts790()
+    {
+        using var transport = new KenwoodCatTransport("COM99", 4800, hardwareRtsEnabled: true, StopBits.Two);
+        var port = GetSerialPort(transport);
+
+        Assert.Equal(4800, port.BaudRate);
+        Assert.Equal(StopBits.Two, port.StopBits);
+        Assert.True(port.RtsEnable);
+    }
+
     private static SerialPort GetSerialPort(KenwoodCatTransport transport)
     {
         var field = typeof(KenwoodCatTransport).GetField("_port", BindingFlags.Instance | BindingFlags.NonPublic);

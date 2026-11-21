@@ -26,6 +26,7 @@ public static class DeviceIdentityNames
         RigType.YaesuFt991a => "FT-991A",
         RigType.YaesuFtx1 => "FTX-1",
         RigType.KenwoodTs2000 => "TS-2000",
+        RigType.KenwoodTs790 => "TS-790",
         RigType.KenwoodThD74 => "TH-D74",
         RigType.KenwoodThD75 => "TH-D75",
         RigType.KenwoodTs990s => "TS-990S",

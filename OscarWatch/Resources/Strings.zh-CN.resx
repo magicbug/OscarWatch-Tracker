@@ -3129,6 +3129,9 @@
   <data name="Settings.Radio.Ts2000TraceNote">
     <value>使用电台内置频率跟踪时请保持开启。由 OscarWatch 管理多普勒时请关闭（适合 PC CAT 跟踪）；不确定时可两种都试。</value>
   </data>
+  <data name="Settings.Radio.Ts790Hint">
+    <value>TS-790：经 IF-232C（或兼容 USB）使用 CAT 4800 8N2。退出记忆进入 VFO，将下行放在右侧 SUB 窗口，且仅使用跨频段模式（MAIN 发射，SUB 接收）。</value>
+  </data>
   <data name="Settings.Radio.Region">
     <value>区域</value>
   </data>

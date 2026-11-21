@@ -606,6 +606,18 @@
                            TextWrapping="Wrap"
                            Text="{loc:Localize Key=Settings.Radio.Ts2000TraceNote}" />
               </StackPanel>
+              <StackPanel Spacing="6" IsVisible="{Binding ShowRigTs790SingleOptions}">
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.Ts790Hint}" />
+                <CheckBox Content="{loc:Localize Key=Settings.Radio.Ts2000HardwareRts}"
+                          IsChecked="{Binding RigKenwoodHardwareRtsEnabled, Mode=TwoWay}" />
+                <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Text="{loc:Localize Key=Settings.Radio.Ts2000HardwareRtsNote}" />
+              </StackPanel>
               <StackPanel Spacing="10" IsVisible="{Binding ShowRigSerialFields}">
                 <TextBlock Text="{loc:Localize Key=Settings.Radio.Region}" />
                 <ComboBox ItemsSource="{Binding RigRegionChoices}"

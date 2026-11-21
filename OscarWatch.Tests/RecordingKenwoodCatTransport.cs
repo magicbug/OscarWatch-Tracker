@@ -8,7 +8,12 @@ internal sealed class RecordingKenwoodCatTransport : IKenwoodCatTransport
     /// <summary>Watts returned for <c>PC;</c> reads (TS-2000 transmit power, 005–100).</summary>
     public int RfPowerWatts { get; set; } = 50;
 
+    /// <summary>MAIN (or VFO A when destination is MAIN) frequency in Hz.</summary>
     public long FaHz { get; set; } = 435_750_000;
+
+    /// <summary>SUB frequency in Hz when using TS-790 <c>DC1</c> destination.</summary>
+    public long SubFaHz { get; set; } = 145_900_000;
+
     public long FbHz { get; set; } = 145_900_000;
     public bool SatelliteStatusOn { get; set; } = true;
 
@@ -30,6 +35,9 @@ internal sealed class RecordingKenwoodCatTransport : IKenwoodCatTransport
     public char SubVfoSelect { get; set; } = '0';
     public List<string> SentCommands { get; } = [];
     public bool IsOpen { get; private set; }
+
+    /// <summary>TS-790 destination: true when CTRL is on SUB (<c>DC1;</c>).</summary>
+    public bool DestinationIsSub { get; private set; }
 
     private bool _ctrlOnSubReceiver;
 
@@ -77,11 +85,15 @@ internal sealed class RecordingKenwoodCatTransport : IKenwoodCatTransport
             "RX;" => "RX0;",
             "SA;" => SatelliteStatusOn ? "SA1;" : "SA0;",
             "FR;" => $"FR{(_ctrlOnSubReceiver ? SubVfoSelect : MainVfoSelect)};",
-            "FA;" => KenwoodCatCodec.BuildSetFrequencyCommand('A', FaHz),
+            "FA;" => KenwoodCatCodec.BuildSetFrequencyCommand('A', DestinationIsSub ? SubFaHz : FaHz),
             "FB;" => KenwoodCatCodec.BuildSetFrequencyCommand('B', FbHz),
             "PC;" => $"PC{RfPowerWatts:D3};",
+            "ID;" => $"ID{KenwoodTs790CatCodec.ModelId};",
+            "DC;" => DestinationIsSub ? "DC1;" : "DC0;",
             _ when TryRememberPowerSet(normalized) => normalized,
-            _ => KenwoodCatCodec.IsReadCommand(normalized) ? null : normalized
+            _ => KenwoodCatCodec.IsReadCommand(normalized) || KenwoodTs790CatCodec.IsReadCommand(normalized)
+                ? null
+                : normalized
         };
     }
 
@@ -110,18 +122,38 @@ internal sealed class RecordingKenwoodCatTransport : IKenwoodCatTransport
         if (KenwoodCatCodec.TryParseFrequencyHz(normalized, out var hz) && hz > 0)
         {
             if (normalized.StartsWith("FA", StringComparison.OrdinalIgnoreCase))
-                FaHz = hz;
+            {
+                if (DestinationIsSub)
+                    SubFaHz = hz;
+                else
+                    FaHz = hz;
+            }
             else if (normalized.StartsWith("FB", StringComparison.OrdinalIgnoreCase))
+            {
                 FbHz = hz;
+            }
         }
     }
 
     private void ApplyDcCommand(string normalized)
     {
-        if (!normalized.StartsWith("DC", StringComparison.OrdinalIgnoreCase) || normalized.Length < 5)
+        if (!normalized.StartsWith("DC", StringComparison.OrdinalIgnoreCase) || normalized.Length < 4)
             return;
 
-        _ctrlOnSubReceiver = normalized[3] == '1';
+        // TS-790: DC0; / DC1;
+        if (normalized.Length == 4 && normalized[2] is '0' or '1')
+        {
+            DestinationIsSub = normalized[2] == '1';
+            _ctrlOnSubReceiver = DestinationIsSub;
+            return;
+        }
+
+        // TS-2000: DCp1p2; CTRL on sub when p2 == '1'
+        if (normalized.Length >= 5)
+        {
+            _ctrlOnSubReceiver = normalized[3] == '1';
+            DestinationIsSub = _ctrlOnSubReceiver;
+        }
     }
 
     private void ApplyVfoSelectCommand(string normalized)

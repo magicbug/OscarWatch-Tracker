@@ -6,7 +6,8 @@ using Serilog;
 namespace OscarWatch.Rig;
 
 /// <summary>
-/// Kenwood TS-2000 CAT: 8N1 ASCII commands terminated by semicolon.
+/// Kenwood ASCII CAT: semicolon-terminated commands over serial.
+/// Default is 8N1 (TS-2000). Pass <see cref="StopBits.Two"/> for the TS-790 (4800 8N2).
 /// Hardware RTS is enabled by default (required for replies on full CAT cables); can be disabled for simple cables.
 /// </summary>
 internal sealed class KenwoodCatTransport : IKenwoodCatTransport
@@ -19,9 +20,13 @@ internal sealed class KenwoodCatTransport : IKenwoodCatTransport
     private string? _lastRejectedSetCommand;
     private int _rejectedSetRepeatCount;
 
-    public KenwoodCatTransport(string portName, int baudRate, bool hardwareRtsEnabled = true)
+    public KenwoodCatTransport(
+        string portName,
+        int baudRate,
+        bool hardwareRtsEnabled = true,
+        StopBits stopBits = StopBits.One)
     {
-        _port = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One)
+        _port = new SerialPort(portName, baudRate, Parity.None, 8, stopBits)
         {
             Handshake = hardwareRtsEnabled ? Handshake.RequestToSend : Handshake.None,
             ReadTimeout = 200,

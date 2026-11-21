@@ -774,11 +774,17 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     public bool ShowRigTs2000SingleOptions =>
         !DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.KenwoodTs2000;
 
+    /// <summary>TS-790 single-radio RTS option (no TRACE / SATL).</summary>
+    public bool ShowRigTs790SingleOptions =>
+        !DualRadioEnabled && SelectedRigTypeChoice?.Value == RigType.KenwoodTs790;
+
     public bool ShowRigTs2000CatHint =>
         ShowRigTs2000SingleOptions
         || (DualRadioEnabled
             && (SelectedDownlinkRigTypeChoice?.Value == RigType.KenwoodTs2000
                 || SelectedUplinkRigTypeChoice?.Value == RigType.KenwoodTs2000));
+
+    public bool ShowRigTs790CatHint => ShowRigTs790SingleOptions;
 
     public bool ShowRigFlexHint =>
         SelectedRigTypeChoice?.Value == RigType.FlexSmartSdr;
@@ -1061,6 +1067,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             new(RigType.IcomIc821h, "ICOM IC-821H"),
             new(RigType.YaesuFt847, "Yaesu FT-847"),
             new(RigType.KenwoodTs2000, "Kenwood TS-2000"),
+            new(RigType.KenwoodTs790, "Kenwood TS-790"),
             new(RigType.FlexSmartSdr, _l.Get("Settings.Radio.FlexSmartSdr")),
             new(RigType.Dummy, "Dummy Rig")
         ];
@@ -2557,6 +2564,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt847CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
+        OnPropertyChanged(nameof(ShowRigTs790CatHint));
+        OnPropertyChanged(nameof(ShowRigTs790SingleOptions));
         OnPropertyChanged(nameof(ShowDownlinkCivAddress));
         OnPropertyChanged(nameof(ShowDownlinkSerialFields));
         OnPropertyChanged(nameof(ShowDownlinkSdrFields));
@@ -2623,6 +2632,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt847CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
+        OnPropertyChanged(nameof(ShowRigTs790CatHint));
+        OnPropertyChanged(nameof(ShowRigTs790SingleOptions));
         OnPropertyChanged(nameof(ShowRigFlexHint));
         OnPropertyChanged(nameof(ShowRigFlexDuplexWarning));
         OnPropertyChanged(nameof(ShowRigFt817CatHint));
@@ -2632,6 +2643,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
 
         if (value.Value is RigType.YaesuFt847 or RigType.KenwoodTs2000)
             RigBaudRate = RigSettings.Ft847Ts2000DefaultBaudRate;
+        if (value.Value == RigType.KenwoodTs790)
+            RigBaudRate = RigSettings.Ts790DefaultBaudRate;
 
         if (value.Value == RigType.FlexSmartSdr)
         {
@@ -2669,6 +2682,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt847CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
+        OnPropertyChanged(nameof(ShowRigTs790CatHint));
+        OnPropertyChanged(nameof(ShowRigTs790SingleOptions));
         OnPropertyChanged(nameof(ShowIc910PowerClass));
         OnPropertyChanged(nameof(ShowIc9700PowerClass));
         OnPropertyChanged(nameof(ShowDownlinkCivAddress));
@@ -2761,6 +2776,8 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRigFt847CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000CatHint));
         OnPropertyChanged(nameof(ShowRigTs2000SingleOptions));
+        OnPropertyChanged(nameof(ShowRigTs790CatHint));
+        OnPropertyChanged(nameof(ShowRigTs790SingleOptions));
         OnPropertyChanged(nameof(ShowIc910PowerClass));
         OnPropertyChanged(nameof(ShowIc9700PowerClass));
         OnPropertyChanged(nameof(ShowUplinkCivAddress));
@@ -2866,6 +2883,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         {
             RigType.IcomIc9700 => RigSettings.Ic9700DefaultBaudRate,
             RigType.YaesuFt847 or RigType.KenwoodTs2000 => RigSettings.Ft847Ts2000DefaultBaudRate,
+            RigType.KenwoodTs790 => RigSettings.Ts790DefaultBaudRate,
             _ => RigSettings.IcomSatelliteDefaultBaudRate
         });
 

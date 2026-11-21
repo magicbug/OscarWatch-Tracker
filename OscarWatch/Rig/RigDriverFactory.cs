@@ -234,6 +234,11 @@ public static class RigDriverFactory
                 catDelayMs,
                 hardwareRtsEnabled: kenwoodHardwareRtsEnabled,
                 traceEnabled: kenwoodTraceEnabled),
+            RigType.KenwoodTs790 => new KenwoodTs790Driver(
+                port,
+                baudRate,
+                catDelayMs,
+                hardwareRtsEnabled: kenwoodHardwareRtsEnabled),
             RigType.FlexSmartSdr =>
                 throw new InvalidOperationException("FlexRadio SmartSDR requires network host/port via RigSettings."),
             RigType.SdrRigCtlTcp =>
