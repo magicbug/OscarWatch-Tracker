@@ -2617,6 +2617,9 @@ Continuare?</value>
   <data name="Dx.MapLauncher.Active">
     <value>Mostra monitor della stazione DX</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>Nascondi monitor della stazione DX</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Inserisci il locator della stazione remota</value>
   </data>

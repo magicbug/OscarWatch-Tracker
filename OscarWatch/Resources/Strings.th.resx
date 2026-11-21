@@ -2617,6 +2617,9 @@ LOS: {2}
   <data name="Dx.MapLauncher.Active">
     <value>แสดงตัวติดตามสถานี DX</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>ซ่อนตัวติดตามสถานี DX</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>กรอกกริดสแควร์ของสถานีปลายทาง</value>
   </data>

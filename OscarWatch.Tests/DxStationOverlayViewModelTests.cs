@@ -95,6 +95,35 @@ public class DxStationOverlayViewModelTests
     }
 
     [Fact]
+    public void OpenFromMapIcon_toggles_panel_without_clearing_grid()
+    {
+        using var _ = TestUiCulture.Apply(DefaultLanguage);
+
+        var settings = new TestSettingsService { Current = { RemoteStationGridSquare = "JO22" } };
+        var vm = new DxStationOverlayViewModel(settings, new PublicOrbitToolsPropagator(), LocalizationService.Instance);
+
+        vm.OpenFromMapIconCommand.Execute(null);
+        Assert.True(vm.IsPanelOpen);
+        Assert.Equal(
+            LocalizationService.Instance.Get("Dx.MapLauncher.Hide"),
+            vm.MapLauncherToolTip);
+
+        vm.OpenFromMapIconCommand.Execute(null);
+        Assert.False(vm.IsPanelOpen);
+        Assert.True(vm.IsActive);
+        Assert.Equal("JO22", vm.GridSquare);
+        Assert.Equal("JO22", settings.Current.RemoteStationGridSquare);
+        Assert.Equal(
+            LocalizationService.Instance.Get("Dx.MapLauncher.Active"),
+            vm.MapLauncherToolTip);
+
+        vm.OpenFromMapIconCommand.Execute(null);
+        Assert.True(vm.IsPanelOpen);
+        Assert.True(vm.IsActive);
+        Assert.Equal("JO22", vm.GridSquare);
+    }
+
+    [Fact]
     public void ToggleCollapse_persists_dx_overlay_state()
     {
         var settings = new TestSettingsService();

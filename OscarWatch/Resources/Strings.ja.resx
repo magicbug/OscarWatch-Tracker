@@ -1236,6 +1236,9 @@
   <data name="Dx.MapLauncher.Active">
     <value>DX局モニターを表示</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>DX局モニターを隠す</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>リモート局のグリッドを入力</value>
   </data>

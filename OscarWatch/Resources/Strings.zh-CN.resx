@@ -2613,6 +2613,9 @@
   <data name="Dx.MapLauncher.Active">
     <value>显示 DX 台站监视器</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>隐藏 DX 台站监视器</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>输入 DX 台站的网格</value>
   </data>

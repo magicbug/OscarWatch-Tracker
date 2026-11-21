@@ -2617,6 +2617,9 @@ Fortfahren?</value>
   <data name="Dx.MapLauncher.Active">
     <value>DX-Stationsmonitor anzeigen</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>DX-Stationsmonitor ausblenden</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Locator der Gegenstation eingeben</value>
   </data>

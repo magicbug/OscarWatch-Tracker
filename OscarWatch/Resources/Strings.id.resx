@@ -2617,6 +2617,9 @@ Lanjutkan?</value>
   <data name="Dx.MapLauncher.Active">
     <value>Tampilkan monitor stasiun DX</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>Sembunyikan monitor stasiun DX</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Masukkan gridsquare stasiun jarak jauh</value>
   </data>

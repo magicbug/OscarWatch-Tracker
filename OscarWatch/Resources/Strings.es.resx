@@ -2613,6 +2613,9 @@
   <data name="Dx.MapLauncher.Active">
     <value>Mostrar monitor de estación DX</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>Ocultar monitor de estación DX</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Introducir el localizador de la estación remota</value>
   </data>

@@ -59,9 +59,11 @@ public partial class DxStationOverlayViewModel : ViewModelBase
         ? _l.Get("Dx.CollapseExpand")
         : _l.Get("Dx.CollapseCompact");
 
-    public string MapLauncherToolTip => IsActive
-        ? _l.Get("Dx.MapLauncher.Active")
-        : _l.Get("Dx.MapLauncher.Inactive");
+    public string MapLauncherToolTip => IsPanelOpen
+        ? _l.Get("Dx.MapLauncher.Hide")
+        : IsActive
+            ? _l.Get("Dx.MapLauncher.Active")
+            : _l.Get("Dx.MapLauncher.Inactive");
 
     public Thickness OverlayMargin => new(OverlayX, OverlayY, 0, 0);
 
@@ -90,6 +92,13 @@ public partial class DxStationOverlayViewModel : ViewModelBase
     [RelayCommand]
     private void OpenFromMapIcon()
     {
+        if (IsPanelOpen)
+        {
+            // Hide without clearing the grid so the same target can be brought back.
+            IsPanelOpen = false;
+            return;
+        }
+
         IsPanelOpen = true;
         IsCollapsed = IsActive;
         RequestOverlayReclamp();
@@ -145,6 +154,8 @@ public partial class DxStationOverlayViewModel : ViewModelBase
     }
 
     partial void OnIsActiveChanged(bool value) => OnPropertyChanged(nameof(MapLauncherToolTip));
+
+    partial void OnIsPanelOpenChanged(bool value) => OnPropertyChanged(nameof(MapLauncherToolTip));
 
     partial void OnValidationHintChanged(string value) => OnPropertyChanged(nameof(ShowValidationHint));
 

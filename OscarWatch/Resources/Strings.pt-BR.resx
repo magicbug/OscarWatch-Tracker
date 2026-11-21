@@ -2613,6 +2613,9 @@ Continuar?</value>
   <data name="Dx.MapLauncher.Active">
     <value>Mostrar monitor da estação DX</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>Ocultar monitor da estação DX</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Inserir grid da estação alvo</value>
   </data>

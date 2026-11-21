@@ -2617,6 +2617,9 @@ LOS: {2}
   <data name="Dx.MapLauncher.Active">
     <value>Показать монитор станции DX</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>Скрыть монитор станции DX</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Введите квадрат удалённой станции</value>
   </data>

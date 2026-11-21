@@ -2613,6 +2613,9 @@ Continue?</value>
   <data name="Dx.MapLauncher.Active">
     <value>Show DX station monitor</value>
   </data>
+  <data name="Dx.MapLauncher.Hide">
+    <value>Hide DX station monitor</value>
+  </data>
   <data name="Dx.MapLauncher.Inactive">
     <value>Enter remote station grid square</value>
   </data>
