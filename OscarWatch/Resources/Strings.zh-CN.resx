@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>即将过境</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>将即将过境分离到单独窗口</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>将即将过境重新停靠到侧栏</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>显示在单独窗口中</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>隐藏过境仰角时间线</value>
   </data>
@@ -189,6 +198,15 @@
   </data>
   <data name="Main.HamsAtRoves">
     <value>未来漫游电台</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>将即将漫游分离到单独窗口</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>将即将漫游重新停靠到侧栏</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>显示在单独窗口中</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>没有与您在 hams.at 上的位置有重叠部分的漫游电台。</value>
@@ -731,6 +749,12 @@
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>过境仰角时间线</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>即将过境</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>即将漫游</value>
   </data>
   <data name="Picker.SelectAll">
     <value>全选</value>

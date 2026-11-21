@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Ближайшие пролёты</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Вынести предстоящие пролёты в отдельное окно</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Вернуть предстоящие пролёты в боковую панель</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>Показано в отдельном окне</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Скрыть шкалу угла места пролётов</value>
   </data>
@@ -193,6 +202,15 @@ LOS: {2}
   </data>
   <data name="Main.HamsAtRoves">
     <value>Ближайшие выезды</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Вынести предстоящие роувы в отдельное окно</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Вернуть предстоящие роувы в боковую панель</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>Показано в отдельном окне</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>Нет рабочих выездов для вашей точки на hams.at.</value>
@@ -1176,6 +1194,12 @@ LOS: {2}
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Шкала угла места пролётов</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Предстоящие пролёты</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Предстоящие роувы</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Выбрать все</value>

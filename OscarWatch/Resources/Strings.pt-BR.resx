@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Próximas passagens</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Desacoplar próximas passagens para uma janela separada</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Acoplar próximas passagens de volta na barra lateral</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>Mostrado numa janela separada</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Ocultar linha do tempo de elevação de passagens</value>
   </data>
@@ -189,6 +198,15 @@
   </data>
   <data name="Main.HamsAtRoves">
     <value>Próximas roves</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Desacoplar próximas roves para uma janela separada</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Acoplar próximas roves de volta na barra lateral</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>Mostrado numa janela separada</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>Nenhuma rove exequível para sua localização no hams.at.</value>
@@ -731,6 +749,12 @@ Continuar?</value>
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Linha do tempo de elevação de passagens</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Próximas passagens</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Próximas roves</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Selecionar Todos</value>

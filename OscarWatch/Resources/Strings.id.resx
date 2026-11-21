@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Lintasan Mendatang</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Lepaskan lintasan mendatang ke jendela terpisah</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Kembalikan lintasan mendatang ke bilah sisi</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>Ditampilkan di jendela terpisah</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Sembunyikan timeline elevasi lintasan</value>
   </data>
@@ -193,6 +202,15 @@ Durasi: {4}</value>
   </data>
   <data name="Main.HamsAtRoves">
     <value>Rove Mendatang</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Lepaskan rove mendatang ke jendela terpisah</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Kembalikan rove mendatang ke bilah sisi</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>Ditampilkan di jendela terpisah</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>Tidak ada rove yang bisa dikerjakan untuk lokasi hams.at Anda.</value>
@@ -1176,6 +1194,12 @@ Lanjutkan?</value>
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Timeline elevasi lintasan</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Lintasan mendatang</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Rove mendatang</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Pilih Semua</value>

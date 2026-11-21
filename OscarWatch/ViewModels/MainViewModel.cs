@@ -352,7 +352,19 @@ public partial class MainViewModel : ViewModelBase
     private bool _isSkyPlotExpanded = true;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPassesDockedVisible))]
+    [NotifyCanExecuteChangedFor(nameof(DetachUpcomingPassesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DockUpcomingPassesCommand))]
     private bool _isPassesExpanded = true;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPassesDockedVisible))]
+    [NotifyCanExecuteChangedFor(nameof(DetachUpcomingPassesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DockUpcomingPassesCommand))]
+    private bool _isPassesDetached;
+
+    /// <summary>Sidebar pass list is shown only when expanded and not in a floating window.</summary>
+    public bool IsPassesDockedVisible => IsPassesExpanded && !IsPassesDetached;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsTimelineDockedVisible))]
@@ -374,7 +386,19 @@ public partial class MainViewModel : ViewModelBase
     private double _timelinePanelHeight = 110;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRovesDockedVisible))]
+    [NotifyCanExecuteChangedFor(nameof(DetachUpcomingRovesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DockUpcomingRovesCommand))]
     private bool _isHamsAtRovesExpanded = true;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRovesDockedVisible))]
+    [NotifyCanExecuteChangedFor(nameof(DetachUpcomingRovesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DockUpcomingRovesCommand))]
+    private bool _isRovesDetached;
+
+    /// <summary>Sidebar roves list is shown only when expanded and not in a floating window.</summary>
+    public bool IsRovesDockedVisible => IsHamsAtRovesExpanded && !IsRovesDetached;
 
     [ObservableProperty]
     private double _hamsAtRovesPanelHeight = 180;
@@ -550,7 +574,93 @@ public partial class MainViewModel : ViewModelBase
     {
         _settings.Current.PassesExpanded = value;
         _settings.RequestSave();
+        // Collapsing the sidebar header must not dock a floating list window.
         SidebarLayoutInvalidated?.Invoke();
+    }
+
+    partial void OnIsPassesDetachedChanged(bool value)
+    {
+        _settings.Current.IsPassesDetached = value;
+        _settings.RequestSave();
+        if (value)
+            EnsureDetachedPassesWindowOpen();
+        else if (!_suppressPassesWindowClose)
+            CloseDetachedPassesWindow();
+        SidebarLayoutInvalidated?.Invoke();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDetachUpcomingPasses))]
+    private void DetachUpcomingPasses()
+    {
+        IsPassesExpanded = true;
+        IsPassesDetached = true;
+    }
+
+    private bool CanDetachUpcomingPasses() => !IsPassesDetached;
+
+    [RelayCommand(CanExecute = nameof(CanDockUpcomingPasses))]
+    private void DockUpcomingPasses()
+    {
+        IsPassesDetached = false;
+        IsPassesExpanded = true;
+    }
+
+    private bool CanDockUpcomingPasses() => IsPassesDetached;
+
+    /// <summary>Called when the floating upcoming passes window is closed by the operator.</summary>
+    public void DockUpcomingPassesFromWindowClose()
+    {
+        if (!IsPassesDetached)
+            return;
+
+        _suppressPassesWindowClose = true;
+        try
+        {
+            _openPassesWindow = null;
+            IsPassesDetached = false;
+            IsPassesExpanded = true;
+        }
+        finally
+        {
+            _suppressPassesWindowClose = false;
+        }
+    }
+
+    private static UpcomingPassesWindow? _openPassesWindow;
+    private bool _suppressPassesWindowClose;
+
+    private void EnsureDetachedPassesWindowOpen()
+    {
+        if (!IsPassesDetached)
+            return;
+
+        if (_openPassesWindow is { IsVisible: true })
+        {
+            _openPassesWindow.Activate();
+            return;
+        }
+
+        var window = new UpcomingPassesWindow { DataContext = this };
+        window.Closed += (_, _) =>
+        {
+            if (ReferenceEquals(_openPassesWindow, window))
+                _openPassesWindow = null;
+        };
+        _openPassesWindow = window;
+        if (App.MainWindow is null)
+            window.Show();
+        else
+            window.Show(App.MainWindow);
+    }
+
+    private void CloseDetachedPassesWindow()
+    {
+        if (_openPassesWindow is null)
+            return;
+
+        var window = _openPassesWindow;
+        _openPassesWindow = null;
+        window.Close();
     }
 
     partial void OnIsTimelineExpandedChanged(bool value)
@@ -680,7 +790,93 @@ public partial class MainViewModel : ViewModelBase
     {
         _settings.Current.HamsAtRovesExpanded = value;
         _settings.RequestSave();
+        // Collapsing the sidebar header must not dock a floating list window.
         SidebarLayoutInvalidated?.Invoke();
+    }
+
+    partial void OnIsRovesDetachedChanged(bool value)
+    {
+        _settings.Current.IsRovesDetached = value;
+        _settings.RequestSave();
+        if (value)
+            EnsureDetachedRovesWindowOpen();
+        else if (!_suppressRovesWindowClose)
+            CloseDetachedRovesWindow();
+        SidebarLayoutInvalidated?.Invoke();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDetachUpcomingRoves))]
+    private void DetachUpcomingRoves()
+    {
+        IsHamsAtRovesExpanded = true;
+        IsRovesDetached = true;
+    }
+
+    private bool CanDetachUpcomingRoves() => !IsRovesDetached;
+
+    [RelayCommand(CanExecute = nameof(CanDockUpcomingRoves))]
+    private void DockUpcomingRoves()
+    {
+        IsRovesDetached = false;
+        IsHamsAtRovesExpanded = true;
+    }
+
+    private bool CanDockUpcomingRoves() => IsRovesDetached;
+
+    /// <summary>Called when the floating upcoming roves window is closed by the operator.</summary>
+    public void DockUpcomingRovesFromWindowClose()
+    {
+        if (!IsRovesDetached)
+            return;
+
+        _suppressRovesWindowClose = true;
+        try
+        {
+            _openRovesWindow = null;
+            IsRovesDetached = false;
+            IsHamsAtRovesExpanded = true;
+        }
+        finally
+        {
+            _suppressRovesWindowClose = false;
+        }
+    }
+
+    private static UpcomingRovesWindow? _openRovesWindow;
+    private bool _suppressRovesWindowClose;
+
+    private void EnsureDetachedRovesWindowOpen()
+    {
+        if (!IsRovesDetached)
+            return;
+
+        if (_openRovesWindow is { IsVisible: true })
+        {
+            _openRovesWindow.Activate();
+            return;
+        }
+
+        var window = new UpcomingRovesWindow { DataContext = this };
+        window.Closed += (_, _) =>
+        {
+            if (ReferenceEquals(_openRovesWindow, window))
+                _openRovesWindow = null;
+        };
+        _openRovesWindow = window;
+        if (App.MainWindow is null)
+            window.Show();
+        else
+            window.Show(App.MainWindow);
+    }
+
+    private void CloseDetachedRovesWindow()
+    {
+        if (_openRovesWindow is null)
+            return;
+
+        var window = _openRovesWindow;
+        _openRovesWindow = null;
+        window.Close();
     }
 
     public const double HamsAtRovesMinPanelHeight = 80;
@@ -689,6 +885,7 @@ public partial class MainViewModel : ViewModelBase
     private void ApplyHamsAtSidebarSettings()
     {
         IsHamsAtRovesExpanded = _settings.Current.HamsAtRovesExpanded;
+        IsRovesDetached = _settings.Current.IsRovesDetached;
         HamsAtRovesPanelHeight = Math.Clamp(
             _settings.Current.HamsAtRovesPanelHeightPx,
             HamsAtRovesMinPanelHeight,
@@ -819,6 +1016,7 @@ public partial class MainViewModel : ViewModelBase
             ApplyMapCentreFromSettings();
             IsSkyPlotExpanded = _settings.Current.SkyPlotExpanded;
             IsPassesExpanded = _settings.Current.PassesExpanded;
+            IsPassesDetached = _settings.Current.IsPassesDetached;
             IsTimelineExpanded = _settings.Current.IsTimelineExpanded;
             IsTimelineDetached = _settings.Current.IsTimelineDetached && IsTimelineExpanded;
             TimelineWindowMinutes = TimelineWindowLimits.Clamp(_settings.Current.TimelineWindowMinutes);

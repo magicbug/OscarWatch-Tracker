@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OscarWatch.ViewModels"
+        xmlns:loc="using:OscarWatch.Localization"
+        xmlns:ctrl="using:OscarWatch.Controls"
+        x:Class="OscarWatch.Views.UpcomingRovesWindow"
+        x:DataType="vm:MainViewModel"
+        Title="{loc:Localize Key=Window.UpcomingRoves.Title}"
+        Width="420" Height="360"
+        MinWidth="320" MinHeight="200"
+        WindowStartupLocation="CenterOwner">
+  <ctrl:UpcomingRovesListControl Margin="8"
+                                 ShowResizeGrip="False" />
+</Window>

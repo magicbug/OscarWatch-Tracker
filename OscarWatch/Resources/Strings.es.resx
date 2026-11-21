@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Próximos pases</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Desacoplar próximos pases a una ventana aparte</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Acoplar próximos pases de nuevo en la barra lateral</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>Mostrado en una ventana aparte</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Ocultar cronograma de elevación de pases</value>
   </data>
@@ -189,6 +198,15 @@
   </data>
   <data name="Main.HamsAtRoves">
     <value>Próximas expediciones</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Desacoplar próximas roves a una ventana aparte</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Acoplar próximas roves de nuevo en la barra lateral</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>Mostrado en una ventana aparte</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>No hay expediciones disponibles para tu ubicación de hams.at.</value>
@@ -731,6 +749,12 @@
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Cronograma de elevación de pases</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Próximos pases</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Próximas roves</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Seleccionar todo</value>

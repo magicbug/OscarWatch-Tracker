@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>พาสที่กำลังจะมาถึง</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>แยกพาสที่กำลังจะมาถึงไปหน้าต่างอื่น</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>นำพาสที่กำลังจะมาถึงกลับไปแถบด้านข้าง</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>แสดงในหน้าต่างแยก</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>ซ่อนไทม์ไลน์มุมเงยของพาส</value>
   </data>
@@ -193,6 +202,15 @@ LOS: {2}
   </data>
   <data name="Main.HamsAtRoves">
     <value>โรว์ที่กำลังจะมาถึง</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>แยกโรฟที่กำลังจะมาถึงไปหน้าต่างอื่น</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>นำโรฟที่กำลังจะมาถึงกลับไปแถบด้านข้าง</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>แสดงในหน้าต่างแยก</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>ไม่มีโรว์ที่ติดต่อได้สำหรับตำแหน่ง hams.at ของคุณ</value>
@@ -1176,6 +1194,12 @@ LOS: {2}
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>ไทม์ไลน์มุมเงยของพาส</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>พาสที่กำลังจะมาถึง</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>โรฟที่กำลังจะมาถึง</value>
   </data>
   <data name="Picker.SelectAll">
     <value>เลือกทั้งหมด</value>

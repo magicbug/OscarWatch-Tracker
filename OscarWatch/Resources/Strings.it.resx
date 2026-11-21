@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Prossimi passaggi</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Stacca i passaggi imminenti in una finestra separata</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Riporta i passaggi imminenti nella barra laterale</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>Mostrato in una finestra separata</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Nascondi la timeline di elevazione dei passaggi</value>
   </data>
@@ -193,6 +202,15 @@ Durata: {4}</value>
   </data>
   <data name="Main.HamsAtRoves">
     <value>Prossimi rove</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Stacca le roves imminenti in una finestra separata</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Riporta le roves imminenti nella barra laterale</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>Mostrato in una finestra separata</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>Nessun rove operabile per la tua posizione hams.at.</value>
@@ -1176,6 +1194,12 @@ Continuare?</value>
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Timeline di elevazione dei passaggi</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Passaggi imminenti</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Roves imminenti</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Seleziona tutti</value>

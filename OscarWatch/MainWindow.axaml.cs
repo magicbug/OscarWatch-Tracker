@@ -1,39 +1,26 @@
-using System.ComponentModel;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using Microsoft.Extensions.DependencyInjection;
-using OscarWatch.Controls;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Orbit;
 using OscarWatch.Core.Services;
 using OscarWatch.ViewModels;
 using OscarWatch.Views;
-using OscarWatch.Localization;
 
 namespace OscarWatch;
 
 public partial class MainWindow : Window
 {
-    private static readonly TimeSpan PassListScrollResetIdle = TimeSpan.FromMinutes(5);
-    private static readonly TimeSpan PassListScrollResetCheckInterval = TimeSpan.FromSeconds(30);
-    private const double PassListTopEpsilon = 1.0;
-
     private const double HamsAtRovesMinPanelHeight = 80;
     private const double HamsAtRovesMaxPanelHeight = 400;
-    private const double HamsAtRovesResizeGripHeight = 10;
+    private const double HamsAtRovesResizeGripHeight = 14;
     private const double TimelineResizeGripHeight = 10;
     private const double MapMinHeightForTimelineResize = 200;
 
-    private ScrollViewer? _passListScrollViewer;
-    private DispatcherTimer? _passListScrollResetTimer;
-    private DateTime _passListLastUserScrollUtc = DateTime.MinValue;
-    private bool _passListIsScrolledDown;
     private bool _isResizingHamsAtRoves;
     private double _hamsAtRovesResizeStartY;
     private double _hamsAtRovesResizeStartHeight;
@@ -42,26 +29,17 @@ public partial class MainWindow : Window
     private double _timelineResizeStartY;
     private double _timelineResizeStartHeight;
     private IPointer? _timelineResizePointer;
-    private PassRowViewModel? _passListContextRow;
     private bool _hardwareShutdownComplete;
 
     public MainWindow()
     {
         InitializeComponent();
-        PassesListBox.AddHandler(PointerPressedEvent, OnPassesListRightClickTunnel, RoutingStrategies.Tunnel);
         AddHandler(KeyDownEvent, OnGlobalKeyDown, RoutingStrategies.Tunnel);
         AddHandler(PointerMovedEvent, OnResizePointerMoved, RoutingStrategies.Tunnel);
         AddHandler(PointerReleasedEvent, OnResizePointerReleased, RoutingStrategies.Tunnel);
         AddHandler(PointerCaptureLostEvent, OnResizePointerCaptureLost, RoutingStrategies.Tunnel);
-        PassesListBox.ContainerPrepared += OnPassListContainerPrepared;
-        PassesListBox.ContainerClearing += OnPassListContainerClearing;
-        PassesListBox.AttachedToVisualTree += (_, _) => TryAttachPassListScrollViewer();
         TimelineControl.SatelliteFocusRequested += OnTimelineSatelliteFocusRequested;
         Closing += OnClosing;
-
-        _passListScrollResetTimer = new DispatcherTimer { Interval = PassListScrollResetCheckInterval };
-        _passListScrollResetTimer.Tick += OnPassListScrollResetTick;
-        _passListScrollResetTimer.Start();
     }
 
     private void OnTimelineSatelliteFocusRequested(object? sender, string noradId)
@@ -77,8 +55,6 @@ public partial class MainWindow : Window
 
         // Cancel once so teardown finishes before Avalonia tears down the process.
         e.Cancel = true;
-        _passListScrollResetTimer?.Stop();
-        DetachPassListScrollViewer();
 
         var settings = App.Services.GetRequiredService<ISettingsService>();
         MainWindowBounds.Capture(this, settings.Current);
@@ -98,185 +74,31 @@ public partial class MainWindow : Window
         Close();
     }
 
-    private void TryAttachPassListScrollViewer()
-    {
-        if (_passListScrollViewer is not null)
-            return;
-
-        _passListScrollViewer = PassesListBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
-        if (_passListScrollViewer is null)
-            return;
-
-        _passListScrollViewer.ScrollChanged += OnPassListScrollChanged;
-        UpdatePassListScrollState(_passListScrollViewer.Offset.Y);
-    }
-
-    private void DetachPassListScrollViewer()
-    {
-        if (_passListScrollViewer is null)
-            return;
-
-        _passListScrollViewer.ScrollChanged -= OnPassListScrollChanged;
-        _passListScrollViewer = null;
-    }
-
-    private void OnPassListScrollChanged(object? sender, ScrollChangedEventArgs e)
-    {
-        if (sender is ScrollViewer viewer)
-            UpdatePassListScrollState(viewer.Offset.Y);
-    }
-
-    private void UpdatePassListScrollState(double offsetY)
-    {
-        _passListIsScrolledDown = offsetY > PassListTopEpsilon;
-        if (_passListIsScrolledDown)
-            _passListLastUserScrollUtc = DateTime.UtcNow;
-        else
-            _passListLastUserScrollUtc = DateTime.MinValue;
-    }
-
-    private void OnPassListScrollResetTick(object? sender, EventArgs e)
-    {
-        if (!_passListIsScrolledDown || _passListScrollViewer is null)
-            return;
-
-        if (_passListLastUserScrollUtc == DateTime.MinValue)
-            return;
-
-        if (DateTime.UtcNow - _passListLastUserScrollUtc < PassListScrollResetIdle)
-            return;
-
-        var offset = _passListScrollViewer.Offset;
-        _passListScrollViewer.Offset = new Vector(offset.X, 0);
-        _passListIsScrolledDown = false;
-        _passListLastUserScrollUtc = DateTime.MinValue;
-    }
-
-    private static void OnPassListContainerClearing(object? sender, ContainerClearingEventArgs e)
-    {
-        if (e.Container is ListBoxItem item)
-            item.Classes.Remove("pass-day-header");
-    }
-
-    private void OnPassesListRightClickTunnel(object? sender, PointerPressedEventArgs e)
-    {
-        if (!e.GetCurrentPoint(PassesListBox).Properties.IsRightButtonPressed)
-            return;
-
-        _passListContextRow = TryGetPassRowFromPointerSource(e.Source as Visual);
-        e.Handled = _passListContextRow is not null;
-    }
-
-    private void OnPassesContextMenuOpening(object? sender, CancelEventArgs e)
-    {
-        _passListContextRow ??= PassesListBox.SelectedItem as PassRowViewModel;
-        if (_passListContextRow is null)
-        {
-            e.Cancel = true;
-            return;
-        }
-
-        if (SchedulePassMenuItem is not null)
-        {
-            var l = LocalizationService.Instance;
-            SchedulePassMenuItem.Header = _passListContextRow.IsScheduled
-                ? l.Get("Pass.Schedule.Remove")
-                : l.Get("Pass.Schedule.Add");
-        }
-
-        if (PostHamsAtActivationMenuItem is not null && DataContext is MainViewModel vm)
-            PostHamsAtActivationMenuItem.IsVisible = vm.HasHamsAtApiKey;
-    }
-
-    private async void OnPostHamsAtActivationClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        var row = _passListContextRow ?? PassesListBox.SelectedItem as PassRowViewModel;
-        if (row is null)
-            return;
-
-        await vm.PostHamsAtActivationAsync(row).ConfigureAwait(true);
-        _passListContextRow = null;
-    }
-
-    private void OnOpenPassVisualizerClick(object? sender, RoutedEventArgs e) =>
-        OpenPassVisualizerForContextPass();
-
-    private void OnToggleSchedulePassClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        var row = _passListContextRow ?? PassesListBox.SelectedItem as PassRowViewModel;
-        if (row is null)
-            return;
-
-        vm.TogglePassScheduled(row);
-        _passListContextRow = null;
-    }
-
-    private void OnPassScheduleToggleClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        if (sender is not Button { DataContext: PassRowViewModel row })
-            return;
-
-        e.Handled = true;
-        vm.TogglePassScheduled(row);
-    }
-
-    private static PassRowViewModel? TryGetPassRowFromPointerSource(Visual? source)
-    {
-        for (var node = source; node is not null; node = node.GetVisualParent() as Visual)
-        {
-            if (node is ListBoxItem item && item.DataContext is PassRowViewModel passRow)
-                return passRow;
-        }
-
-        return null;
-    }
-
-    private void OpenPassVisualizerForContextPass()
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        var row = _passListContextRow ?? PassesListBox.SelectedItem as PassRowViewModel;
-        if (row is null)
-            return;
-
-        var visualizerVm = vm.CreatePassVisualizerViewModel(row);
-        _passListContextRow = null;
-        if (visualizerVm is null)
-            return;
-
-        new PassVisualizerWindow
-        {
-            DataContext = visualizerVm
-        }.Show(this);
-    }
-
-    private static void OnPassListContainerPrepared(object? sender, ContainerPreparedEventArgs e)
-    {
-        if (e.Container is not ListBoxItem item)
-            return;
-
-        var isHeader = item.DataContext is PassDayHeaderViewModel;
-        item.IsEnabled = !isHeader;
-        item.Focusable = !isHeader;
-
-        if (isHeader)
-            item.Classes.Add("pass-day-header");
-        else
-            item.Classes.Remove("pass-day-header");
-    }
-
     private void OnSidebarLayoutSizeChanged(object? sender, SizeChangedEventArgs e) =>
-        UpdateSidebarTopMaxHeight(e.NewSize.Height);
+        UpdateSidebarLayout(e.NewSize.Height);
+
+    private void UpdateSidebarLayout(double sidebarHeight)
+    {
+        UpdateSidebarPassesRowDefinition();
+        UpdateSidebarTopMaxHeight(sidebarHeight);
+    }
+
+    private void UpdateSidebarPassesRowDefinition()
+    {
+        if (SidebarLayoutGrid is null)
+            return;
+
+        // Default to the star row (docked list) until MainViewModel is available. Treating a
+        // missing DataContext as "not docked" made the passes row Auto and let the list grow
+        // over the Live / sky plot section.
+        var docked = DataContext is not MainViewModel vm || vm.IsPassesDockedVisible;
+        var row = SidebarLayoutGrid.RowDefinitions[1];
+        row.Height = docked ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
+        if (PassesExpander is not null)
+            PassesExpander.VerticalAlignment = docked
+                ? Avalonia.Layout.VerticalAlignment.Stretch
+                : Avalonia.Layout.VerticalAlignment.Top;
+    }
 
     private void UpdateSidebarTopMaxHeight(double sidebarHeight)
     {
@@ -294,8 +116,10 @@ public partial class MainWindow : Window
         const double minPassesListHeight = 140;
         const double expanderHeaderHeight = 32;
         var reserve = expanderHeaderHeight + 8;
-        if (DataContext is MainViewModel vm && vm.IsPassesExpanded)
+        if (DataContext is MainViewModel vm && vm.IsPassesDockedVisible)
             reserve += minPassesListHeight;
+        else if (DataContext is MainViewModel { IsPassesDetached: true, IsPassesExpanded: true })
+            reserve += 28;
 
         return reserve;
     }
@@ -307,8 +131,10 @@ public partial class MainWindow : Window
             return 0;
 
         var reserve = expanderHeaderHeight + 8;
-        if (vm.IsHamsAtRovesExpanded)
+        if (vm.IsRovesDockedVisible)
             reserve += vm.HamsAtRovesPanelHeight + HamsAtRovesResizeGripHeight + 16;
+        else if (vm.IsRovesDetached && vm.IsHamsAtRovesExpanded)
+            reserve += 28;
 
         return reserve;
     }
@@ -455,21 +281,6 @@ public partial class MainWindow : Window
         return Math.Clamp(computed, HamsAtRovesMinPanelHeight, HamsAtRovesMaxPanelHeight);
     }
 
-    private void OnHamsAtRovesListTapped(object? sender, TappedEventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-            return;
-
-        for (var node = e.Source as Visual; node is not null; node = node.GetVisualParent() as Visual)
-        {
-            if (node is ListBoxItem { DataContext: HamsAtRoveRowViewModel row })
-            {
-                vm.OpenHamsAtRove(row);
-                break;
-            }
-        }
-    }
-
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
@@ -494,14 +305,14 @@ public partial class MainWindow : Window
                 vm.GroundStation);
             Serilog.Log.Information("MainWindow.OnOpened initialization completed in {ElapsedMs} ms", initStopwatch.ElapsedMilliseconds);
             if (SidebarLayoutGrid is not null)
-                UpdateSidebarTopMaxHeight(SidebarLayoutGrid.Bounds.Height);
+                UpdateSidebarLayout(SidebarLayoutGrid.Bounds.Height);
         }
     }
 
     private void OnSidebarLayoutInvalidated()
     {
         if (SidebarLayoutGrid is not null)
-            UpdateSidebarTopMaxHeight(SidebarLayoutGrid.Bounds.Height);
+            UpdateSidebarLayout(SidebarLayoutGrid.Bounds.Height);
     }
 
     private void OnGlobalKeyDown(object? sender, KeyEventArgs e)

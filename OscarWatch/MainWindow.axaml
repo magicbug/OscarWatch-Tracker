@@ -3,7 +3,6 @@
         xmlns:vm="using:OscarWatch.ViewModels"
         xmlns:loc="using:OscarWatch.Localization"
         xmlns:ctrl="using:OscarWatch.Controls"
-        xmlns:theme="using:OscarWatch.Theme"
         x:Class="OscarWatch.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="{loc:Localize Key=App.Title}"
@@ -316,6 +315,18 @@
             <Style Selector="Expander">
               <Setter Property="HorizontalAlignment" Value="Stretch" />
               <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+            <Style Selector="Button.sidebar-detach">
+              <Setter Property="Padding" Value="6,2" />
+              <Setter Property="MinWidth" Value="22" />
+              <Setter Property="MinHeight" Value="22" />
+              <Setter Property="MaxHeight" Value="22" />
+              <Setter Property="Margin" Value="8,0,0,0" />
+              <Setter Property="VerticalAlignment" Value="Center" />
+              <Setter Property="Background" Value="Transparent" />
+              <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Setter Property="CornerRadius" Value="4" />
             </Style>
             <Style Selector="Border.live-panel">
               <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
@@ -634,10 +645,20 @@
             </Border>
           </StackPanel>
 
-          <Expander Header="{loc:Localize Key=Main.SkyPlot}"
-                    IsExpanded="{Binding IsSkyPlotExpanded, Mode=TwoWay}"
+          <Expander IsExpanded="{Binding IsSkyPlotExpanded, Mode=TwoWay}"
                     Margin="0,0,0,10"
-                    Padding="0">
+                    Padding="0"
+                    MinHeight="0">
+            <Expander.Header>
+              <DockPanel LastChildFill="True"
+                         MinWidth="0"
+                         MinHeight="28"
+                         VerticalAlignment="Center">
+                <TextBlock Text="{loc:Localize Key=Main.SkyPlot}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+              </DockPanel>
+            </Expander.Header>
             <ctrl:SkyPlotControl Height="220"
                                  TabIndex="2"
                                  MinWidth="0"
@@ -654,294 +675,125 @@
             </StackPanel>
           </ScrollViewer>
 
-          <Expander Grid.Row="1"
-                    Header="{loc:Localize Key=Main.Passes}"
+          <Expander x:Name="PassesExpander"
+                    Grid.Row="1"
                     IsExpanded="{Binding IsPassesExpanded, Mode=TwoWay}"
                     Margin="0,8,0,0"
                     Padding="0"
                     MinHeight="0"
+                    ClipToBounds="True"
                     VerticalAlignment="Stretch">
-            <ListBox x:Name="PassesListBox"
-                     ItemsSource="{Binding Passes}"
-                     TabIndex="3"
-                     Padding="0"
-                     MinWidth="0"
-                     MinHeight="0"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     AutoScrollToSelectedItem="False"
-                     SelectedItem="{Binding SelectedListItem, Mode=TwoWay}">
-              <ListBox.ContextMenu>
-                <ContextMenu Opening="OnPassesContextMenuOpening">
-                  <MenuItem Header="{loc:Localize Key=Pass.OpenVisualizer}"
-                            Click="OnOpenPassVisualizerClick" />
-                  <MenuItem x:Name="SchedulePassMenuItem"
-                            Click="OnToggleSchedulePassClick" />
-                  <MenuItem x:Name="PostHamsAtActivationMenuItem"
-                            Header="{loc:Localize Key=Pass.HamsAt.PostActivation}"
-                            Click="OnPostHamsAtActivationClick" />
-                </ContextMenu>
-              </ListBox.ContextMenu>
-              <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel />
-                </ItemsPanelTemplate>
-              </ListBox.ItemsPanel>
-              <ListBox.Styles>
-                <Style Selector="ListBoxItem">
-                  <Setter Property="Padding" Value="0" />
-                  <Setter Property="Margin" Value="0,0,0,4" />
-                  <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-                <Style Selector="ListBoxItem:not(.pass-day-header)">
-                  <Setter Property="MinHeight" Value="72" />
-                </Style>
-                <Style Selector="ListBoxItem.pass-day-header">
-                  <Setter Property="Margin" Value="0,8,0,2" />
-                </Style>
-                <Style Selector="ListBoxItem.pass-day-header:disabled">
-                  <Setter Property="Padding" Value="0" />
-                  <Setter Property="Margin" Value="0,8,0,2" />
-                  <Setter Property="Background" Value="Transparent" />
-                  <Setter Property="Opacity" Value="1" />
-                </Style>
-                <Style Selector="ListBoxItem.pass-day-header:disabled TextBlock">
-                  <Setter Property="Opacity" Value="1" />
-                  <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
-                </Style>
-              </ListBox.Styles>
-              <ListBox.DataTemplates>
-                <DataTemplate DataType="vm:PassDayHeaderViewModel">
-                  <Border Padding="0,4,0,2"
-                          BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                          BorderThickness="0,1,0,0">
-                    <TextBlock Text="{Binding DateLabel}"
-                               FontSize="15"
-                               FontWeight="SemiBold"
-                               TextTrimming="CharacterEllipsis"
-                               Foreground="{DynamicResource ThemeForegroundBrush}" />
-                  </Border>
-                </DataTemplate>
-                <DataTemplate DataType="vm:PassRowViewModel">
-                  <Border Padding="10,8"
-                          CornerRadius="4"
-                          HorizontalAlignment="Stretch"
-                          BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                          BorderThickness="1"
-                          Background="{Binding Highlight, Converter={x:Static theme:PassRowBackgroundConverter.Instance}}">
-                    <StackPanel Spacing="3">
-                      <DockPanel LastChildFill="True">
-                        <Border DockPanel.Dock="Right"
-                                Padding="10,4"
-                                CornerRadius="10"
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                IsVisible="{Binding ShowBadge}"
-                                Background="{Binding Highlight, Converter={x:Static theme:PassRowBadgeBackgroundConverter.Instance}}">
-                          <TextBlock Text="{Binding BadgeText}"
-                                     FontSize="14"
-                                     FontWeight="SemiBold"
-                                     FontFamily="Consolas,Courier New,monospace"
-                                     Foreground="{Binding Highlight, Converter={x:Static theme:PassRowBadgeForegroundConverter.Instance}}" />
-                        </Border>
-                        <Button DockPanel.Dock="Right"
-                                Padding="4,2"
-                                Margin="6,0,0,0"
-                                MinWidth="28"
-                                VerticalAlignment="Center"
-                                IsVisible="{Binding ShowScheduleButton}"
-                                Click="OnPassScheduleToggleClick"
-                                ToolTip.Tip="{Binding ScheduleToolTip}"
-                                AutomationProperties.Name="{Binding ScheduleAutomationName}">
-                          <TextBlock FontSize="14"
-                                     FontWeight="SemiBold"
-                                     Text="{Binding ScheduleGlyph}"
-                                     Foreground="{DynamicResource ThemeForegroundBrush}" />
-                        </Button>
-                        <Ellipse DockPanel.Dock="Left"
-                                 Width="8"
-                                 Height="8"
-                                 Margin="0,0,8,0"
-                                 VerticalAlignment="Center"
-                                 IsVisible="{Binding ShowCommunityStatusDot}"
-                                 Opacity="{Binding CommunityStatusDotOpacity}"
-                                 ToolTip.Tip="{Binding CommunityStatusToolTip}"
-                                 AutomationProperties.Name="{Binding CommunityStatusAutomationName}"
-                                 Fill="{Binding CommunityStatusKind, Converter={x:Static theme:CommunityStatusDotFillConverter.Instance}}" />
-                        <TextBlock DockPanel.Dock="Right"
-                                   Margin="6,0,0,0"
-                                   VerticalAlignment="Center"
-                                   FontSize="12"
-                                   FontWeight="SemiBold"
-                                   Text="{Binding ElementAgeText}"
-                                   IsVisible="{Binding ShowElementAge}"
-                                   Foreground="{DynamicResource StaleTleForegroundBrush}"
-                                   ToolTip.Tip="{Binding ElementAgeToolTip}"
-                                   AutomationProperties.Name="{Binding ElementAgeAutomationName}" />
-                        <TextBlock DockPanel.Dock="Right"
-                                   Margin="6,0,0,0"
-                                   VerticalAlignment="Center"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Text="⚠"
-                                   IsVisible="{Binding ShowNotice}"
-                                   Foreground="{DynamicResource StaleTleForegroundBrush}"
-                                   ToolTip.Tip="{Binding NoticeToolTip}"
-                                   AutomationProperties.Name="{Binding NoticeAutomationName}" />
-                        <TextBlock Text="{Binding SatelliteName}"
-                                   FontWeight="SemiBold"
-                                   FontSize="16"
-                                   TextTrimming="CharacterEllipsis"
-                                   Foreground="{DynamicResource ThemeForegroundBrush}" />
-                      </DockPanel>
-                      <TextBlock FontSize="14"
-                                 Text="{Binding TimeRangeLine}"
-                                 TextTrimming="CharacterEllipsis"
-                                 Foreground="{DynamicResource ThemeForegroundBrush}" />
-                      <Grid ColumnDefinitions="*,*">
-                        <TextBlock Grid.Column="0"
-                                   FontSize="13"
-                                   Margin="0,0,8,0"
-                                   Text="{Binding DurationText}"
-                                   TextTrimming="CharacterEllipsis"
-                                   Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                        <TextBlock Grid.Column="1"
-                                   FontSize="13"
-                                   Text="{Binding MaxElevationText}"
-                                   TextTrimming="CharacterEllipsis"
-                                   Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                      </Grid>
-                    </StackPanel>
-                  </Border>
-                </DataTemplate>
-              </ListBox.DataTemplates>
-            </ListBox>
+            <Expander.Header>
+              <DockPanel LastChildFill="True"
+                         MinWidth="0"
+                         MinHeight="28"
+                         VerticalAlignment="Center">
+                <Button DockPanel.Dock="Right"
+                        Classes="sidebar-detach"
+                        IsVisible="{Binding !IsPassesDetached}"
+                        Command="{Binding DetachUpcomingPassesCommand}"
+                        ToolTip.Tip="{loc:Localize Key=Main.Passes.Detach}"
+                        AutomationProperties.Name="{loc:Localize Key=Main.Passes.Detach}">
+                  <TextBlock Text="⧉"
+                             FontSize="11"
+                             LineHeight="14"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" />
+                </Button>
+                <Button DockPanel.Dock="Right"
+                        Classes="sidebar-detach"
+                        IsVisible="{Binding IsPassesDetached}"
+                        Command="{Binding DockUpcomingPassesCommand}"
+                        ToolTip.Tip="{loc:Localize Key=Main.Passes.Dock}"
+                        AutomationProperties.Name="{loc:Localize Key=Main.Passes.Dock}">
+                  <TextBlock Text="⧉"
+                             FontSize="11"
+                             LineHeight="14"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" />
+                </Button>
+                <TextBlock Text="{loc:Localize Key=Main.Passes}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+              </DockPanel>
+            </Expander.Header>
+            <Grid MinHeight="0" MinWidth="0" ClipToBounds="True">
+              <ctrl:UpcomingPassesListControl IsVisible="{Binding IsPassesDockedVisible}"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Stretch"
+                                              MinHeight="0" />
+              <TextBlock Text="{loc:Localize Key=Main.Passes.DetachedStatus}"
+                         FontSize="13"
+                         TextWrapping="Wrap"
+                         Margin="4,8"
+                         VerticalAlignment="Top"
+                         IsVisible="{Binding IsPassesDetached}"
+                         Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+            </Grid>
           </Expander>
 
-          <Expander Grid.Row="2"
-                    Header="{loc:Localize Key=Main.HamsAtRoves}"
+          <Expander x:Name="RovesExpander"
+                    Grid.Row="2"
                     IsExpanded="{Binding IsHamsAtRovesExpanded, Mode=TwoWay}"
                     IsVisible="{Binding ShowHamsAtRovesPanel}"
                     Margin="0,8,0,0"
-                    Padding="0">
-            <StackPanel Spacing="4" MinWidth="0">
-              <Border x:Name="HamsAtRovesResizeGrip"
-                      Height="10"
-                      Margin="0,0,0,2"
-                      Background="Transparent"
-                      Cursor="SizeNorthSouth"
-                      PointerPressed="OnHamsAtRovesResizePointerPressed"
-                      HorizontalAlignment="Stretch"
-                      ToolTip.Tip="{loc:Localize Key=Main.HamsAtRoves.ResizeGrip}">
-                <Border Height="4"
-                        Width="36"
-                        CornerRadius="2"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
-              </Border>
-              <TextBlock Text="{Binding HamsAtRovesStatusText}"
-                         FontSize="15"
+                    Padding="0"
+                    MinHeight="0"
+                    ClipToBounds="True"
+                    VerticalAlignment="Top">
+            <Expander.Header>
+              <DockPanel LastChildFill="True"
+                         MinWidth="0"
+                         MinHeight="28"
+                         VerticalAlignment="Center">
+                <Button DockPanel.Dock="Right"
+                        Classes="sidebar-detach"
+                        IsVisible="{Binding !IsRovesDetached}"
+                        Command="{Binding DetachUpcomingRovesCommand}"
+                        ToolTip.Tip="{loc:Localize Key=Main.HamsAtRoves.Detach}"
+                        AutomationProperties.Name="{loc:Localize Key=Main.HamsAtRoves.Detach}">
+                  <TextBlock Text="⧉"
+                             FontSize="11"
+                             LineHeight="14"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" />
+                </Button>
+                <Button DockPanel.Dock="Right"
+                        Classes="sidebar-detach"
+                        IsVisible="{Binding IsRovesDetached}"
+                        Command="{Binding DockUpcomingRovesCommand}"
+                        ToolTip.Tip="{loc:Localize Key=Main.HamsAtRoves.Dock}"
+                        AutomationProperties.Name="{loc:Localize Key=Main.HamsAtRoves.Dock}">
+                  <TextBlock Text="⧉"
+                             FontSize="11"
+                             LineHeight="14"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" />
+                </Button>
+                <TextBlock Text="{loc:Localize Key=Main.HamsAtRoves}"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center" />
+              </DockPanel>
+            </Expander.Header>
+            <Grid MinWidth="0" ClipToBounds="True">
+              <ctrl:UpcomingRovesListControl x:Name="HamsAtRovesList"
+                                            IsVisible="{Binding IsRovesDockedVisible}"
+                                            ShowResizeGrip="True"
+                                            FixedListHeight="{Binding HamsAtRovesPanelHeight}"
+                                            VerticalAlignment="Top"
+                                            ResizeGripPressed="OnHamsAtRovesResizePointerPressed" />
+              <TextBlock Text="{loc:Localize Key=Main.HamsAtRoves.DetachedStatus}"
+                         FontSize="13"
                          TextWrapping="Wrap"
-                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                         IsVisible="{Binding ShowHamsAtRovesStatus}" />
-              <ListBox x:Name="HamsAtRovesListBox"
-                       ItemsSource="{Binding HamsAtRoves}"
-                       Tapped="OnHamsAtRovesListTapped"
-                       Padding="0"
-                       MinWidth="0"
-                       Height="{Binding HamsAtRovesPanelHeight}"
-                       ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListBox.Styles>
-                  <Style Selector="ListBoxItem">
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="Margin" Value="0,0,0,2" />
-                    <Setter Property="MinHeight" Value="72" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Cursor" Value="Hand" />
-                  </Style>
-                </ListBox.Styles>
-                <ListBox.ItemTemplate>
-                  <DataTemplate DataType="vm:HamsAtRoveRowViewModel">
-                    <Border Padding="10,8"
-                            CornerRadius="3"
-                            HorizontalAlignment="Stretch"
-                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                            BorderThickness="1">
-                        <StackPanel Spacing="3">
-                          <DockPanel LastChildFill="True">
-                            <StackPanel DockPanel.Dock="Right"
-                                        Orientation="Horizontal"
-                                        Spacing="4"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center">
-                              <Border Padding="10,4"
-                                      CornerRadius="10"
-                                      Background="{DynamicResource PassRecordingBadgeBackgroundBrush}"
-                                      IsVisible="{Binding ShowNeededGrids}">
-                                <TextBlock Text="{Binding NeededGridsText}"
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           FontFamily="Consolas,Courier New,monospace"
-                                           Foreground="{DynamicResource PassRecordingBadgeForegroundBrush}" />
-                              </Border>
-                              <Border Padding="10,4"
-                                      CornerRadius="10"
-                                      BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                      BorderThickness="1"
-                                      IsVisible="{Binding ShowWorkedGrids}">
-                                <TextBlock Text="{Binding WorkedGridsText}"
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           FontFamily="Consolas,Courier New,monospace"
-                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                              </Border>
-                              <Border Padding="10,4"
-                                      CornerRadius="10"
-                                      Background="{DynamicResource HamsAtGridBadgeBackgroundBrush}"
-                                      IsVisible="{Binding ShowGrids}">
-                                <TextBlock Text="{Binding GridsText}"
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           FontFamily="Consolas,Courier New,monospace"
-                                           Foreground="{DynamicResource PassInProgressBadgeForegroundBrush}" />
-                              </Border>
-                            </StackPanel>
-                            <TextBlock Text="{Binding Callsign}"
-                                       FontWeight="SemiBold"
-                                       FontSize="16"
-                                       TextTrimming="CharacterEllipsis" />
-                          </DockPanel>
-                          <DockPanel LastChildFill="True">
-                            <Border DockPanel.Dock="Right"
-                                    Padding="10,4"
-                                    CornerRadius="10"
-                                    Margin="6,0,0,0"
-                                    VerticalAlignment="Center"
-                                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                                    BorderThickness="1"
-                                    IsVisible="{Binding ShowSatellite}">
-                              <TextBlock Text="{Binding SatelliteName}"
-                                         FontSize="14"
-                                         FontWeight="SemiBold"
-                                         FontFamily="Consolas,Courier New,monospace" />
-                            </Border>
-                            <TextBlock Text="{Binding TimeWindowText}"
-                                       FontSize="15"
-                                       TextTrimming="CharacterEllipsis"
-                                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                          </DockPanel>
-                          <TextBlock Text="{Binding Comment}"
-                                     FontSize="15"
-                                     TextTrimming="CharacterEllipsis"
-                                     IsVisible="{Binding ShowComment}"
-                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
-                        </StackPanel>
-                    </Border>
-                  </DataTemplate>
-                </ListBox.ItemTemplate>
-              </ListBox>
-            </StackPanel>
+                         Margin="4,8"
+                         VerticalAlignment="Top"
+                         IsVisible="{Binding IsRovesDetached}"
+                         Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+            </Grid>
           </Expander>
         </Grid>
       </Border>

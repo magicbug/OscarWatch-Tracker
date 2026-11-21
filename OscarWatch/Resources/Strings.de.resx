@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Nächste Überflüge</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Bevorstehende Überflüge in ein eigenes Fenster lösen</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Bevorstehende Überflüge wieder in die Seitenleiste einsetzen</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>In einem eigenen Fenster angezeigt</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Elevationsverlauf ausblenden</value>
   </data>
@@ -193,6 +202,15 @@ Dauer: {4}</value>
   </data>
   <data name="Main.HamsAtRoves">
     <value>Anstehende Roves</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Bevorstehende Roves in ein eigenes Fenster lösen</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Bevorstehende Roves wieder in die Seitenleiste einsetzen</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>In einem eigenen Fenster angezeigt</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>Keine Roves in Reichweite für Ihren hams.at-Standort.</value>
@@ -1176,6 +1194,12 @@ Fortfahren?</value>
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Elevationsverlauf</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Bevorstehende Überflüge</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Bevorstehende Roves</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Alle auswählen</value>

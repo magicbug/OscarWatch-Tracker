@@ -142,6 +142,15 @@
   <data name="Main.Passes">
     <value>今後のパス</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>今後のパスを別ウィンドウに切り離す</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>今後のパスをサイドバーに戻す</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>別ウィンドウに表示中</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>パス仰角タイムラインを非表示</value>
   </data>
@@ -171,6 +180,15 @@
   </data>
   <data name="Main.HamsAtRoves">
     <value>今後のローブ</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>今後のローブを別ウィンドウに切り離す</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>今後のローブをサイドバーに戻す</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>別ウィンドウに表示中</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>hams.at の位置で実行可能なローブはありません。</value>
@@ -713,6 +731,12 @@
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>パス仰角タイムライン</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>今後のパス</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>今後のローブ</value>
   </data>
   <data name="Settings.FootprintArrows">
     <value>フットプリントの移動矢印を表示</value>

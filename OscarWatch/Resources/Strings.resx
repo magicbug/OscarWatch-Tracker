@@ -160,6 +160,15 @@
   <data name="Main.Passes">
     <value>Upcoming Passes</value>
   </data>
+  <data name="Main.Passes.Detach">
+    <value>Detach upcoming passes to a separate window</value>
+  </data>
+  <data name="Main.Passes.Dock">
+    <value>Dock upcoming passes back in the sidebar</value>
+  </data>
+  <data name="Main.Passes.DetachedStatus">
+    <value>Shown in a separate window</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Hide pass elevation timeline</value>
   </data>
@@ -189,6 +198,15 @@
   </data>
   <data name="Main.HamsAtRoves">
     <value>Upcoming Roves</value>
+  </data>
+  <data name="Main.HamsAtRoves.Detach">
+    <value>Detach upcoming roves to a separate window</value>
+  </data>
+  <data name="Main.HamsAtRoves.Dock">
+    <value>Dock upcoming roves back in the sidebar</value>
+  </data>
+  <data name="Main.HamsAtRoves.DetachedStatus">
+    <value>Shown in a separate window</value>
   </data>
   <data name="Main.HamsAtRoves.Empty">
     <value>No workable roves for your hams.at location.</value>
@@ -1172,6 +1190,12 @@ Continue?</value>
   </data>
   <data name="Window.PassElevationTimeline.Title">
     <value>Pass elevation timeline</value>
+  </data>
+  <data name="Window.UpcomingPasses.Title">
+    <value>Upcoming passes</value>
+  </data>
+  <data name="Window.UpcomingRoves.Title">
+    <value>Upcoming roves</value>
   </data>
   <data name="Picker.SelectAll">
     <value>Select All</value>

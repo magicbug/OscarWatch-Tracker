@@ -76,6 +76,16 @@ public sealed class AppSettings
     public bool SkyPlotExpanded { get; set; } = true;
     /// <summary>Whether the sidebar upcoming passes expander is open.</summary>
     public bool PassesExpanded { get; set; } = true;
+    /// <summary>When true, the upcoming passes list is in a floating window instead of the sidebar.</summary>
+    public bool IsPassesDetached { get; set; }
+    /// <summary>Floating upcoming passes window width.</summary>
+    public int? PassesDetachedWindowWidth { get; set; }
+    /// <summary>Floating upcoming passes window height.</summary>
+    public int? PassesDetachedWindowHeight { get; set; }
+    /// <summary>Floating upcoming passes window X position.</summary>
+    public int? PassesDetachedWindowX { get; set; }
+    /// <summary>Floating upcoming passes window Y position.</summary>
+    public int? PassesDetachedWindowY { get; set; }
     /// <summary>Whether the pass elevation timeline panel below the map is expanded.</summary>
     public bool IsTimelineExpanded { get; set; } = true;
     /// <summary>When true, the pass elevation timeline is in a floating window instead of the docked panel.</summary>
@@ -94,6 +104,16 @@ public sealed class AppSettings
     public int? TimelineDetachedWindowY { get; set; }
     /// <summary>Whether the sidebar hams.at roves expander is open.</summary>
     public bool HamsAtRovesExpanded { get; set; } = true;
+    /// <summary>When true, the upcoming roves list is in a floating window instead of the sidebar.</summary>
+    public bool IsRovesDetached { get; set; }
+    /// <summary>Floating upcoming roves window width.</summary>
+    public int? RovesDetachedWindowWidth { get; set; }
+    /// <summary>Floating upcoming roves window height.</summary>
+    public int? RovesDetachedWindowHeight { get; set; }
+    /// <summary>Floating upcoming roves window X position.</summary>
+    public int? RovesDetachedWindowX { get; set; }
+    /// <summary>Floating upcoming roves window Y position.</summary>
+    public int? RovesDetachedWindowY { get; set; }
     /// <summary>Height in pixels of the hams.at roves list when expanded.</summary>
     public int HamsAtRovesPanelHeightPx { get; set; } = 180;
     public int? MainWindowWidth { get; set; }
