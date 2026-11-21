@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7262,5 +7262,104 @@ Mais recente: {1} ({2})</value>
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>Informe uma porta de 1 a 65535.</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>Alinhar</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>Envia seu indicativo uma vez para medir seu eco no satélite e alinhar o deslocamento TX de subida para {0} Hz. Use baixa potência e não envie o sidetone TX para a entrada de áudio do decodificador.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>Desfazer</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>Reverter o último alinhamento automático de subida CW ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>O alinhamento automático de CW só funciona em transponders lineares bidirecionais (não FM, beacons ou modos de dados).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>Mude para o modo CW ou CW-R antes de alinhar a subida.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>Conecte um rádio via CAT antes de alinhar a subida.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>Saia do Standby antes de alinhar a subida.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>Defina o indicativo da sua estação nas Configurações antes de alinhar a subida.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>Inicie o decodificador CW primeiro para que o OscarWatch possa ouvir seu eco.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>Nenhum áudio de descida está chegando ao decodificador CW. Verifique o dispositivo de entrada de áudio.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>Aguarde a transmissão CW atual terminar antes de alinhar.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>Alinhando subida: enviando {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>Alinhando subida: ouvindo seu eco…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>Subida alinhada: eco {0} Hz → ajuste TX {1} Hz.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>Subida já alinhada (eco em {0} Hz, alvo {1} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>Não foi possível verificar seu eco ({0}). Deslocamento TX mantido sem alteração.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>Eco ambíguo: seu indicativo foi ouvido em vários tons ({0}). Verifique se o sidetone TX não está entrando no decodificador. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>A correção medida ({0} Hz) excede o limite de segurança de ±{1} Hz. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>A correção medida ({0} Hz) moveria o deslocamento TX para fora do limite de ±20 kHz. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>A sonda de alinhamento atingiu o tempo limite de transmissão e parou. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>Alinhamento de subida cancelado. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>Alinhamento de subida parado para Standby. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>Alinhamento de subida parado: rádio desconectado. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>Alinhamento de subida parado: saiu do modo CW. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>Alinhamento de subida parado: satélite ou transponder alterado. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>Alinhamento de subida parado: decodificador CW parado. Deslocamento TX inalterado.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>Alinhamento de subida desfeito ({0} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>Não é possível desfazer porque o satélite ou transponder mudou.</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>Alinhamento de subida</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>Tom CW alvo (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>Duração máxima da sonda (s)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>Use baixa potência de transmissão em transponders lineares e não envie o sidetone ou áudio monitor TX do rádio para a entrada do decodificador CW.</value>
   </data>
 </root>

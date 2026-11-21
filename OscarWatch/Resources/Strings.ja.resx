@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7263,5 +7263,104 @@
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>1 から 65535 のポートを入力してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>自動調整</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>自局コールサインを1回送信して衛星エコーを測定し、アップリンクTXオフセットを {0} Hz に合わせます。低出力で使用し、送信サイドトーンがデコーダー入力に入らないようにしてください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>元に戻す</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>直前のCWアップリンク自動調整を取り消します ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>CW自動調整は双方向リニアトランスポンダーでのみ使用できます（FM・ビーコン・データモードは不可）。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>調整前にCWまたはCW-Rモードに切り替えてください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>調整前にCATで無線機を接続してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>調整前にスタンバイを解除してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>調整前に設定で自局コールサインを入力してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>エコーを受信できるよう、先にCWデコーダーを開始してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>CWデコーダーにダウンリンク音声が入力されていません。音声入力デバイスを確認してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>現在のCW送信が終わってから調整を実行してください。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>アップリンク調整中: {0} を送信しています…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>アップリンク調整中: エコーを受信しています…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>アップリンクを調整しました: エコー {0} Hz → TX補正 {1} Hz。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>アップリンクはすでに合っています（エコー {0} Hz、目標 {1} Hz）。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>自局エコー ({0}) を確認できませんでした。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>エコーが複数検出されました ({0})。送信サイドトーンがデコーダー入力に入っていないか確認してください。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>測定された補正量 ({0} Hz) が安全上限 ±{1} Hz を超えています。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>測定された補正量 ({0} Hz) ではTXオフセットが ±20 kHz の範囲外になります。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>調整プローブが最大送信時間に達して停止しました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>アップリンク調整を中止しました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>スタンバイのためアップリンク調整を中止しました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>アップリンク調整を中止しました: 無線機が切断されました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>アップリンク調整を中止しました: CWモードを離れました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>アップリンク調整を中止しました: 衛星またはトランスポンダーが変更されました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>アップリンク調整を中止しました: CWデコーダーが停止しました。TXオフセットは変更されていません。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>アップリンク調整を元に戻しました ({0} Hz)。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>衛星またはトランスポンダーが変更されたため元に戻せません。</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>アップリンク自動調整</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>目標CWピッチ (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>最大プローブ時間 (秒)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>リニアトランスポンダーでは低出力で送信し、無線機のTXサイドトーンやモニター音をCWデコーダーの音声入力に入れないでください。</value>
   </data>
 </root>

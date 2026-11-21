@@ -11,6 +11,8 @@ public sealed class CwOnnxModel : ICwModelRunner, IDisposable
     public const string MetadataFileName = "model.onnx.json";
 
     private readonly InferenceSession _session;
+    private readonly object _runGate = new();
+    private bool _disposed;
 
     private CwOnnxModel(InferenceSession session, CwModelMetadata metadata)
     {
@@ -40,18 +42,31 @@ public sealed class CwOnnxModel : ICwModelRunner, IDisposable
 
     public float[] Run(float[] spectrogram, int frames, int bins, out int outputFrames)
     {
-        var input = new DenseTensor<float>(spectrogram, [1, 1, frames, bins]);
-        using var results = _session.Run(
-            [NamedOnnxValue.CreateFromTensor(Metadata.OnnxInputName, input)],
-            [Metadata.OnnxOutputName]);
-        var output = results[0].AsTensor<float>();
-        var dims = output.Dimensions;
-        if (dims.Length != 3 || dims[2] != Metadata.NumClasses)
-            throw new InvalidDataException($"Unexpected CW model output shape [{string.Join(", ", dims.ToArray())}].");
+        lock (_runGate)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            var input = new DenseTensor<float>(spectrogram, [1, 1, frames, bins]);
+            using var results = _session.Run(
+                [NamedOnnxValue.CreateFromTensor(Metadata.OnnxInputName, input)],
+                [Metadata.OnnxOutputName]);
+            var output = results[0].AsTensor<float>();
+            var dims = output.Dimensions;
+            if (dims.Length != 3 || dims[2] != Metadata.NumClasses)
+                throw new InvalidDataException($"Unexpected CW model output shape [{string.Join(", ", dims.ToArray())}].");
 
-        outputFrames = dims[1];
-        return output.ToArray();
+            outputFrames = dims[1];
+            return output.ToArray();
+        }
     }
 
-    public void Dispose() => _session.Dispose();
+    public void Dispose()
+    {
+        lock (_runGate)
+        {
+            if (_disposed)
+                return;
+            _disposed = true;
+            _session.Dispose();
+        }
+    }
 }

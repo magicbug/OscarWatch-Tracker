@@ -96,6 +96,30 @@
         </StackPanel>
 
         <Separator Classes="cw-rule" />
+        <TextBlock Classes="cw-section" Text="{loc:Localize Key=Cw.Settings.Alignment}" />
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock Text="{loc:Localize Key=Cw.Align.TargetPitch}" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding AlignTargetPitchHz, Mode=TwoWay}"
+                         Minimum="{Binding MinAlignTargetPitchHz}"
+                         Maximum="{Binding MaxAlignTargetPitchHz}"
+                         Increment="10"
+                         FormatString="0"
+                         Width="140"
+                         AutomationProperties.Name="{loc:Localize Key=Cw.Align.TargetPitch}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <TextBlock Text="{loc:Localize Key=Cw.Align.MaxDuration}" VerticalAlignment="Center" />
+          <NumericUpDown Value="{Binding AlignMaxDurationSeconds, Mode=TwoWay}"
+                         Minimum="{Binding MinAlignDurationSeconds}"
+                         Maximum="{Binding MaxAlignDurationSeconds}"
+                         Increment="1"
+                         FormatString="0"
+                         Width="140"
+                         AutomationProperties.Name="{loc:Localize Key=Cw.Align.MaxDuration}" />
+        </StackPanel>
+        <TextBlock Classes="cw-note" Margin="0" Text="{loc:Localize Key=Cw.Align.SafetyNote}" />
+
+        <Separator Classes="cw-rule" />
         <TextBlock Classes="cw-note" Margin="0" Text="{loc:Localize Key=Cw.Settings.Credit}" />
       </StackPanel>
     </ScrollViewer>

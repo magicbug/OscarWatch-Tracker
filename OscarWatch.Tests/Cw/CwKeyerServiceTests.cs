@@ -303,6 +303,84 @@ public sealed class CwKeyerServiceTests
         Assert.Contains("cwstop", rig.Calls);
     }
 
+    [Fact]
+    public void SendProbe_enforces_hard_time_cap_and_unkeys_line()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw => cw.Wpm = 5);
+        using var keyer = new CwKeyerService(rig, settings);
+        var finished = new ManualResetEventSlim();
+        CwKeyerFinishedEventArgs? args = null;
+        keyer.Finished += (_, e) => { args = e; finished.Set(); };
+
+        Assert.Equal(
+            CwKeyerStartResult.Started,
+            keyer.SendProbe(CwMessage.FromText("MM9SQL/P"), TimeSpan.FromMilliseconds(300)));
+        Assert.True(keyer.IsProbeSession);
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.NotNull(args);
+        Assert.Equal(CwKeyerService.ProbeSlot, args!.Slot);
+        Assert.Equal(CwKeyerFinish.Aborted, args.Finish);
+        Assert.True(args.TimedOut);
+        Assert.Equal("cwkey:dtr:off", rig.Calls[^1]);
+        Assert.False(keyer.IsSending);
+    }
+
+    [Fact]
+    public void SendProbe_enforces_hard_time_cap_and_stops_text_radio()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.KenwoodTs590sg, cw => cw.Wpm = 5);
+        using var keyer = new CwKeyerService(rig, settings);
+        var finished = new ManualResetEventSlim();
+        CwKeyerFinishedEventArgs? args = null;
+        keyer.Finished += (_, e) => { args = e; finished.Set(); };
+
+        Assert.Equal(
+            CwKeyerStartResult.Started,
+            keyer.SendProbe(CwMessage.FromText("MM9SQL/P"), TimeSpan.FromMilliseconds(250)));
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.NotNull(args);
+        Assert.Equal(CwKeyerFinish.Aborted, args!.Finish);
+        Assert.True(args.TimedOut);
+        Assert.Contains("cwstop", rig.Calls);
+        Assert.False(keyer.IsSending);
+    }
+
+    [Fact]
+    public void SendProbe_aborts_running_macro_and_macro_aborts_running_probe()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw => cw.Wpm = 5);
+        using var keyer = new CwKeyerService(rig, settings);
+        var finishes = new List<CwKeyerFinishedEventArgs>();
+        var gate = new object();
+        keyer.Finished += (_, e) => { lock (gate) finishes.Add(e); };
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.Send(0, CwMessage.FromText("CQ CQ CQ")));
+        Assert.Equal(0, keyer.ActiveSlot);
+        Thread.Sleep(50);
+
+        Assert.Equal(
+            CwKeyerStartResult.Started,
+            keyer.SendProbe(CwMessage.FromText("MM9SQL"), TimeSpan.FromSeconds(5)));
+        Assert.True(keyer.IsProbeSession);
+        Thread.Sleep(50);
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.Send(1, CwMessage.FromText("E")));
+        Assert.Equal(1, keyer.ActiveSlot);
+        keyer.Stop();
+
+        lock (gate)
+        {
+            Assert.Contains(finishes, f => f.Slot == 0 && f.Finish == CwKeyerFinish.Aborted);
+            Assert.Contains(finishes, f => f.Slot == CwKeyerService.ProbeSlot && f.Finish == CwKeyerFinish.Aborted && !f.TimedOut);
+        }
+        Assert.Equal("cwkey:dtr:off", rig.Calls[^1]);
+    }
+
     private static FakeSettings Settings(RigType type, Action<CwKeyerSettings>? configure = null)
     {
         var settings = new FakeSettings();

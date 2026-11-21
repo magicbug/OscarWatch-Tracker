@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7267,5 +7267,104 @@ Terbaru: {1} ({2})</value>
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>Masukkan port dari 1 sampai 65535.</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>Selaraskan</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>Kirim callsign Anda sekali untuk mengukur gema satelit dan menyelaraskan offset TX uplink ke {0} Hz. Gunakan daya rendah dan jangan arahkan sidetone TX radio ke input audio dekoder.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>Urungkan</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>Kembalikan penyelarasan uplink CW otomatis terakhir ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>Penyelarasan CW otomatis hanya berfungsi pada transponder linear dua arah (bukan FM, beacon, atau mode data).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>Beralih ke mode CW atau CW-R sebelum menyelaraskan uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>Hubungkan radio melalui CAT sebelum menyelaraskan uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>Keluar dari Standby sebelum menyelaraskan uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>Atur callsign stasiun Anda di Pengaturan sebelum menyelaraskan uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>Jalankan dekoder CW terlebih dahulu agar OscarWatch dapat mendengar gema Anda.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>Tidak ada audio downlink yang masuk ke dekoder CW. Periksa perangkat input audio.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>Tunggu transmisi CW saat ini selesai sebelum menyelaraskan.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>Menyelaraskan uplink: mengirim {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>Menyelaraskan uplink: mendengarkan gema Anda…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>Uplink selaras: gema {0} Hz → koreksi TX {1} Hz.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>Uplink sudah selaras (gema di {0} Hz, target {1} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>Tidak dapat memverifikasi gema Anda ({0}). Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>Gema ambigu: callsign Anda terdengar pada beberapa nada ({0}). Pastikan sidetone TX tidak masuk ke input dekoder. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>Koreksi terukur ({0} Hz) melebihi batas aman ±{1} Hz. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>Koreksi terukur ({0} Hz) akan melebihi rentang offset TX ±20 kHz. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>Probe penyelarasan mencapai batas waktu kirim dan berhenti. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>Penyelarasan uplink dibatalkan. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>Penyelarasan uplink dihentikan karena Standby. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>Penyelarasan uplink dihentikan: radio terputus. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>Penyelarasan uplink dihentikan: keluar dari mode CW. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>Penyelarasan uplink dihentikan: satelit atau transponder berubah. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>Penyelarasan uplink dihentikan: dekoder CW berhenti. Offset TX tidak diubah.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>Penyelarasan uplink diurungkan ({0} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>Tidak dapat mengurungkan karena satelit atau transponder telah berubah.</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>Penyelarasan uplink</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>Nada CW target (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>Durasi probe maksimum (d)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>Gunakan daya pancar rendah pada transponder linear dan jangan arahkan audio sidetone atau monitor TX radio ke input dekoder CW.</value>
   </data>
 </root>

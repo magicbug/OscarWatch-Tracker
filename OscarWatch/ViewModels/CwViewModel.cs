@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OscarWatch.Core.Cw;
 using OscarWatch.Core.CwDecode;
 using OscarWatch.Core.Services;
 using OscarWatch.Core.Sstv;
@@ -50,6 +51,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     private double _wpm = double.NaN;
     private DateTime _lastSpeedUtc = DateTime.MinValue;
     private bool _loadingDevices;
+    private bool _syncingAlignSettings;
     private bool _disposed;
     private string? _lastError;
     private bool _startedByAuto;
@@ -85,6 +87,9 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _copyFontSize = CwDecodeSettings.ClampCopyFontSize(s.CopyFontSize);
         _autoStartEnabled = s.AutoStartEnabled;
         _autoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(s.AutoStartElevationDeg);
+        var cwKeyerSettings = _settings.Current.QsoLogbook.CwKeyer;
+        _alignTargetPitchHz = CwKeyerSettings.ClampAlignTargetPitchHz(cwKeyerSettings.AlignTargetPitchHz);
+        _alignMaxDurationSeconds = CwKeyerSettings.ClampAlignDurationSeconds(cwKeyerSettings.AlignMaxDurationSeconds);
 
         Copy = new CwCopyLog(CreateWord);
         _statusText = _l.Get("Cw.Status.Idle");
@@ -184,6 +189,17 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     public double MinCopyFontSize => CwDecodeSettings.MinCopyFontSize;
     public double MaxCopyFontSize => CwDecodeSettings.MaxCopyFontSize;
 
+    [ObservableProperty]
+    private decimal? _alignTargetPitchHz;
+
+    [ObservableProperty]
+    private decimal? _alignMaxDurationSeconds;
+
+    public int MinAlignTargetPitchHz => CwKeyerSettings.MinAlignTargetPitchHz;
+    public int MaxAlignTargetPitchHz => CwKeyerSettings.MaxAlignTargetPitchHz;
+    public int MinAlignDurationSeconds => CwKeyerSettings.MinAlignDurationSeconds;
+    public int MaxAlignDurationSeconds => CwKeyerSettings.MaxAlignDurationSeconds;
+
     /// <summary>
     /// How far the decode band sits from its home of 400 to 1200 Hz on the waterfall. The waterfall
     /// already shows audio after the rig control correction, so this is the operator's tuning only.
@@ -220,6 +236,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         // Opening the window mid-pass should listen straight away if the satellite is already up.
         _autoStart.ResetTracking();
         _lastAutoStartCheckUtc = DateTime.MinValue;
+        SyncAlignSettingsFromConfig();
         UpdateOwnStation();
         ShowStoppedStatus();
         if (!_watchingLogbook)
@@ -434,6 +451,73 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             return;
         _settings.Current.CwDecoder.AutoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(value);
         _settings.RequestSave();
+    }
+
+    partial void OnAlignTargetPitchHzChanged(decimal? value)
+    {
+        if (_syncingAlignSettings)
+            return;
+
+        var cw = _settings.Current.QsoLogbook.CwKeyer;
+        if (value is not { } typed)
+        {
+            AlignTargetPitchHz = cw.AlignTargetPitchHz;
+            return;
+        }
+
+        var clamped = CwKeyerSettings.ClampAlignTargetPitchHz((int)Math.Round(typed));
+        if (clamped != typed)
+        {
+            AlignTargetPitchHz = clamped;
+            return;
+        }
+
+        if (cw.AlignTargetPitchHz == clamped)
+            return;
+
+        cw.AlignTargetPitchHz = clamped;
+        _settings.RequestSave();
+    }
+
+    partial void OnAlignMaxDurationSecondsChanged(decimal? value)
+    {
+        if (_syncingAlignSettings)
+            return;
+
+        var cw = _settings.Current.QsoLogbook.CwKeyer;
+        if (value is not { } typed)
+        {
+            AlignMaxDurationSeconds = cw.AlignMaxDurationSeconds;
+            return;
+        }
+
+        var clamped = CwKeyerSettings.ClampAlignDurationSeconds((int)Math.Round(typed));
+        if (clamped != typed)
+        {
+            AlignMaxDurationSeconds = clamped;
+            return;
+        }
+
+        if (cw.AlignMaxDurationSeconds == clamped)
+            return;
+
+        cw.AlignMaxDurationSeconds = clamped;
+        _settings.RequestSave();
+    }
+
+    private void SyncAlignSettingsFromConfig()
+    {
+        var cw = _settings.Current.QsoLogbook.CwKeyer;
+        _syncingAlignSettings = true;
+        try
+        {
+            AlignTargetPitchHz = CwKeyerSettings.ClampAlignTargetPitchHz(cw.AlignTargetPitchHz);
+            AlignMaxDurationSeconds = CwKeyerSettings.ClampAlignDurationSeconds(cw.AlignMaxDurationSeconds);
+        }
+        finally
+        {
+            _syncingAlignSettings = false;
+        }
     }
 
     partial void OnPendingTextChanged(string value) => ClearCommand.NotifyCanExecuteChanged();

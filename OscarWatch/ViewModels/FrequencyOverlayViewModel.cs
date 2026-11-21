@@ -13,6 +13,17 @@ using OscarWatch.Localization;
 
 namespace OscarWatch.ViewModels;
 
+/// <summary>Snapshot of the live and persisted CW TX offset before automatic uplink alignment.</summary>
+public sealed record CwTxTrimSnapshot(
+    string? SatelliteStorageKey,
+    string? SatelliteName,
+    string ModeType,
+    bool UseCwOffsetStorage,
+    double LiveTransmitOffsetKHz,
+    bool HadStoredOffset,
+    double StoredTransmitOffsetKHz,
+    bool PriorRememberOffsets);
+
 public partial class FrequencyOverlayViewModel : ViewModelBase
 {
     /// <summary>Maximum magnitude for RX/TX offset spinners and nudge keys (kHz).</summary>
@@ -810,6 +821,114 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
 
     /// <summary>Receive offset nudge in Hz (applied to downlink nominal before doppler).</summary>
     public void AdjustReceiveOffsetHz(int deltaHz) => AdjustActiveOffsetHz(deltaHz);
+
+    public string? CurrentSatelliteStorageName => _currentSatelliteName;
+
+    public bool IsCwOffsetStorageActive => UseCwOffsetStorage();
+
+    /// <summary>Capture the current satellite/mode TX offset (live and persisted) for one-click Undo.</summary>
+    public CwTxTrimSnapshot? CaptureTxTrimSnapshot()
+    {
+        if (SelectedMode is null || (string.IsNullOrEmpty(_currentStorageKey) && string.IsNullOrEmpty(_currentSatelliteName)))
+            return null;
+
+        var key = _currentStorageKey ?? _currentSatelliteName;
+        var modeType = SelectedMode.Type?.Trim() ?? "";
+        var cw = UseCwOffsetStorage();
+
+        var hadStored = false;
+        double storedTx = 0;
+        var priorRemember = true;
+
+        if (!string.IsNullOrWhiteSpace(key)
+            && _settings.Current.FrequencySelections.TryGetValue(key, out var selection))
+        {
+            priorRemember = selection.RememberOffsets;
+            if (cw)
+            {
+                hadStored = selection.CwTransmitOffsetKHzByMode.TryGetValue(modeType, out storedTx);
+            }
+            else if (selection.ModeOffsets.TryGetValue(modeType, out var modeOffsets))
+            {
+                hadStored = true;
+                storedTx = modeOffsets.TransmitOffsetKHz;
+            }
+            else if (modeType.Equals(selection.ModeType, StringComparison.OrdinalIgnoreCase)
+                     && (selection.TransmitOffsetKHz != 0 || selection.ReceiveOffsetKHz != 0))
+            {
+                hadStored = true;
+                storedTx = selection.TransmitOffsetKHz;
+            }
+        }
+
+        return new CwTxTrimSnapshot(
+            SatelliteStorageKey: key,
+            SatelliteName: _currentSatelliteName,
+            ModeType: modeType,
+            UseCwOffsetStorage: cw,
+            LiveTransmitOffsetKHz: TransmitOffsetKHz,
+            HadStoredOffset: hadStored,
+            StoredTransmitOffsetKHz: storedTx,
+            PriorRememberOffsets: priorRemember);
+    }
+
+    /// <summary>
+    /// Apply a CW uplink alignment TX trim immediately (updating CAT with Doppler on top)
+    /// and persist it to the transponder's CW TX offset storage.
+    /// </summary>
+    public void ApplyAndPersistTxTrimKHz(double newTransmitOffsetKHz)
+    {
+        if (SelectedMode is null)
+            return;
+
+        var clamped = Math.Clamp(newTransmitOffsetKHz, OffsetMinKHz, OffsetMaxKHz);
+        if (Math.Abs(TransmitOffsetKHz - clamped) > 0.00001)
+            TransmitOffsetKHz = clamped;
+        else
+            ApplyOffsetEdit();
+
+        var selection = GetOrCreateSelection();
+        selection.RememberOffsets = true;
+        selection.SetTransmitOffsetForMode(SelectedMode.Type, TransmitOffsetKHz, UseCwOffsetStorage());
+        _settings.RequestSave();
+    }
+
+    /// <summary>Restore a previously captured TX trim snapshot if the same satellite and mode are still active.</summary>
+    public bool TryRestoreTxTrimSnapshot(CwTxTrimSnapshot snapshot)
+    {
+        if (SelectedMode is null)
+            return false;
+
+        var currentKey = _currentStorageKey ?? _currentSatelliteName;
+        if (!string.Equals(currentKey, snapshot.SatelliteStorageKey, StringComparison.OrdinalIgnoreCase))
+            return false;
+        if (!string.Equals(SelectedMode.Type?.Trim(), snapshot.ModeType, StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        var clamped = Math.Clamp(snapshot.LiveTransmitOffsetKHz, OffsetMinKHz, OffsetMaxKHz);
+        if (Math.Abs(TransmitOffsetKHz - clamped) > 0.00001)
+            TransmitOffsetKHz = clamped;
+        else
+            ApplyOffsetEdit();
+
+        var selection = GetOrCreateSelection();
+        selection.RememberOffsets = snapshot.PriorRememberOffsets;
+        if (snapshot.HadStoredOffset)
+        {
+            selection.SetTransmitOffsetForMode(snapshot.ModeType, snapshot.StoredTransmitOffsetKHz, snapshot.UseCwOffsetStorage);
+        }
+        else if (snapshot.UseCwOffsetStorage)
+        {
+            selection.CwTransmitOffsetKHzByMode.Remove(snapshot.ModeType);
+        }
+        else
+        {
+            selection.SetTransmitOffsetForMode(snapshot.ModeType, 0, cwOperatingStyle: false);
+        }
+
+        _settings.RequestSave();
+        return true;
+    }
 
     [RelayCommand(CanExecute = nameof(CanStoreOffset))]
     private void StoreOffset()

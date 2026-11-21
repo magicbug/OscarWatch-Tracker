@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7267,5 +7267,104 @@ LOS: {2}
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>Введите порт от 1 до 65535.</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>Подстроить</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>Передать позывной один раз, измерить спутниковое эхо и выровнять сдвиг TX вверх на {0} Гц. Используйте малую мощность и не подавайте самоконтроль TX на аудиовход декодера.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>Отменить</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>Отменить последнюю автоподстройку CW вверх ({0} Гц)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>Автоподстройка CW работает только на двусторонних линейных транспондерах (не FM, маяки или цифровые режимы).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>Переключитесь в режим CW или CW-R перед подстройкой передачи.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>Подключите трансивер по CAT перед подстройкой передачи.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>Выйдите из режима ожидания перед подстройкой передачи.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>Укажите позывной своей станции в настройках перед подстройкой.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>Сначала запустите CW-декодер, чтобы OscarWatch мог принять ваше эхо.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>На CW-декодер не поступает звук приёма. Проверьте устройство аудиовхода.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>Дождитесь окончания текущей передачи CW перед подстройкой.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>Подстройка передачи: отправка {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>Подстройка передачи: ожидание вашего эха…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>Передача подстроена: эхо {0} Гц → сдвиг TX {1} Гц.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>Передача уже настроена (эхо {0} Гц, цель {1} Гц).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>Не удалось подтвердить ваше эхо ({0}). Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>Неоднозначное эхо: позывной принят на нескольких тонах ({0}). Проверьте, что самоконтроль TX не попадает на вход декодера. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>Измеренная поправка ({0} Гц) превышает предел безопасности ±{1} Гц. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>Измеренная поправка ({0} Гц) выводит сдвиг TX за пределы ±20 кГц. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>Пробная передача достигла лимита времени и остановлена. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>Подстройка передачи отменена. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>Подстройка остановлена из-за режима ожидания. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>Подстройка остановлена: трансивер отключён. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>Подстройка остановлена: выход из режима CW. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>Подстройка остановлена: изменён спутник или транспондер. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>Подстройка остановлена: CW-декодер остановлен. Сдвиг TX не изменён.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>Подстройка передачи отменена ({0} Гц).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>Отмена невозможна: спутник или транспондер изменился.</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>Подстройка передачи</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>Целевой тон CW (Гц)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>Макс. длительность пробы (с)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>Используйте малую мощность на линейных транспондерах и не подавайте самоконтроль TX трансивера на аудиовход CW-декодера.</value>
   </data>
 </root>

@@ -11,6 +11,7 @@ public sealed class LiveTrackerSnapshotProvider : ILiveTrackerSnapshotProvider
     private readonly FrequencyOverlayViewModel _frequencies;
     private readonly ILiveTrackingService _liveTracking;
     private string? _focusedNoradId;
+    private volatile bool _isStandby;
 
     public LiveTrackerSnapshotProvider(
         FrequencyOverlayViewModel frequencies,
@@ -26,11 +27,18 @@ public sealed class LiveTrackerSnapshotProvider : ILiveTrackerSnapshotProvider
         set => _focusedNoradId = value;
     }
 
+    public bool IsStandby
+    {
+        get => _isStandby;
+        set => _isStandby = value;
+    }
+
     public LiveTrackerSnapshot GetCurrent()
     {
+        var standby = _isStandby;
         var state = ResolveFocusedState();
         if (state is null)
-            return LiveTrackerSnapshot.Empty;
+            return standby ? LiveTrackerSnapshot.Empty with { IsStandby = true } : LiveTrackerSnapshot.Empty;
 
         var modeType = _frequencies.SelectedMode?.Type?.Trim() ?? "";
         var elevationDeg = state.LookAngles?.ElevationDeg;
@@ -43,8 +51,8 @@ public sealed class LiveTrackerSnapshotProvider : ILiveTrackerSnapshotProvider
             // change and must not stamp the previous satellite onto a QSO.
             var name = state.Name;
             return string.IsNullOrWhiteSpace(name)
-                ? LiveTrackerSnapshot.Empty
-                : new LiveTrackerSnapshot(name.Trim(), "", "", 0, 0, "", "", modeType, elevationDeg, rangeRateKmPerSec);
+                ? (standby ? LiveTrackerSnapshot.Empty with { IsStandby = true } : LiveTrackerSnapshot.Empty)
+                : new LiveTrackerSnapshot(name.Trim(), "", "", 0, 0, "", "", modeType, elevationDeg, rangeRateKmPerSec, standby);
         }
 
         var update = CloudlogRadioMapper.TryCreate(
@@ -54,7 +62,7 @@ public sealed class LiveTrackerSnapshotProvider : ILiveTrackerSnapshotProvider
             context.CwUplink,
             context.CwKeepSidebandDownlink);
         if (update is null)
-            return LiveTrackerSnapshot.Empty;
+            return standby ? LiveTrackerSnapshot.Empty with { IsStandby = true } : LiveTrackerSnapshot.Empty;
 
         return new LiveTrackerSnapshot(
             update.SatelliteName,
@@ -66,7 +74,8 @@ public sealed class LiveTrackerSnapshotProvider : ILiveTrackerSnapshotProvider
             AdifBandHelper.FromHz(update.DownlinkHz),
             string.IsNullOrWhiteSpace(modeType) ? context.Mode.Type.Trim() : modeType,
             elevationDeg,
-            rangeRateKmPerSec);
+            rangeRateKmPerSec,
+            standby);
     }
 
     private SatelliteTrackState? ResolveFocusedState()

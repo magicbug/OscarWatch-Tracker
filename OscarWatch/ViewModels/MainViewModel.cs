@@ -16,7 +16,9 @@ using OscarWatch.Core.Orbit;
 using OscarWatch.Core.Services;
 using OscarWatch.Theme;
 using OscarWatch.Diagnostics;
+using OscarWatch.Cw;
 using OscarWatch.Ft4;
+using OscarWatch.Hardware;
 using OscarWatch.Help;
 using OscarWatch.Localization;
 using OscarWatch.Orbit;
@@ -55,6 +57,8 @@ public partial class MainViewModel : ViewModelBase
     private readonly ISatelliteDatabaseService _satelliteDatabase;
     private readonly ILocalizationService _l;
     private readonly LiveTrackerSnapshotProvider _trackerSnapshot;
+    private readonly CwKeyerService? _cwKeyer;
+    private readonly CwUplinkAlignService? _cwUplinkAlign;
     private readonly DispatcherTimer _timer;
     private DispatcherTimer? _appUpdateCheckTimer;
     private DispatcherTimer? _satelliteStatusRefreshTimer;
@@ -444,10 +448,14 @@ public partial class MainViewModel : ViewModelBase
         ILocalizationService localization,
         FrequencyOverlayViewModel frequencies,
         DxStationOverlayViewModel dxStation,
-        LiveTrackerSnapshotProvider trackerSnapshot)
+        LiveTrackerSnapshotProvider trackerSnapshot,
+        CwKeyerService? cwKeyer = null,
+        CwUplinkAlignService? cwUplinkAlign = null)
     {
         _l = localization;
         _trackerSnapshot = trackerSnapshot;
+        _cwKeyer = cwKeyer;
+        _cwUplinkAlign = cwUplinkAlign;
         _statusText = _l.Get("Status.LoadingSettings");
         _settings = settings;
         _tleService = tleService;
@@ -1472,6 +1480,16 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
+            _cwUplinkAlign?.AbortForStandby();
+            _cwKeyer?.Stop();
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "CW keyer stop during shutdown failed");
+        }
+
+        try
+        {
             _liveTracking.Dispose();
         }
         catch (Exception ex)
@@ -1667,9 +1685,12 @@ public partial class MainViewModel : ViewModelBase
     private void ToggleStandby()
     {
         IsStandby = !IsStandby;
+        _trackerSnapshot.IsStandby = IsStandby;
 
         if (IsStandby)
         {
+            _cwUplinkAlign?.AbortForStandby();
+            _cwKeyer?.Stop();
             _rigCatPausedBeforeStandby = RigCatPaused;
             if (!RigCatPaused)
                 SetRigCatPausedWithoutPersist(true);

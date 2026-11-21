@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7267,5 +7267,104 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>Geben Sie einen Port von 1 bis 65535 ein.</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>Abgleichen</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>Sendet Ihr Rufzeichen einmal, misst das Satellitenecho und gleicht den Uplink-TX-Versatz auf {0} Hz ab. Mit geringer Leistung senden und den TX-Mithörton nicht in den Dekodereingang leiten.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>Rückgängig</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>Letzten automatischen CW-Uplink-Abgleich rückgängig machen ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>Automatischer CW-Abgleich funktioniert nur auf Zwei-Wege-Lineartranspondern (nicht bei FM, Baken oder Datenmodi).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>Wechseln Sie vor dem Abgleich in den Modus CW oder CW-R.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>Verbinden Sie vor dem Abgleich ein Funkgerät über CAT.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>Beenden Sie Standby vor dem Uplink-Abgleich.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>Tragen Sie vor dem Abgleich Ihr Stationsrufzeichen in den Einstellungen ein.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>Starten Sie zuerst den CW-Dekoder, damit OscarWatch Ihr Echo hören kann.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>Am CW-Dekoder kommt kein Downlink-Audio an. Prüfen Sie das Audio-Eingabegerät.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>Warten Sie, bis die laufende CW-Sendung beendet ist.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>Uplink-Abgleich: sende {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>Uplink-Abgleich: warte auf Ihr Echo…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>Uplink abgeglichen: Echo {0} Hz → TX-Korrektur {1} Hz.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>Uplink bereits abgeglichen (Echo bei {0} Hz, Ziel {1} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>Ihr Echo ({0}) konnte nicht eindeutig erkannt werden. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>Mehrdeutiges Echo: Ihr Rufzeichen wurde auf mehreren Tönen gehört ({0}). Prüfen Sie, dass kein TX-Mithörton im Dekodereingang anliegt. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>Gemessene Korrektur ({0} Hz) überschreitet das Sicherheitslimit von ±{1} Hz. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>Gemessene Korrektur ({0} Hz) würde den TX-Versatz außerhalb von ±20 kHz verschieben. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>Abgleich-Probe hat das Sendezeitlimit erreicht und gestoppt. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>Uplink-Abgleich abgebrochen. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>Uplink-Abgleich für Standby gestoppt. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>Uplink-Abgleich gestoppt: Funkgerät getrennt. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>Uplink-Abgleich gestoppt: CW-Modus verlassen. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>Uplink-Abgleich gestoppt: Satellit oder Transponder gewechselt. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>Uplink-Abgleich gestoppt: CW-Dekoder gestoppt. TX-Versatz unverändert.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>Uplink-Abgleich rückgängig gemacht ({0} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>Rückgängig nicht möglich, da Satellit oder Transponder gewechselt wurden.</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>Uplink-Abgleich</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>CW-Zieltonhöhe (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>Maximale Probedauer (s)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>Verwenden Sie auf Lineartranspondern geringe Sendeleistung und leiten Sie keinen TX-Mithörton des Funkgeräts in den Audioeingang des CW-Dekoders.</value>
   </data>
 </root>

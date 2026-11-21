@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7266,5 +7266,104 @@ Ultima versione: {1} ({2})</value>
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>Inserisci una porta da 1 a 65535.</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>Allinea</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>Invia il tuo nominativo una volta per misurare l'eco dal satellite e allineare l'offset TX uplink a {0} Hz. Usa bassa potenza e non inviare il sidetone TX all'ingresso audio del decodificatore.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>Annulla</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>Ripristina l'ultimo allineamento automatico uplink CW ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>L'allineamento CW automatico funziona solo su transponder lineari bidirezionali (non FM, beacon o modi dati).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>Passa in modo CW o CW-R prima di allineare l'uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>Collega una radio tramite CAT prima di allineare l'uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>Esci da Standby prima di allineare l'uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>Imposta il tuo nominativo di stazione nelle Impostazioni prima di allineare l'uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>Avvia prima il decodificatore CW così OscarWatch può ascoltare il tuo eco.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>Nessun audio downlink raggiunge il decodificatore CW. Controlla il dispositivo di ingresso audio.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>Attendi la fine della trasmissione CW corrente prima di allineare.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>Allineamento uplink: invio {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>Allineamento uplink: in ascolto del tuo eco…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>Uplink allineato: eco {0} Hz → correzione TX {1} Hz.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>Uplink già allineato (eco a {0} Hz, obiettivo {1} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>Impossibile verificare il tuo eco ({0}). Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>Eco ambiguo: nominativo rilevato su più toni ({0}). Verifica che il sidetone TX non entri nel decodificatore. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>La correzione misurata ({0} Hz) supera il limite di sicurezza di ±{1} Hz. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>La correzione misurata ({0} Hz) porterebbe l'offset TX oltre ±20 kHz. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>La sonda di allineamento ha raggiunto il limite di tempo TX e si è fermata. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>Allineamento uplink annullato. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>Allineamento uplink fermato per Standby. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>Allineamento uplink fermato: radio disconnessa. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>Allineamento uplink fermato: uscito dal modo CW. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>Allineamento uplink fermato: satellite o transponder cambiato. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>Allineamento uplink fermato: decodificatore CW fermo. Offset TX invariato.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>Allineamento uplink annullato ({0} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>Impossibile annullare perché il satellite o il transponder è cambiato.</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>Allineamento uplink</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>Tono CW obiettivo (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>Durata massima sonda (s)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>Usa bassa potenza di trasmissione sui transponder lineari e non inviare il sidetone o il monitor TX della radio nell'ingresso del decodificatore CW.</value>
   </data>
 </root>

@@ -18,6 +18,10 @@
     <Style Selector="Button.cw-macro.cw-active TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeForegroundBrush}" />
     </Style>
+    <Style Selector="Button.cw-align.cw-active">
+      <Setter Property="Background" Value="{DynamicResource PassRecordingBadgeBackgroundBrush}" />
+      <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeForegroundBrush}" />
+    </Style>
   </UserControl.Styles>
 
   <Border Classes="cw-keyer-panel"
@@ -29,7 +33,7 @@
                  TextWrapping="Wrap"
                  Margin="0,6,0,0"
                  IsVisible="{Binding $parent[controls:CwKeyerStrip].ShowStatus}" />
-      <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8">
+      <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
         <ItemsControl Grid.Column="0" ItemsSource="{Binding CwButtons}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -61,7 +65,29 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Grid.Column="1"
+        <StackPanel Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="6">
+          <Button Classes="cw-align"
+                  Classes.cw-active="{Binding IsAligning}"
+                  Content="{loc:Localize Key=Logbook.Cw.Align}"
+                  Command="{Binding AlignUplinkCommand}"
+                  Focusable="False"
+                  VerticalAlignment="Stretch"
+                  VerticalContentAlignment="Center"
+                  ToolTip.Tip="{Binding AlignButtonToolTip}"
+                  ToolTip.ShowOnDisabled="True"
+                  AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.Align}" />
+          <Button Content="{loc:Localize Key=Logbook.Cw.Align.Undo}"
+                  Command="{Binding UndoAlignCommand}"
+                  IsVisible="{Binding CanUndoAlign}"
+                  Focusable="False"
+                  VerticalAlignment="Stretch"
+                  VerticalContentAlignment="Center"
+                  ToolTip.Tip="{Binding UndoAlignToolTip}"
+                  AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.Align.Undo}" />
+        </StackPanel>
+        <Button Grid.Column="2"
                 Content="{loc:Localize Key=Logbook.Cw.Stop}"
                 Command="{Binding StopCwCommand}"
                 Focusable="False"
@@ -69,7 +95,7 @@
                 VerticalContentAlignment="Center"
                 MinWidth="64"
                 ToolTip.Tip="{loc:Localize Key=Logbook.Cw.StopToolTip}" />
-        <StackPanel Grid.Column="2"
+        <StackPanel Grid.Column="3"
                     Orientation="Horizontal"
                     Spacing="6"
                     VerticalAlignment="Center"
@@ -83,14 +109,14 @@
                      VerticalAlignment="Center"
                      FontWeight="SemiBold" />
         </StackPanel>
-        <Button Grid.Column="3"
+        <Button Grid.Column="4"
                 Content="{loc:Localize Key=Logbook.Cw.Keyboard}"
                 Click="OnKeyboardClick"
                 Focusable="False"
                 VerticalAlignment="Stretch"
                 VerticalContentAlignment="Center"
                 ToolTip.Tip="{loc:Localize Key=Logbook.Cw.Keyboard.Tip}" />
-        <Button Grid.Column="4"
+        <Button Grid.Column="5"
                 Content="{loc:Localize Key=Logbook.Cw.EditMessages}"
                 Command="{Binding EditMessagesCommand}"
                 Focusable="False"

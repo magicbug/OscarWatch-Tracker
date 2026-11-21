@@ -7263,4 +7263,103 @@ Latest: {1} ({2})</value>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>Enter a port from 1 to 65535.</value>
   </data>
+  <data name="Logbook.Cw.Align">
+    <value>Align</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>Send your callsign once to measure your satellite echo and align the uplink TX offset to {0} Hz. Use low power and keep radio TX sidetone out of the decoder audio input.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>Undo</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>Revert the last automatic CW uplink alignment ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>Automatic CW alignment only works on two-way linear transponders (not FM, beacons, or data modes).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>Switch to CW or CW-R mode before aligning the uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>Connect a radio via CAT before aligning the uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>Leave Standby before aligning the uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>Set your station callsign in Settings before aligning the uplink.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>Start the CW decoder first so OscarWatch can listen for your echo.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>No downlink audio is reaching the CW decoder. Check the audio input device.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>Wait for the current CW transmission to finish before aligning.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>Aligning uplink: sending {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>Aligning uplink: listening for your echo…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>Aligned uplink: echo {0} Hz → TX trim {1} Hz.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>Uplink already aligned (echo at {0} Hz, target {1} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>Could not verify your echo ({0}). TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>Ambiguous echo: heard your callsign at multiple tones ({0}). Check that TX sidetone is not routed into the decoder input. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>Measured correction ({0} Hz) exceeds the ±{1} Hz safety cap. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>Measured correction ({0} Hz) would move the TX offset outside the allowed ±20 kHz range. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>Alignment probe reached the transmit time cap and stopped. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>Uplink alignment cancelled. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>Uplink alignment stopped for Standby. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>Uplink alignment stopped: radio disconnected. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>Uplink alignment stopped: left CW mode. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>Uplink alignment stopped: satellite or transponder changed. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>Uplink alignment stopped: CW decoder stopped. TX offset left unchanged.</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>Undid uplink alignment ({0} Hz).</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>Cannot undo alignment because the satellite or transponder has changed.</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>Uplink alignment</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>Target CW pitch (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>Maximum probe duration (s)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>Use low transmit power on linear transponders and do not route your radio's TX sidetone or monitor audio into the CW decoder input.</value>
+  </data>
 </root>

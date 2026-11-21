@@ -147,6 +147,8 @@ public partial class App : Application
         services.AddSingleton<OscarWatch.Services.QsoLogbookEntryBridge>();
         services.AddSingleton<OscarWatch.Cw.CwAudioService>();
         services.AddSingleton<OscarWatch.Cw.CwReceiverService>();
+        services.AddSingleton<OscarWatch.Cw.ICwProbeReceiver>(sp => sp.GetRequiredService<OscarWatch.Cw.CwReceiverService>());
+        services.AddSingleton<OscarWatch.Cw.CwUplinkAlignService>();
         services.AddSingleton<CwViewModel>();
         services.AddSingleton<TerminalViewModel>();
         services.AddTransient<TerminalSettingsViewModel>();

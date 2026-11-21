@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using OscarWatch.Core.Cw;
 using OscarWatch.Core.Models;
 using OscarWatch.Core.Services;
+using OscarWatch.Cw;
 using OscarWatch.Hardware;
 using OscarWatch.Localization;
 using OscarWatch.Services;
@@ -31,28 +32,35 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private readonly ILiveTrackerSnapshotProvider _tracker;
     private readonly QsoLogbookEntryBridge _entryBridge;
     private readonly ILocalizationService _l;
+    private readonly CwUplinkAlignService? _uplinkAlign;
     private readonly HashSet<CwKeyerHost> _hosts = [];
     private bool _suppressCwWpmSave;
     private CwKeyboardViewModel? _keyboard;
     private CwKeyboardWindow? _keyboardWindow;
+    private CwAlignRefusalReason _alignRefusal = CwAlignRefusalReason.NotLinearTransponder;
+    private string _lastAlignStatus = "";
 
     public CwKeyerPanelViewModel(
         CwKeyerService cwKeyer,
         ISettingsService settings,
         ILiveTrackerSnapshotProvider tracker,
         QsoLogbookEntryBridge entryBridge,
-        ILocalizationService localization)
+        ILocalizationService localization,
+        CwUplinkAlignService? uplinkAlign = null)
     {
         _cwKeyer = cwKeyer;
         _settings = settings;
         _tracker = tracker;
         _entryBridge = entryBridge;
         _l = localization;
+        _uplinkAlign = uplinkAlign;
 
         for (var i = 0; i < CwKeyerSettings.MessageCount; i++)
             CwButtons.Add(new CwMacroButtonViewModel(i, SendCwMacro));
 
         _cwKeyer.Finished += OnCwKeyerFinished;
+        if (_uplinkAlign is not null)
+            _uplinkAlign.StateChanged += OnUplinkAlignStateChanged;
         Reload();
     }
 
@@ -67,6 +75,7 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StopCwCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AlignUplinkCommand))]
     private bool _cwSending;
 
     [ObservableProperty]
@@ -76,7 +85,23 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private string _statusText = "";
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AlignUplinkCommand))]
     private bool _keyboardOpen;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AlignUplinkCommand))]
+    [NotifyCanExecuteChangedFor(nameof(StopCwCommand))]
+    private bool _isAligning;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(UndoAlignCommand))]
+    private bool _canUndoAlign;
+
+    [ObservableProperty]
+    private string _alignButtonToolTip = "";
+
+    [ObservableProperty]
+    private string _undoAlignToolTip = "";
 
     /// <summary>Raised when the operator asks to edit messages and a logbook is already open.</summary>
     public event EventHandler? EditMessagesRequested;
@@ -98,6 +123,8 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
             return;
 
         CloseKeyboard();
+        if (IsAligning)
+            _uplinkAlign?.Abort();
         if (CwSending)
             StopCw();
         else
@@ -123,6 +150,8 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     /// <summary>Update visibility and button tooltips from the live station mode and entry form.</summary>
     public void Refresh(LiveTrackerSnapshot snapshot)
     {
+        _uplinkAlign?.CheckRuntimeGuards(snapshot);
+
         var cw = _settings.Current.QsoLogbook.CwKeyer;
         ShowCwKeyer = cw.Enabled && IsCwMode(snapshot.Mode);
         if (!ShowCwKeyer)
@@ -131,6 +160,8 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         var context = BuildCwContext();
         foreach (var button in CwButtons)
             button.RefreshToolTip(context, _l);
+
+        RefreshAlignState(snapshot);
     }
 
     /// <summary>F1 to F12 from a host window. Returns true when the key was used.</summary>
@@ -165,6 +196,12 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
             return true;
         }
 
+        if (IsAligning)
+        {
+            StopCw();
+            return true;
+        }
+
         if (!CwSending)
             return false;
 
@@ -182,11 +219,19 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         return true;
     }
 
-    private bool CanStopCw() => CwSending;
+    private bool CanStopCw() => CwSending || IsAligning;
 
     [RelayCommand(CanExecute = nameof(CanStopCw))]
     private void StopCw()
     {
+        if (IsAligning && _uplinkAlign is not null)
+        {
+            _uplinkAlign.Abort(_l.Get("Logbook.Cw.Align.Status.Aborted"));
+            CwSending = _cwKeyer.IsSending;
+            SetActiveCwSlot(-1);
+            return;
+        }
+
         if (KeyboardOpen && _keyboard is not null)
         {
             _keyboard.Abort();
@@ -200,6 +245,31 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         CwSending = false;
         SetActiveCwSlot(-1);
         StatusText = _l.Get("Logbook.Cw.Status.Stopped");
+    }
+
+    private bool CanAlignUplink() =>
+        _uplinkAlign is not null
+        && !IsAligning
+        && !CwSending
+        && !KeyboardOpen
+        && _alignRefusal == CwAlignRefusalReason.None;
+
+    [RelayCommand(CanExecute = nameof(CanAlignUplink))]
+    private void AlignUplink()
+    {
+        if (_uplinkAlign is null)
+            return;
+
+        SetActiveCwSlot(-1);
+        _uplinkAlign.Start();
+    }
+
+    private bool CanExecuteUndoAlign() => CanUndoAlign;
+
+    [RelayCommand(CanExecute = nameof(CanExecuteUndoAlign))]
+    private void UndoAlign()
+    {
+        _uplinkAlign?.Undo();
     }
 
     [RelayCommand]
@@ -286,6 +356,9 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
 
     private void OpenKeyboard(Window owner)
     {
+        if (IsAligning)
+            _uplinkAlign?.Abort();
+
         if (_keyboardWindow is not null)
         {
             _keyboardWindow.Activate();
@@ -425,6 +498,9 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         if (slot < 0 || slot >= CwButtons.Count)
             return;
 
+        if (IsAligning)
+            _uplinkAlign?.Abort();
+
         if (KeyboardOpen)
         {
             AppendMacroToKeyboard(slot);
@@ -486,6 +562,12 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private void OnCwKeyerFinished(object? sender, CwKeyerFinishedEventArgs e) =>
         Dispatcher.UIThread.Post(() =>
         {
+            if (e.Slot == CwKeyerService.ProbeSlot)
+            {
+                CwSending = _cwKeyer.IsSending;
+                return;
+            }
+
             // A newer message may already be running; only that one owns the strip state.
             var stillSending = _cwKeyer.IsSending;
             if (!stillSending && !KeyboardOpen)
@@ -593,10 +675,76 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         if (!value)
         {
             CloseKeyboard();
+            if (IsAligning)
+                _uplinkAlign?.Abort();
             if (CwSending)
                 StopCw();
             _cwKeyer.ReleasePort();
         }
+    }
+
+    private void OnUplinkAlignStateChanged(object? sender, EventArgs e)
+    {
+        if (_uplinkAlign is null)
+            return;
+
+        IsAligning = _uplinkAlign.IsActive;
+        CwSending = _cwKeyer.IsSending;
+        CanUndoAlign = _uplinkAlign.CanUndo;
+
+        var msg = _uplinkAlign.LastStatusMessage;
+        if (!string.IsNullOrEmpty(msg) && !string.Equals(msg, _lastAlignStatus, StringComparison.Ordinal))
+        {
+            _lastAlignStatus = msg;
+            if (!_cwKeyer.IsSending || _cwKeyer.IsProbeSession)
+                StatusText = msg;
+        }
+
+        RefreshAlignState(_tracker.GetCurrent());
+    }
+
+    private void RefreshAlignState(LiveTrackerSnapshot snapshot)
+    {
+        if (_uplinkAlign is null)
+        {
+            _alignRefusal = CwAlignRefusalReason.NotLinearTransponder;
+            IsAligning = false;
+            CanUndoAlign = false;
+            AlignButtonToolTip = "";
+            UndoAlignToolTip = "";
+            AlignUplinkCommand.NotifyCanExecuteChanged();
+            return;
+        }
+
+        IsAligning = _uplinkAlign.IsActive;
+        CanUndoAlign = _uplinkAlign.CanUndo;
+        _alignRefusal = _uplinkAlign.CheckPrerequisites(snapshot);
+
+        var targetPitch = CwKeyerSettings.ClampAlignTargetPitchHz(_settings.Current.QsoLogbook.CwKeyer.AlignTargetPitchHz);
+        if (IsAligning)
+        {
+            AlignButtonToolTip = _uplinkAlign.LastStatusMessage;
+        }
+        else if (CwSending || KeyboardOpen)
+        {
+            AlignButtonToolTip = _l.Get("Logbook.Cw.Align.Refusal.Busy");
+        }
+        else if (_alignRefusal != CwAlignRefusalReason.None)
+        {
+            AlignButtonToolTip = _uplinkAlign.DescribeRefusal(_alignRefusal);
+        }
+        else
+        {
+            AlignButtonToolTip = _l.Get("Logbook.Cw.Align.Tip", targetPitch);
+        }
+
+        UndoAlignToolTip = _uplinkAlign.LastUndo is { } undo
+            ? _l.Get("Logbook.Cw.Align.Undo.Tip", CwUplinkAlignService.FormatSignedHz(undo.AppliedDeltaHz))
+            : "";
+
+        AlignUplinkCommand.NotifyCanExecuteChanged();
+        UndoAlignCommand.NotifyCanExecuteChanged();
+        StopCwCommand.NotifyCanExecuteChanged();
     }
 }
 

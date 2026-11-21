@@ -26,6 +26,17 @@ public partial class LogbookSettingsViewModel
     private decimal? _cwWpm = CwKeyerSettings.DefaultWpm;
 
     [ObservableProperty]
+    private decimal? _cwAlignTargetPitchHz = CwKeyerSettings.DefaultAlignTargetPitchHz;
+
+    [ObservableProperty]
+    private decimal? _cwAlignMaxDurationSeconds = CwKeyerSettings.DefaultAlignDurationSeconds;
+
+    public int CwMinAlignTargetPitchHz => CwKeyerSettings.MinAlignTargetPitchHz;
+    public int CwMaxAlignTargetPitchHz => CwKeyerSettings.MaxAlignTargetPitchHz;
+    public int CwMinAlignDurationSeconds => CwKeyerSettings.MinAlignDurationSeconds;
+    public int CwMaxAlignDurationSeconds => CwKeyerSettings.MaxAlignDurationSeconds;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CwShowLineOptions))]
     [NotifyPropertyChangedFor(nameof(CwRouteText))]
     private bool _cwUseComLineOnTextRadios;
@@ -82,6 +93,8 @@ public partial class LogbookSettingsViewModel
         cw.Normalise();
         CwEnabled = cw.Enabled;
         CwWpm = cw.Wpm;
+        CwAlignTargetPitchHz = cw.AlignTargetPitchHz;
+        CwAlignMaxDurationSeconds = cw.AlignMaxDurationSeconds;
         CwUseComLineOnTextRadios = cw.UseComLineOnTextRadios;
         CwKeyLineIndex = cw.KeyLine == PttLine.Rts ? 1 : 0;
         CwUseSeparatePort = cw.UseSeparatePort;
@@ -110,6 +123,12 @@ public partial class LogbookSettingsViewModel
     {
         Enabled = CwEnabled,
         Wpm = CwKeyerSettings.ClampWpm((int)Math.Round(CwWpm ?? CwKeyerSettings.DefaultWpm)),
+        AlignTargetPitchHz = CwKeyerSettings.ClampAlignTargetPitchHz(
+            (int)Math.Round(CwAlignTargetPitchHz ?? CwKeyerSettings.DefaultAlignTargetPitchHz)),
+        AlignMaxDurationSeconds = CwKeyerSettings.ClampAlignDurationSeconds(
+            (int)Math.Round(CwAlignMaxDurationSeconds ?? CwKeyerSettings.DefaultAlignDurationSeconds)),
+        AlignMaxCorrectionHz = CwKeyerSettings.ClampAlignMaxCorrectionHz(
+            _settings.Current.QsoLogbook.CwKeyer.AlignMaxCorrectionHz),
         KeyLine = CwKeyLineIndex == 1 ? PttLine.Rts : PttLine.Dtr,
         UseSeparatePort = CwUseSeparatePort,
         SeparatePort = CwSeparatePort?.Trim() ?? "",

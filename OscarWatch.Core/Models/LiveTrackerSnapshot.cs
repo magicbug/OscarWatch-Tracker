@@ -11,7 +11,8 @@ public sealed record LiveTrackerSnapshot(
     string BandRx,
     string ModeType = "",
     double? ElevationDeg = null,
-    double? RangeRateKmPerSec = null)
+    double? RangeRateKmPerSec = null,
+    bool IsStandby = false)
 {
     public static LiveTrackerSnapshot Empty { get; } = new("", "", "", 0, 0, "", "", "", null);
 

@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7267,5 +7267,104 @@ LOS: {2}
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>ป้อนพอร์ตตั้งแต่ 1 ถึง 65535</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>ปรับเทียบ</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>ส่งสัญญาณเรียกขานของคุณหนึ่งครั้งเพื่อวัดเสียงสะท้อนจากดาวเทียมและปรับค่าชดเชย TX ขาขึ้นให้ตรง {0} Hz ใช้กำลังส่งต่ำและอย่าส่งเสียง sidetone TX เข้าอินพุตตัวถอดรหัส</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>เลิกทำ</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>ย้อนกลับการปรับเทียบ CW ขาขึ้นอัตโนมัติครั้งล่าสุด ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>การปรับเทียบ CW อัตโนมัติใช้ได้เฉพาะทรานสปอนเดอร์แบบเชิงเส้นสองทางเท่านั้น (ไม่รองรับ FM บีคอน หรือโหมดข้อมูล)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>สลับไปโหมด CW หรือ CW-R ก่อนปรับเทียบขาขึ้น</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>เชื่อมต่อเครื่องวิทยุผ่าน CAT ก่อนปรับเทียบขาขึ้น</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>ออกจากโหมดสแตนด์บายก่อนปรับเทียบขาขึ้น</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>ตั้งค่าสัญญาณเรียกขานสถานีของคุณในการตั้งค่าก่อนปรับเทียบขาขึ้น</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>เริ่มตัวถอดรหัส CW ก่อนเพื่อให้ OscarWatch รับฟังเสียงสะท้อนของคุณได้</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>ไม่มีเสียงดาวน์ลิงก์เข้าสู่ตัวถอดรหัส CW โปรดตรวจสอบอุปกรณ์อินพุตเสียง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>รอให้การส่ง CW ปัจจุบันเสร็จสิ้นก่อนปรับเทียบ</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>กำลังปรับเทียบขาขึ้น: กำลังส่ง {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>กำลังปรับเทียบขาขึ้น: กำลังฟังเสียงสะท้อนของคุณ…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>ปรับเทียบขาขึ้นแล้ว: เสียงสะท้อน {0} Hz → ปรับ TX {1} Hz</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>ขาขึ้นตรงอยู่แล้ว (เสียงสะท้อน {0} Hz เป้าหมาย {1} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>ไม่สามารถยืนยันเสียงสะท้อนของคุณ ({0}) ได้ ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>เสียงสะท้อนกำกวม: พบสัญญาณเรียกขานของคุณหลายความถี่ ({0}) ตรวจสอบว่าเสียง sidetone TX ไม่ได้เข้าตัวถอดรหัส ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>ค่าแก้ไขที่วัดได้ ({0} Hz) เกินขีดจำกัดความปลอดภัย ±{1} Hz ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>ค่าแก้ไขที่วัดได้ ({0} Hz) ทำให้ค่าชดเชย TX เกินช่วง ±20 kHz ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>การส่งทดสอบถึงขีดจำกัดเวลาและหยุดแล้ว ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>ยกเลิกการปรับเทียบขาขึ้นแล้ว ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>หยุดการปรับเทียบขาขึ้นเนื่องจากเข้าสู่โหมดสแตนด์บาย ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>หยุดการปรับเทียบขาขึ้น: วิทยุขาดการเชื่อมต่อ ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>หยุดการปรับเทียบขาขึ้น: ออกจากโหมด CW ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>หยุดการปรับเทียบขาขึ้น: เปลี่ยนดาวเทียมหรือทรานสปอนเดอร์ ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>หยุดการปรับเทียบขาขึ้น: ตัวถอดรหัส CW หยุดทำงาน ค่าชดเชย TX ไม่เปลี่ยนแปลง</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>เลิกทำการปรับเทียบขาขึ้นแล้ว ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>ไม่สามารถเลิกทำได้เนื่องจากดาวเทียมหรือทรานสปอนเดอร์เปลี่ยนไปแล้ว</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>การปรับเทียบขาขึ้น</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>ความถี่เสียง CW เป้าหมาย (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>ระยะเวลาส่งทดสอบสูงสุด (วินาที)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>ใช้กำลังส่งต่ำบนทรานสปอนเดอร์เชิงเส้น และอย่าส่งเสียง sidetone หรือมอนิเตอร์ TX ของวิทยุเข้าสู่อินพุตของตัวถอดรหัส CW</value>
   </data>
 </root>

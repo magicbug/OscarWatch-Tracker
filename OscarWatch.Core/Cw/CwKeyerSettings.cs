@@ -11,10 +11,28 @@ public sealed class CwKeyerSettings
     public const int DefaultWpm = 20;
     public const int MaxLabelLength = 12;
     public const int MaxMessageLength = 200;
+    public const int MinAlignDurationSeconds = 3;
+    public const int MaxAlignDurationSeconds = 8;
+    public const int DefaultAlignDurationSeconds = 5;
+    public const int MinAlignTargetPitchHz = 300;
+    public const int MaxAlignTargetPitchHz = 1200;
+    public const int DefaultAlignTargetPitchHz = 700;
+    public const int MinAlignMaxCorrectionHz = 200;
+    public const int MaxAlignMaxCorrectionHz = 2500;
+    public const int DefaultAlignMaxCorrectionHz = 1500;
 
     public bool Enabled { get; set; }
 
     public int Wpm { get; set; } = DefaultWpm;
+
+    /// <summary>Hard transmit duration cap for an automatic CW uplink alignment probe, in seconds.</summary>
+    public int AlignMaxDurationSeconds { get; set; } = DefaultAlignDurationSeconds;
+
+    /// <summary>Target audio pitch for automatic CW uplink alignment, in hertz.</summary>
+    public int AlignTargetPitchHz { get; set; } = DefaultAlignTargetPitchHz;
+
+    /// <summary>Maximum per-probe uplink correction allowed before refusal, in hertz.</summary>
+    public int AlignMaxCorrectionHz { get; set; } = DefaultAlignMaxCorrectionHz;
 
     /// <summary>Line that keys the radio when a COM key line is used.</summary>
     public PttLine KeyLine { get; set; } = PttLine.Dtr;
@@ -32,6 +50,15 @@ public sealed class CwKeyerSettings
     public List<CwKeyerMessage> Messages { get; set; } = CreateDefaultMessages();
 
     public static int ClampWpm(int wpm) => Math.Clamp(wpm, MinWpm, MaxWpm);
+
+    public static int ClampAlignDurationSeconds(int seconds) =>
+        Math.Clamp(seconds, MinAlignDurationSeconds, MaxAlignDurationSeconds);
+
+    public static int ClampAlignTargetPitchHz(int hz) =>
+        Math.Clamp(hz, MinAlignTargetPitchHz, MaxAlignTargetPitchHz);
+
+    public static int ClampAlignMaxCorrectionHz(int hz) =>
+        Math.Clamp(hz, MinAlignMaxCorrectionHz, MaxAlignMaxCorrectionHz);
 
     public static List<CwKeyerMessage> CreateDefaultMessages()
     {
@@ -53,6 +80,9 @@ public sealed class CwKeyerSettings
     public void Normalise()
     {
         Wpm = ClampWpm(Wpm);
+        AlignMaxDurationSeconds = ClampAlignDurationSeconds(AlignMaxDurationSeconds);
+        AlignTargetPitchHz = ClampAlignTargetPitchHz(AlignTargetPitchHz);
+        AlignMaxCorrectionHz = ClampAlignMaxCorrectionHz(AlignMaxCorrectionHz);
         SeparatePort = SeparatePort?.Trim() ?? "";
         if (!Enum.IsDefined(KeyLine))
             KeyLine = PttLine.Dtr;

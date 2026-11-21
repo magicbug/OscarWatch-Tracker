@@ -31,7 +31,7 @@ public enum CwKeyerFinish
     RigRejected
 }
 
-public sealed record CwKeyerFinishedEventArgs(int Slot, CwKeyerFinish Finish, bool SaveQso = false);
+public sealed record CwKeyerFinishedEventArgs(int Slot, CwKeyerFinish Finish, bool SaveQso = false, bool TimedOut = false);
 
 /// <summary>A symbol the keyboard session has started keying.</summary>
 public sealed record CwKeyboardProgressEventArgs(CwSymbol Symbol);
@@ -43,6 +43,9 @@ public sealed record CwKeyboardProgressEventArgs(CwSymbol Symbol);
 /// </summary>
 public sealed class CwKeyerService : IDisposable
 {
+    /// <summary>Active slot while the uplink alignment probe is sending.</summary>
+    public const int ProbeSlot = -3;
+
     /// <summary>Active slot while the live keyboard is sending (not one of the twelve macros).</summary>
     public const int KeyboardSlot = -2;
 
@@ -90,7 +93,10 @@ public sealed class CwKeyerService : IDisposable
     /// <summary>True while the live keyboard session owns the keyer.</summary>
     public bool IsKeyboardSession => Volatile.Read(ref _activeSlot) == KeyboardSlot;
 
-    /// <summary>Message slot (0 to 11) being sent, <see cref="KeyboardSlot"/> for the keyboard, or -1.</summary>
+    /// <summary>True while an uplink alignment probe owns the keyer.</summary>
+    public bool IsProbeSession => Volatile.Read(ref _activeSlot) == ProbeSlot;
+
+    /// <summary>Message slot (0 to 11) being sent, <see cref="KeyboardSlot"/> for the keyboard, <see cref="ProbeSlot"/> for a probe, or -1.</summary>
     public int ActiveSlot => Volatile.Read(ref _activeSlot);
 
     public int Wpm => _wpm;
@@ -131,6 +137,78 @@ public sealed class CwKeyerService : IDisposable
             {
                 IsBackground = true,
                 Name = "OscarWatch.CwKeyer",
+                Priority = ThreadPriority.AboveNormal
+            };
+            _worker.Start();
+        }
+
+        return CwKeyerStartResult.Started;
+    }
+
+    /// <summary>
+    /// Side-effect-free prerequisite check for CW keying availability (does not open ports or toggle key lines).
+    /// </summary>
+    public CwKeyerStartResult DryCheckKeying()
+    {
+        var settings = _settings.Current;
+        var cw = settings.QsoLogbook.CwKeyer;
+        var method = CwKeyingRoute.Resolve(cw, settings.Rig);
+
+        return method switch
+        {
+            CwKeyingMethod.KenwoodText or CwKeyingMethod.IcomText =>
+                settings.Rig.Enabled ? CwKeyerStartResult.Started : CwKeyerStartResult.RigNotConnected,
+            CwKeyingMethod.CatPortLine when !settings.Rig.Enabled => CwKeyerStartResult.RigNotConnected,
+            CwKeyingMethod.CatPortLine when CwKeyingRoute.CatPortRtsBlocked(cw, settings.Rig) => CwKeyerStartResult.RtsBlocked,
+            CwKeyingMethod.CatPortLine => CwKeyerStartResult.Started,
+            CwKeyingMethod.SeparatePortLine when string.IsNullOrWhiteSpace(cw.SeparatePort) => CwKeyerStartResult.NoPortConfigured,
+            CwKeyingMethod.SeparatePortLine when SerialPortConflictHelper.IsCwKeyPortOccupied(settings, cw.SeparatePort.Trim()) => CwKeyerStartResult.PortConflict,
+            CwKeyingMethod.SeparatePortLine => CwKeyerStartResult.Started,
+            _ => CwKeyerStartResult.KeyLineUnavailable
+        };
+    }
+
+    /// <summary>
+    /// Send a single CW alignment probe message bounded by a hard transmit time cap.
+    /// Aborts any running macro or keyboard session first.
+    /// </summary>
+    public CwKeyerStartResult SendProbe(CwMessage message, TimeSpan maxDuration)
+    {
+        if (message.IsEmpty)
+            return CwKeyerStartResult.NothingToSend;
+        if (maxDuration <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(maxDuration), "Probe time cap must be positive.");
+
+        Stop();
+
+        var prepare = PrepareKeying(out var method, out var useRts);
+        if (prepare != CwKeyerStartResult.Started)
+            return prepare;
+
+        var manualCts = new CancellationTokenSource();
+        var timeoutCts = new CancellationTokenSource();
+        var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(manualCts.Token, timeoutCts.Token);
+        timeoutCts.CancelAfter(maxDuration);
+
+        lock (_gate)
+        {
+            _cts = manualCts;
+            Volatile.Write(ref _activeSlot, ProbeSlot);
+            _worker = new Thread(() =>
+            {
+                try
+                {
+                    Run(ProbeSlot, message, method, useRts, saveQso: false, linkedCts.Token, manualCts.Token, timeoutCts.Token);
+                }
+                finally
+                {
+                    linkedCts.Dispose();
+                    timeoutCts.Dispose();
+                }
+            })
+            {
+                IsBackground = true,
+                Name = "OscarWatch.CwProbeKeyer",
                 Priority = ThreadPriority.AboveNormal
             };
             _worker.Start();
@@ -361,7 +439,15 @@ public sealed class CwKeyerService : IDisposable
         }
     }
 
-    private void Run(int slot, CwMessage message, CwKeyingMethod method, bool useRts, bool saveQso, CancellationToken token)
+    private void Run(
+        int slot,
+        CwMessage message,
+        CwKeyingMethod method,
+        bool useRts,
+        bool saveQso,
+        CancellationToken token,
+        CancellationToken manualToken = default,
+        CancellationToken timeoutToken = default)
     {
         var finish = CwKeyerFinish.Completed;
         try
@@ -382,7 +468,11 @@ public sealed class CwKeyerService : IDisposable
             Interlocked.CompareExchange(ref _activeSlot, IdleSlot, slot);
         }
 
-        Finished?.Invoke(this, new CwKeyerFinishedEventArgs(slot, finish, saveQso));
+        var timedOut = finish == CwKeyerFinish.Aborted
+            && timeoutToken.IsCancellationRequested
+            && !manualToken.IsCancellationRequested;
+
+        Finished?.Invoke(this, new CwKeyerFinishedEventArgs(slot, finish, saveQso, timedOut));
     }
 
     private void RunKeyboard(CwKeyingMethod method, bool useRts, CancellationToken token)

@@ -311,6 +311,36 @@
                        FontSize="12"
                        Foreground="#FFC07070" />
 
+            <TextBlock Text="{loc:Localize Key=Cw.Settings.Alignment}"
+                       FontWeight="SemiBold"
+                       FontSize="13" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{loc:Localize Key=Cw.Align.TargetPitch}"
+                         VerticalAlignment="Center" />
+              <NumericUpDown Value="{Binding CwAlignTargetPitchHz, Mode=TwoWay}"
+                             Minimum="{Binding CwMinAlignTargetPitchHz}"
+                             Maximum="{Binding CwMaxAlignTargetPitchHz}"
+                             Increment="10"
+                             FormatString="0"
+                             Width="120"
+                             AutomationProperties.Name="{loc:Localize Key=Cw.Align.TargetPitch}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{loc:Localize Key=Cw.Align.MaxDuration}"
+                         VerticalAlignment="Center" />
+              <NumericUpDown Value="{Binding CwAlignMaxDurationSeconds, Mode=TwoWay}"
+                             Minimum="{Binding CwMinAlignDurationSeconds}"
+                             Maximum="{Binding CwMaxAlignDurationSeconds}"
+                             Increment="1"
+                             FormatString="0"
+                             Width="120"
+                             AutomationProperties.Name="{loc:Localize Key=Cw.Align.MaxDuration}" />
+            </StackPanel>
+            <TextBlock Text="{loc:Localize Key=Cw.Align.SafetyNote}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+
             <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Messages}"
                        FontWeight="SemiBold"
                        FontSize="13" />

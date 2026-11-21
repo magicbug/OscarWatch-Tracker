@@ -11,12 +11,52 @@ namespace OscarWatch.Cw;
 /// <summary>Live soundcard health for the CW window (updated on the decoder thread).</summary>
 public sealed record CwCaptureHealth(bool IsReceivingAudio, bool IsReconnecting);
 
+/// <summary>Active audio + waterfall capture handle for an uplink alignment probe.</summary>
+public sealed class CwProbeCaptureHandle
+{
+    internal CwProbeCaptureHandle(int maxSamples, IReadOnlyList<float[]> baselineRows)
+    {
+        MaxSamples = maxSamples;
+        BaselineRows = baselineRows;
+        Samples = new List<float>(Math.Min(maxSamples, CwReceiverService.WaterfallRate * 4));
+        Rows = new List<float[]>(128);
+    }
+
+    internal int MaxSamples { get; }
+    internal List<float> Samples { get; }
+    internal List<float[]> Rows { get; }
+    internal IReadOnlyList<float[]> BaselineRows { get; }
+    public bool IsAborted { get; internal set; }
+}
+
+/// <summary>Thread-safe snapshot of a probe capture window for background echo analysis.</summary>
+public sealed record CwProbeCaptureData(
+    float[] SamplesAt8k,
+    IReadOnlyList<float[]> ProbeRows,
+    IReadOnlyList<float[]> BaselineRows,
+    double BinHz,
+    double TunedBandCentreHz,
+    bool WasAborted);
+
+/// <summary>Receiver surface required by <see cref="CwUplinkAlignService"/>.</summary>
+public interface ICwProbeReceiver
+{
+    bool IsRunning { get; }
+    CwCaptureHealth CaptureHealth { get; }
+    bool IsInputSilent { get; }
+    ICwModelRunner? ActiveModelRunner { get; }
+    CwModelMetadata ActiveModelMetadata { get; }
+    CwProbeCaptureHandle? BeginProbeCapture(double maxCaptureSeconds = 12.0);
+    CwProbeCaptureData? SnapshotProbeCapture(CwProbeCaptureHandle handle);
+    void EndProbeCapture(CwProbeCaptureHandle handle);
+}
+
 /// <summary>
 /// Runs the DeepCW decoder on its own thread, fed from the soundcard. Audio goes to 8 kHz for
 /// the waterfall and note finder, then to the model rate (3200 Hz), shifted by the rig control
 /// note offset. Events are raised on the decoder thread.
 /// </summary>
-public sealed class CwReceiverService : IDisposable
+public sealed class CwReceiverService : ICwProbeReceiver, IDisposable
 {
     private static readonly ILogger Log = Serilog.Log.ForContext<CwReceiverService>();
     private static readonly ThrottledLogger ReopenFailureLog = new(Log);
@@ -44,10 +84,14 @@ public sealed class CwReceiverService : IDisposable
     private const double FollowMaxStepHz = 5;
     private const double ToneSearchMinHz = 150;
     private const double ToneSearchMaxHz = 1900;
+    private const int BaselineRowCapacity = 12;
 
     private readonly CwAudioService _audio;
     private readonly Queue<float[]> _spectrumRows = new();
+    private readonly Queue<float[]> _baselineRows = new();
+    private readonly object _probeGate = new();
     private readonly object _modelGate = new();
+    private CwProbeCaptureHandle? _activeProbe;
     private CwOnnxModel? _model;
     private CancellationTokenSource? _cts;
     private Task? _worker;
@@ -100,6 +144,77 @@ public sealed class CwReceiverService : IDisposable
 
     /// <summary>Total audio offset of the decode band: rig control correction plus tuning.</summary>
     public double DecodeOffsetHz => CwTuner.ClampOffset(FeedForwardHz + TuneOffsetHz);
+
+    /// <summary>Shared DeepCW model runner while live decoding is active, or null when stopped/unloaded.</summary>
+    public ICwModelRunner? ActiveModelRunner
+    {
+        get
+        {
+            if (!IsRunning)
+                return null;
+            lock (_modelGate)
+                return _model;
+        }
+    }
+
+    public CwModelMetadata ActiveModelMetadata
+    {
+        get
+        {
+            lock (_modelGate)
+                return _model?.Metadata ?? CwModelMetadata.DeepCw();
+        }
+    }
+
+    /// <summary>Attach a bounded 8 kHz audio + spectrum probe capture window while the receiver is live.</summary>
+    public CwProbeCaptureHandle? BeginProbeCapture(double maxCaptureSeconds = 12.0)
+    {
+        if (!IsRunning || ActiveModelRunner is null || !double.IsFinite(maxCaptureSeconds) || maxCaptureSeconds <= 0)
+            return null;
+
+        var maxSamples = Math.Max(WaterfallRate, (int)Math.Ceiling(maxCaptureSeconds * WaterfallRate));
+        lock (_probeGate)
+        {
+            var baseline = _baselineRows.Select(r => (float[])r.Clone()).ToArray();
+            var handle = new CwProbeCaptureHandle(maxSamples, baseline);
+            _activeProbe = handle;
+            return handle;
+        }
+    }
+
+    /// <summary>Clone accumulated probe audio and waterfall rows without stopping capture.</summary>
+    public CwProbeCaptureData? SnapshotProbeCapture(CwProbeCaptureHandle handle)
+    {
+        if (handle is null)
+            return null;
+
+        var metadata = ActiveModelMetadata;
+        var bandCentre = (metadata.SpectrogramMinFreqHz + metadata.SpectrogramMaxFreqHz) / 2.0 + TuneOffsetHz;
+
+        lock (_probeGate)
+        {
+            return new CwProbeCaptureData(
+                SamplesAt8k: handle.Samples.ToArray(),
+                ProbeRows: handle.Rows.Select(r => (float[])r.Clone()).ToArray(),
+                BaselineRows: handle.BaselineRows,
+                BinHz: BinHz,
+                TunedBandCentreHz: bandCentre,
+                WasAborted: handle.IsAborted);
+        }
+    }
+
+    /// <summary>Detach and release an active probe capture handle.</summary>
+    public void EndProbeCapture(CwProbeCaptureHandle handle)
+    {
+        if (handle is null)
+            return;
+
+        lock (_probeGate)
+        {
+            if (ReferenceEquals(_activeProbe, handle))
+                _activeProbe = null;
+        }
+    }
 
     /// <summary>Text settled by one decode step, and the tail that may still change.</summary>
     public event EventHandler<CwDecodeUpdate>? TextDecoded;
@@ -213,6 +328,8 @@ public sealed class CwReceiverService : IDisposable
             var toWaterfall = new SstvResampler(rate, WaterfallRate);
             var toModel = new CwResampler(WaterfallRate, model.Metadata.SampleRate, ResampleCutoffHz, ResampleTaps);
             var tuner = new CwTuner(WaterfallRate, model.Metadata);
+            var probeShifter = new CwFrequencyShifter(WaterfallRate);
+            var probeScratch = new List<float>(ChunkSamples);
             var followAverage = new float[WaterfallColumns];
             var tap = new SstvSpectrumTap(
                 WaterfallRate, SpectrumRowsPerSecond, WaterfallMinHz, WaterfallMaxHz, WaterfallColumns,
@@ -263,9 +380,9 @@ public sealed class CwReceiverService : IDisposable
                 toWaterfall.Process(buffer.AsSpan(0, n), at8k);
                 rows.Clear();
                 tap.Add(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(at8k), rows);
+                var feedForward = FeedForwardHz;
                 if (rows.Count > 0)
                 {
-                    var feedForward = FeedForwardHz;
                     if (feedForward != 0)
                     {
                         for (var r = 0; r < rows.Count; r++)
@@ -277,6 +394,8 @@ public sealed class CwReceiverService : IDisposable
                     if (FollowNote)
                         FollowTone(rows, followAverage, tuner.CentreHz);
                 }
+
+                RecordProbeAudio(at8k, rows, feedForward, probeShifter, probeScratch);
 
                 tuner.OffsetHz = DecodeOffsetHz;
                 tuner.Process(at8k);
@@ -308,6 +427,7 @@ public sealed class CwReceiverService : IDisposable
             }
 
             chunks?.Dispose();
+            AbortActiveProbeCapture();
             _inputSilent = false;
             Volatile.Write(ref _toneHz, double.NaN);
             Stopped?.Invoke(this, session);
@@ -393,6 +513,70 @@ public sealed class CwReceiverService : IDisposable
             _captureHealth = new CwCaptureHealth(false, true);
             ReopenFailureLog.Warning(ex, "CW could not reopen the soundcard '{Device}'", inputName);
             return false;
+        }
+    }
+
+    private void RecordProbeAudio(
+        List<float> at8k,
+        List<float[]> rows,
+        double feedForwardHz,
+        CwFrequencyShifter probeShifter,
+        List<float> probeScratch)
+    {
+        CwProbeCaptureHandle? active;
+        lock (_probeGate)
+        {
+            if (rows.Count > 0)
+            {
+                foreach (var row in rows)
+                    _baselineRows.Enqueue((float[])row.Clone());
+                while (_baselineRows.Count > BaselineRowCapacity)
+                    _baselineRows.Dequeue();
+            }
+
+            active = _activeProbe;
+        }
+
+        if (active is null)
+            return;
+
+        probeScratch.Clear();
+        probeScratch.AddRange(at8k);
+        probeShifter.ShiftHz = -feedForwardHz;
+        probeShifter.Process(probeScratch);
+
+        lock (_probeGate)
+        {
+            if (!ReferenceEquals(_activeProbe, active) || active.IsAborted)
+                return;
+
+            var remaining = active.MaxSamples - active.Samples.Count;
+            if (remaining > 0 && probeScratch.Count > 0)
+            {
+                var take = Math.Min(remaining, probeScratch.Count);
+                for (var i = 0; i < take; i++)
+                    active.Samples.Add(probeScratch[i]);
+            }
+
+            if (remaining > 0 && rows.Count > 0)
+            {
+                foreach (var row in rows)
+                    active.Rows.Add((float[])row.Clone());
+            }
+        }
+    }
+
+    private void AbortActiveProbeCapture()
+    {
+        lock (_probeGate)
+        {
+            if (_activeProbe is not null)
+            {
+                _activeProbe.IsAborted = true;
+                _activeProbe = null;
+            }
+
+            _baselineRows.Clear();
         }
     }
 

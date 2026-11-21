@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -7263,5 +7263,104 @@
   </data>
   <data name="Logbook.Settings.Wsjtx.PortInvalid">
     <value>请输入 1 到 65535 之间的端口。</value>
+  </data>
+  <data name="Logbook.Cw.Align">
+    <value>自动校准</value>
+  </data>
+  <data name="Logbook.Cw.Align.Tip">
+    <value>发送一次本台呼号以测量卫星回波，并将上行 TX 偏移校准到 {0} Hz。请使用低功率，并避免将电台发射侧音送入解码器音频输入。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo">
+    <value>撤销</value>
+  </data>
+  <data name="Logbook.Cw.Align.Undo.Tip">
+    <value>撤销上次 CW 上行自动校准 ({0} Hz)</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotLinearTransponder">
+    <value>CW 自动校准仅适用于双向线性转发器（不适用于 FM、信标或数据模式）。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NotCwMode">
+    <value>请先切换到 CW 或 CW-R 模式再校准上行。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.RadioNotConnected">
+    <value>请先通过 CAT 连接电台再校准上行。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.InStandby">
+    <value>请先退出待机模式再校准上行。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoCallsign">
+    <value>请先在设置中填写本台呼号再校准上行。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.DecoderNotRunning">
+    <value>请先启动 CW 解码器，以便 OscarWatch 监听您的回波。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.NoDownlinkAudio">
+    <value>CW 解码器未收到下行音频。请检查音频输入设备。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Refusal.Busy">
+    <value>请等待当前 CW 发射结束后再进行校准。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Sending">
+    <value>正在校准上行：发送 {0}…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Listening">
+    <value>正在校准上行：监听回波…</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Applied">
+    <value>上行已校准：回波 {0} Hz → TX 修正 {1} Hz。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AlreadyAligned">
+    <value>上行已对齐（回波 {0} Hz，目标 {1} Hz）。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.NoEcho">
+    <value>未能确认您的回波 ({0})。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Ambiguous">
+    <value>回波不明确：在多个音调检测到本台呼号 ({0})。请检查发射侧音是否进入了解码器输入。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.ExceedsCap">
+    <value>测得修正量 ({0} Hz) 超过 ±{1} Hz 安全上限。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.OutOfBounds">
+    <value>测得修正量 ({0} Hz) 会使 TX 偏移超出 ±20 kHz 范围。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.TimedOut">
+    <value>校准探测达到发射时长上限并已停止。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Aborted">
+    <value>已取消上行校准。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedStandby">
+    <value>因进入待机已停止上行校准。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDisconnected">
+    <value>上行校准已停止：电台已断开连接。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedModeChanged">
+    <value>上行校准已停止：已离开 CW 模式。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedTransponderChanged">
+    <value>上行校准已停止：卫星或转发器已切换。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.AbortedDecoderStopped">
+    <value>上行校准已停止：CW 解码器已停止。TX 偏移未更改。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.Undone">
+    <value>已撤销上行校准 ({0} Hz)。</value>
+  </data>
+  <data name="Logbook.Cw.Align.Status.UndoUnavailable">
+    <value>卫星或转发器已切换，无法撤销。</value>
+  </data>
+  <data name="Cw.Settings.Alignment">
+    <value>上行校准</value>
+  </data>
+  <data name="Cw.Align.TargetPitch">
+    <value>目标 CW 音调 (Hz)</value>
+  </data>
+  <data name="Cw.Align.MaxDuration">
+    <value>最大探测时长 (秒)</value>
+  </data>
+  <data name="Cw.Align.SafetyNote">
+    <value>在线性转发器上请使用低发射功率，并且不要将电台的发射侧音或监听音频接入 CW 解码器输入。</value>
   </data>
 </root>
