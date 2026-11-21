@@ -3,7 +3,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using OscarWatch.Core.CwDecode;
+using OscarWatch.Core.Models;
 using OscarWatch.Cw;
 using OscarWatch.Localization;
 using OscarWatch.ViewModels;
@@ -23,7 +25,8 @@ public partial class CwWindow : Window
         Waterfall.TuneRequested += (_, hz) => (DataContext as CwViewModel)?.TuneTo(hz);
         Waterfall.TuneResetRequested += (_, _) => (DataContext as CwViewModel)?.ResetTuning();
         CopyScroller.AddHandler(PointerWheelChangedEvent, OnCopyWheel, RoutingStrategies.Tunnel);
-        KeyDown += OnWindowKeyDown;
+        // Tunnel so a focused control cannot take the macro keys first (same as the logbook).
+        AddHandler(KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel);
     }
 
     /// <summary>Ctrl and the mouse wheel over the copy changes its text size.</summary>
@@ -35,10 +38,31 @@ public partial class CwWindow : Window
         e.Handled = true;
     }
 
-    /// <summary>Ctrl and plus, minus or 0 changes or resets the copy text size.</summary>
+    /// <summary>
+    /// F1 to F12 and Escape drive the CW keyer. Ctrl with plus, minus or 0 changes the copy size.
+    /// </summary>
     private void OnWindowKeyDown(object? sender, KeyEventArgs e)
     {
-        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control) || DataContext is not CwViewModel vm)
+        if (DataContext is not CwViewModel vm)
+            return;
+
+        if (e.KeyModifiers == KeyModifiers.None)
+        {
+            if (e.Key is >= Key.F1 and <= Key.F12)
+            {
+                if (vm.CwKeyer.TryHandleCwFunctionKey(e.Key - Key.F1))
+                    e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Escape && vm.CwKeyer.TryHandleCwEscape())
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        if (!e.KeyModifiers.HasFlag(KeyModifiers.Control))
             return;
 
         switch (e.Key)
@@ -72,6 +96,7 @@ public partial class CwWindow : Window
 
         vm.CopyAppended += OnCopyAppended;
         vm.SaveCopyRequested = SaveCopyAsync;
+        vm.CwKeyer.EditMessagesRequested += OnEditMessagesRequested;
         vm.OnWindowOpened();
     }
 
@@ -81,6 +106,7 @@ public partial class CwWindow : Window
             return;
 
         vm.CopyAppended -= OnCopyAppended;
+        vm.CwKeyer.EditMessagesRequested -= OnEditMessagesRequested;
         vm.SaveCopyRequested = null;
         vm.SavedWindowSize = (Width, Height);
         vm.OnWindowClosed();
@@ -99,6 +125,30 @@ public partial class CwWindow : Window
     {
         if (DataContext is CwViewModel vm && sender is Button { DataContext: CwCopyLink link })
             vm.SendToLogbook(link);
+    }
+
+    private async void OnEditMessagesRequested(object? sender, EventArgs e)
+    {
+        if (DataContext is not CwViewModel vm)
+            return;
+
+        var logbook = App.Services.GetRequiredService<OscarWatch.Services.QsoLogbookEntryBridge>().Attached;
+        if (logbook?.SelectedLogbook is null)
+        {
+            vm.CwKeyer.StatusText = LocalizationService.Instance.Get("Logbook.Cw.Status.OpenLogbookToEdit");
+            return;
+        }
+
+        var settingsVm = App.Services.GetRequiredService<LogbookSettingsViewModel>();
+        settingsVm.LoadForLogbook(logbook.SelectedLogbook);
+        var dialog = new LogbookSettingsWindow { DataContext = settingsVm };
+        dialog.Opened += (_, _) => dialog.SelectCwKeyerTab();
+        var result = await dialog.ShowDialog<QsoLogbookCloudlogSettingsRequest?>(this).ConfigureAwait(true);
+
+        vm.CwKeyer.Reload();
+        logbook.ReloadCwKeyer();
+        if (result is not null)
+            await logbook.ApplyCloudlogSettingsAsync(result).ConfigureAwait(true);
     }
 
     private async void OnSettingsClick(object? sender, RoutedEventArgs e)

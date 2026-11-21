@@ -6926,6 +6926,15 @@ Aktuell: {1} ({2})</value>
   <data name="Logbook.Cw.Status.PortFailed">
     <value>{0} konnte für die CW-Tastung nicht geöffnet werden.</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>Nachrichten bearbeiten</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>Logbuch-Einstellungen öffnen, um die CW-Nachrichten zu ändern</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>Öffnen Sie das Logbuch, um die CW-Nachrichten zu bearbeiten.</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>CW-Keyer</value>
   </data>
@@ -6933,10 +6942,10 @@ Aktuell: {1} ({2})</value>
     <value>CW-Keyer</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Zwölf Nachrichtentasten erscheinen zwischen QSO-Eingabe und Log, wenn der Uplink CW ist. Klicken Sie eine Taste oder drücken Sie F1 bis F12, um zu senden. Esc oder Stopp bricht ab.</value>
+    <value>Zwölf Nachrichtentasten erscheinen im Logbuch und im CW-Decoder, wenn der Uplink CW ist. Klicken Sie eine Taste oder drücken Sie F1 bis F12 zum Senden. Escape oder Stopp bricht ab.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>CW-Keyer im Logbuch anzeigen</value>
+    <value>CW-Keyer im Logbuch und CW-Decoder anzeigen</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>Tastung</value>

@@ -404,78 +404,10 @@
       <DockPanel Grid.Row="1">
         <Border DockPanel.Dock="Top"
                 Classes="logbook-panel"
-                Padding="6"
+                Padding="0"
                 Margin="0,0,0,10"
-                IsVisible="{Binding ShowCwKeyer}">
-          <Border.Styles>
-            <Style Selector="Button.cw-macro">
-              <Setter Property="HorizontalAlignment" Value="Stretch" />
-              <Setter Property="HorizontalContentAlignment" Value="Center" />
-              <Setter Property="Padding" Value="4,3" />
-              <Setter Property="Margin" Value="2,0" />
-            </Style>
-            <Style Selector="Button.cw-macro.cw-active">
-              <Setter Property="Background" Value="{DynamicResource PassRecordingBadgeBackgroundBrush}" />
-            </Style>
-            <Style Selector="Button.cw-macro.cw-active TextBlock">
-              <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeForegroundBrush}" />
-            </Style>
-          </Border.Styles>
-          <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-            <ItemsControl Grid.Column="0" ItemsSource="{Binding CwButtons}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <UniformGrid Rows="1" />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="vm:CwMacroButtonViewModel">
-                  <Button Classes="cw-macro"
-                          Classes.cw-active="{Binding IsActive}"
-                          Command="{Binding SendCommand}"
-                          Focusable="False"
-                          ToolTip.Tip="{Binding ToolTip}"
-                          ToolTip.ShowOnDisabled="True"
-                          AutomationProperties.Name="{Binding ToolTip}">
-                    <StackPanel>
-                      <TextBlock Text="{Binding KeyName}"
-                                 FontSize="10"
-                                 HorizontalAlignment="Center"
-                                 Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
-                      <TextBlock Text="{Binding Label}"
-                                 FontSize="12"
-                                 FontWeight="SemiBold"
-                                 MinHeight="16"
-                                 HorizontalAlignment="Center"
-                                 TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-                  </Button>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <Button Grid.Column="1"
-                    Content="{loc:Localize Key=Logbook.Cw.Stop}"
-                    Command="{Binding StopCwCommand}"
-                    Focusable="False"
-                    VerticalAlignment="Stretch"
-                    VerticalContentAlignment="Center"
-                    MinWidth="64"
-                    ToolTip.Tip="{loc:Localize Key=Logbook.Cw.StopToolTip}" />
-            <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        Spacing="6"
-                        VerticalAlignment="Center"
-                        ToolTip.Tip="{loc:Localize Key=Logbook.Cw.WpmToolTip}">
-              <NumericUpDown Value="{Binding CwWpm, Mode=TwoWay}"
-                             Minimum="5" Maximum="60" Increment="1"
-                             FormatString="0"
-                             Width="110"
-                             AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.WpmToolTip}" />
-              <TextBlock Text="{loc:Localize Key=Logbook.Cw.Wpm}"
-                         VerticalAlignment="Center"
-                         FontWeight="SemiBold" />
-            </StackPanel>
-          </Grid>
+                IsVisible="{Binding CwKeyer.ShowCwKeyer}">
+          <ctrl:CwKeyerStrip DataContext="{Binding CwKeyer}" />
         </Border>
 
         <Grid ColumnDefinitions="*,260" ColumnSpacing="10">

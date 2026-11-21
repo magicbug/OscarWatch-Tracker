@@ -6921,6 +6921,15 @@ Está utilizando la versión {0}.
   <data name="Logbook.Cw.Status.PortFailed">
     <value>No se pudo abrir {0} para manipular CW.</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>Editar mensajes</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>Abrir la configuración del libro de guardia para cambiar los mensajes CW</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>Abra el libro de guardia para editar los mensajes CW.</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>Manipulador CW</value>
   </data>
@@ -6928,10 +6937,10 @@ Está utilizando la versión {0}.
     <value>Manipulador CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Doce botones de mensaje aparecen entre la entrada del QSO y el registro cuando el enlace ascendente es CW. Haga clic en un botón o pulse F1 a F12 para enviarlo. Esc o Parar lo interrumpe.</value>
+    <value>Doce botones de mensaje aparecen en el libro de guardia y en el decodificador CW cuando el enlace ascendente es CW. Pulse un botón o F1 a F12 para enviar. Escape o Detener aborta.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>Mostrar el manipulador CW en el libro</value>
+    <value>Mostrar el keyer CW en el libro de guardia y el decodificador CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>Manipulación</value>

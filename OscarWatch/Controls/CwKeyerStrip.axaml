@@ -1,0 +1,97 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OscarWatch.ViewModels"
+             xmlns:loc="using:OscarWatch.Localization"
+             xmlns:controls="using:OscarWatch.Controls"
+             x:Class="OscarWatch.Controls.CwKeyerStrip"
+             x:DataType="vm:CwKeyerPanelViewModel">
+  <UserControl.Styles>
+    <Style Selector="Button.cw-macro">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="Padding" Value="4,3" />
+      <Setter Property="Margin" Value="2,0" />
+    </Style>
+    <Style Selector="Button.cw-macro.cw-active">
+      <Setter Property="Background" Value="{DynamicResource PassRecordingBadgeBackgroundBrush}" />
+    </Style>
+    <Style Selector="Button.cw-macro.cw-active TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource PassRecordingBadgeForegroundBrush}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Border Classes="cw-keyer-panel"
+          Padding="6">
+    <DockPanel>
+      <TextBlock DockPanel.Dock="Bottom"
+                 Text="{Binding StatusText}"
+                 FontSize="12"
+                 TextWrapping="Wrap"
+                 Margin="0,6,0,0"
+                 IsVisible="{Binding $parent[controls:CwKeyerStrip].ShowStatus}" />
+      <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+        <ItemsControl Grid.Column="0" ItemsSource="{Binding CwButtons}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Rows="1" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:CwMacroButtonViewModel">
+              <Button Classes="cw-macro"
+                      Classes.cw-active="{Binding IsActive}"
+                      Command="{Binding SendCommand}"
+                      Focusable="False"
+                      ToolTip.Tip="{Binding ToolTip}"
+                      ToolTip.ShowOnDisabled="True"
+                      AutomationProperties.Name="{Binding ToolTip}">
+                <StackPanel>
+                  <TextBlock Text="{Binding KeyName}"
+                             FontSize="10"
+                             HorizontalAlignment="Center"
+                             Foreground="{DynamicResource ThemeSecondaryForegroundBrush}" />
+                  <TextBlock Text="{Binding Label}"
+                             FontSize="12"
+                             FontWeight="SemiBold"
+                             MinHeight="16"
+                             HorizontalAlignment="Center"
+                             TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button Grid.Column="1"
+                Content="{loc:Localize Key=Logbook.Cw.Stop}"
+                Command="{Binding StopCwCommand}"
+                Focusable="False"
+                VerticalAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                MinWidth="64"
+                ToolTip.Tip="{loc:Localize Key=Logbook.Cw.StopToolTip}" />
+        <StackPanel Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="6"
+                    VerticalAlignment="Center"
+                    ToolTip.Tip="{loc:Localize Key=Logbook.Cw.WpmToolTip}">
+          <NumericUpDown Value="{Binding CwWpm, Mode=TwoWay}"
+                         Minimum="5" Maximum="60" Increment="1"
+                         FormatString="0"
+                         Width="110"
+                         AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.WpmToolTip}" />
+          <TextBlock Text="{loc:Localize Key=Logbook.Cw.Wpm}"
+                     VerticalAlignment="Center"
+                     FontWeight="SemiBold" />
+        </StackPanel>
+        <Button Grid.Column="3"
+                Content="{loc:Localize Key=Logbook.Cw.EditMessages}"
+                Command="{Binding EditMessagesCommand}"
+                Focusable="False"
+                VerticalAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                IsVisible="{Binding $parent[controls:CwKeyerStrip].ShowEditMessages}"
+                ToolTip.Tip="{loc:Localize Key=Logbook.Cw.EditMessages.Tip}" />
+      </Grid>
+    </DockPanel>
+  </Border>
+</UserControl>

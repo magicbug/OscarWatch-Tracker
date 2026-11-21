@@ -17,7 +17,7 @@ public enum QsoLogbookFillResult
 /// <summary>
 /// Lets decoder windows put a callsign or locator into the logbook's entry form without
 /// logging anything. The open logbook attaches itself; with none open, the fill waits and
-/// the logbook is asked to open.
+/// the logbook is asked to open. The CW keyer also reads the attached entry for macros.
 /// </summary>
 public sealed class QsoLogbookEntryBridge
 {
@@ -25,8 +25,26 @@ public sealed class QsoLogbookEntryBridge
     private string? _pendingCall;
     private string? _pendingGrid;
 
-    /// <summary>Raised when a fill arrives with no logbook open.</summary>
+    /// <summary>Raised when a fill arrives with no logbook open, or when the keyer asks to open it.</summary>
     public event EventHandler? OpenLogbookRequested;
+
+    /// <summary>The open logbook entry form, or null when the logbook window is closed.</summary>
+    public QsoLogbookViewModel? Attached => _target;
+
+    /// <summary>Entry fields for CW macros when a logbook is open.</summary>
+    public ICwKeyerEntrySource? KeyerEntry => _keyerEntry ?? _target;
+
+    private ICwKeyerEntrySource? _keyerEntry;
+
+    /// <summary>Test hook: supply macro fields without a full logbook window.</summary>
+    public void AttachKeyerEntry(ICwKeyerEntrySource entry) => _keyerEntry = entry;
+
+    /// <summary>Test hook: clear a keyer-only entry source.</summary>
+    public void DetachKeyerEntry(ICwKeyerEntrySource entry)
+    {
+        if (ReferenceEquals(_keyerEntry, entry))
+            _keyerEntry = null;
+    }
 
     public QsoLogbookFillResult Fill(string? call, string? grid)
     {
@@ -37,9 +55,12 @@ public sealed class QsoLogbookEntryBridge
             _pendingCall = call;
         if (!string.IsNullOrWhiteSpace(grid))
             _pendingGrid = grid;
-        OpenLogbookRequested?.Invoke(this, EventArgs.Empty);
+        RequestOpen();
         return QsoLogbookFillResult.OpeningLogbook;
     }
+
+    /// <summary>Ask the main window to open the logbook (no pending fill).</summary>
+    public void RequestOpen() => OpenLogbookRequested?.Invoke(this, EventArgs.Empty);
 
     /// <summary>Called by the logbook once it has loaded; applies any fill that was waiting.</summary>
     public void Attach(QsoLogbookViewModel logbook)

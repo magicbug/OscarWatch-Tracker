@@ -6925,6 +6925,15 @@ Ultima versione: {1} ({2})</value>
   <data name="Logbook.Cw.Status.PortFailed">
     <value>Impossibile aprire {0} per la manipolazione CW.</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>Modifica messaggi</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>Apri le impostazioni del logbook per modificare i messaggi CW</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>Apri il logbook per modificare i messaggi CW.</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>Keyer CW</value>
   </data>
@@ -6932,10 +6941,10 @@ Ultima versione: {1} ({2})</value>
     <value>Keyer CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Dodici pulsanti messaggio compaiono tra l'inserimento del QSO e il log quando l'uplink è in CW. Fai clic su un pulsante o premi da F1 a F12 per inviarlo. Esc o Ferma interrompe.</value>
+    <value>Dodici pulsanti messaggio compaiono nel logbook e nel decoder CW quando l'uplink è CW. Fai clic su un pulsante o premi F1-F12 per inviare. Escape o Stop interrompe.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>Mostra il keyer CW nel logbook</value>
+    <value>Mostra il keyer CW nel logbook e nel decoder CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>Manipolazione</value>

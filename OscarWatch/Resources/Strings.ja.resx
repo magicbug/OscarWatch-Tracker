@@ -6922,6 +6922,15 @@
   <data name="Logbook.Cw.Status.PortFailed">
     <value>CW キーイング用に {0} を開けませんでした。</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>メッセージを編集</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>ログブック設定を開いて CW メッセージを変更します</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>CW メッセージを編集するにはログブックを開いてください。</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>CW キーヤー</value>
   </data>
@@ -6929,10 +6938,10 @@
     <value>CW キーヤー</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>アップリンクが CW のとき、QSO 入力欄とログの間に 12 個のメッセージボタンが表示されます。ボタンをクリックするか F1 から F12 を押すと送信します。Esc か停止で中止します。</value>
+    <value>アップリンクが CW のとき、ログブックと CW デコーダーに 12 個のメッセージボタンが表示されます。ボタンをクリックするか F1〜F12 で送信します。Escape または Stop で中止します。</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>ログブックに CW キーヤーを表示する</value>
+    <value>ログブックと CW デコーダーに CW キーヤーを表示</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>キーイング</value>

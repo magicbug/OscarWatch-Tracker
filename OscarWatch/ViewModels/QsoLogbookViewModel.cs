@@ -14,7 +14,7 @@ using Serilog;
 
 namespace OscarWatch.ViewModels;
 
-public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
+public partial class QsoLogbookViewModel : ViewModelBase, OscarWatch.Services.ICwKeyerEntrySource, IDisposable
 {
     private static readonly ILogger Log = Serilog.Log.ForContext<QsoLogbookViewModel>();
     private readonly IQsoLogbookRepository _repository;
@@ -59,7 +59,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, IDisposable
         IQrzCallbookService qrz,
         IHamQthCallbookService hamQth,
         ILocalizationService localization,
-        OscarWatch.Hardware.CwKeyerService? cwKeyer = null,
+        CwKeyerPanelViewModel? cwKeyer = null,
         OscarWatch.Services.QsoLogbookEntryBridge? entryBridge = null,
         ActivationDirectoryService? activationDirectories = null)
     {

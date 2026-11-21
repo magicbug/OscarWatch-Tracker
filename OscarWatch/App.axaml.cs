@@ -121,6 +121,7 @@ public partial class App : Application
         services.AddTransient<RotatorManualViewModel>();
         services.AddSingleton(OscarWatch.Hardware.HandshakePortPool.Shared);
         services.AddSingleton<OscarWatch.Hardware.CwKeyerService>();
+        services.AddSingleton<CwKeyerPanelViewModel>();
         services.AddTransient<QsoLogbookViewModel>();
         services.AddTransient<CreateLogbookViewModel>();
         services.AddTransient<LogbookSettingsViewModel>();

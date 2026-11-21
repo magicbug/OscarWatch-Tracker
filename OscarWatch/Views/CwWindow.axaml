@@ -71,6 +71,17 @@
   </Window.Styles>
 
   <DockPanel Margin="10">
+    <!-- CW keyer (bottom of the window, under the listening status) -->
+    <Border DockPanel.Dock="Bottom"
+            Classes="cw-panel"
+            Padding="0"
+            Margin="0,8,0,0"
+            IsVisible="{Binding CwKeyer.ShowCwKeyer}">
+      <controls:CwKeyerStrip DataContext="{Binding CwKeyer}"
+                            ShowEditMessages="True"
+                            ShowStatus="True" />
+    </Border>
+
     <!-- Toolbar -->
     <Border DockPanel.Dock="Top" Classes="cw-panel" Padding="8" Margin="0,0,0,8">
       <DockPanel>

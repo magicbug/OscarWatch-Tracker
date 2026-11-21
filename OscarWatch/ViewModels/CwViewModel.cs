@@ -30,6 +30,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     private readonly CwReceiverService _receiver;
     private readonly QsoLogbookEntryBridge _logbook;
     private readonly IQsoLogbookRepository _logbookRepository;
+    private readonly CwKeyerPanelViewModel _cwKeyer;
     /// <summary>Null until the logbook has been read; words are left unshaded until then.</summary>
     private IReadOnlySet<string>? _workedCalls;
     private IReadOnlySet<string>? _workedGridFields;
@@ -64,7 +65,8 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         ILocalizationService localization,
         CwReceiverService receiver,
         QsoLogbookEntryBridge logbook,
-        IQsoLogbookRepository logbookRepository)
+        IQsoLogbookRepository logbookRepository,
+        CwKeyerPanelViewModel cwKeyer)
     {
         _logbookRepository = logbookRepository;
         _settings = settings;
@@ -74,6 +76,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _l = localization;
         _receiver = receiver;
         _logbook = logbook;
+        _cwKeyer = cwKeyer;
 
         var s = _settings.Current.CwDecoder;
         _catDopplerFeedForward = s.CatDopplerFeedForward;
@@ -102,6 +105,9 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         new FuncValueConverter<bool, FontWeight>(b => b ? FontWeight.SemiBold : FontWeight.Normal);
 
     public CwCopyLog Copy { get; }
+
+    /// <summary>Shared CW keyer strip (same instance as the logbook).</summary>
+    public CwKeyerPanelViewModel CwKeyer => _cwKeyer;
 
     public ObservableCollection<CwCopyLine> Lines => Copy.Lines;
 
@@ -222,6 +228,8 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             _logbookRepository.QsosChanged += OnLogbookQsosChanged;
         }
 
+        _cwKeyer.AttachHost(CwKeyerHost.Decoder);
+        _cwKeyer.Refresh(_tracker.GetCurrent());
         _ = RefreshWorkedAsync();
         _uiTimer.Start();
         _waterfallTimer.Start();
@@ -231,6 +239,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     {
         _uiTimer.Stop();
         _waterfallTimer.Stop();
+        _cwKeyer.DetachHost(CwKeyerHost.Decoder);
         StopReceiver();
         _settings.RequestSave();
     }
@@ -595,6 +604,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
     private void RefreshUiTick()
     {
+        _cwKeyer.Refresh(_tracker.GetCurrent());
         UpdateDoppler();
         ProcessAutoStartTick();
 

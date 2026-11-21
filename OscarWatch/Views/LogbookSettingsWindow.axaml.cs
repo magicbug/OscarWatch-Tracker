@@ -7,11 +7,17 @@ namespace OscarWatch.Views;
 
 public partial class LogbookSettingsWindow : Window
 {
+    /// <summary>Zero-based index of the CW keyer tab (Cloudlog, QRZ, HamQTH, WSJT-X, then CW).</summary>
+    public const int CwKeyerTabIndex = 4;
+
     public LogbookSettingsWindow()
     {
         InitializeComponent();
         Opened += OnOpened;
     }
+
+    /// <summary>Select the CW keyer tab when opening from the decoder Edit messages button.</summary>
+    public void SelectCwKeyerTab() => SettingsTabs.SelectedIndex = CwKeyerTabIndex;
 
     private async void OnOpened(object? sender, EventArgs e)
     {

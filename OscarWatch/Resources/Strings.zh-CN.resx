@@ -6922,6 +6922,15 @@
   <data name="Logbook.Cw.Status.PortFailed">
     <value>无法打开 {0} 用于 CW 键控。</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>编辑消息</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>打开日志设置以更改 CW 消息</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>打开日志以编辑 CW 消息。</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>CW 键控器</value>
   </data>
@@ -6929,10 +6938,10 @@
     <value>CW 键控器</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>上行为 CW 时，QSO 输入区和日志之间会显示十二个消息按钮。点击按钮或按 F1 至 F12 发送。按 Esc 或“停止”中止。</value>
+    <value>当上行链路为 CW 时，日志簿和 CW 解码器会显示十二个消息按钮。单击按钮或按 F1 至 F12 发送。Escape 或停止可中止。</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>在日志中显示 CW 键控器</value>
+    <value>在日志簿和 CW 解码器中显示 CW 键控器</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>键控</value>

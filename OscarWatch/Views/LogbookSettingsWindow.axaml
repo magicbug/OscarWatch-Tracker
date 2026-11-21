@@ -34,7 +34,7 @@
       </StackPanel>
     </StackPanel>
 
-    <TabControl Margin="0,0,0,4">
+    <TabControl x:Name="SettingsTabs" Margin="0,0,0,4">
       <TabControl.Styles>
         <Style Selector="TabItem">
           <Setter Property="FontSize" Value="14" />

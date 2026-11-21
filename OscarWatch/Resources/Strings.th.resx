@@ -6926,6 +6926,15 @@ LOS: {2}
   <data name="Logbook.Cw.Status.PortFailed">
     <value>เปิด {0} สำหรับคีย์ CW ไม่ได้</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>แก้ไขข้อความ</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>เปิดการตั้งค่าสมุดบันทึกเพื่อเปลี่ยนข้อความ CW</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>เปิดสมุดบันทึกเพื่อแก้ไขข้อความ CW</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>คีย์เยอร์ CW</value>
   </data>
@@ -6933,10 +6942,10 @@ LOS: {2}
     <value>คีย์เยอร์ CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>ปุ่มข้อความสิบสองปุ่มจะแสดงระหว่างช่องกรอก QSO กับล็อกเมื่ออัปลิงก์เป็น CW คลิกปุ่มหรือกด F1 ถึง F12 เพื่อส่ง กด Esc หรือหยุดเพื่อยกเลิก</value>
+    <value>ปุ่มข้อความสิบสองปุ่มจะปรากฏในสมุดบันทึกและตัวถอดรหัส CW เมื่ออัปลิงก์เป็น CW คลิกปุ่มหรือกด F1 ถึง F12 เพื่อส่ง Escape หรือ Stop เพื่อยกเลิก</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>แสดงคีย์เยอร์ CW ในล็อกบุ๊ก</value>
+    <value>แสดงคีย์เยอร์ CW ในสมุดบันทึกและตัวถอดรหัส CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>การคีย์</value>

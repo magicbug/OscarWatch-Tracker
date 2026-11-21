@@ -6926,6 +6926,15 @@ LOS: {2}
   <data name="Logbook.Cw.Status.PortFailed">
     <value>Не удалось открыть {0} для манипуляции CW.</value>
   </data>
+  <data name="Logbook.Cw.EditMessages">
+    <value>Изменить сообщения</value>
+  </data>
+  <data name="Logbook.Cw.EditMessages.Tip">
+    <value>Открыть настройки журнала, чтобы изменить сообщения CW</value>
+  </data>
+  <data name="Logbook.Cw.Status.OpenLogbookToEdit">
+    <value>Откройте журнал, чтобы изменить сообщения CW.</value>
+  </data>
   <data name="Logbook.Settings.Cw.Tab">
     <value>CW-манипулятор</value>
   </data>
@@ -6933,10 +6942,10 @@ LOS: {2}
     <value>CW-манипулятор</value>
   </data>
   <data name="Logbook.Settings.Cw.Intro">
-    <value>Двенадцать кнопок сообщений появляются между вводом QSO и журналом, когда аплинк в режиме CW. Нажмите кнопку или клавиши F1–F12, чтобы передать. Esc или «Стоп» прерывает передачу.</value>
+    <value>Двенадцать кнопок сообщений появляются в журнале и в декодере CW, когда uplink — CW. Нажмите кнопку или F1–F12 для передачи. Escape или Стоп прерывает.</value>
   </data>
   <data name="Logbook.Settings.Cw.Enable">
-    <value>Показывать CW-манипулятор в журнале</value>
+    <value>Показывать CW-кейер в журнале и декодере CW</value>
   </data>
   <data name="Logbook.Settings.Cw.Keying">
     <value>Манипуляция</value>
