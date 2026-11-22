@@ -30,6 +30,22 @@ public static class PassSidebarMerge
     }
 
     /// <summary>
+    /// Satellite passes and Moon rise and set entries as one list, earliest first. Entries that start at
+    /// the same time keep the satellite first.
+    /// </summary>
+    public static IReadOnlyList<PassInfo> WithCelestialBodies(
+        IReadOnlyList<PassInfo> satellitePasses,
+        IReadOnlyList<PassInfo> celestialPasses)
+    {
+        if (celestialPasses.Count == 0)
+            return satellitePasses;
+        return satellitePasses
+            .Concat(celestialPasses)
+            .OrderBy(p => PassUtc.Normalize(p.AosUtc))
+            .ToList();
+    }
+
+    /// <summary>
     /// Re-adds passes that are still in progress when the predictor omits them (e.g. elevation dipped
     /// below the list threshold before the next 15-minute refresh).
     /// </summary>

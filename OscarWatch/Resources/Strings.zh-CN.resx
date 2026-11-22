@@ -169,6 +169,9 @@
   <data name="Main.Passes.DetachedStatus">
     <value>显示在单独窗口中</value>
   </data>
+  <data name="Body.Moon">
+    <value>月球</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>隐藏过境仰角时间线</value>
   </data>
@@ -3005,6 +3008,21 @@
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 表示显示高于最低仰角和地平线遮挡的每一次过境。过境规划有自己的最短时长。</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>在即将过境中显示月出和月落</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>月球仰角下限（°）</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>月球仰角上限（°）</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>同时对月球应用地平线遮挡</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>升起和落下是月球中心到达下方设置的仰角下限（默认0°）的时刻，与印刷版天文历时间（上缘，含大气折射）相差几分钟。不应用卫星的最小仰角设置，因此地平线上的月球也会列出。这些条目仅供参考，不能选为目标。</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>启动时检查转发器数据库更新</value>
@@ -7389,5 +7407,245 @@
   </data>
   <data name="Cw.Align.SafetyNote">
     <value>在线性转发器上请使用低发射功率，并且不要将电台的发射侧音或监听音频接入 CW 解码器输入。</value>
+  </data>
+  <data name="Menu.Window.Moon">
+    <value>月球 (EME)(_M)</value>
+  </data>
+  <data name="Window.Moon.Title">
+    <value>月球 (EME)</value>
+  </data>
+  <data name="Moon.Accessible.Name">
+    <value>月球 (EME)</value>
+  </data>
+  <data name="Moon.Empty.NoPosition">
+    <value>无法计算月球位置。请在设置中检查电台位置。</value>
+  </data>
+  <data name="Moon.FrequencyInvalid">
+    <value>请输入 30 MHz 至 100 GHz 的频率。在此之前不显示多普勒和路径损耗。</value>
+  </data>
+  <data name="Moon.Band">
+    <value>频段</value>
+  </data>
+  <data name="Moon.Frequency">
+    <value>频率 (MHz)</value>
+  </data>
+  <data name="Moon.Beamwidth">
+    <value>波束宽度 (°)</value>
+  </data>
+  <data name="Moon.Circular">
+    <value>圆极化</value>
+  </data>
+  <data name="Moon.LargeDigits">
+    <value>大号数字</value>
+  </data>
+  <data name="Moon.Copy">
+    <value>复制</value>
+  </data>
+  <data name="Moon.Section.Position">
+    <value>位置</value>
+  </data>
+  <data name="Moon.Section.Echo">
+    <value>回波与路径损耗</value>
+  </data>
+  <data name="Moon.Section.Moon">
+    <value>今日月球</value>
+  </data>
+  <data name="Moon.Section.Visibility">
+    <value>升起和落下</value>
+  </data>
+  <data name="Moon.Label.Azimuth">
+    <value>方位角</value>
+  </data>
+  <data name="Moon.Label.Elevation">
+    <value>仰角</value>
+  </data>
+  <data name="Moon.Label.HourAngle">
+    <value>时角</value>
+  </data>
+  <data name="Moon.Label.GreenwichHourAngle">
+    <value>格林尼治时角</value>
+  </data>
+  <data name="Moon.Label.Declination">
+    <value>赤纬</value>
+  </data>
+  <data name="Moon.Label.Sublunar">
+    <value>月下点</value>
+  </data>
+  <data name="Moon.Label.Distance">
+    <value>距离</value>
+  </data>
+  <data name="Moon.Label.RangeRate">
+    <value>距离变化率</value>
+  </data>
+  <data name="Moon.Label.EchoDelay">
+    <value>回波延迟</value>
+  </data>
+  <data name="Moon.Label.OwnEcho">
+    <value>自身回波频移</value>
+  </data>
+  <data name="Moon.Label.ExtraLoss">
+    <value>额外路径损耗</value>
+  </data>
+  <data name="Moon.Label.AbsoluteLoss">
+    <value>路径损耗</value>
+  </data>
+  <data name="Moon.Label.Phase">
+    <value>月相</value>
+  </data>
+  <data name="Moon.Label.Diameter">
+    <value>视直径</value>
+  </data>
+  <data name="Moon.Label.NextPerigee">
+    <value>下次近地点</value>
+  </data>
+  <data name="Moon.Label.NextApogee">
+    <value>下次远地点</value>
+  </data>
+  <data name="Moon.Label.LastApsis">
+    <value>上一个近远地点</value>
+  </data>
+  <data name="Moon.Label.SunSeparation">
+    <value>月球与太阳夹角</value>
+  </data>
+  <data name="Moon.Label.GalacticSeparation">
+    <value>月球与银河系中心夹角</value>
+  </data>
+  <data name="Moon.Label.Status">
+    <value>状态</value>
+  </data>
+  <data name="Moon.Label.Next">
+    <value>下一个</value>
+  </data>
+  <data name="Moon.Label.Time">
+    <value>时间</value>
+  </data>
+  <data name="Moon.Value.Degrees">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.Position">
+    <value>{0:F1}°, {1:F1}°</value>
+  </data>
+  <data name="Moon.Value.Kilometres">
+    <value>{0:N0} 千米</value>
+  </data>
+  <data name="Moon.Value.RangeRate">
+    <value>{0:+0.000;-0.000} 千米/秒</value>
+  </data>
+  <data name="Moon.Value.Seconds">
+    <value>{0:F3} 秒</value>
+  </data>
+  <data name="Moon.Value.Hertz">
+    <value>{0:+0;-0;0} Hz</value>
+  </data>
+  <data name="Moon.Value.Decibels">
+    <value>{0:F1} dB</value>
+  </data>
+  <data name="Moon.Value.ExtraLoss">
+    <value>{0:F1} dB, {1}</value>
+  </data>
+  <data name="Moon.Value.Phase">
+    <value>{0}，照亮 {1:F0}%</value>
+  </data>
+  <data name="Moon.Value.Diameter">
+    <value>{0:F1}′</value>
+  </data>
+  <data name="Moon.Value.Apsis">
+    <value>{0}, {1:N0} km</value>
+  </data>
+  <data name="Moon.Value.LastApsis">
+    <value>{0}，{1:F1} 天前</value>
+  </data>
+  <data name="Moon.Value.Separation">
+    <value>{0:F1}°</value>
+  </data>
+  <data name="Moon.Value.SeparationFlag">
+    <value>{0:F1}°. {1}</value>
+  </data>
+  <data name="Moon.Value.TimeUtc">
+    <value>{0} UTC</value>
+  </data>
+  <data name="Moon.Flag.Sun">
+    <value>离太阳太近：太阳噪声可能淹没回波。</value>
+  </data>
+  <data name="Moon.Flag.Galactic">
+    <value>位于银河前方：背景噪声更高。</value>
+  </data>
+  <data name="Moon.Note.NewMoon">
+    <value>新月：月球在天空中靠近太阳。低频段仍可进行通联。</value>
+  </data>
+  <data name="Moon.Note.FreeSpace">
+    <value>为各向同性天线的自由空间数值，不是链路预算。6.5% 的反射率是一个假设。</value>
+  </data>
+  <data name="Moon.Status.Up">
+    <value>已升起（不低于 {0:F1}°）</value>
+  </data>
+  <data name="Moon.Status.Down">
+    <value>低于 {0:F1}° 的下限</value>
+  </data>
+  <data name="Moon.Short.Up">
+    <value>已升起</value>
+  </data>
+  <data name="Moon.Short.Down">
+    <value>未升起</value>
+  </data>
+  <data name="Moon.Next.Rise">
+    <value>{0} 升起</value>
+  </data>
+  <data name="Moon.Next.Set">
+    <value>{0} 落下</value>
+  </data>
+  <data name="Moon.Next.None">
+    <value>3 天内没有升起或落下</value>
+  </data>
+  <data name="Moon.Apsis.Perigee">
+    <value>近地点</value>
+  </data>
+  <data name="Moon.Apsis.Apogee">
+    <value>远地点</value>
+  </data>
+  <data name="Moon.Class.Good">
+    <value>良好</value>
+  </data>
+  <data name="Moon.Class.Fair">
+    <value>一般</value>
+  </data>
+  <data name="Moon.Class.Poor">
+    <value>较差</value>
+  </data>
+  <data name="Moon.Class.Bad">
+    <value>很差</value>
+  </data>
+  <data name="Moon.Phase.New">
+    <value>新月</value>
+  </data>
+  <data name="Moon.Phase.WaxingCrescent">
+    <value>蛾眉月（盈）</value>
+  </data>
+  <data name="Moon.Phase.FirstQuarter">
+    <value>上弦月</value>
+  </data>
+  <data name="Moon.Phase.WaxingGibbous">
+    <value>盈凸月</value>
+  </data>
+  <data name="Moon.Phase.Full">
+    <value>满月</value>
+  </data>
+  <data name="Moon.Phase.WaningGibbous">
+    <value>亏凸月</value>
+  </data>
+  <data name="Moon.Phase.LastQuarter">
+    <value>下弦月</value>
+  </data>
+  <data name="Moon.Phase.WaningCrescent">
+    <value>蛾眉月（亏）</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Up">
+    <value>月球已升起。方位角 {0:F1} 度，仰角 {1:F1} 度。额外路径损耗 {2:F1} dB，{3}。</value>
+  </data>
+  <data name="Moon.Accessible.Summary.Down">
+    <value>月球低于下限。方位角 {0:F1} 度，仰角 {1:F1} 度。额外路径损耗 {2:F1} dB，{3}。</value>
+  </data>
+  <data name="Moon.Copy.Header">
+    <value>月球 (EME)，{0}</value>
   </data>
 </root>

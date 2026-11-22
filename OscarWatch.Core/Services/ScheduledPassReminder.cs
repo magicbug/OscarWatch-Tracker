@@ -276,11 +276,19 @@ public sealed class ScheduledPassReminder
         return best;
     }
 
+    /// <summary>
+    /// False for the Moon's rise and set entries, which are information only and are not satellite passes, so
+    /// they can never be given a reminder.
+    /// </summary>
+    public static bool CanSchedule(string noradId) =>
+        !string.Equals(noradId, OscarWatch.Core.Eme.MoonWindows.MoonId, StringComparison.OrdinalIgnoreCase);
     public static List<ScheduledPassEntry> Toggle(
         IReadOnlyList<ScheduledPassEntry> scheduled,
         string noradId,
         DateTime aosUtc)
     {
+        if (!CanSchedule(noradId))
+            return new List<ScheduledPassEntry>(scheduled);
         var list = new List<ScheduledPassEntry>(scheduled.Count + 1);
         var existing = FindMatchingEntry(scheduled, noradId, aosUtc);
         var foundMatch = false;
@@ -313,6 +321,8 @@ public sealed class ScheduledPassReminder
         string noradId,
         DateTime aosUtc)
     {
+        if (!CanSchedule(noradId))
+            return new List<ScheduledPassEntry>(scheduled);
         if (IsScheduled(scheduled, noradId, aosUtc))
             return scheduled.Count == 0 ? new List<ScheduledPassEntry>() : new List<ScheduledPassEntry>(scheduled);
 

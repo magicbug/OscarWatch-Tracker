@@ -13,6 +13,8 @@ public sealed class AppSettings
     public double MinimumElevationDeg { get; set; } = 5.0;
     /// <summary>Lookahead for the main-window upcoming passes list and the pass elevation timeline.</summary>
     public int PassPredictionHours { get; set; } = 48;
+    /// <summary>Moon and EME settings, including whether the Moon's rise and set join the upcoming passes.</summary>
+    public EmeSettings Eme { get; set; } = new();
     /// <summary>
     /// Minimum length for the main-window upcoming passes list.
     /// 0 means no extra duration filter beyond elevation and the horizon mask.
