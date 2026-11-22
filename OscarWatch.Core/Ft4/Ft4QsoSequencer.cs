@@ -271,7 +271,8 @@ public sealed class Ft4QsoSequencer
     /// Newline-separated messages to try when the first decode misses a weak copy.
     /// Only while a contact is open and both calls are known: their grid, a report, and,
     /// once a report has been exchanged, RR73 or 73.
-    /// RRR is not guessed. A decoded RRR queues our 73, and satellite contacts usually skip that step.
+    /// RRR is not guessed. A decoded RRR, once both reports are in, is their confirmation:
+    /// the contact finishes after our 73 or RR73 has been sent. Satellite contacts usually skip that step.
     /// 73 and RR73 are not guessed while we are still sending the opening grid. That guess
     /// can win on the other station's CQ (the two messages share his callsign) and the
     /// sequencer would then send 73 before any report existed.
@@ -549,10 +550,14 @@ public sealed class Ft4QsoSequencer
 
         if (Ft4MessageCodec.IsRrr(extra))
         {
-            // RRR is not a sign-off. Send 73 unless one is already queued.
+            // RRR means they copied our report. Log once our 73 or RR73 has gone out.
+            // Their final 73 is a courtesy and is often lost as a satellite pass ends.
+            // A stray RRR before both reports exist does not finish the contact.
+            if (ReportSent is not null && ReportReceived is not null)
+                _theySent73 = true;
             if (!IsOutgoingClosing(CurrentTxMessage))
                 CurrentTxMessage = Ft4MessageCodec.Build73(TheirCall, my);
-            return false;
+            return TryCompleteContact();
         }
 
         if (Ft4MessageCodec.IsGrid(extra))
@@ -737,7 +742,7 @@ public sealed class Ft4QsoSequencer
 
     /// <summary>
     /// Called after a TX message was fully sent. Our 73 or RR73 counts as sent.
-    /// The contact finishes only when the other station has sent 73 or RR73 as well.
+    /// The contact finishes when the other station has sent RRR, RR73, or 73.
     /// </summary>
     public bool OnTxCompleted()
     {
@@ -754,7 +759,9 @@ public sealed class Ft4QsoSequencer
         }
     }
 
-    /// <summary>Stop and log only after both stations have sent 73 (RR73 counts).</summary>
+    /// <summary>
+    /// Stop and log once we have sent 73 or RR73 and they have sent RRR, RR73, or 73.
+    /// </summary>
     private bool TryCompleteContact()
     {
         if (!_weSent73 || !_theySent73)

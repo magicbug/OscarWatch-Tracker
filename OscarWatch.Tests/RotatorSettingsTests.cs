@@ -114,6 +114,21 @@ public sealed class RotatorSettingsTests
     }
 
     [Fact]
+    public void ClampParkElevation_allows_minus_10_for_spid_only()
+    {
+        Assert.Equal(-10, RotatorSettings.ClampParkElevationDeg(
+            RotatorType.Spid, RotatorElevationRange.Deg180, -10));
+        Assert.Equal(-10, RotatorSettings.ClampParkElevationDeg(
+            RotatorType.SpidMd01, RotatorElevationRange.Deg90, -40));
+        Assert.Equal(90, RotatorSettings.ClampParkElevationDeg(
+            RotatorType.Spid, RotatorElevationRange.Deg90, 120));
+        Assert.Equal(0, RotatorSettings.ClampParkElevationDeg(
+            RotatorType.YaesuGs232, RotatorElevationRange.Deg180, -10));
+        Assert.Equal(0, RotatorSettings.ClampParkElevationDeg(
+            RotatorType.EasyComm, RotatorElevationRange.Deg180, -10));
+    }
+
+    [Fact]
     public void GreenHeron_ignores_tcp_transport_kind()
     {
         var settings = new RotatorSettings

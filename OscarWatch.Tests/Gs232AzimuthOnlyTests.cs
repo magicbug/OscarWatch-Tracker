@@ -81,6 +81,18 @@ public sealed class Gs232AzimuthOnlyTests
     }
 
     [Fact]
+    public void Default_driver_clamps_negative_elevation_to_zero()
+    {
+        var transport = new RecordingRotatorSerialTransport();
+        using var rotator = new Gs232Rotator(transport);
+        rotator.Open();
+
+        rotator.SetPosition(90, -10, new RotatorSettings());
+
+        Assert.Equal("W090 000\r", transport.Written[^1]);
+    }
+
+    [Fact]
     public void IsAzimuthOnly_applies_only_to_gs232()
     {
         Assert.True(new RotatorSettings { Type = RotatorType.YaesuGs232, AzimuthOnly = true }.IsAzimuthOnly);

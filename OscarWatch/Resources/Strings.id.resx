@@ -3632,7 +3632,7 @@ Lanjutkan?</value>
     <value>Parkir rotator setelah lintasan</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>Posisi parkir dipakai saat tidak ada satelit di atas ambang pelacakan. Lintasan terfokus atau satelit langsung dilacak otomatis. Parkir manual di jendela utama dan mode siaga tidak terpengaruh.</value>
+    <value>Posisi parkir dipakai saat tidak ada satelit di atas ambang pelacakan. Lintasan terfokus atau satelit langsung dilacak otomatis. Parkir manual di jendela utama dan mode siaga tidak terpengaruh. SPID Rot2Prog (serial atau MD-01 / MD-02) dapat parkir hingga -10°. Pengendali lain tetap di 0° atau lebih.</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>Offset kalibrasi (°)</value>

@@ -2098,7 +2098,7 @@
     <value>パス終了後にローテーターをパーク</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>追跡しきい値以上の衛星がないときにパーク位置を使用。フォーカスパスまたはライブ衛星を自動追跡します。メイン画面の手動パークとスタンバイモードは影響を受けません。</value>
+    <value>追跡しきい値以上の衛星がないときにパーク位置を使用。フォーカスパスまたはライブ衛星を自動追跡します。メイン画面の手動パークとスタンバイモードは影響を受けません。SPID Rot2Prog（シリアルまたは MD-01 / MD-02）は -10° までパークできます。その他のコントローラーは 0° 以上です。</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>キャリブレーションオフセット (°)</value>

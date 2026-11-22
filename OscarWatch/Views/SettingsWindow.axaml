@@ -1421,8 +1421,9 @@
               <StackPanel Grid.Column="1" Spacing="4"
                           IsVisible="{Binding ShowRotatorElevationSettings}">
                 <TextBlock Text="{loc:Localize Key=Settings.Rotator.ParkElevation}" />
-                <NumericUpDown Value="{Binding RotatorParkElevationDeg, Mode=TwoWay}"
-                               Minimum="0" Maximum="180"
+                <NumericUpDown Minimum="{Binding RotatorParkElevationMinimum}"
+                               Maximum="{Binding RotatorParkElevationMaximum}"
+                               Value="{Binding RotatorParkElevationDeg, Mode=TwoWay}"
                                Increment="1" FormatString="F0" />
               </StackPanel>
             </Grid>

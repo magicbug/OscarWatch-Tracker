@@ -3628,7 +3628,7 @@
     <value>过境结束后停靠旋转器</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>当没有卫星高于跟踪阈值时，使用停靠位置。自动跟踪聚焦的过境或实时卫星。主窗口的手动停靠和待机模式不受影响。</value>
+    <value>当没有卫星高于跟踪阈值时，使用停靠位置。自动跟踪聚焦的过境或实时卫星。主窗口的手动停靠和待机模式不受影响。SPID Rot2Prog（串口或 MD-01 / MD-02）可停靠至 -10°。其他控制器保持在 0° 或以上。</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>校准偏移量（°）</value>

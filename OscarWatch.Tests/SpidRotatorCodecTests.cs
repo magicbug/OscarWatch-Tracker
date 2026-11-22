@@ -29,6 +29,19 @@ public sealed class SpidRotatorCodecTests
     }
 
     [Fact]
+    public void BuildSetCommand_rot2_encodes_elevation_below_horizon()
+    {
+        Span<byte> packet = stackalloc byte[SpidRotatorCodec.CommandLength];
+        SpidRotatorCodec.BuildSetCommand(packet, 180, -10, pulsesPerDegree: 2, rot1Mode: false);
+
+        var encoded = (packet[6] - (byte)'0') * 1000
+            + (packet[7] - (byte)'0') * 100
+            + (packet[8] - (byte)'0') * 10
+            + (packet[9] - (byte)'0');
+        Assert.Equal(-10, encoded / 2.0 - 360.0);
+    }
+
+    [Fact]
     public void BuildSetCommand_rot1_encodes_whole_degrees()
     {
         Span<byte> packet = stackalloc byte[SpidRotatorCodec.CommandLength];

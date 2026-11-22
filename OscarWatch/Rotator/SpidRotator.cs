@@ -72,7 +72,8 @@ public sealed class SpidRotator : IRotatorDriver
         EnsureVariantDetected();
 
         var az = Math.Clamp(azimuthDeg, 0, settings.MaxAzimuthDeg);
-        var el = Math.Clamp(elevationDeg, 0, settings.MaxElevationDeg);
+        // Rot2Prog encodes elevation as 360 + degrees, so a park below the horizon is a normal command.
+        var el = Math.Clamp(elevationDeg, RotatorSettings.SpidMinElevationDeg, settings.MaxElevationDeg);
 
         _gate.Wait();
         try

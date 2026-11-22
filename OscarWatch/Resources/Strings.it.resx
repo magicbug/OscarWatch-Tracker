@@ -3632,7 +3632,7 @@ Continuare?</value>
     <value>Parcheggia il rotore dopo il passaggio</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>La posizione di parcheggio viene usata quando nessun satellite supera la soglia di inseguimento. Il passaggio selezionato o il satellite attivo viene seguito automaticamente. Il comando Parcheggia nella finestra principale e la modalità standby non sono interessati.</value>
+    <value>La posizione di parcheggio viene usata quando nessun satellite supera la soglia di inseguimento. Il passaggio selezionato o il satellite attivo viene seguito automaticamente. Il comando Parcheggia nella finestra principale e la modalità standby non sono interessati. SPID Rot2Prog (seriale o MD-01 / MD-02) può parcheggiare fino a -10°. Gli altri controller restano a 0° o oltre.</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>Offset di calibrazione (°)</value>

@@ -40,6 +40,22 @@ public sealed class SpidRotatorTests
     }
 
     [Fact]
+    public void SetPosition_sends_negative_elevation_down_to_the_spid_floor()
+    {
+        var transport = new QueuedRotatorSerialTransport();
+        transport.EnqueueRead(BuildRot2Status(0, 0, pulses: 2));
+
+        using var driver = new SpidRotator(transport);
+        driver.Open();
+
+        driver.SetPosition(15, -10, ClassicSettings);
+        Assert.Equal(-10, DecodeRot2SetElevation(transport.WrittenCommands[^1]));
+
+        driver.SetPosition(15, -40, ClassicSettings);
+        Assert.Equal(-10, DecodeRot2SetElevation(transport.WrittenCommands[^1]));
+    }
+
+    [Fact]
     public void Classic_SetPosition_does_not_wait_for_reply()
     {
         var transport = new QueuedRotatorSerialTransport();
@@ -218,6 +234,19 @@ public sealed class SpidRotatorTests
         Assert.IsType<SpidRotator>(driver);
     }
 
+    private static double DecodeRot2SetElevation(byte[] command)
+    {
+        Assert.Equal(SpidRotatorCodec.CommandLength, command.Length);
+        Assert.Equal(SpidRotatorCodec.CommandSet, command[11]);
+        var pulses = command[10];
+        Assert.True(pulses > 0);
+        var encoded = (command[6] - (byte)'0') * 1000
+            + (command[7] - (byte)'0') * 100
+            + (command[8] - (byte)'0') * 10
+            + (command[9] - (byte)'0');
+        return encoded / (double)pulses - 360.0;
+    }
+
     private static byte[] BuildRot2Status(double azDeg, double elDeg, int pulses)
     {
         var az = (int)Math.Round((360.0 + azDeg) * 10);
@@ -256,6 +285,7 @@ internal sealed class QueuedRotatorSerialTransport : IRotatorSerialTransport
     private bool _timeoutArmed;
 
     public int WriteCount { get; private set; }
+    public List<byte[]> WrittenCommands { get; } = [];
     public int UnreadByteCount => _pending.Count + _replyFrames.Sum(f => f?.Length ?? 0);
     public bool IsOpen { get; private set; }
     public bool DtrEnable { get; set; }
@@ -270,7 +300,13 @@ internal sealed class QueuedRotatorSerialTransport : IRotatorSerialTransport
 
     public void Write(string text) => ArmNextReply();
 
-    public void Write(byte[] buffer, int offset, int count) => ArmNextReply();
+    public void Write(byte[] buffer, int offset, int count)
+    {
+        var copy = new byte[count];
+        Buffer.BlockCopy(buffer, offset, copy, 0, count);
+        WrittenCommands.Add(copy);
+        ArmNextReply();
+    }
 
     public void DiscardInBuffer() => _pending.Clear();
 

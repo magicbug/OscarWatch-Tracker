@@ -3628,7 +3628,7 @@ Continuar?</value>
     <value>Estacionar rotor após a passagem</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>A posição de estacionamento é usada quando nenhum satélite está acima do limiar de rastreamento. A passagem focada ou o satélite ao vivo é rastreado automaticamente. Estacionamento manual na janela principal e modo standby não são afetados.</value>
+    <value>A posição de estacionamento é usada quando nenhum satélite está acima do limiar de rastreamento. A passagem focada ou o satélite ao vivo é rastreado automaticamente. Estacionamento manual na janela principal e modo standby não são afetados. O SPID Rot2Prog (serial ou MD-01 / MD-02) pode estacionar até -10°. Os outros controladores ficam em 0° ou acima.</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>Offsets de calibração (°)</value>

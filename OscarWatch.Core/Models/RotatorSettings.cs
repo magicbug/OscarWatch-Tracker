@@ -19,6 +19,13 @@ public sealed class RotatorSettings
     /// <summary>Default TCP port for <see cref="RotatorType.SpidMd01"/> Ethernet.</summary>
     public const int DefaultSpidMd01NetworkPort = 23;
 
+    /// <summary>
+    /// Lowest elevation a SPID Rot2Prog controller is commanded to.
+    /// AlfaSpid RAS heads tilt to about −10° so the antenna can park below the horizon.
+    /// Other protocols stay at 0°.
+    /// </summary>
+    public const double SpidMinElevationDeg = -10;
+
     public bool Enabled { get; set; }
     public RotatorType Type { get; set; } = RotatorType.YaesuGs232;
 
@@ -115,6 +122,17 @@ public sealed class RotatorSettings
 
     public double MaxAzimuthDeg => (double)AzimuthRange;
     public double MaxElevationDeg => (double)ElevationRange;
+
+    /// <summary>Lowest park elevation for this controller. SPID Rot2Prog can go below the horizon; other types stay at 0°.</summary>
+    public static double MinParkElevationDeg(RotatorType type) =>
+        type is RotatorType.Spid or RotatorType.SpidMd01 ? SpidMinElevationDeg : 0;
+
+    /// <summary>Park elevation limited to the controller floor and the selected elevation range.</summary>
+    public static double ClampParkElevationDeg(
+        RotatorType type,
+        RotatorElevationRange range,
+        double elevationDeg) =>
+        Math.Clamp(elevationDeg, MinParkElevationDeg(type), (double)range);
 
     /// <summary>True when the rotator has no elevation axis (GS-232 with <see cref="AzimuthOnly"/>).</summary>
     public bool IsAzimuthOnly => AzimuthOnly && Type == RotatorType.YaesuGs232;

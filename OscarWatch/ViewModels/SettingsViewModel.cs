@@ -317,6 +317,12 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     public bool IsRotatorSmartAzimuth450Enabled =>
         SelectedAzimuthRangeChoice?.Value == RotatorAzimuthRange.Deg450;
 
+    public double RotatorParkElevationMinimum =>
+        RotatorSettings.MinParkElevationDeg(SelectedRotatorTypeChoice?.Value ?? RotatorType.YaesuGs232);
+
+    public double RotatorParkElevationMaximum =>
+        (double)(SelectedElevationRangeChoice?.Value ?? RotatorElevationRange.Deg180);
+
     [ObservableProperty]
     private bool _rotatorAzimuthOnly;
 
@@ -1425,7 +1431,10 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             ElevationRange = SelectedElevationRangeChoice?.Value ?? RotatorElevationRange.Deg180,
             TrackStartElevationDeg = Math.Clamp(RotatorTrackStartElevationDeg, -90, 90),
             ParkAzimuthDeg = RotatorParkAzimuthDeg,
-            ParkElevationDeg = RotatorParkElevationDeg,
+            ParkElevationDeg = RotatorSettings.ClampParkElevationDeg(
+                SelectedRotatorTypeChoice?.Value ?? RotatorType.YaesuGs232,
+                SelectedElevationRangeChoice?.Value ?? RotatorElevationRange.Deg180,
+                RotatorParkElevationDeg),
             ParkAfterPass = RotatorParkAfterPass,
             AzimuthOffsetDeg = RotatorAzimuthOffsetDeg,
             ElevationOffsetDeg = RotatorElevationOffsetDeg,
@@ -1680,6 +1689,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             RotatorTrackStartElevationDeg = rotator.TrackStartElevationDeg;
             RotatorParkAzimuthDeg = rotator.ParkAzimuthDeg;
             RotatorParkElevationDeg = rotator.ParkElevationDeg;
+            ClampRotatorParkElevationToLimits();
             RotatorParkAfterPass = rotator.ParkAfterPass;
             RotatorAzimuthOffsetDeg = rotator.AzimuthOffsetDeg;
             RotatorElevationOffsetDeg = rotator.ElevationOffsetDeg;
@@ -2472,6 +2482,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
                 RotatorNetworkPort = RotatorSettings.DefaultNetworkPort;
         }
 
+        if (!_isSynchronizing)
+            ClampRotatorParkElevationToLimits();
+
         RefreshComPortConflictIfReady();
     }
 
@@ -2492,7 +2505,18 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ShowRotatorSpidMd01NetworkNote));
         OnPropertyChanged(nameof(ShowRotatorTcpSerialNetworkNote));
         OnPropertyChanged(nameof(RotatorTypeNote));
+        OnPropertyChanged(nameof(RotatorParkElevationMinimum));
         NotifyRotatorAzimuthOnlyVisibility();
+    }
+
+    private void ClampRotatorParkElevationToLimits()
+    {
+        var clamped = RotatorSettings.ClampParkElevationDeg(
+            SelectedRotatorTypeChoice?.Value ?? RotatorType.YaesuGs232,
+            SelectedElevationRangeChoice?.Value ?? RotatorElevationRange.Deg180,
+            RotatorParkElevationDeg);
+        if (clamped != RotatorParkElevationDeg)
+            RotatorParkElevationDeg = clamped;
     }
 
     private void NotifyRotatorAzimuthOnlyVisibility()
@@ -2523,8 +2547,11 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     partial void OnSelectedElevationRangeChoiceChanged(RotatorElevationOption? value)
     {
         OnPropertyChanged(nameof(IsRotatorKeyholeSettingsVisible));
+        OnPropertyChanged(nameof(RotatorParkElevationMaximum));
         if (value?.Value != RotatorElevationRange.Deg180)
             RotatorKeyholeAvoidanceEnabled = false;
+        if (!_isSynchronizing)
+            ClampRotatorParkElevationToLimits();
     }
 
     partial void OnRigEnabledChanged(bool value) => RefreshComPortConflictIfReady();

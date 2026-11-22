@@ -3632,7 +3632,7 @@ Fortfahren?</value>
     <value>Rotor nach Überflug parken</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>Die Parkposition gilt, wenn kein Satellit über dem Nachführ-Schwellwert liegt. Der fokussierte Überflug oder Live-Satellit wird automatisch nachgeführt. Manuelles Parken im Hauptfenster und der Bereitschaftsmodus bleiben unberührt.</value>
+    <value>Die Parkposition gilt, wenn kein Satellit über dem Nachführ-Schwellwert liegt. Der fokussierte Überflug oder Live-Satellit wird automatisch nachgeführt. Manuelles Parken im Hauptfenster und der Bereitschaftsmodus bleiben unberührt. SPID Rot2Prog (seriell oder MD-01 / MD-02) kann bis -10° parken. Andere Steuerungen bleiben bei 0° oder darüber.</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>Kalibrier-Offsets (°)</value>

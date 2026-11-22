@@ -371,6 +371,64 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
+    public void Rrr_then_our_73_logs_without_their_final_73()
+    {
+        // They confirmed the report with RRR. WSJT-X logs once we have sent 73.
+        // Their courtesy 73 is often lost as the satellite sets.
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        seq.StartAnswer(Msg("CQ WT0DX EM48"), oppositeEvenSlot: false);
+        Assert.False(seq.OnDecoded(Msg("MM9SQL WT0DX +06", snr: -4f)));
+        Assert.Equal("WT0DX MM9SQL R-04", seq.CurrentTxMessage);
+
+        Assert.False(seq.OnDecoded(Msg("MM9SQL WT0DX RRR")));
+        Assert.Equal("WT0DX MM9SQL 73", seq.CurrentTxMessage);
+        Assert.Equal(Ft4QsoPhase.InQso, seq.Phase);
+        Assert.True(seq.TransmitEnabled);
+
+        Assert.True(seq.OnTxCompleted());
+        Assert.True(seq.CanLog());
+        Assert.Equal(Ft4QsoPhase.Finished, seq.Phase);
+        Assert.False(seq.TransmitEnabled);
+        Assert.Equal("CQ MM9SQL IO85", seq.CurrentTxMessage);
+        Assert.Equal("+06", seq.ReportReceived);
+        Assert.Equal("-04", seq.ReportSent);
+    }
+
+    [Fact]
+    public void Rrr_after_our_rr73_logs_without_another_transmission()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        seq.StartCq(evenSlot: true);
+        seq.OnDecoded(Msg("MM9SQL G4ABC IO91"));
+        seq.OnDecoded(Msg("MM9SQL G4ABC R-08"));
+        Assert.Equal("G4ABC MM9SQL RR73", seq.CurrentTxMessage);
+        Assert.False(seq.OnTxCompleted());
+
+        Assert.True(seq.OnDecoded(Msg("MM9SQL G4ABC RRR")));
+        Assert.True(seq.CanLog());
+        Assert.Equal(Ft4QsoPhase.Finished, seq.Phase);
+        Assert.False(seq.TransmitEnabled);
+        Assert.Equal("CQ MM9SQL IO85", seq.CurrentTxMessage);
+    }
+
+    [Fact]
+    public void Rrr_before_both_reports_does_not_finish_the_contact()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => false);
+        seq.StartCq(evenSlot: true);
+        seq.OnDecoded(Msg("MM9SQL G4ABC IO91", snr: -6f));
+        Assert.Equal("-06", seq.ReportSent);
+        Assert.Null(seq.ReportReceived);
+
+        Assert.False(seq.OnDecoded(Msg("MM9SQL G4ABC RRR")));
+        Assert.Equal("G4ABC MM9SQL 73", seq.CurrentTxMessage);
+        Assert.False(seq.OnTxCompleted());
+        Assert.Equal(Ft4QsoPhase.InQso, seq.Phase);
+        Assert.True(seq.TransmitEnabled);
+        Assert.False(seq.CanLog());
+    }
+
+    [Fact]
     public void Answer_cq_then_their_report_then_roger_then_73()
     {
         // Standard answer path (WSJT-X style):

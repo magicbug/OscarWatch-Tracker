@@ -3628,7 +3628,7 @@ Continue?</value>
     <value>Park rotator after pass</value>
   </data>
   <data name="Settings.Rotator.ParkNote">
-    <value>Park position is used when no satellite is above the tracking threshold. The focused pass or live satellite is tracked automatically. Manual Park on the main window and standby mode are not affected.</value>
+    <value>Park position is used when no satellite is above the tracking threshold. The focused pass or live satellite is tracked automatically. Manual Park on the main window and standby mode are not affected. SPID Rot2Prog (serial or MD-01 / MD-02) can park down to -10°. Other controllers stay at 0° or above.</value>
   </data>
   <data name="Settings.Rotator.CalibrationOffsets">
     <value>Calibration offsets (°)</value>
