@@ -334,9 +334,11 @@
           <Border Background="{DynamicResource ThemeInsetBackgroundBrush}"
                   CornerRadius="4"
                   Padding="8,6"
-                  HorizontalAlignment="Left">
+                  HorizontalAlignment="Left"
+                  IsVisible="{Binding ShowAwardFields}">
             <StackPanel Orientation="Horizontal" Spacing="16">
-              <StackPanel Orientation="Horizontal" Spacing="6">
+              <StackPanel Orientation="Horizontal" Spacing="6"
+                          IsVisible="{Binding ShowPotaField}">
                 <TextBlock Text="{loc:Localize Key=Logbook.Refs.Pota.Short}"
                            VerticalAlignment="Center"
                            FontSize="12"
@@ -351,7 +353,8 @@
                                              ToolTip.Tip="{loc:Localize Key=Logbook.PotaRef.Hint}"
                                              KeyDown="OnEntryKeyDown" />
               </StackPanel>
-              <StackPanel Orientation="Horizontal" Spacing="6">
+              <StackPanel Orientation="Horizontal" Spacing="6"
+                          IsVisible="{Binding ShowSotaField}">
                 <TextBlock Text="{loc:Localize Key=Logbook.Refs.Sota.Short}"
                            VerticalAlignment="Center"
                            FontSize="12"
@@ -365,7 +368,8 @@
                                              ToolTip.Tip="{loc:Localize Key=Logbook.SotaRef.Hint}"
                                              KeyDown="OnEntryKeyDown" />
               </StackPanel>
-              <StackPanel Orientation="Horizontal" Spacing="6">
+              <StackPanel Orientation="Horizontal" Spacing="6"
+                          IsVisible="{Binding ShowWwffField}">
                 <TextBlock Text="{loc:Localize Key=Logbook.Refs.Wwff.Short}"
                            VerticalAlignment="Center"
                            FontSize="12"

@@ -38,6 +38,7 @@
         <SolidColorBrush x:Key="ThemeForegroundBrush" Color="#1A1A1A" />
         <SolidColorBrush x:Key="ThemeSecondaryForegroundBrush" Color="#525252" />
         <SolidColorBrush x:Key="ThemePlaceholderForegroundBrush" Color="#5C6370" />
+        <SolidColorBrush x:Key="ThemeExampleForegroundBrush" Color="#5C6370" />
         <x:Double x:Key="TextControlPlaceholderOpacity">1</x:Double>
         <SolidColorBrush x:Key="PassHighlightBrush" Color="#2B6E1F" />
         <SolidColorBrush x:Key="PassInProgressBackgroundBrush" Color="#E5F5E0" />

@@ -113,6 +113,15 @@ public partial class LogbookSettingsViewModel : ViewModelBase
     [ObservableProperty]
     private decimal? _wsjtxPort = WsjtxUdpSettings.DefaultPort;
 
+    [ObservableProperty]
+    private bool _showPotaField;
+
+    [ObservableProperty]
+    private bool _showSotaField;
+
+    [ObservableProperty]
+    private bool _showWwffField;
+
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorText);
 
     public bool HasStatus => !string.IsNullOrWhiteSpace(StatusText);
@@ -154,6 +163,11 @@ public partial class LogbookSettingsViewModel : ViewModelBase
         WsjtxHost = string.IsNullOrWhiteSpace(wsjtx.Host) ? WsjtxUdpSettings.DefaultHost : wsjtx.Host.Trim();
         WsjtxPort = WsjtxUdpSettings.IsValidPort(wsjtx.Port) ? wsjtx.Port : WsjtxUdpSettings.DefaultPort;
 
+        var awards = _settings.Current.QsoLogbook;
+        ShowPotaField = awards.ShowPotaField;
+        ShowSotaField = awards.ShowSotaField;
+        ShowWwffField = awards.ShowWwffField;
+
         LoadCwKeyer();
     }
 
@@ -172,7 +186,7 @@ public partial class LogbookSettingsViewModel : ViewModelBase
             StationProfiles.Clear();
             if (!result.Ok)
             {
-                ErrorText = result.ErrorMessage ?? _l.Get("Logbook.Settings.Cloudlog.LoadProfilesFailed");
+                StatusText = result.ErrorMessage ?? _l.Get("Logbook.Settings.Cloudlog.LoadProfilesFailed");
                 return;
             }
 
@@ -366,6 +380,9 @@ public partial class LogbookSettingsViewModel : ViewModelBase
             Password = HamQthPassword
         };
         SaveCwKeyer();
+        _settings.Current.QsoLogbook.ShowPotaField = ShowPotaField;
+        _settings.Current.QsoLogbook.ShowSotaField = ShowSotaField;
+        _settings.Current.QsoLogbook.ShowWwffField = ShowWwffField;
         _settings.Current.WsjtxUdp = wsjtx;
         _wsjtxUdp.ApplySettings(wsjtx);
         _settings.RequestSave();

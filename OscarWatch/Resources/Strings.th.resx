@@ -1985,7 +1985,7 @@ LOS: {2}
     <value>พาร์ค POTA</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>เช่น US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>พาร์คเดียว หรือหลายพาร์คคั่นด้วยจุลภาค เว้นว่างไว้หากไม่ได้ออกอากาศจากพาร์ค</value>
@@ -1994,7 +1994,7 @@ LOS: {2}
     <value>ยอดเขา SOTA</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>เช่น W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>เว้นว่างไว้หากไม่ได้ออกอากาศจากยอดเขา</value>
@@ -2003,10 +2003,28 @@ LOS: {2}
     <value>อ้างอิง WWFF</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>เช่น KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>เว้นว่างไว้หากไม่ได้ออกอากาศจากพื้นที่ WWFF</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>รางวัล</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>รหัสกิจกรรม</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>แสดง POTA, SOTA หรือ WWFF ในแถวบันทึก QSO เมื่อต้องการเปลี่ยนรหัสของรายการเดียว แต่ละช่องจะซ่อนไว้จนกว่าจะเปิด รายการใหม่ยังใช้รหัสที่บันทึกไว้ในสมุดบันทึก</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>แสดง POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>แสดง SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>แสดง WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>รหัสอ้างอิง POTA ไม่ถูกต้อง ใช้พาร์ค เช่น US-1356 หรือหลายพาร์คคั่นด้วยจุลภาค</value>

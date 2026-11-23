@@ -20,6 +20,15 @@ public sealed class QsoLogbookSettings
     public int? WindowX { get; set; }
 
     public int? WindowY { get; set; }
+
+    /// <summary>Show the POTA box on the QSO entry row. Off until the operator turns it on.</summary>
+    public bool ShowPotaField { get; set; }
+
+    /// <summary>Show the SOTA box on the QSO entry row. Off until the operator turns it on.</summary>
+    public bool ShowSotaField { get; set; }
+
+    /// <summary>Show the WWFF box on the QSO entry row. Off until the operator turns it on.</summary>
+    public bool ShowWwffField { get; set; }
 }
 
 public static class QsoLogbookWindowDefaults

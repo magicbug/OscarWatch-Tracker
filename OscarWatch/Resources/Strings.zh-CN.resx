@@ -1978,7 +1978,7 @@
     <value>POTA 公园</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>例如 US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>一个公园，或用逗号分隔多个。不进行公园活动时请留空。</value>
@@ -1987,7 +1987,7 @@
     <value>SOTA 山峰</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>例如 W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>不进行山峰活动时请留空。</value>
@@ -1996,10 +1996,28 @@
     <value>WWFF 参考编号</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>例如 KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>不进行 WWFF 活动时请留空。</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>奖项</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>活动参考编号</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>需要为单次联络更改参考编号时，在 QSO 输入行显示 POTA、SOTA 或 WWFF。每项在打开之前都保持隐藏。新联络仍使用日志中保存的参考编号。</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>显示 POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>显示 SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>显示 WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>POTA 参考编号无效。请使用公园编号，例如 US-1356，多个请用逗号分隔。</value>

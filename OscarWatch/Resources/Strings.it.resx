@@ -1985,7 +1985,7 @@ Continuare?</value>
     <value>Parco POTA</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>es. US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>Un parco, o più parchi separati da virgole. Lasciare vuoto se non si attiva un parco.</value>
@@ -1994,7 +1994,7 @@ Continuare?</value>
     <value>Vetta SOTA</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>es. W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>Lasciare vuoto se non si attiva una vetta.</value>
@@ -2003,10 +2003,28 @@ Continuare?</value>
     <value>Riferimento WWFF</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>es. KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>Lasciare vuoto se non si attiva un riferimento WWFF.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>Diplomi</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>Riferimenti di attivazione</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>Mostra POTA, SOTA o WWFF nella riga del QSO quando vuoi cambiare il riferimento di un contatto. Ogni casella resta nascosta finché non la attivi. Un contatto nuovo usa comunque i riferimenti salvati nel registro.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>Mostra POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>Mostra SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>Mostra WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>Il riferimento POTA non è valido. Usare un parco come US-1356, o più parchi separati da virgole.</value>

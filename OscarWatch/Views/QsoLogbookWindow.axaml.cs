@@ -209,6 +209,7 @@ public partial class QsoLogbookWindow : Window
             .ConfigureAwait(true);
 
         vm.ReloadCwKeyer();
+        vm.ReloadAwardFields();
         if (result is null)
             return;
 

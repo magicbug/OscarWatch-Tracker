@@ -1985,7 +1985,7 @@ Lanjutkan?</value>
     <value>Taman POTA</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>mis. US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>Satu taman, atau beberapa dipisahkan koma. Kosongkan jika tidak mengaktifkan taman.</value>
@@ -1994,7 +1994,7 @@ Lanjutkan?</value>
     <value>Puncak SOTA</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>mis. W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>Kosongkan jika tidak mengaktifkan puncak.</value>
@@ -2003,10 +2003,28 @@ Lanjutkan?</value>
     <value>Referensi WWFF</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>mis. KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>Kosongkan jika tidak mengaktifkan referensi WWFF.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>Penghargaan</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>Referensi aktivasi</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>Tampilkan POTA, SOTA, atau WWFF pada baris QSO bila Anda ingin mengubah referensi untuk satu kontak. Setiap kotak tetap tersembunyi sampai diaktifkan. Kontak baru tetap memakai referensi yang tersimpan pada buku log.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>Tampilkan POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>Tampilkan SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>Tampilkan WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>Referensi POTA tidak valid. Gunakan taman seperti US-1356, atau beberapa dipisahkan koma.</value>

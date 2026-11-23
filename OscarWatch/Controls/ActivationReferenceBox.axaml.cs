@@ -92,7 +92,8 @@ public partial class ActivationReferenceBox : UserControl
         }
         else if (change.Property == WatermarkProperty)
         {
-            Input.Watermark = change.GetNewValue<string?>();
+            Example.Text = change.GetNewValue<string?>();
+            UpdateExample();
         }
         else if (change.Property == SuggestionsProperty)
         {
@@ -106,6 +107,7 @@ public partial class ActivationReferenceBox : UserControl
         if (!string.Equals(typed, Text, StringComparison.Ordinal))
             SetCurrentValue(TextProperty, typed);
 
+        UpdateExample();
         if (_suppressPopup)
             return;
 
@@ -155,6 +157,9 @@ public partial class ActivationReferenceBox : UserControl
 
         Choose(entry);
     }
+
+    private void UpdateExample() =>
+        Example.IsVisible = string.IsNullOrEmpty(Input.Text);
 
     private void UpdatePopup()
     {

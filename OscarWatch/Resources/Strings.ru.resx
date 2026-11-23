@@ -1985,7 +1985,7 @@ LOS: {2}
     <value>Парк POTA</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>напр. US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>Один парк или несколько через запятую. Оставьте пустым, если парк не активируется.</value>
@@ -1994,7 +1994,7 @@ LOS: {2}
     <value>Вершина SOTA</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>напр. W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>Оставьте пустым, если вершина не активируется.</value>
@@ -2003,10 +2003,28 @@ LOS: {2}
     <value>Ссылка WWFF</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>напр. KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>Оставьте пустым, если ссылка WWFF не активируется.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>Дипломы</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>Референсы активации</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>Показывать POTA, SOTA или WWFF в строке QSO, когда нужно изменить референс одного контакта. Каждое поле скрыто, пока его не включить. Новый контакт по-прежнему берёт референсы, сохранённые в журнале.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>Показывать POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>Показывать SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>Показывать WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>Ссылка POTA недействительна. Укажите парк, например US-1356, или несколько через запятую.</value>

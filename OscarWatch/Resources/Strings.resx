@@ -1981,7 +1981,7 @@ Continue?</value>
     <value>POTA park</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>e.g. US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>One park, or several separated by commas. Leave blank if you are not activating a park.</value>
@@ -1990,7 +1990,7 @@ Continue?</value>
     <value>SOTA summit</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>e.g. W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>Leave blank if you are not activating a summit.</value>
@@ -1999,10 +1999,28 @@ Continue?</value>
     <value>WWFF reference</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>e.g. KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>Leave blank if you are not activating a WWFF reference.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>Awards</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>Award references</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>Show POTA, SOTA, or WWFF on the QSO entry row when you want to change the reference for one contact. Each box stays hidden until you turn it on. A new contact still uses the references saved on the logbook.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>Show POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>Show SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>Show WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>The POTA reference is not valid. Use a park such as US-1356, or several separated by commas.</value>

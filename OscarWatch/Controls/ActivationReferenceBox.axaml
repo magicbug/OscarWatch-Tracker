@@ -4,7 +4,14 @@
              x:Class="OscarWatch.Controls.ActivationReferenceBox">
   <Grid>
     <TextBox x:Name="Input"
-             MaxLength="80" />
+             MaxLength="80"
+             Padding="10,4,6,4" />
+    <TextBlock x:Name="Example"
+               IsHitTestVisible="False"
+               FontStyle="Italic"
+               VerticalAlignment="Center"
+               Margin="10,0,6,0"
+               Foreground="{DynamicResource ThemeExampleForegroundBrush}" />
     <Popup x:Name="Dropdown"
            PlacementTarget="{Binding #Input}"
            Placement="BottomEdgeAlignedLeft"

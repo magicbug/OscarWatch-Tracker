@@ -88,6 +88,7 @@ public partial class QsoLogbookViewModel : ViewModelBase, OscarWatch.Services.IC
         _cloudlogUpload.UploadStateChanged += OnCloudlogUploadStateChanged;
         _repository.QsosChanged += OnRepositoryQsosChanged;
         InitializeCwKeyer(cwKeyer);
+        ReloadAwardFields();
     }
 
     [ObservableProperty]
@@ -123,6 +124,30 @@ public partial class QsoLogbookViewModel : ViewModelBase, OscarWatch.Services.IC
     /// <summary>WWFF reference for this QSO. Defaults to the logbook's value.</summary>
     [ObservableProperty]
     private string _wwffRef = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowAwardFields))]
+    private bool _showPotaField;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowAwardFields))]
+    private bool _showSotaField;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowAwardFields))]
+    private bool _showWwffField;
+
+    /// <summary>True when at least one award box is switched on in logbook settings.</summary>
+    public bool ShowAwardFields => ShowPotaField || ShowSotaField || ShowWwffField;
+
+    /// <summary>Re-read which award boxes the entry row should show.</summary>
+    public void ReloadAwardFields()
+    {
+        var logbook = _settings.Current.QsoLogbook;
+        ShowPotaField = logbook.ShowPotaField;
+        ShowSotaField = logbook.ShowSotaField;
+        ShowWwffField = logbook.ShowWwffField;
+    }
 
     public ObservableCollection<ActivationDirectoryEntry> PotaSuggestions => _potaSuggestions.Items;
 

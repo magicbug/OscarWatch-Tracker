@@ -1985,7 +1985,7 @@ Fortfahren?</value>
     <value>POTA-Park</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>z. B. US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>Ein Park oder mehrere, durch Kommas getrennt. Leer lassen, wenn kein Park aktiviert wird.</value>
@@ -1994,7 +1994,7 @@ Fortfahren?</value>
     <value>SOTA-Gipfel</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>z. B. W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>Leer lassen, wenn kein Gipfel aktiviert wird.</value>
@@ -2003,10 +2003,28 @@ Fortfahren?</value>
     <value>WWFF-Referenz</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>z. B. KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>Leer lassen, wenn keine WWFF-Referenz aktiviert wird.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>Diplome</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>Aktivierungsreferenzen</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>POTA, SOTA oder WWFF in der QSO-Zeile anzeigen, wenn Sie die Referenz für einen Kontakt ändern möchten. Jedes Feld bleibt ausgeblendet, bis Sie es einschalten. Ein neuer Kontakt verwendet weiterhin die im Logbuch gespeicherten Referenzen.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>POTA anzeigen</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>SOTA anzeigen</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>WWFF anzeigen</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>Die POTA-Referenz ist ungültig. Verwenden Sie einen Park wie US-1356 oder mehrere, durch Kommas getrennt.</value>

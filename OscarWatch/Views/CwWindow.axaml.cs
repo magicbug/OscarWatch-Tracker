@@ -155,6 +155,7 @@ public partial class CwWindow : Window
 
         vm.CwKeyer.Reload();
         logbook.ReloadCwKeyer();
+        logbook.ReloadAwardFields();
         if (result is not null)
             await logbook.ApplyCloudlogSettingsAsync(result).ConfigureAwait(true);
     }

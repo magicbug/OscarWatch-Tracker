@@ -3460,7 +3460,7 @@
     <value>POTA パーク</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>例: US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>1 か所、またはカンマで区切って複数指定できます。パークを運用しない場合は空欄のままにしてください。</value>
@@ -3469,7 +3469,7 @@
     <value>SOTA サミット</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>例: W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>サミットを運用しない場合は空欄のままにしてください。</value>
@@ -3478,10 +3478,28 @@
     <value>WWFF リファレンス</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>例: KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>WWFF リファレンスを運用しない場合は空欄のままにしてください。</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>アワード</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>アクティベーション参照</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>1件の交信だけ参照を変えたいときに、QSO入力行へ POTA、SOTA、WWFF を表示します。各欄はオンにするまで隠れています。新しい交信には、ログブックに保存した参照がそのまま使われます。</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>POTA を表示</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>SOTA を表示</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>WWFF を表示</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>POTA リファレンスが正しくありません。US-1356 のようなパークを指定するか、カンマで区切って複数指定してください。</value>

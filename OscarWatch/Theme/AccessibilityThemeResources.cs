@@ -12,6 +12,8 @@ public static class AccessibilityThemeResources
     public const string ThemeForegroundKey = "ThemeForegroundBrush";
     public const string ThemeSecondaryForegroundKey = "ThemeSecondaryForegroundBrush";
     public const string ThemePlaceholderForegroundKey = "ThemePlaceholderForegroundBrush";
+    /// <summary>Award-box examples. Dimmer than a normal placeholder in dark mode, still readable on white.</summary>
+    public const string ThemeExampleForegroundKey = "ThemeExampleForegroundBrush";
     public const string PassHighlightKey = "PassHighlightBrush";
     public const string PassInProgressBackgroundKey = "PassInProgressBackgroundBrush";
     public const string PassRecordingBackgroundKey = "PassRecordingBackgroundBrush";
@@ -64,6 +66,8 @@ public static class AccessibilityThemeResources
             isDark ? Color.Parse("#C8CDD4") : Color.Parse("#525252"));
         resources[ThemePlaceholderForegroundKey] = new SolidColorBrush(
             isDark ? Color.Parse("#9CA3AF") : Color.Parse("#5C6370"));
+        resources[ThemeExampleForegroundKey] = new SolidColorBrush(
+            isDark ? Color.Parse("#6B7280") : Color.Parse("#5C6370"));
 
         // Fluent defaults are too faint on light backgrounds for labels, hints, and watermarks.
         resources["SystemControlForegroundBaseMediumBrush"] = resources[ThemeSecondaryForegroundKey];

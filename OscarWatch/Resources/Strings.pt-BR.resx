@@ -1978,7 +1978,7 @@ Continuar?</value>
     <value>Parque POTA</value>
   </data>
   <data name="Logbook.PotaRef.Watermark">
-    <value>US-1356</value>
+    <value>ex.: US-1356</value>
   </data>
   <data name="Logbook.PotaRef.Hint">
     <value>Um parque, ou vários separados por vírgula. Deixe em branco se não estiver ativando um parque.</value>
@@ -1987,7 +1987,7 @@ Continuar?</value>
     <value>Cume SOTA</value>
   </data>
   <data name="Logbook.SotaRef.Watermark">
-    <value>W3/SV-001</value>
+    <value>ex.: W3/SV-001</value>
   </data>
   <data name="Logbook.SotaRef.Hint">
     <value>Deixe em branco se não estiver ativando um cume.</value>
@@ -1996,10 +1996,28 @@ Continuar?</value>
     <value>Referência WWFF</value>
   </data>
   <data name="Logbook.WwffRef.Watermark">
-    <value>KFF-4655</value>
+    <value>ex.: KFF-4655</value>
   </data>
   <data name="Logbook.WwffRef.Hint">
     <value>Deixe em branco se não estiver ativando uma referência WWFF.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Tab">
+    <value>Diplomas</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Section">
+    <value>Referências de ativação</value>
+  </data>
+  <data name="Logbook.Settings.Awards.Intro">
+    <value>Mostre POTA, SOTA ou WWFF na linha do QSO quando quiser alterar a referência de um contato. Cada caixa fica oculta até você ativá-la. Um contato novo continua usando as referências salvas no livro.</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowPota">
+    <value>Mostrar POTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowSota">
+    <value>Mostrar SOTA</value>
+  </data>
+  <data name="Logbook.Settings.Awards.ShowWwff">
+    <value>Mostrar WWFF</value>
   </data>
   <data name="Logbook.Error.PotaRef">
     <value>A referência POTA não é válida. Use um parque como US-1356, ou vários separados por vírgula.</value>

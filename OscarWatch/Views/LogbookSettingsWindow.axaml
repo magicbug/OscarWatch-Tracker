@@ -17,10 +17,6 @@
                  TextWrapping="Wrap"
                  Foreground="#FFC07070"
                  IsVisible="{Binding HasError}" />
-      <TextBlock Text="{Binding StatusText}"
-                 TextWrapping="Wrap"
-                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                 IsVisible="{Binding HasStatus}" />
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
         <Button Content="{loc:Localize Key=Common.Cancel}"
                 Classes="dialog-footer"
@@ -117,6 +113,33 @@
                     Command="{Binding RetryFailedUploadsCommand}"
                     HorizontalAlignment="Left"
                     IsEnabled="{Binding CloudlogConfigured}" />
+            <TextBlock Text="{Binding StatusText}"
+                       TextWrapping="Wrap"
+                       FontSize="12"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                       IsVisible="{Binding HasStatus}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="{loc:Localize Key=Logbook.Settings.Awards.Tab}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="4,8,4,0">
+          <StackPanel Spacing="14" MaxWidth="480">
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Awards.Section}"
+                       FontWeight="SemiBold"
+                       FontSize="13" />
+            <TextBlock Text="{loc:Localize Key=Logbook.Settings.Awards.Intro}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+            <CheckBox Content="{loc:Localize Key=Logbook.Settings.Awards.ShowPota}"
+                      IsChecked="{Binding ShowPotaField, Mode=TwoWay}"
+                      AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Awards.ShowPota}" />
+            <CheckBox Content="{loc:Localize Key=Logbook.Settings.Awards.ShowSota}"
+                      IsChecked="{Binding ShowSotaField, Mode=TwoWay}"
+                      AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Awards.ShowSota}" />
+            <CheckBox Content="{loc:Localize Key=Logbook.Settings.Awards.ShowWwff}"
+                      IsChecked="{Binding ShowWwffField, Mode=TwoWay}"
+                      AutomationProperties.Name="{loc:Localize Key=Logbook.Settings.Awards.ShowWwff}" />
           </StackPanel>
         </ScrollViewer>
       </TabItem>
