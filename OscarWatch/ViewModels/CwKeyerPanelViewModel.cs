@@ -74,8 +74,6 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private bool _showCwKeyer;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(StopCwCommand))]
-    [NotifyCanExecuteChangedFor(nameof(AlignUplinkCommand))]
     private bool _cwSending;
 
     [ObservableProperty]
@@ -85,17 +83,25 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private string _statusText = "";
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AlignUplinkCommand))]
     private bool _keyboardOpen;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(AlignUplinkCommand))]
-    [NotifyCanExecuteChangedFor(nameof(StopCwCommand))]
     private bool _isAligning;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(UndoAlignCommand))]
     private bool _canUndoAlign;
+
+    /// <summary>
+    /// Align can be started. Bound as <c>IsEnabled</c> on every copy of the strip.
+    /// Avalonia requeries <c>ICommand.CanExecute</c> on the button that ran the command,
+    /// so the other window kept an enabled Align button after a click in this one.
+    /// </summary>
+    [ObservableProperty]
+    private bool _alignEnabled;
+
+    /// <summary>Stop can abort a message, the keyboard, or an alignment. Bound as <c>IsEnabled</c>.</summary>
+    [ObservableProperty]
+    private bool _stopEnabled;
 
     [ObservableProperty]
     private string _alignButtonToolTip = "";
@@ -219,11 +225,12 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         return true;
     }
 
-    private bool CanStopCw() => CwSending || IsAligning;
-
-    [RelayCommand(CanExecute = nameof(CanStopCw))]
+    [RelayCommand]
     private void StopCw()
     {
+        if (!StopEnabled)
+            return;
+
         if (IsAligning && _uplinkAlign is not null)
         {
             _uplinkAlign.Abort(_l.Get("Logbook.Cw.Align.Status.Aborted"));
@@ -254,21 +261,22 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         && !KeyboardOpen
         && _alignRefusal == CwAlignRefusalReason.None;
 
-    [RelayCommand(CanExecute = nameof(CanAlignUplink))]
+    [RelayCommand]
     private void AlignUplink()
     {
-        if (_uplinkAlign is null)
+        if (!CanAlignUplink())
             return;
 
         SetActiveCwSlot(-1);
-        _uplinkAlign.Start();
+        _uplinkAlign?.Start();
     }
 
-    private bool CanExecuteUndoAlign() => CanUndoAlign;
-
-    [RelayCommand(CanExecute = nameof(CanExecuteUndoAlign))]
+    [RelayCommand]
     private void UndoAlign()
     {
+        if (!CanUndoAlign)
+            return;
+
         _uplinkAlign?.Undo();
     }
 
@@ -712,7 +720,7 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
             CanUndoAlign = false;
             AlignButtonToolTip = "";
             UndoAlignToolTip = "";
-            AlignUplinkCommand.NotifyCanExecuteChanged();
+            UpdateStripButtons();
             return;
         }
 
@@ -742,9 +750,20 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
             ? _l.Get("Logbook.Cw.Align.Undo.Tip", CwUplinkAlignService.FormatSignedHz(undo.AppliedDeltaHz))
             : "";
 
-        AlignUplinkCommand.NotifyCanExecuteChanged();
-        UndoAlignCommand.NotifyCanExecuteChanged();
-        StopCwCommand.NotifyCanExecuteChanged();
+        UpdateStripButtons();
+    }
+
+    partial void OnCwSendingChanged(bool value) => UpdateStripButtons();
+
+    partial void OnKeyboardOpenChanged(bool value) => UpdateStripButtons();
+
+    partial void OnIsAligningChanged(bool value) => UpdateStripButtons();
+
+    /// <summary>Push enabled state to every open strip. See <see cref="AlignEnabled"/>.</summary>
+    private void UpdateStripButtons()
+    {
+        AlignEnabled = CanAlignUplink();
+        StopEnabled = CwSending || IsAligning;
     }
 }
 

@@ -155,6 +155,8 @@ public sealed class CwUplinkAlignServiceTests
         Assert.True(harness.Align.Start());
         Assert.Equal(CwAlignState.Sending, harness.Align.State);
         Assert.True(panel.IsAligning);
+        Assert.False(panel.AlignEnabled);
+        Assert.True(panel.StopEnabled);
 
         // Escape aborts immediately and leaves key up.
         Assert.True(panel.TryHandleCwEscape());
