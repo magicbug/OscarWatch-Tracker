@@ -3,9 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using OscarWatch.Core.CwDecode;
-using OscarWatch.Core.Models;
 using OscarWatch.Cw;
 using OscarWatch.Localization;
 using OscarWatch.ViewModels;
@@ -24,6 +22,7 @@ public partial class CwWindow : Window
         Closed += OnClosed;
         Waterfall.TuneRequested += (_, hz) => (DataContext as CwViewModel)?.TuneTo(hz);
         Waterfall.TuneResetRequested += (_, _) => (DataContext as CwViewModel)?.ResetTuning();
+        WaterfallSplitter.DragCompleted += (_, _) => PersistWaterfallHeight();
         CopyScroller.AddHandler(PointerWheelChangedEvent, OnCopyWheel, RoutingStrategies.Tunnel);
         // Tunnel so a focused control cannot take the macro keys first (same as the logbook).
         AddHandler(KeyDownEvent, OnWindowKeyDown, RoutingStrategies.Tunnel);
@@ -102,9 +101,9 @@ public partial class CwWindow : Window
             Height = Math.Max(MinHeight, size.Height);
         }
 
+        CopyLayout.RowDefinitions[0].Height = new GridLength(vm.SavedWaterfallHeight);
         vm.CopyAppended += OnCopyAppended;
         vm.SaveCopyRequested = SaveCopyAsync;
-        vm.CwKeyer.EditMessagesRequested += OnEditMessagesRequested;
         vm.OnWindowOpened();
     }
 
@@ -114,10 +113,19 @@ public partial class CwWindow : Window
             return;
 
         vm.CopyAppended -= OnCopyAppended;
-        vm.CwKeyer.EditMessagesRequested -= OnEditMessagesRequested;
         vm.SaveCopyRequested = null;
+        PersistWaterfallHeight();
         vm.SavedWindowSize = (Width, Height);
         vm.OnWindowClosed();
+    }
+
+    private void PersistWaterfallHeight()
+    {
+        if (DataContext is not CwViewModel vm)
+            return;
+
+        var row = CopyLayout.RowDefinitions[0];
+        vm.SavedWaterfallHeight = row.ActualHeight > 0 ? row.ActualHeight : row.Height.Value;
     }
 
     /// <summary>Keep the newest copy in view, unless the operator has scrolled back to read.</summary>
@@ -133,31 +141,6 @@ public partial class CwWindow : Window
     {
         if (DataContext is CwViewModel vm && sender is Button { DataContext: CwCopyLink link })
             vm.SendToLogbook(link);
-    }
-
-    private async void OnEditMessagesRequested(object? sender, EventArgs e)
-    {
-        if (DataContext is not CwViewModel vm)
-            return;
-
-        var logbook = App.Services.GetRequiredService<OscarWatch.Services.QsoLogbookEntryBridge>().Attached;
-        if (logbook?.SelectedLogbook is null)
-        {
-            vm.CwKeyer.StatusText = LocalizationService.Instance.Get("Logbook.Cw.Status.OpenLogbookToEdit");
-            return;
-        }
-
-        var settingsVm = App.Services.GetRequiredService<LogbookSettingsViewModel>();
-        settingsVm.LoadForLogbook(logbook.SelectedLogbook);
-        var dialog = new LogbookSettingsWindow { DataContext = settingsVm };
-        dialog.Opened += (_, _) => dialog.SelectCwKeyerTab();
-        var result = await dialog.ShowDialog<QsoLogbookCloudlogSettingsRequest?>(this).ConfigureAwait(true);
-
-        vm.CwKeyer.Reload();
-        logbook.ReloadCwKeyer();
-        logbook.ReloadAwardFields();
-        if (result is not null)
-            await logbook.ApplyCloudlogSettingsAsync(result).ConfigureAwait(true);
     }
 
     private async void OnSettingsClick(object? sender, RoutedEventArgs e)

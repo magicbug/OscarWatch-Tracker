@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -185,7 +185,11 @@
     <value>45°</value>
   </data>
   <data name="Main.Timeline.PassTooltip">
-    <value>{0}&#10;升起：{1} UTC&#10;落下：{2} UTC&#10;最大仰角：{3}&#10;持续时间：{4}</value>
+    <value>{0}
+升起：{1} UTC
+落下：{2} UTC
+最大仰角：{3}
+持续时间：{4}</value>
   </data>
   <data name="Main.Timeline.TimeAxisUtc">
     <value>UTC</value>
@@ -952,7 +956,7 @@
     <value>{0} | 0 已启用 — 卫星菜单 → 选择卫星</value>
   </data>
   <data name="Status.NoTle">
-    <value>无 TLE 数据 - 请检查 设置 -> TLE，或使用 卫星 -> 刷新 TLE</value>
+    <value>无 TLE 数据 - 请检查 设置 -&gt; TLE，或使用 卫星 -&gt; 刷新 TLE</value>
   </data>
   <data name="Status.RecordingsFolderFailed">
     <value>无法打开 _recordings 文件夹</value>
@@ -1003,7 +1007,7 @@
     <value>TLE 未加载</value>
   </data>
   <data name="Status.LineNoSatellites">
-    <value>{0} | 已启用 0 颗 - 卫星菜单 -> 启用一些卫星</value>
+    <value>{0} | 已启用 0 颗 - 卫星菜单 -&gt; 启用一些卫星</value>
   </data>
   <data name="Status.CloudlogError">
     <value>Cloudlog：{0}</value>
@@ -2980,7 +2984,7 @@
     <value>TLE 更新</value>
   </data>
   <data name="Settings.Tle.UpdatesNote">
-    <value>自动下载仅适用于 OscarWatch 和自定义 URL。当您保存设置或选择卫星 -> 刷新 TLE 时，将重新读取本地文件。</value>
+    <value>自动下载仅适用于 OscarWatch 和自定义 URL。当您保存设置或选择卫星 -&gt; 刷新 TLE 时，将重新读取本地文件。</value>
   </data>
   <data name="Settings.Tle.ElementAge">
     <value>当 TLE 至少达到此天数时发出警告</value>
@@ -4398,7 +4402,7 @@
   <data name="Mutual.OpenVisualizer">
     <value>打开可视化</value>
   </data>
-    <data name="Mutual.Visualizer.DoubleClickHint">
+  <data name="Mutual.Visualizer.DoubleClickHint">
     <value>双击一条过境记录以打开双向过境可视化。右键可查看更多选项。</value>
   </data>
   <data name="Mutual.Copy.Title">
@@ -4507,7 +4511,7 @@
     <value>选择卫星并单击“预测”。</value>
   </data>
   <data name="Sunlight.Status.NoSatellites">
-    <value>没有已启用的卫星 - 请先使用 卫星 -> 选择卫星。</value>
+    <value>没有已启用的卫星 - 请先使用 卫星 -&gt; 选择卫星。</value>
   </data>
   <data name="Sunlight.Status.Computing">
     <value>正在计算 {0} 的日照情况…</value>
@@ -5676,7 +5680,6 @@
   <data name="Ft4.Status.PounceInvalid">
     <value>“{0}”不是呼号或网格。</value>
   </data>
-
   <data name="Menu.Tools.Terminal">
     <value>OscarWatch 终端(_T)</value>
   </data>
@@ -6970,9 +6973,6 @@
   <data name="Logbook.Cw.EditMessages">
     <value>编辑消息</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>打开日志设置以更改 CW 消息</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>键盘</value>
   </data>
@@ -7123,14 +7123,8 @@
   <data name="Cw.Waterfall.Tip">
     <value>0 至 2000 Hz 的音频。解码器读取阴影频带。点击 CW 轨迹即可解码，右键单击可将频带复位到 400 至 1200 Hz。黄线标出最强的稳定音调。</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>单击带下划线的呼号或网格定位，或按 Enter 或空格键，即可填入日志的录入表单。添加 QSO 之前不会记录任何内容。</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>最新的字符，解码器仍可能修改。</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>抄收文本比信号滞后约 2 秒。</value>
   </data>
   <data name="Cw.Tone">
     <value>音调 {0:0} Hz</value>
@@ -7257,18 +7251,6 @@
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>在 CW 窗口中，也可以在文本上按住 Ctrl 并滚动鼠标滚轮，或按 Ctrl 加上加号或减号。Ctrl+0 恢复默认大小。</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>新呼号</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>新网格</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>已通联</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>你的呼号</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>新呼号：不在你的任何日志中。</value>

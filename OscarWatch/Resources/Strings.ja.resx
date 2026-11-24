@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -167,7 +167,11 @@
     <value>45°</value>
   </data>
   <data name="Main.Timeline.PassTooltip">
-    <value>{0}&#10;AOS: {1} UTC&#10;LOS: {2} UTC&#10;最大仰角: {3}&#10;継続時間: {4}</value>
+    <value>{0}
+AOS: {1} UTC
+LOS: {2} UTC
+最大仰角: {3}
+継続時間: {4}</value>
   </data>
   <data name="Main.Timeline.TimeAxisUtc">
     <value>UTC</value>
@@ -5676,7 +5680,6 @@
   <data name="Ft4.Status.PounceInvalid">
     <value>「{0}」はコールサインでもグリッドでもありません。</value>
   </data>
-
   <data name="Menu.Tools.Terminal">
     <value>OscarWatch ターミナル(_T)</value>
   </data>
@@ -6970,9 +6973,6 @@
   <data name="Logbook.Cw.EditMessages">
     <value>メッセージを編集</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>ログブック設定を開いて CW メッセージを変更します</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>キーボード</value>
   </data>
@@ -7123,14 +7123,8 @@
   <data name="Cw.Waterfall.Tip">
     <value>0 から 2000 Hz までの音声です。デコーダーは網掛けの帯域を読みます。CW の軌跡をクリックするとそれを解読し、右クリックで帯域を 400 から 1200 Hz に戻します。黄色の線は最も強い安定した音を示します。</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>下線付きのコールサインとロケーターは、クリック、または Enter かスペースでログブックの入力欄に入ります。QSO を追加するまで何も記録されません。</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>最新の文字です。デコーダーがまだ変更する可能性があります。</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>テキストは信号より約 2 秒遅れて表示されます。</value>
   </data>
   <data name="Cw.Tone">
     <value>音 {0:0} Hz</value>
@@ -7257,18 +7251,6 @@
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>CW ウィンドウでは、テキストの上で Ctrl を押しながらマウスホイールを回すか、Ctrl とプラスまたはマイナスを押しても変更できます。Ctrl+0 で既定のサイズに戻ります。</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>新しいコール</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>新しいグリッド</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>交信済み</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>自局のコール</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>新しいコール: どのログブックにもありません。</value>

@@ -136,6 +136,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanStart))]
+    [NotifyPropertyChangedFor(nameof(ListenButtonText))]
     [NotifyCanExecuteChangedFor(nameof(StartCommand), nameof(StopCommand))]
     private bool _isRunning;
 
@@ -151,6 +152,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     private string _pendingText = "";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasTelemetry))]
     private string _toneText = "";
 
     /// <summary>True when the strongest note is outside the band the model reads.</summary>
@@ -158,6 +160,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     private bool _toneOutOfBand;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasTelemetry))]
     private string _dopplerText = "";
 
     [ObservableProperty]
@@ -209,11 +212,19 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
     /// <summary>Measured sending speed, or empty when none is heard.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasTelemetry))]
     private string _speedText = "";
 
     public bool CanStart => !IsRunning;
 
-    public string LagText => _l.Get("Cw.Lag");
+    /// <summary>Start while stopped, Stop while listening.</summary>
+    public string ListenButtonText => _l.Get(IsRunning ? "Cw.Stop" : "Cw.Start");
+
+    /// <summary>True when the status strip has a note, speed or Doppler reading to show.</summary>
+    public bool HasTelemetry =>
+        !string.IsNullOrEmpty(ToneText)
+        || !string.IsNullOrEmpty(SpeedText)
+        || !string.IsNullOrEmpty(DopplerText);
 
     public (double Width, double Height)? SavedWindowSize
     {
@@ -228,6 +239,23 @@ public partial class CwViewModel : ViewModelBase, IDisposable
                 return;
             _settings.Current.CwDecoder.WindowWidth = (int)Math.Round(size.Width);
             _settings.Current.CwDecoder.WindowHeight = (int)Math.Round(size.Height);
+        }
+    }
+
+    /// <summary>Height of the waterfall panel, restored when the window opens.</summary>
+    public double SavedWaterfallHeight
+    {
+        get
+        {
+            var height = _settings.Current.CwDecoder.WaterfallHeight;
+            return height is { } h
+                ? CwDecodeSettings.ClampWaterfallHeight(h)
+                : CwDecodeSettings.DefaultWaterfallHeight;
+        }
+        set
+        {
+            _settings.Current.CwDecoder.WaterfallHeight = CwDecodeSettings.ClampWaterfallHeight(value);
+            _settings.RequestSave();
         }
     }
 
@@ -263,6 +291,15 @@ public partial class CwViewModel : ViewModelBase, IDisposable
 
     [RelayCommand(CanExecute = nameof(CanStart))]
     private void Start() => StartSession(automatic: false);
+
+    [RelayCommand]
+    private void ToggleListen()
+    {
+        if (IsRunning)
+            Stop();
+        else
+            Start();
+    }
 
     private void StartSession(bool automatic)
     {

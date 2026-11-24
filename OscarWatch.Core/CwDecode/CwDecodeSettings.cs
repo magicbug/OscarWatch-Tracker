@@ -31,11 +31,23 @@ public sealed class CwDecodeSettings
     public const double MaxCopyFontSize = 40;
     public const double DefaultCopyFontSize = 16;
 
+    public const int MinWaterfallHeight = 80;
+    public const int MaxWaterfallHeight = 300;
+    public const int DefaultWaterfallHeight = 120;
+
     /// <summary>Text size of the decoded copy, in pixels.</summary>
     public double CopyFontSize { get; set; } = DefaultCopyFontSize;
 
     public static double ClampCopyFontSize(double size) =>
         double.IsFinite(size) ? Math.Clamp(Math.Round(size), MinCopyFontSize, MaxCopyFontSize) : DefaultCopyFontSize;
+
+    /// <summary>Height of the waterfall panel in the CW window, in pixels.</summary>
+    public int? WaterfallHeight { get; set; }
+
+    public static int ClampWaterfallHeight(double height) =>
+        double.IsFinite(height)
+            ? (int)Math.Clamp(Math.Round(height), MinWaterfallHeight, MaxWaterfallHeight)
+            : DefaultWaterfallHeight;
 
     public int? WindowWidth { get; set; }
     public int? WindowHeight { get; set; }
@@ -46,5 +58,7 @@ public sealed class CwDecodeSettings
         InputDeviceDisplayName ??= "";
         AutoStartElevationDeg = SstvSettings.ClampAutoStartElevationDeg(AutoStartElevationDeg);
         CopyFontSize = ClampCopyFontSize(CopyFontSize);
+        if (WaterfallHeight is { } height)
+            WaterfallHeight = ClampWaterfallHeight(height);
     }
 }

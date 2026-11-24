@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -6973,9 +6973,6 @@ Ultima versione: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages">
     <value>Modifica messaggi</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>Apri le impostazioni del logbook per modificare i messaggi CW</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>Tastiera</value>
   </data>
@@ -7126,14 +7123,8 @@ Ultima versione: {1} ({2})</value>
   <data name="Cw.Waterfall.Tip">
     <value>Audio da 0 a 2000 Hz. Il decodificatore legge la banda ombreggiata. Fai clic su una traccia CW per decodificarla, o clic destro per riportare la banda a 400-1200 Hz. La linea gialla indica la nota stabile più forte.</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>Nominativi e locatori sottolineati passano nel modulo del registro con un clic, oppure con Invio o Spazio. Non viene registrato nulla finché non aggiungi il QSO.</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>Le lettere più recenti. Il decodificatore può ancora cambiarle.</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>Il testo segue il segnale con circa 2 s di ritardo.</value>
   </data>
   <data name="Cw.Tone">
     <value>Nota {0:0} Hz</value>
@@ -7260,18 +7251,6 @@ Ultima versione: {1} ({2})</value>
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>Nella finestra CW puoi anche tenere premuto Ctrl e ruotare la rotellina del mouse sul testo, oppure premere Ctrl con più o meno. Ctrl+0 torna alla dimensione predefinita.</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>Nominativo nuovo</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>Locatore nuovo</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>Già collegato</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>Il tuo nominativo</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>Nominativo nuovo: non è in nessuno dei tuoi log.</value>

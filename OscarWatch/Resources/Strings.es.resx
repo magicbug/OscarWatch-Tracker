@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -185,7 +185,11 @@
     <value>45°</value>
   </data>
   <data name="Main.Timeline.PassTooltip">
-    <value>{0}&#10;AOS: {1} UTC&#10;LOS: {2} UTC&#10;Elevación máx.: {3}&#10;Duración: {4}</value>
+    <value>{0}
+AOS: {1} UTC
+LOS: {2} UTC
+Elevación máx.: {3}
+Duración: {4}</value>
   </data>
   <data name="Main.Timeline.TimeAxisUtc">
     <value>UTC</value>
@@ -6969,9 +6973,6 @@ Está utilizando la versión {0}.
   <data name="Logbook.Cw.EditMessages">
     <value>Editar mensajes</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>Abrir la configuración del libro de guardia para cambiar los mensajes CW</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>Teclado</value>
   </data>
@@ -7122,14 +7123,8 @@ Está utilizando la versión {0}.
   <data name="Cw.Waterfall.Tip">
     <value>Audio de 0 a 2000 Hz. El decodificador lee la banda sombreada. Haz clic en una traza CW para decodificarla, o clic derecho para devolver la banda a 400 a 1200 Hz. La línea amarilla marca la nota estable más fuerte.</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>Los indicativos y localizadores subrayados pasan al formulario del libro de guardia al hacer clic, o con Intro o Espacio. No se registra nada hasta que añadas el QSO.</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>Las letras más recientes. El decodificador aún puede cambiarlas.</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>El texto va unos 2 s por detrás de la señal.</value>
   </data>
   <data name="Cw.Tone">
     <value>Nota {0:0} Hz</value>
@@ -7256,18 +7251,6 @@ Está utilizando la versión {0}.
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>En la ventana CW también puedes mantener Ctrl y girar la rueda del ratón sobre el texto, o pulsar Ctrl con más o menos. Ctrl+0 vuelve al tamaño predeterminado.</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>Indicativo nuevo</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>Cuadrícula nueva</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>Ya trabajado</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>Tu indicativo</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>Indicativo nuevo: no está en ninguno de tus libros de guardia.</value>

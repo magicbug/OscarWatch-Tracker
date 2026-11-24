@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -5680,7 +5680,6 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.Status.PounceInvalid">
     <value>"{0}" bukan callsign atau grid.</value>
   </data>
-
   <data name="Menu.Tools.Terminal">
     <value>OscarWatch _Terminal</value>
   </data>
@@ -6974,9 +6973,6 @@ Terbaru: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages">
     <value>Edit pesan</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>Buka pengaturan Logbook untuk mengubah pesan CW</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>Keyboard</value>
   </data>
@@ -7127,14 +7123,8 @@ Terbaru: {1} ({2})</value>
   <data name="Cw.Waterfall.Tip">
     <value>Audio dari 0 hingga 2000 Hz. Dekoder membaca pita berarsir. Klik jejak CW untuk mendekodenya, atau klik kanan untuk mengembalikan pita ke 400 hingga 1200 Hz. Garis kuning menandai nada stabil terkuat.</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>Tanda panggil dan lokator yang bergaris bawah masuk ke formulir isian logbook saat diklik, atau dengan Enter atau Spasi. Tidak ada yang dicatat sampai Anda menambahkan QSO.</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>Huruf terbaru. Dekoder masih bisa mengubahnya.</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>Salinan tertinggal sekitar 2 detik dari sinyal.</value>
   </data>
   <data name="Cw.Tone">
     <value>Nada {0:0} Hz</value>
@@ -7261,18 +7251,6 @@ Terbaru: {1} ({2})</value>
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>Di jendela CW Anda juga dapat menahan Ctrl dan memutar roda tetikus di atas salinan, atau menekan Ctrl dengan plus atau minus. Ctrl+0 kembali ke ukuran bawaan.</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>Callsign baru</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>Grid baru</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>Pernah dikontak</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>Callsign Anda</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>Callsign baru: tidak ada di logbook mana pun.</value>

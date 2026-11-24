@@ -24,4 +24,24 @@ public sealed class CwDecodeSettingsTests
 
         Assert.Equal(expected, settings.CopyFontSize);
     }
+
+    [Theory]
+    [InlineData(0, CwDecodeSettings.MinWaterfallHeight)]
+    [InlineData(500, CwDecodeSettings.MaxWaterfallHeight)]
+    [InlineData(150.4, 150)]
+    [InlineData(double.NaN, CwDecodeSettings.DefaultWaterfallHeight)]
+    public void ClampWaterfallHeightKeepsThePanelInRange(double saved, int expected)
+    {
+        Assert.Equal(expected, CwDecodeSettings.ClampWaterfallHeight(saved));
+    }
+
+    [Fact]
+    public void NormaliseKeepsASavedWaterfallHeightInRange()
+    {
+        var settings = new CwDecodeSettings { WaterfallHeight = 40 };
+
+        settings.Normalise();
+
+        Assert.Equal(CwDecodeSettings.MinWaterfallHeight, settings.WaterfallHeight);
+    }
 }

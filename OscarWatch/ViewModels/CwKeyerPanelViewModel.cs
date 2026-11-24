@@ -66,6 +66,9 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
 
     public ObservableCollection<CwMacroButtonViewModel> CwButtons { get; } = [];
 
+    /// <summary>Macro buttons that have a message. Empty slots stay off the strip.</summary>
+    public ObservableCollection<CwMacroButtonViewModel> VisibleCwButtons { get; } = [];
+
     public int CwMinWpm => CwKeyerSettings.MinWpm;
 
     public int CwMaxWpm => CwKeyerSettings.MaxWpm;
@@ -80,7 +83,11 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
     private decimal? _cwWpm = CwKeyerSettings.DefaultWpm;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasStatusText))]
     private string _statusText = "";
+
+    /// <summary>True when the strip should show the status line under the buttons.</summary>
+    public bool HasStatusText => !string.IsNullOrWhiteSpace(StatusText);
 
     [ObservableProperty]
     private bool _keyboardOpen;
@@ -108,9 +115,6 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
 
     [ObservableProperty]
     private string _undoAlignToolTip = "";
-
-    /// <summary>Raised when the operator asks to edit messages and a logbook is already open.</summary>
-    public event EventHandler? EditMessagesRequested;
 
     /// <summary>A window started showing the strip.</summary>
     public void AttachHost(CwKeyerHost host)
@@ -145,12 +149,23 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         for (var i = 0; i < CwButtons.Count; i++)
             CwButtons[i].Load(cw.Messages[i]);
 
+        RebuildVisibleButtons();
         _suppressCwWpmSave = true;
         CwWpm = cw.Wpm;
         _suppressCwWpmSave = false;
         _cwKeyer.SetWpm(cw.Wpm);
         _cwKeyer.ReleaseUnusedPort();
         Refresh(_tracker.GetCurrent());
+    }
+
+    private void RebuildVisibleButtons()
+    {
+        VisibleCwButtons.Clear();
+        foreach (var button in CwButtons)
+        {
+            if (button.HasMessage)
+                VisibleCwButtons.Add(button);
+        }
     }
 
     /// <summary>Update visibility and button tooltips from the live station mode and entry form.</summary>
@@ -280,17 +295,18 @@ public sealed partial class CwKeyerPanelViewModel : ObservableObject
         _uplinkAlign?.Undo();
     }
 
-    [RelayCommand]
-    private void EditMessages()
+    /// <summary>
+    /// True when a logbook is open and messages can be edited. Otherwise asks the operator
+    /// to open the logbook first.
+    /// </summary>
+    public bool TryBeginEditMessages()
     {
-        if (_entryBridge.Attached is null)
-        {
-            StatusText = _l.Get("Logbook.Cw.Status.OpenLogbookToEdit");
-            _entryBridge.RequestOpen();
-            return;
-        }
+        if (_entryBridge.Attached is not null)
+            return true;
 
-        EditMessagesRequested?.Invoke(this, EventArgs.Empty);
+        StatusText = _l.Get("Logbook.Cw.Status.OpenLogbookToEdit");
+        _entryBridge.RequestOpen();
+        return false;
     }
 
     /// <summary>Open or close the keyboard from the strip button.</summary>

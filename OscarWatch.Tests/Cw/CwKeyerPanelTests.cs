@@ -127,6 +127,37 @@ public sealed class CwKeyerPanelTests
     }
 
     [Fact]
+    public void Visible_buttons_exclude_empty_slots_and_reload_updates_them()
+    {
+        var tracker = new FakeTracker("CW");
+        using var harness = Create(tracker);
+
+        Assert.Equal(12, harness.Panel.CwButtons.Count);
+        Assert.All(harness.Panel.VisibleCwButtons, b => Assert.True(b.HasMessage));
+        Assert.Equal(
+            harness.Panel.CwButtons.Count(b => b.HasMessage),
+            harness.Panel.VisibleCwButtons.Count);
+
+        harness.Settings.Current.QsoLogbook.CwKeyer.Messages[0].Text = "";
+        harness.Settings.Current.QsoLogbook.CwKeyer.Messages[0].Label = "";
+        harness.Panel.Reload();
+
+        Assert.DoesNotContain(harness.Panel.VisibleCwButtons, b => b.Slot == 0);
+        Assert.True(harness.Panel.TryHandleCwFunctionKey(0));
+        Assert.False(harness.Panel.CwSending);
+    }
+
+    [Fact]
+    public void Try_begin_edit_messages_asks_for_the_logbook_when_it_is_closed()
+    {
+        var tracker = new FakeTracker("CW");
+        using var harness = Create(tracker);
+
+        Assert.False(harness.Panel.TryBeginEditMessages());
+        Assert.Contains("logbook", harness.Panel.StatusText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void Function_key_during_keyboard_session_appends_instead_of_replacing()
     {
         var tracker = new FakeTracker("CW");

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -5680,7 +5680,6 @@ LOS: {2}
   <data name="Ft4.Status.PounceInvalid">
     <value>«{0}» не является позывным или квадратом.</value>
   </data>
-
   <data name="Menu.Tools.Terminal">
     <value>OscarWatch _Терминал</value>
   </data>
@@ -6974,9 +6973,6 @@ LOS: {2}
   <data name="Logbook.Cw.EditMessages">
     <value>Изменить сообщения</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>Открыть настройки журнала, чтобы изменить сообщения CW</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>Клавиатура</value>
   </data>
@@ -7127,14 +7123,8 @@ LOS: {2}
   <data name="Cw.Waterfall.Tip">
     <value>Звук от 0 до 2000 Гц. Декодер читает затенённую полосу. Щёлкните след CW, чтобы декодировать его, или правой кнопкой, чтобы вернуть полосу на 400–1200 Гц. Жёлтая линия отмечает самый сильный устойчивый тон.</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>Подчёркнутые позывные и локаторы попадают в форму журнала по щелчку, клавише Enter или пробелу. Ничего не записывается, пока вы не добавите QSO.</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>Самые новые знаки. Декодер ещё может их изменить.</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>Текст отстаёт от сигнала примерно на 2 с.</value>
   </data>
   <data name="Cw.Tone">
     <value>Тон {0:0} Гц</value>
@@ -7261,18 +7251,6 @@ LOS: {2}
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>В окне CW можно также удерживать Ctrl и вращать колесо мыши над текстом или нажимать Ctrl с плюсом или минусом. Ctrl+0 возвращает размер по умолчанию.</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>Новый позывной</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>Новый квадрат</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>Уже проведена связь</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>Ваш позывной</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>Новый позывной: нет ни в одном из ваших журналов.</value>

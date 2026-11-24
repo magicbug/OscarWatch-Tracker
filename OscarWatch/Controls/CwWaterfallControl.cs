@@ -63,7 +63,7 @@ public sealed class CwWaterfallControl : Control
 
     public CwWaterfallControl()
     {
-        MinHeight = 80;
+        MinHeight = 64;
         ClipToBounds = true;
         Cursor = new Cursor(StandardCursorType.Cross);
     }

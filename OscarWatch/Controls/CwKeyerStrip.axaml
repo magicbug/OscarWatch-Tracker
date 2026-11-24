@@ -26,15 +26,27 @@
 
   <Border Classes="cw-keyer-panel"
           Padding="6">
+    <Border.ContextMenu>
+      <ContextMenu>
+        <MenuItem Header="{loc:Localize Key=Logbook.Cw.EditMessages}"
+                  Click="OnEditMessagesClick" />
+      </ContextMenu>
+    </Border.ContextMenu>
     <DockPanel>
       <TextBlock DockPanel.Dock="Bottom"
                  Text="{Binding StatusText}"
                  FontSize="12"
                  TextWrapping="Wrap"
-                 Margin="0,6,0,0"
-                 IsVisible="{Binding $parent[controls:CwKeyerStrip].ShowStatus}" />
-      <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
-        <ItemsControl Grid.Column="0" ItemsSource="{Binding CwButtons}">
+                 Margin="0,6,0,0">
+        <TextBlock.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="$parent[controls:CwKeyerStrip].ShowStatus" />
+            <Binding Path="HasStatusText" />
+          </MultiBinding>
+        </TextBlock.IsVisible>
+      </TextBlock>
+      <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="8">
+        <ItemsControl Grid.Column="0" ItemsSource="{Binding VisibleCwButtons}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
               <UniformGrid Rows="1" />
@@ -49,6 +61,12 @@
                       ToolTip.Tip="{Binding ToolTip}"
                       ToolTip.ShowOnDisabled="True"
                       AutomationProperties.Name="{Binding ToolTip}">
+                <Button.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="{loc:Localize Key=Logbook.Cw.EditMessages}"
+                              Click="OnEditMessagesClick" />
+                  </ContextMenu>
+                </Button.ContextMenu>
                 <StackPanel>
                   <TextBlock Text="{Binding KeyName}"
                              FontSize="10"
@@ -106,7 +124,7 @@
           <NumericUpDown Value="{Binding CwWpm, Mode=TwoWay}"
                          Minimum="5" Maximum="60" Increment="1"
                          FormatString="0"
-                         Width="110"
+                         Width="92"
                          AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.WpmToolTip}" />
           <TextBlock Text="{loc:Localize Key=Logbook.Cw.Wpm}"
                      VerticalAlignment="Center"
@@ -119,14 +137,6 @@
                 VerticalAlignment="Stretch"
                 VerticalContentAlignment="Center"
                 ToolTip.Tip="{loc:Localize Key=Logbook.Cw.Keyboard.Tip}" />
-        <Button Grid.Column="5"
-                Content="{loc:Localize Key=Logbook.Cw.EditMessages}"
-                Command="{Binding EditMessagesCommand}"
-                Focusable="False"
-                VerticalAlignment="Stretch"
-                VerticalContentAlignment="Center"
-                IsVisible="{Binding $parent[controls:CwKeyerStrip].ShowEditMessages}"
-                ToolTip.Tip="{loc:Localize Key=Logbook.Cw.EditMessages.Tip}" />
       </Grid>
     </DockPanel>
   </Border>

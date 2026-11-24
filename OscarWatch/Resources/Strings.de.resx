@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -5680,7 +5680,6 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.Status.PounceInvalid">
     <value>„{0}“ ist weder ein Rufzeichen noch ein Locator.</value>
   </data>
-
   <data name="Menu.Tools.Terminal">
     <value>OscarWatch _Terminal</value>
   </data>
@@ -6974,9 +6973,6 @@ Aktuell: {1} ({2})</value>
   <data name="Logbook.Cw.EditMessages">
     <value>Nachrichten bearbeiten</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>Logbuch-Einstellungen öffnen, um die CW-Nachrichten zu ändern</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>Tastatur</value>
   </data>
@@ -7127,14 +7123,8 @@ Aktuell: {1} ({2})</value>
   <data name="Cw.Waterfall.Tip">
     <value>Audio von 0 bis 2000 Hz. Der Dekoder liest den schattierten Bereich. Klicken Sie auf eine CW-Spur, um sie zu dekodieren, oder mit der rechten Maustaste, um den Bereich auf 400 bis 1200 Hz zurückzusetzen. Die gelbe Linie markiert den stärksten gleichmäßigen Ton.</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>Unterstrichene Rufzeichen und Locator gelangen per Klick, Eingabe oder Leertaste in das Eingabeformular des Logbuchs. Geloggt wird erst, wenn Sie das QSO hinzufügen.</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>Die neuesten Zeichen. Der Decoder kann sie noch ändern.</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>Die Mitschrift läuft etwa 2 s hinter dem Signal.</value>
   </data>
   <data name="Cw.Tone">
     <value>Ton {0:0} Hz</value>
@@ -7261,18 +7251,6 @@ Aktuell: {1} ({2})</value>
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>Im CW-Fenster können Sie auch Strg gedrückt halten und über der Mitschrift das Mausrad drehen oder Strg mit Plus oder Minus drücken. Strg+0 stellt die Standardgröße wieder her.</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>Neues Rufzeichen</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>Neues Feld</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>Schon gearbeitet</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>Ihr Rufzeichen</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>Neues Rufzeichen: in keinem Ihrer Logbücher.</value>

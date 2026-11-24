@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -5680,7 +5680,6 @@ LOS: {2}
   <data name="Ft4.Status.PounceInvalid">
     <value>"{0}" ไม่ใช่สัญญาณเรียกขานหรือกริด</value>
   </data>
-
   <data name="Menu.Tools.Terminal">
     <value>OscarWatch _Terminal</value>
   </data>
@@ -6974,9 +6973,6 @@ LOS: {2}
   <data name="Logbook.Cw.EditMessages">
     <value>แก้ไขข้อความ</value>
   </data>
-  <data name="Logbook.Cw.EditMessages.Tip">
-    <value>เปิดการตั้งค่าสมุดบันทึกเพื่อเปลี่ยนข้อความ CW</value>
-  </data>
   <data name="Logbook.Cw.Keyboard">
     <value>แป้นพิมพ์</value>
   </data>
@@ -7127,14 +7123,8 @@ LOS: {2}
   <data name="Cw.Waterfall.Tip">
     <value>เสียงตั้งแต่ 0 ถึง 2000 Hz ตัวถอดรหัสอ่านแถบที่แรเงา คลิกเส้น CW เพื่อถอดรหัส หรือคลิกขวาเพื่อคืนแถบกลับไปที่ 400 ถึง 1200 Hz เส้นสีเหลืองแสดงโน้ตคงที่ที่แรงที่สุด</value>
   </data>
-  <data name="Cw.Copy.Hint">
-    <value>สัญญาณเรียกขานและโลเคเตอร์ที่ขีดเส้นใต้จะถูกใส่ลงในแบบฟอร์มของสมุดบันทึกเมื่อคลิก หรือกด Enter หรือ Space จะยังไม่มีการบันทึกจนกว่าคุณจะเพิ่ม QSO</value>
-  </data>
   <data name="Cw.Pending.Tip">
     <value>ตัวอักษรล่าสุด ตัวถอดรหัสอาจยังเปลี่ยนแปลงได้</value>
-  </data>
-  <data name="Cw.Lag">
-    <value>ข้อความจะช้ากว่าสัญญาณประมาณ 2 วินาที</value>
   </data>
   <data name="Cw.Tone">
     <value>เสียง {0:0} Hz</value>
@@ -7261,18 +7251,6 @@ LOS: {2}
   </data>
   <data name="Cw.CopyFontSize.Tip">
     <value>ในหน้าต่าง CW คุณยังกด Ctrl ค้างไว้แล้วหมุนล้อเมาส์เหนือข้อความ หรือกด Ctrl พร้อมบวกหรือลบได้ Ctrl+0 จะกลับไปใช้ขนาดเริ่มต้น</value>
-  </data>
-  <data name="Cw.Legend.NewCall">
-    <value>สัญญาณเรียกขานใหม่</value>
-  </data>
-  <data name="Cw.Legend.NewGrid">
-    <value>กริดใหม่</value>
-  </data>
-  <data name="Cw.Legend.Worked">
-    <value>เคยติดต่อแล้ว</value>
-  </data>
-  <data name="Cw.Legend.You">
-    <value>สัญญาณเรียกขานของคุณ</value>
   </data>
   <data name="Cw.Worked.NewCall">
     <value>สัญญาณเรียกขานใหม่: ไม่มีในสมุดบันทึกใดของคุณ</value>
