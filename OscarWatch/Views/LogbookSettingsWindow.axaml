@@ -255,7 +255,7 @@
           </StackPanel>
         </ScrollViewer>
       </TabItem>
-      <TabItem Header="{loc:Localize Key=Logbook.Settings.Cw.Tab}">
+      <TabItem x:Name="CwKeyerTab" Header="{loc:Localize Key=Logbook.Settings.Cw.Tab}">
         <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="4,8,4,0">
           <StackPanel Spacing="14" MaxWidth="560">
             <TextBlock Text="{loc:Localize Key=Logbook.Settings.Cw.Section}"
@@ -359,6 +359,21 @@
                              Width="120"
                              AutomationProperties.Name="{loc:Localize Key=Cw.Align.MaxDuration}" />
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{loc:Localize Key=Cw.Align.MaxCorrection}"
+                         VerticalAlignment="Center" />
+              <NumericUpDown Value="{Binding CwAlignMaxCorrectionHz, Mode=TwoWay}"
+                             Minimum="{Binding CwMinAlignMaxCorrectionHz}"
+                             Maximum="{Binding CwMaxAlignMaxCorrectionHz}"
+                             Increment="50"
+                             FormatString="0"
+                             Width="120"
+                             AutomationProperties.Name="{loc:Localize Key=Cw.Align.MaxCorrection}" />
+            </StackPanel>
+            <TextBlock Text="{loc:Localize Key=Cw.Align.MaxCorrection.Tip}"
+                       TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
             <TextBlock Text="{loc:Localize Key=Cw.Align.SafetyNote}"
                        TextWrapping="Wrap"
                        FontSize="11"

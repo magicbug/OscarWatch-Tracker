@@ -7237,11 +7237,26 @@
   <data name="Cw.FollowNote.Tip">
     <value>将最靠近阴影频带中心的稳定音调保持在中央，避免多普勒漂移把它带出频带。点击瀑布图上的轨迹可解码其他信号，右键单击可将频带复位。</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>隐藏噪声产生的零散字母</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>丢弃模型不确定的一两个字母的单词。这些在通联间隙几乎都是噪声。像 K 这样有把握的短词会保留。</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximum TX offset change (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Drops short words the model is unsure of. Normal hides one- and two-letter noise. Strict needs higher confidence before a short word is kept.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Strict</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Abort Align if the TX offset would move by more than this. Keeps a wrong echo from walking the transmitter too far on a linear transponder.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Off</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Noise filter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>显示</value>

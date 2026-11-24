@@ -7237,11 +7237,26 @@ Aktuell: {1} ({2})</value>
   <data name="Cw.FollowNote.Tip">
     <value>Hält den gleichmäßigen Ton, der der Mitte des schattierten Bereichs am nächsten ist, in der Mitte, damit ihn die Doppler-Drift nicht hinausträgt. Klicken Sie im Wasserfall auf eine Spur, um ein anderes Signal zu dekodieren; Rechtsklick setzt den Bereich zurück.</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>Einzelne Zeichen aus dem Rauschen ausblenden</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>Verwirft Wörter aus einem oder zwei Zeichen, bei denen sich das Modell unsicher ist. Das ist zwischen den Durchgängen fast immer Rauschen. Sichere kurze Wörter wie K bleiben.</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximale TX-Offset-Änderung (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Blendet kurze Wörter aus, bei denen das Modell unsicher ist. Normal entfernt ein- und zweibuchstabiges Rauschen. Streng verlangt höhere Sicherheit, bevor ein kurzes Wort bleibt.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Streng</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Align abbrechen, wenn sich der TX-Offset um mehr als diesen Wert bewegen würde. Verhindert, dass ein falsches Echo den Sender auf einem Lineartransponder zu weit verschiebt.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Aus</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Rauschfilter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>Anzeige</value>

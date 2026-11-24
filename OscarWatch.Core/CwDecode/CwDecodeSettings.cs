@@ -16,8 +16,18 @@ public sealed class CwDecodeSettings
     /// </summary>
     public bool CatDopplerFeedForward { get; set; } = true;
 
-    /// <summary>Hide one- and two-letter words the model is unsure of, which are almost always noise.</summary>
+    /// <summary>
+    /// Legacy on/off for older settings files. Prefer <see cref="SquelchMode"/>.
+    /// Kept so a saved false still maps to Off when SquelchMode is missing.
+    /// </summary>
     public bool SquelchNoise { get; set; } = true;
+
+    /// <summary>How aggressively short unsure letters are hidden. Null means use <see cref="SquelchNoise"/>.</summary>
+    public CwNoiseSquelchMode? SquelchMode { get; set; }
+
+    /// <summary>Resolved noise filter after bridging the legacy checkbox.</summary>
+    public CwNoiseSquelchMode EffectiveSquelchMode =>
+        SquelchMode ?? (SquelchNoise ? CwNoiseSquelchMode.Normal : CwNoiseSquelchMode.Off);
 
     /// <summary>Keep the steady note nearest the decode band centred as it drifts.</summary>
     public bool FollowNote { get; set; } = true;
@@ -60,5 +70,11 @@ public sealed class CwDecodeSettings
         CopyFontSize = ClampCopyFontSize(CopyFontSize);
         if (WaterfallHeight is { } height)
             WaterfallHeight = ClampWaterfallHeight(height);
+
+        var mode = EffectiveSquelchMode;
+        if (!Enum.IsDefined(mode))
+            mode = CwNoiseSquelchMode.Normal;
+        SquelchMode = mode;
+        SquelchNoise = mode != CwNoiseSquelchMode.Off;
     }
 }

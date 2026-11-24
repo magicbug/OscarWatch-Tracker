@@ -7237,11 +7237,26 @@ LOS: {2} UTC
   <data name="Cw.FollowNote.Tip">
     <value>網掛けの帯域の中央に最も近い安定した音を中央に保ち、ドップラーのずれで帯域から外れないようにします。ウォーターフォールの別の軌跡をクリックするとその信号を解読し、右クリックで帯域を元に戻します。</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>ノイズによる余分な文字を隠す</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>モデルが確信できない 1 文字または 2 文字の語を取り除きます。送信の合間に出るこれらはほぼ必ずノイズです。K のような確かな短い語は残ります。</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximum TX offset change (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Drops short words the model is unsure of. Normal hides one- and two-letter noise. Strict needs higher confidence before a short word is kept.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Strict</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Abort Align if the TX offset would move by more than this. Keeps a wrong echo from walking the transmitter too far on a linear transponder.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Off</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Noise filter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>表示</value>

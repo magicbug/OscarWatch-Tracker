@@ -25,13 +25,8 @@
   </UserControl.Styles>
 
   <Border Classes="cw-keyer-panel"
-          Padding="6">
-    <Border.ContextMenu>
-      <ContextMenu>
-        <MenuItem Header="{loc:Localize Key=Logbook.Cw.EditMessages}"
-                  Click="OnEditMessagesClick" />
-      </ContextMenu>
-    </Border.ContextMenu>
+          Padding="6"
+          PointerPressed="OnEditMessagesPointerPressed">
     <DockPanel>
       <TextBlock DockPanel.Dock="Bottom"
                  Text="{Binding StatusText}"
@@ -58,15 +53,10 @@
                       Classes.cw-active="{Binding IsActive}"
                       Command="{Binding SendCommand}"
                       Focusable="False"
+                      PointerPressed="OnEditMessagesPointerPressed"
                       ToolTip.Tip="{Binding ToolTip}"
                       ToolTip.ShowOnDisabled="True"
                       AutomationProperties.Name="{Binding ToolTip}">
-                <Button.ContextMenu>
-                  <ContextMenu>
-                    <MenuItem Header="{loc:Localize Key=Logbook.Cw.EditMessages}"
-                              Click="OnEditMessagesClick" />
-                  </ContextMenu>
-                </Button.ContextMenu>
                 <StackPanel>
                   <TextBlock Text="{Binding KeyName}"
                              FontSize="10"

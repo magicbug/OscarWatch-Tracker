@@ -7237,11 +7237,26 @@ LOS: {2}
   <data name="Cw.FollowNote.Tip">
     <value>รักษาโน้ตที่คงที่ซึ่งใกล้กลางแถบแรเงาที่สุดให้อยู่ตรงกลาง เพื่อไม่ให้การเลื่อนดอปเปลอร์พามันออกนอกแถบ คลิกเส้นบนวอเตอร์ฟอลเพื่อถอดรหัสสัญญาณอื่น คลิกขวาเพื่อคืนแถบกลับที่เดิม</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>ซ่อนตัวอักษรหลงจากสัญญาณรบกวน</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>ตัดคำที่มีหนึ่งหรือสองตัวอักษรซึ่งโมเดลไม่มั่นใจออก คำเหล่านี้แทบทั้งหมดคือสัญญาณรบกวนระหว่างการส่ง คำสั้นที่มั่นใจ เช่น K จะยังคงอยู่</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximum TX offset change (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Drops short words the model is unsure of. Normal hides one- and two-letter noise. Strict needs higher confidence before a short word is kept.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Strict</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Abort Align if the TX offset would move by more than this. Keeps a wrong echo from walking the transmitter too far on a linear transponder.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Off</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Noise filter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>การแสดงผล</value>

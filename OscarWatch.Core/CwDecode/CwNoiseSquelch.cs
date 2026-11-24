@@ -3,19 +3,39 @@ using System.Text;
 namespace OscarWatch.Core.CwDecode;
 
 /// <summary>
-/// Drops the stray letters the model reads out of noise: words of one or two letters where no
-/// letter is confident. A short weak word at the end of a step is held until the next step shows
+/// Drops the stray letters the model reads out of noise: short words where no letter is
+/// confident. A short weak word at the end of a step is held until the next step shows
 /// whether it carries on into a longer word.
 /// </summary>
 public sealed class CwNoiseSquelch
 {
-    public const int MaxNoiseWordLength = 2;
-    public const float MinWordConfidence = 0.7f;
+    public const int NormalMaxNoiseWordLength = 2;
+    public const float NormalMinWordConfidence = 0.7f;
+    public const int StrictMaxNoiseWordLength = 2;
+    public const float StrictMinWordConfidence = 0.85f;
+
+    /// <summary>Kept for older tests and callers that still name the Normal thresholds.</summary>
+    public const int MaxNoiseWordLength = NormalMaxNoiseWordLength;
+    public const float MinWordConfidence = NormalMinWordConfidence;
 
     private string _heldText = "";
     private float[] _heldConfidence = [];
     /// <summary>The last text let through ended inside a word that more letters may join.</summary>
     private bool _insideWord;
+
+    public CwNoiseSquelchMode Mode { get; set; } = CwNoiseSquelchMode.Normal;
+
+    public static int MaxWordLength(CwNoiseSquelchMode mode) => mode switch
+    {
+        CwNoiseSquelchMode.Strict => StrictMaxNoiseWordLength,
+        _ => NormalMaxNoiseWordLength,
+    };
+
+    public static float MinConfidence(CwNoiseSquelchMode mode) => mode switch
+    {
+        CwNoiseSquelchMode.Strict => StrictMinWordConfidence,
+        _ => NormalMinWordConfidence,
+    };
 
     /// <summary>
     /// Settled text from one decode step, with a confidence per character (1 for spaces).
@@ -23,6 +43,11 @@ public sealed class CwNoiseSquelch
     /// </summary>
     public string Process(string text, ReadOnlySpan<float> confidence)
     {
+        if (Mode == CwNoiseSquelchMode.Off)
+            return text;
+
+        var maxLength = MaxWordLength(Mode);
+        var minConfidence = MinConfidence(Mode);
         var combined = _heldText + text;
         var scores = new float[combined.Length];
         _heldConfidence.CopyTo(scores, 0);
@@ -54,8 +79,8 @@ public sealed class CwNoiseSquelch
 
             var continues = wordStart == 0 && startsInsideWord;
             var isNoise = !continues
-                && wordEnd - wordStart <= MaxNoiseWordLength
-                && best < MinWordConfidence;
+                && wordEnd - wordStart <= maxLength
+                && best < minConfidence;
             var atEnd = wordEnd == combined.Length;
 
             if (isNoise && atEnd)
@@ -87,11 +112,14 @@ public sealed class CwNoiseSquelch
     }
 
     /// <summary>True when <paramref name="pending"/> is only a short word the model is unsure of.</summary>
-    public static bool IsLikelyNoise(CwLaneText pending)
+    public static bool IsLikelyNoise(CwLaneText pending, CwNoiseSquelchMode mode = CwNoiseSquelchMode.Normal)
     {
-        var text = pending.Text.Trim();
-        if (text.Length is 0 or > MaxNoiseWordLength || text.Contains(' '))
+        if (mode == CwNoiseSquelchMode.Off)
             return false;
-        return pending.Confidence is { Length: > 0 } c && c.Max() < MinWordConfidence;
+
+        var text = pending.Text.Trim();
+        if (text.Length is 0 || text.Length > MaxWordLength(mode) || text.Contains(' '))
+            return false;
+        return pending.Confidence is { Length: > 0 } c && c.Max() < MinConfidence(mode);
     }
 }

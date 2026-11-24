@@ -7237,11 +7237,26 @@ Está utilizando la versión {0}.
   <data name="Cw.FollowNote.Tip">
     <value>Mantiene en el centro la nota estable más cercana al centro de la banda sombreada, para que la deriva Doppler no la saque. Haz clic en una traza de la cascada para decodificar otra señal; clic derecho para devolver la banda.</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>Ocultar letras sueltas del ruido</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>Descarta palabras de una o dos letras de las que el modelo no está seguro. Casi siempre son ruido entre cambios. Las palabras cortas seguras, como K, se mantienen.</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Cambio máximo del desfase TX (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Omite palabras cortas de las que el modelo no está seguro. Normal oculta ruido de una o dos letras. Estricto exige más confianza antes de conservar una palabra corta.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Estricto</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Aborta Align si el desfase TX se movería más de este valor. Evita que un eco incorrecto desplace demasiado el transmisor en un transpondedor lineal.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Desactivado</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Filtro de ruido</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>Pantalla</value>

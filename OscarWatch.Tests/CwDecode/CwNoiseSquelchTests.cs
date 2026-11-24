@@ -76,5 +76,14 @@ public sealed class CwNoiseSquelchTests
         Assert.True(CwNoiseSquelch.IsLikelyNoise(new CwLaneText("S", true, [0.4f])));
         Assert.False(CwNoiseSquelch.IsLikelyNoise(new CwLaneText("S", true, [0.9f])));
         Assert.False(CwNoiseSquelch.IsLikelyNoise(new CwLaneText("CQ DE", false, [0.3f, 0.3f, 1, 0.3f, 0.3f])));
+        Assert.False(CwNoiseSquelch.IsLikelyNoise(new CwLaneText("S", true, [0.4f]), CwNoiseSquelchMode.Off));
+    }
+
+    [Fact]
+    public void StrictModeNeedsHigherConfidenceForShortWords()
+    {
+        Assert.Equal("", new CwNoiseSquelch { Mode = CwNoiseSquelchMode.Strict }.Process("K", [0.75f]));
+        Assert.Equal("K", new CwNoiseSquelch { Mode = CwNoiseSquelchMode.Normal }.Process("K", [0.75f]));
+        Assert.Equal("K", new CwNoiseSquelch { Mode = CwNoiseSquelchMode.Strict }.Process("K", [0.9f]));
     }
 }

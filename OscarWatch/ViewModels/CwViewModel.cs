@@ -81,8 +81,9 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _cwKeyer = cwKeyer;
 
         var s = _settings.Current.CwDecoder;
+        s.Normalise();
         _catDopplerFeedForward = s.CatDopplerFeedForward;
-        _squelchNoise = s.SquelchNoise;
+        _squelch.Mode = s.EffectiveSquelchMode;
         _followNote = s.FollowNote;
         _copyFontSize = CwDecodeSettings.ClampCopyFontSize(s.CopyFontSize);
         _autoStartEnabled = s.AutoStartEnabled;
@@ -90,9 +91,17 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         var cwKeyerSettings = _settings.Current.QsoLogbook.CwKeyer;
         _alignTargetPitchHz = CwKeyerSettings.ClampAlignTargetPitchHz(cwKeyerSettings.AlignTargetPitchHz);
         _alignMaxDurationSeconds = CwKeyerSettings.ClampAlignDurationSeconds(cwKeyerSettings.AlignMaxDurationSeconds);
+        _alignMaxCorrectionHz = CwKeyerSettings.ClampAlignMaxCorrectionHz(cwKeyerSettings.AlignMaxCorrectionHz);
 
         Copy = new CwCopyLog(CreateWord);
         _statusText = _l.Get("Cw.Status.Idle");
+        SquelchModeOptions =
+        [
+            BuildSquelchModeOption(CwNoiseSquelchMode.Off),
+            BuildSquelchModeOption(CwNoiseSquelchMode.Normal),
+            BuildSquelchModeOption(CwNoiseSquelchMode.Strict),
+        ];
+        _selectedSquelchMode = SquelchModeOptions.First(o => o.Mode == s.EffectiveSquelchMode);
         RefreshInputDevices();
 
         _receiver.TextDecoded += OnTextDecoded;
@@ -177,9 +186,11 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private float[]? _spectrum;
 
-    /// <summary>Hide one- and two-letter words the model is unsure of.</summary>
+    /// <summary>Off, Normal or Strict noise filter for the copy.</summary>
+    public IReadOnlyList<CwSquelchModeOption> SquelchModeOptions { get; }
+
     [ObservableProperty]
-    private bool _squelchNoise;
+    private CwSquelchModeOption? _selectedSquelchMode;
 
     /// <summary>Keep the steady note centred in the decode band as it drifts.</summary>
     [ObservableProperty]
@@ -198,10 +209,15 @@ public partial class CwViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private decimal? _alignMaxDurationSeconds;
 
+    [ObservableProperty]
+    private decimal? _alignMaxCorrectionHz;
+
     public int MinAlignTargetPitchHz => CwKeyerSettings.MinAlignTargetPitchHz;
     public int MaxAlignTargetPitchHz => CwKeyerSettings.MaxAlignTargetPitchHz;
     public int MinAlignDurationSeconds => CwKeyerSettings.MinAlignDurationSeconds;
     public int MaxAlignDurationSeconds => CwKeyerSettings.MaxAlignDurationSeconds;
+    public int MinAlignMaxCorrectionHz => CwKeyerSettings.MinAlignMaxCorrectionHz;
+    public int MaxAlignMaxCorrectionHz => CwKeyerSettings.MaxAlignMaxCorrectionHz;
 
     /// <summary>
     /// How far the decode band sits from its home of 400 to 1200 Hz on the waterfall. The waterfall
@@ -432,12 +448,22 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
     }
 
-    partial void OnSquelchNoiseChanged(bool value)
+    partial void OnSelectedSquelchModeChanged(CwSquelchModeOption? value)
     {
-        _settings.Current.CwDecoder.SquelchNoise = value;
-        _settings.RequestSave();
+        var mode = value?.Mode ?? CwNoiseSquelchMode.Normal;
+        _squelch.Mode = mode;
         _squelch.Flush();
+        _settings.Current.CwDecoder.SquelchMode = mode;
+        _settings.Current.CwDecoder.SquelchNoise = mode != CwNoiseSquelchMode.Off;
+        _settings.RequestSave();
     }
+
+    private CwSquelchModeOption BuildSquelchModeOption(CwNoiseSquelchMode mode) => mode switch
+    {
+        CwNoiseSquelchMode.Off => new(mode, _l.Get("Cw.SquelchMode.Off")),
+        CwNoiseSquelchMode.Strict => new(mode, _l.Get("Cw.SquelchMode.Strict")),
+        _ => new(CwNoiseSquelchMode.Normal, _l.Get("Cw.SquelchMode.Normal")),
+    };
 
     partial void OnCopyFontSizeChanged(double value)
     {
@@ -542,6 +568,32 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _settings.RequestSave();
     }
 
+    partial void OnAlignMaxCorrectionHzChanged(decimal? value)
+    {
+        if (_syncingAlignSettings)
+            return;
+
+        var cw = _settings.Current.QsoLogbook.CwKeyer;
+        if (value is not { } typed)
+        {
+            AlignMaxCorrectionHz = cw.AlignMaxCorrectionHz;
+            return;
+        }
+
+        var clamped = CwKeyerSettings.ClampAlignMaxCorrectionHz((int)Math.Round(typed));
+        if (clamped != typed)
+        {
+            AlignMaxCorrectionHz = clamped;
+            return;
+        }
+
+        if (cw.AlignMaxCorrectionHz == clamped)
+            return;
+
+        cw.AlignMaxCorrectionHz = clamped;
+        _settings.RequestSave();
+    }
+
     private void SyncAlignSettingsFromConfig()
     {
         var cw = _settings.Current.QsoLogbook.CwKeyer;
@@ -550,6 +602,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         {
             AlignTargetPitchHz = CwKeyerSettings.ClampAlignTargetPitchHz(cw.AlignTargetPitchHz);
             AlignMaxDurationSeconds = CwKeyerSettings.ClampAlignDurationSeconds(cw.AlignMaxDurationSeconds);
+            AlignMaxCorrectionHz = CwKeyerSettings.ClampAlignMaxCorrectionHz(cw.AlignMaxCorrectionHz);
         }
         finally
         {
@@ -867,9 +920,11 @@ public partial class CwViewModel : ViewModelBase, IDisposable
             if (_disposed)
                 return;
 
-            var text = SquelchNoise
-                ? _squelch.Process(update.CommittedText, update.CommittedConfidence)
-                : update.CommittedText;
+            var mode = SelectedSquelchMode?.Mode ?? CwNoiseSquelchMode.Normal;
+            _squelch.Mode = mode;
+            var text = mode == CwNoiseSquelchMode.Off
+                ? update.CommittedText
+                : _squelch.Process(update.CommittedText, update.CommittedConfidence);
             if (text.Length > 0)
             {
                 Copy.Append(text, DateTime.UtcNow);
@@ -877,7 +932,7 @@ public partial class CwViewModel : ViewModelBase, IDisposable
                 CopyAppended?.Invoke(this, EventArgs.Empty);
             }
 
-            PendingText = SquelchNoise && CwNoiseSquelch.IsLikelyNoise(update.Pending) ? "" : update.Pending.Text;
+            PendingText = CwNoiseSquelch.IsLikelyNoise(update.Pending, mode) ? "" : update.Pending.Text;
             if (update.Wpm is { } wpm)
             {
                 _wpm = double.IsFinite(_wpm) ? _wpm + SpeedAverageAlpha * (wpm - _wpm) : wpm;
@@ -924,3 +979,10 @@ public partial class CwViewModel : ViewModelBase, IDisposable
         _receiver.Stop();
     }
 }
+
+/// <summary>One choice in the CW noise-filter combo.</summary>
+public sealed record CwSquelchModeOption(CwNoiseSquelchMode Mode, string Label)
+{
+    public override string ToString() => Label;
+}
+

@@ -7237,11 +7237,26 @@ Ultima versione: {1} ({2})</value>
   <data name="Cw.FollowNote.Tip">
     <value>Mantiene al centro la nota stabile più vicina al centro della banda ombreggiata, così la deriva Doppler non la porta fuori. Fai clic su una traccia nella cascata per decodificare un altro segnale; clic destro per riportare la banda.</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>Nascondi le lettere sparse dovute al rumore</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>Scarta le parole di una o due lettere di cui il modello non è sicuro. Tra un cambio e l'altro sono quasi sempre rumore. Le parole brevi sicure come K restano.</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximum TX offset change (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Drops short words the model is unsure of. Normal hides one- and two-letter noise. Strict needs higher confidence before a short word is kept.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Strict</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Abort Align if the TX offset would move by more than this. Keeps a wrong echo from walking the transmitter too far on a linear transponder.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Off</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Noise filter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>Visualizzazione</value>

@@ -31,10 +31,15 @@ public partial class LogbookSettingsViewModel
     [ObservableProperty]
     private decimal? _cwAlignMaxDurationSeconds = CwKeyerSettings.DefaultAlignDurationSeconds;
 
+    [ObservableProperty]
+    private decimal? _cwAlignMaxCorrectionHz = CwKeyerSettings.DefaultAlignMaxCorrectionHz;
+
     public int CwMinAlignTargetPitchHz => CwKeyerSettings.MinAlignTargetPitchHz;
     public int CwMaxAlignTargetPitchHz => CwKeyerSettings.MaxAlignTargetPitchHz;
     public int CwMinAlignDurationSeconds => CwKeyerSettings.MinAlignDurationSeconds;
     public int CwMaxAlignDurationSeconds => CwKeyerSettings.MaxAlignDurationSeconds;
+    public int CwMinAlignMaxCorrectionHz => CwKeyerSettings.MinAlignMaxCorrectionHz;
+    public int CwMaxAlignMaxCorrectionHz => CwKeyerSettings.MaxAlignMaxCorrectionHz;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CwShowLineOptions))]
@@ -95,6 +100,7 @@ public partial class LogbookSettingsViewModel
         CwWpm = cw.Wpm;
         CwAlignTargetPitchHz = cw.AlignTargetPitchHz;
         CwAlignMaxDurationSeconds = cw.AlignMaxDurationSeconds;
+        CwAlignMaxCorrectionHz = cw.AlignMaxCorrectionHz;
         CwUseComLineOnTextRadios = cw.UseComLineOnTextRadios;
         CwKeyLineIndex = cw.KeyLine == PttLine.Rts ? 1 : 0;
         CwUseSeparatePort = cw.UseSeparatePort;
@@ -128,7 +134,7 @@ public partial class LogbookSettingsViewModel
         AlignMaxDurationSeconds = CwKeyerSettings.ClampAlignDurationSeconds(
             (int)Math.Round(CwAlignMaxDurationSeconds ?? CwKeyerSettings.DefaultAlignDurationSeconds)),
         AlignMaxCorrectionHz = CwKeyerSettings.ClampAlignMaxCorrectionHz(
-            _settings.Current.QsoLogbook.CwKeyer.AlignMaxCorrectionHz),
+            (int)Math.Round(CwAlignMaxCorrectionHz ?? CwKeyerSettings.DefaultAlignMaxCorrectionHz)),
         KeyLine = CwKeyLineIndex == 1 ? PttLine.Rts : PttLine.Dtr,
         UseSeparatePort = CwUseSeparatePort,
         SeparatePort = CwSeparatePort?.Trim() ?? "",

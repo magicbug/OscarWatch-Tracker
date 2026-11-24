@@ -7237,11 +7237,26 @@ Latest: {1} ({2})</value>
   <data name="Cw.FollowNote.Tip">
     <value>Keeps the steady note nearest the middle of the shaded band in the middle, so Doppler drift does not carry it out. Click a trace on the waterfall to decode another signal; right-click to put the band back.</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>Hide stray letters from noise</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>Drops words of one or two letters that the model is unsure of. These are almost always noise between overs. Confident short words such as K stay.</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximum TX offset change (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Drops short words the model is unsure of. Normal hides one- and two-letter noise. Strict needs higher confidence before a short word is kept.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Strict</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Abort Align if the TX offset would move by more than this. Keeps a wrong echo from walking the transmitter too far on a linear transponder.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Off</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Noise filter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>Display</value>

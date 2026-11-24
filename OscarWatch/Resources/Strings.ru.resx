@@ -7237,11 +7237,26 @@ LOS: {2}
   <data name="Cw.FollowNote.Tip">
     <value>Удерживает в середине устойчивый тон, ближайший к центру затенённой полосы, чтобы доплеровский уход не вывел его наружу. Щёлкните след на водопаде, чтобы декодировать другой сигнал; правый щелчок возвращает полосу.</value>
   </data>
-  <data name="Cw.SquelchNoise">
-    <value>Скрывать случайные буквы из шума</value>
+  <data name="Cw.SquelchMode.Normal">
+    <value>Normal</value>
   </data>
-  <data name="Cw.SquelchNoise.Tip">
-    <value>Отбрасывает слова из одной или двух букв, в которых модель не уверена. Между передачами это почти всегда шум. Уверенные короткие слова, например K, остаются.</value>
+  <data name="Cw.Align.MaxCorrection">
+    <value>Maximum TX offset change (Hz)</value>
+  </data>
+  <data name="Cw.SquelchMode.Tip">
+    <value>Drops short words the model is unsure of. Normal hides one- and two-letter noise. Strict needs higher confidence before a short word is kept.</value>
+  </data>
+  <data name="Cw.SquelchMode.Strict">
+    <value>Strict</value>
+  </data>
+  <data name="Cw.Align.MaxCorrection.Tip">
+    <value>Abort Align if the TX offset would move by more than this. Keeps a wrong echo from walking the transmitter too far on a linear transponder.</value>
+  </data>
+  <data name="Cw.SquelchMode.Off">
+    <value>Off</value>
+  </data>
+  <data name="Cw.SquelchMode">
+    <value>Noise filter</value>
   </data>
   <data name="Cw.Settings.Display">
     <value>Отображение</value>
