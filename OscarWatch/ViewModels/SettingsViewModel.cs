@@ -80,6 +80,14 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     private int _passPredictionHours = 48;
     [ObservableProperty]
     private int _elementAgeWarningDays = ElementAgeWarning.DefaultDays;
+    [ObservableProperty]
+    private bool _showMoonInPasses;
+    [ObservableProperty]
+    private double _moonElevationLimitDeg;
+    [ObservableProperty]
+    private double _moonMaximumElevationDeg = 90;
+    [ObservableProperty]
+    private bool _moonUseHorizonMask;
 
     [ObservableProperty]
     private int _upcomingPassesMinDurationMinutes;
@@ -1367,6 +1375,11 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
         _settings.Current.PassPredictionHours = PassPredictionHours;
         _settings.Current.UpcomingPassesMinDurationMinutes = UpcomingPassesMinDurationMinutes;
         _settings.Current.ElementAgeWarningDays = ElementAgeWarning.ClampDays(ElementAgeWarningDays);
+        _settings.Current.Eme.ShowMoonInPasses = ShowMoonInPasses;
+        _settings.Current.Eme.ElevationLimitDeg = MoonElevationLimitDeg;
+        _settings.Current.Eme.MaximumElevationDeg = MoonMaximumElevationDeg;
+        _settings.Current.Eme.UseHorizonMask = MoonUseHorizonMask;
+        _settings.Current.Eme.Normalise();
         _settings.Current.Theme = ThemePreference;
         _settings.Current.UiLanguage = newLanguage;
         _settings.Current.ShowFootprintMotionArrows = ShowFootprintMotionArrows;
@@ -1613,6 +1626,10 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             PassPredictionHours = _settings.Current.PassPredictionHours;
             UpcomingPassesMinDurationMinutes = _settings.Current.UpcomingPassesMinDurationMinutes;
             ElementAgeWarningDays = ElementAgeWarning.ClampDays(_settings.Current.ElementAgeWarningDays);
+            ShowMoonInPasses = _settings.Current.Eme.ShowMoonInPasses;
+            MoonElevationLimitDeg = _settings.Current.Eme.ElevationLimitDeg;
+            MoonMaximumElevationDeg = _settings.Current.Eme.MaximumElevationDeg;
+            MoonUseHorizonMask = _settings.Current.Eme.UseHorizonMask;
             ThemePreference = _settings.Current.Theme;
             SelectedThemeOption = ThemeOptions.FirstOrDefault(o => o.Value == ThemePreference)
                 ?? ThemeOptions[0];

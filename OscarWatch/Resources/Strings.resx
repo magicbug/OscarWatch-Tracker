@@ -169,6 +169,9 @@
   <data name="Main.Passes.DetachedStatus">
     <value>Shown in a separate window</value>
   </data>
+  <data name="Body.Moon">
+    <value>Moon</value>
+  </data>
   <data name="Main.Timeline.Close">
     <value>Hide pass elevation timeline</value>
   </data>
@@ -3027,6 +3030,21 @@ Continue?</value>
   </data>
   <data name="Settings.Tracking.UpcomingPassesMinDurationNote">
     <value>0 shows every pass above the minimum elevation and horizon mask. The pass planner has its own minimum duration.</value>
+  </data>
+  <data name="Settings.Tracking.ShowMoonPasses">
+    <value>Show Moon rise and set in Upcoming Passes</value>
+  </data>
+  <data name="Settings.Tracking.MoonElevationLimit">
+    <value>Moon elevation limit (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonMaxElevation">
+    <value>Moon maximum elevation (°)</value>
+  </data>
+  <data name="Settings.Tracking.MoonUseHorizonMask">
+    <value>Apply the horizon mask to the Moon too</value>
+  </data>
+  <data name="Settings.Tracking.CelestialPassesNote">
+    <value>Rise and set are when the centre of the Moon is at the elevation limit below (0° by default), which is a few minutes different from printed almanac times (upper limb, with refraction). The satellite minimum elevation setting is not applied, so a Moon on the horizon is listed. These entries are for information and cannot be selected as a target.</value>
   </data>
   <data name="Settings.Tracking.TransponderCheck">
     <value>Check for transponder database updates on startup</value>

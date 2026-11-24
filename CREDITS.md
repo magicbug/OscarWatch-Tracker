@@ -17,6 +17,8 @@ The default `OscarWatch/Assets/Maps/world_map.jpg` is an equirectangular Blue Ma
 
 - [OrbitTools](http://www.zeptomoby.com/satellites/) by Michael F. Henry — NORAD SGP4/SDP4 (Public Edition via NuGet for non-commercial use)
 
+## Moon
+- [Astronomy Engine](https://github.com/cosinekitty/astronomy) by Don Cross (MIT, via the `CosineKitty.AstronomyEngine` NuGet package): the Moon's position, rise and set
 ## TLE data
 
 - Amateur satellite TLEs from [tle.oscarwatch.org](https://tle.oscarwatch.org/)
