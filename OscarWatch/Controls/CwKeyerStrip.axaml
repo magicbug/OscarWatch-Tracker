@@ -114,11 +114,14 @@
           <NumericUpDown Value="{Binding CwWpm, Mode=TwoWay}"
                          Minimum="5" Maximum="60" Increment="1"
                          FormatString="0"
-                         Width="92"
+                         Width="118"
+                         MinWidth="118"
+                         HorizontalContentAlignment="Right"
                          AutomationProperties.Name="{loc:Localize Key=Logbook.Cw.WpmToolTip}" />
           <TextBlock Text="{loc:Localize Key=Logbook.Cw.Wpm}"
                      VerticalAlignment="Center"
-                     FontWeight="SemiBold" />
+                     FontWeight="SemiBold"
+                     Margin="0,0,4,0" />
         </StackPanel>
         <Button Grid.Column="4"
                 Content="{loc:Localize Key=Logbook.Cw.Keyboard}"
