@@ -463,6 +463,19 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
+    public void Answer_rr73_sends_73_not_a_signal_report()
+    {
+        // RR73 matches a Maidenhead locator. Clicking it must resend 73.
+        var seq = new Ft4QsoSequencer(() => "WT0DX", () => "DM79", () => true);
+        seq.StartAnswer(Msg("WT0DX N6CKC RR73", snr: -8f), oppositeEvenSlot: true);
+
+        Assert.Equal("N6CKC", seq.TheirCall);
+        Assert.Null(seq.TheirGrid);
+        Assert.Null(seq.ReportSent);
+        Assert.Equal("N6CKC WT0DX 73", seq.CurrentTxMessage);
+    }
+
+    [Fact]
     public void Answer_directed_grid_sends_report()
     {
         var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);

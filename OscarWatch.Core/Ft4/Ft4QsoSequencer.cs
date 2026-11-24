@@ -176,6 +176,17 @@ public sealed class Ft4QsoSequencer
                 return;
             }
 
+            // Before the grid check. RR73 matches a Maidenhead locator (field RR,
+            // square 73), so IsGrid is true for it. A click on their sign-off must
+            // send 73 again, not a signal report from this decode's SNR.
+            if (Ft4MessageCodec.IsClosing(extra))
+            {
+                if (Ft4MessageCodec.Is73(extra) || Ft4MessageCodec.IsRr73(extra))
+                    _theySent73 = true;
+                CurrentTxMessage = Ft4MessageCodec.Build73(TheirCall, my);
+                return;
+            }
+
             // No grid: the reply to a CQ from a non-standard call carries the full call instead.
             if (Ft4MessageCodec.IsGrid(extra) || string.IsNullOrWhiteSpace(extra))
             {
@@ -183,14 +194,6 @@ public sealed class Ft4QsoSequencer
                     TheirGrid = extra;
                 ReportSent = Ft4MessageCodec.FormatSnrReport(decode.SnrDb);
                 CurrentTxMessage = Ft4MessageCodec.BuildReport(TheirCall, my, ReportSent);
-                return;
-            }
-
-            if (Ft4MessageCodec.IsClosing(extra))
-            {
-                if (Ft4MessageCodec.Is73(extra) || Ft4MessageCodec.IsRr73(extra))
-                    _theySent73 = true;
-                CurrentTxMessage = Ft4MessageCodec.Build73(TheirCall, my);
                 return;
             }
         }
