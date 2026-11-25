@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>最新の位置</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>待機時間 (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>はい</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>5 度回転</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>タイミング確認</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>「5 度回転」は確認後にアンテナを方位角で 5° 回し、仰角はそのままです。「位置を読み取る」で方位角（方位角のみのコントローラー以外は仰角も）が取得できると使えます。</value>
+    <value>「5 度回転」は確認後にアンテナを方位角で 5° 回し、仰角はそのままです。「位置を読み取る」で方位角（方位角のみのコントローラー以外は仰角も）が取得できると使えます。各コマンドの前に待機時間が入り、OscarWatch と同じです。</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>タイミング確認は、位置応答の直後に送った移動と、待機時間後の同じ移動を比較し、アンテナを戻します。一度動いて追尾が止まる場合に使います。</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>{0} のローテーターでタイミング確認を実行しますか？アンテナは約 5° 動いて戻ります。遅延移動の待機時間は {1} ms です。周囲に障害物がないか確認してください。</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>タイミング確認: 即時コマンドでローテーターが動きました。コマンド間隔はおそらく不要です。</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>タイミング確認: 遅延コマンドだけがローテーターを動かしました。設定のコマンド間隔を、ここで使った待機時間に合わせて上げてください。</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>タイミング確認: どちらのコマンドでもローテーターは動きませんでした。セッションログとインターフェース配線を確認してください。</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>コントローラーが位置を報告しなかったため、タイミング確認を中止しました。セッションログに応答があります。</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>セッションログ</value>

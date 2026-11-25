@@ -201,7 +201,7 @@
             <TextBlock Grid.Row="0" Classes="section" Text="{t:Tr Gs232.Heading}" />
             <TextBlock Grid.Row="1" Classes="hint" Text="{t:Tr Gs232.Hint}" />
 
-            <Grid Grid.Row="2" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+            <Grid Grid.Row="2" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
               <TextBlock Classes="label" Grid.Row="0" Text="{t:Tr Gs232.Label.Status}" />
               <SelectableTextBlock Classes="value" Grid.Row="0" Grid.Column="1" Text="{Binding Gs232.AvailabilityText}" />
 
@@ -216,15 +216,28 @@
 
               <TextBlock Classes="label" Grid.Row="4" Text="{t:Tr Gs232.Label.Position}" />
               <SelectableTextBlock Classes="value" Grid.Row="4" Grid.Column="1" Text="{Binding Gs232.PositionText}" />
+
+              <TextBlock Classes="label" Grid.Row="5" Text="{t:Tr Gs232.Label.QuietTime}" VerticalAlignment="Center" />
+              <NumericUpDown Grid.Row="5" Grid.Column="1"
+                             Value="{Binding Gs232.QuietTimeMs, Mode=TwoWay}"
+                             Minimum="0" Maximum="1000"
+                             Increment="10" FormatString="F0"
+                             HorizontalAlignment="Left"
+                             Width="120"
+                             AutomationProperties.Name="{t:Tr Gs232.Label.QuietTime}" />
             </Grid>
 
             <WrapPanel Grid.Row="3" ItemSpacing="8" LineSpacing="8">
               <Button Content="{t:Tr Action.Gs232Read}" Command="{Binding Gs232.ReadPositionCommand}" />
               <Button Content="{t:Tr Action.Gs232Stop}" Command="{Binding Gs232.StopCommand}" />
               <Button Content="{t:Tr Action.Gs232Move}" Command="{Binding Gs232.MoveCommand}" />
+              <Button Content="{t:Tr Action.Gs232TimingCheck}" Command="{Binding Gs232.TimingCheckCommand}" />
             </WrapPanel>
 
-            <TextBlock Grid.Row="4" Classes="hint" Text="{t:Tr Gs232.MoveHint}" />
+            <StackPanel Grid.Row="4" Spacing="4">
+              <TextBlock Classes="hint" Text="{t:Tr Gs232.MoveHint}" />
+              <TextBlock Classes="hint" Text="{t:Tr Gs232.TimingCheckHint}" />
+            </StackPanel>
 
             <DockPanel Grid.Row="5">
               <WrapPanel DockPanel.Dock="Right" ItemSpacing="8" LineSpacing="8">

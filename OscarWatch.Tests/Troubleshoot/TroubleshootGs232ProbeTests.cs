@@ -7,7 +7,7 @@ namespace OscarWatch.Tests.Troubleshoot;
 
 public sealed class TroubleshootGs232ProbeTests : IDisposable
 {
-    private static readonly Gs232Target Target = new(true, "COM5", 4800, false, 450, 180);
+    private static readonly Gs232Target Target = new(true, "COM5", 4800, false, 450, 180, 200);
 
     private readonly string _dir = Path.Combine(Path.GetTempPath(), $"oscarwatch-gs232-{Guid.NewGuid():N}");
 
@@ -174,7 +174,20 @@ public sealed class TroubleshootGs232ProbeTests : IDisposable
         tracker.Current.Rotator.ElevationRange = RotatorElevationRange.Deg90;
         await tracker.SaveAsync();
 
-        Assert.Equal(new Gs232Target(true, "COM6", 9600, true, 360, 90), SettingsFile.Read(SettingsPath).Gs232);
+        Assert.Equal(new Gs232Target(true, "COM6", 9600, true, 360, 90, 200), SettingsFile.Read(SettingsPath).Gs232);
+    }
+
+    [Fact]
+    public async Task Read_takes_command_gap_from_tracker_saved_settings()
+    {
+        var tracker = new SettingsService(SettingsPath);
+        tracker.Load();
+        tracker.Current.Rotator.Type = RotatorType.YaesuGs232;
+        tracker.Current.Rotator.Port = "COM7";
+        tracker.Current.Rotator.CommandGapMs = 250;
+        await tracker.SaveAsync();
+
+        Assert.Equal(250, SettingsFile.Read(SettingsPath).Gs232!.CommandGapMs);
     }
 
     [Theory]
@@ -197,7 +210,97 @@ public sealed class TroubleshootGs232ProbeTests : IDisposable
     {
         File.WriteAllText(SettingsPath, "{}");
 
-        Assert.Equal(new Gs232Target(true, "", 4800, false, 450, 180), SettingsFile.Read(SettingsPath).Gs232);
+        Assert.Equal(new Gs232Target(true, "", 4800, false, 450, 180, 200), SettingsFile.Read(SettingsPath).Gs232);
+    }
+
+    [Fact]
+    public void Timing_check_sends_immediate_nudge_then_delayed_when_unchanged_then_home()
+    {
+        var port = new FakePort();
+        var positionReplies = new Queue<string>([
+            "AZ=120 EL=010\r",
+            "AZ=120 EL=010\r",
+            "AZ=120 EL=010\r",
+            "AZ=125 EL=010\r",
+            "AZ=120 EL=010\r"
+        ]);
+        port.ReplyFactory = command =>
+            command.StartsWith('C') || command == "B"
+                ? (positionReplies.Count > 0 ? positionReplies.Dequeue() : "")
+                : "";
+        var log = new Gs232ProbeLog();
+        var sleeps = new List<int>();
+        long clock = 0;
+        var session = new Gs232Session(
+            port,
+            log,
+            ms =>
+            {
+                sleeps.Add(ms);
+                clock += ms;
+            },
+            commandGapMs: 0,
+            nowMs: () => clock);
+
+        var (verdict, _) = Gs232TimingCheck.Run(session, Target with { CommandGapMs = 200 }, log, quietTimeMs: 200);
+
+        Assert.Equal(Gs232TimingVerdict.DelayedOnlyMoved, verdict);
+        Assert.Equal(2, port.Sent.Count(c => c == "W125 010"));
+        Assert.Contains(port.Sent, c => c == "W120 010");
+        Assert.Contains(sleeps, ms => ms == 200);
+        Assert.Contains("Waiting 200 ms before W125 010", log.Text);
+        Assert.Contains("Verdict: only the delayed command moved the rotator.", log.Text);
+    }
+
+    [Fact]
+    public void Timing_check_reports_immediate_when_first_nudge_moves()
+    {
+        var port = new FakePort();
+        var positionReplies = new Queue<string>([
+            "AZ=120 EL=010\r",
+            "AZ=125 EL=010\r",
+            "AZ=120 EL=010\r"
+        ]);
+        port.ReplyFactory = command =>
+            command.StartsWith('C') || command == "B"
+                ? (positionReplies.Count > 0 ? positionReplies.Dequeue() : "")
+                : "";
+        var log = new Gs232ProbeLog();
+        var session = new Gs232Session(port, log, _ => { }, commandGapMs: 0);
+
+        var (verdict, _) = Gs232TimingCheck.Run(session, Target, log, quietTimeMs: 200);
+
+        Assert.Equal(Gs232TimingVerdict.ImmediateMoved, verdict);
+        Assert.Equal(1, port.Sent.Count(c => c == "W125 010"));
+        Assert.Contains(port.Sent, c => c == "W120 010");
+        Assert.Contains("Verdict: the immediate command moved the rotator.", log.Text);
+    }
+
+    [Fact]
+    public void Session_waits_remaining_command_gap_before_the_next_write()
+    {
+        var port = new FakePort { ["C2"] = "AZ=001 EL=002\r" };
+        var log = new Gs232ProbeLog();
+        var sleeps = new List<int>();
+        long clock = 1000;
+        var session = new Gs232Session(
+            port,
+            log,
+            ms =>
+            {
+                sleeps.Add(ms);
+                clock += ms;
+            },
+            commandGapMs: 200,
+            nowMs: () => clock);
+
+        session.ReadPosition(false);
+        sleeps.Clear();
+        clock += 20;
+        session.Send("W077 000");
+
+        Assert.Contains(180, sleeps);
+        Assert.Contains("Waiting 180 ms before W077 000", log.Text);
     }
 
     private sealed class FakePort : IGs232Port
@@ -216,6 +319,9 @@ public sealed class TroubleshootGs232ProbeTests : IDisposable
             set => _replies[command] = value;
         }
 
+        /// <summary>When set, each write gets the next reply from this factory instead of the dictionary.</summary>
+        public Func<string, string>? ReplyFactory { get; set; }
+
         public void Queue(string text)
         {
             foreach (var b in Encoding.ASCII.GetBytes(text))
@@ -232,8 +338,16 @@ public sealed class TroubleshootGs232ProbeTests : IDisposable
         {
             var command = Encoding.ASCII.GetString(data).TrimEnd('\r');
             Sent.Add(command);
-            if (_replies.TryGetValue(command, out var reply))
-                Queue(reply);
+            if (ReplyFactory is not null)
+            {
+                var reply = ReplyFactory(command);
+                if (reply.Length > 0)
+                    Queue(reply);
+                return;
+            }
+
+            if (_replies.TryGetValue(command, out var mapped))
+                Queue(mapped);
         }
 
         public int BytesToRead => _incoming.Count;

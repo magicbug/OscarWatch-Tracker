@@ -3559,6 +3559,12 @@ LOS: {2}
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Только азимут</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Пауза между командами (мс)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Тишина после ответа перед следующей командой GS-232. Некоторые интерфейсы игнорируют перемещение, отправленное сразу после отчёта о позиции. 0 отправляет сразу. Попробуйте 200–300, если ротор сдвинулся один раз и остановился.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Последовательный порт азимута</value>
   </data>

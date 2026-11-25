@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>Última posição</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>Tempo de silêncio (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>Sim</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>Girar 5 graus</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>Verificação de tempo</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>Girar 5 graus move a antena 5° em azimute após uma confirmação e mantém a elevação. Fica disponível depois que Ler posição retornar o azimute (e a elevação, exceto em controladores só de azimute).</value>
+    <value>Girar 5 graus move a antena 5° em azimute após uma confirmação e mantém a elevação. Fica disponível depois que Ler posição retornar o azimute (e a elevação, exceto em controladores só de azimute). O tempo de silêncio é aplicado antes de cada comando, como no OscarWatch.</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>A verificação de tempo compara um movimento enviado logo após uma resposta de posição com o mesmo movimento após o tempo de silêncio e depois devolve a antena. Use se o rotor se mover uma vez e depois parar de seguir.</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>Executar a verificação de tempo no rotor em {0}? A antena girará cerca de 5° e voltará. O tempo de silêncio do movimento atrasado é {1} ms. Verifique se não há obstáculos.</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>Verificação de tempo: o comando imediato moveu o rotor. Provavelmente não é necessário um intervalo entre comandos.</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>Verificação de tempo: só o comando atrasado moveu o rotor. Aumente o intervalo entre comandos em Configurações para o tempo de silêncio usado aqui.</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>Verificação de tempo: nenhum comando moveu o rotor. Verifique o registro da sessão e a fiação da interface.</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>Verificação de tempo interrompida porque o controlador não informou uma posição. O registro da sessão mostra a resposta.</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>Registro da sessão</value>

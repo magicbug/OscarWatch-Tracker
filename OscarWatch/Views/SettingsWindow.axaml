@@ -1255,6 +1255,16 @@
             <CheckBox Content="{loc:Localize Key=Settings.Rotator.AzimuthOnly}"
                       IsChecked="{Binding RotatorAzimuthOnly, Mode=TwoWay}"
                       IsVisible="{Binding ShowRotatorAzimuthOnlyOption}" />
+            <StackPanel Spacing="4" IsVisible="{Binding ShowRotatorAzimuthOnlyOption}">
+              <TextBlock Text="{loc:Localize Key=Settings.Rotator.CommandGap}" />
+              <NumericUpDown Value="{Binding RotatorCommandGapMs, Mode=TwoWay}"
+                             Minimum="0" Maximum="1000"
+                             Increment="10" FormatString="F0" />
+              <TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                         FontSize="11"
+                         TextWrapping="Wrap"
+                         Text="{loc:Localize Key=Settings.Rotator.CommandGapNote}" />
+            </StackPanel>
             <StackPanel Spacing="10" IsVisible="{Binding ShowRotatorTransportFields}">
               <TextBlock Text="{loc:Localize Key=Settings.Rotator.Transport}" />
               <ComboBox ItemsSource="{Binding RotatorTransportChoices}"

@@ -3559,6 +3559,12 @@ LOS: {2}
   <data name="Settings.Rotator.AzimuthOnly">
     <value>อะซิมัทเท่านั้น</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>ช่วงห่างคำสั่ง (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>เวลานิ่งหลังได้รับการตอบก่อนคำสั่ง GS-232 ถัดไป อินเทอร์เฟซบางตัวเพิกเฉยการเคลื่อนที่ที่ส่งทันทีหลังรายงานตำแหน่ง 0 คือส่งทันที ลอง 200 ถึง 300 หากโรเตเตอร์ขยับครั้งเดียวแล้วหยุด</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>พอร์ตอนุกรมอะซิมัท</value>
   </data>

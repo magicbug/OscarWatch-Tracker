@@ -23,17 +23,26 @@ internal sealed partial class Gs232ProbeViewModel : ObservableObject
     [ObservableProperty] private string _azimuthOnlyText = "";
     [ObservableProperty] private string _positionText = "";
     [ObservableProperty] private string _logText = "";
+    [ObservableProperty] private int _quietTimeMs = 200;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ReadPositionCommand), nameof(StopCommand), nameof(MoveCommand))]
+    [NotifyCanExecuteChangedFor(
+        nameof(ReadPositionCommand),
+        nameof(StopCommand),
+        nameof(MoveCommand),
+        nameof(TimingCheckCommand))]
     private bool _isAvailable;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ReadPositionCommand), nameof(StopCommand), nameof(MoveCommand))]
+    [NotifyCanExecuteChangedFor(
+        nameof(ReadPositionCommand),
+        nameof(StopCommand),
+        nameof(MoveCommand),
+        nameof(TimingCheckCommand))]
     private bool _isBusy;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(MoveCommand))]
+    [NotifyCanExecuteChangedFor(nameof(MoveCommand), nameof(TimingCheckCommand))]
     private Gs232Position _lastPosition;
 
     public Gs232ProbeViewModel(ITroubleshootHost host, Func<Task<bool>> ensureTrackerClosed, Action<string> setResult)
@@ -51,10 +60,13 @@ internal sealed partial class Gs232ProbeViewModel : ObservableObject
     private bool CanMove => CanProbe && _target is { } target && LastPosition.Azimuth is not null
                             && (target.AzimuthOnly || LastPosition.Elevation is not null);
 
+    private bool CanTimingCheck => CanMove;
+
     public void Update(SettingsSnapshot settings)
     {
         var target = settings.State == SettingsFileState.Readable ? settings.Gs232 : null;
-        if (target != _target)
+        var targetChanged = target != _target;
+        if (targetChanged)
             LastPosition = default;
         _target = target;
 
@@ -69,6 +81,8 @@ internal sealed partial class Gs232ProbeViewModel : ObservableObject
         PortText = target.Port.Length > 0 ? target.Port : Tr.Get("Device.Unknown");
         BaudText = target.BaudRate.ToString(CultureInfo.CurrentCulture);
         AzimuthOnlyText = Tr.Get(target.AzimuthOnly ? "Gs232.Yes" : "Gs232.No");
+        if (targetChanged)
+            QuietTimeMs = target.CommandGapMs;
 
         AvailabilityText = !target.IsSerialGs232
             ? Tr.Get("Gs232.NotGs232")
@@ -132,6 +146,32 @@ internal sealed partial class Gs232ProbeViewModel : ObservableObject
         }
     }
 
+    [RelayCommand(CanExecute = nameof(CanTimingCheck))]
+    private async Task TimingCheckAsync()
+    {
+        var target = _target!;
+        var quiet = Math.Clamp(QuietTimeMs, 0, 1000);
+        if (!await _host.ConfirmAsync(Tr.Format(
+                "Confirm.Gs232TimingCheck", target.Port, quiet)))
+            return;
+
+        var result = await RunAsync(
+            session => Gs232TimingCheck.Run(session, target with { CommandGapMs = quiet }, _log, quiet),
+            commandGapMs: 0);
+
+        if (result is not { } check)
+            return;
+
+        ShowPosition(check.FinalPosition);
+        _setResult(check.Verdict switch
+        {
+            Gs232TimingVerdict.ImmediateMoved => Tr.Get("Result.Gs232TimingImmediate"),
+            Gs232TimingVerdict.DelayedOnlyMoved => Tr.Get("Result.Gs232TimingDelayed"),
+            Gs232TimingVerdict.NeitherMoved => Tr.Get("Result.Gs232TimingNeither"),
+            _ => Tr.Get("Result.Gs232TimingFailed")
+        });
+    }
+
     [RelayCommand]
     private async Task CopyLogAsync()
     {
@@ -165,7 +205,7 @@ internal sealed partial class Gs232ProbeViewModel : ObservableObject
     }
 
     /// <summary>Null when the operator kept OscarWatch running or the port could not be used.</summary>
-    private async Task<T?> RunAsync<T>(Func<Gs232Session, T> action) where T : struct
+    private async Task<T?> RunAsync<T>(Func<Gs232Session, T> action, int? commandGapMs = null) where T : struct
     {
         if (!await _ensureTrackerClosed() || _target is not { } target || !IsAvailable)
             return null;
@@ -173,8 +213,14 @@ internal sealed partial class Gs232ProbeViewModel : ObservableObject
         IsBusy = true;
         try
         {
+            var gap = commandGapMs ?? Math.Clamp(QuietTimeMs, 0, 1000);
             var (value, error) = await Task.Run(() =>
-                Gs232Session.Run(() => new Gs232SerialPort(target.Port, target.BaudRate), target, _log, action));
+                Gs232Session.Run(
+                    () => new Gs232SerialPort(target.Port, target.BaudRate),
+                    target,
+                    _log,
+                    action,
+                    commandGapMs: gap));
             if (error is not null)
             {
                 _setResult(Tr.Format("Result.Gs232PortFailed", target.Port, error));

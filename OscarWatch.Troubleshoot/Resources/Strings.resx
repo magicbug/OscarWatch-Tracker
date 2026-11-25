@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>Last position</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>Quiet time (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>Yes</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>Move 5 degrees</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>Timing check</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>Move 5 degrees turns the antenna 5° in azimuth after a confirm, and keeps the elevation. It is available once Read position has returned the azimuth (and the elevation, unless the controller is azimuth only).</value>
+    <value>Move 5 degrees turns the antenna 5° in azimuth after a confirm, and keeps the elevation. It is available once Read position has returned the azimuth (and the elevation, unless the controller is azimuth only). Quiet time is applied before each command, matching OscarWatch.</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>Timing check compares a move sent straight after a position reply with the same move after the quiet time, then returns the antenna. Use it when the rotator moves once and then stops following.</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>Run the timing check on the rotator on {0}? The antenna will turn about 5° and then return. Quiet time for the delayed move is {1} ms. Check nothing is in the way.</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>Timing check: the immediate command moved the rotator. A command gap is probably not needed.</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>Timing check: only the delayed command moved the rotator. Raise the command gap in Settings to match the quiet time used here.</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>Timing check: neither command moved the rotator. Check the session log and the interface wiring.</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>Timing check stopped because the controller did not report a position. The session log shows what came back.</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>Session log</value>

@@ -263,6 +263,9 @@ GPS：{2}</value>
   <data name="Gs232.Label.Position">
     <value>最近位置</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>静默时间（毫秒）</value>
+  </data>
   <data name="Gs232.Yes">
     <value>是</value>
   </data>
@@ -305,8 +308,29 @@ GPS：{2}</value>
   <data name="Action.Gs232Move">
     <value>转动 5 度</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>时序检查</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>“转动 5 度”在确认后将天线方位角转动 5°，仰角保持不变。在“读取位置”返回方位角后可用（除仅方位角控制器外，还需要仰角）。</value>
+    <value>“转动 5 度”在确认后将天线方位角转动 5°，仰角保持不变。在“读取位置”返回方位角后可用（除仅方位角控制器外，还需要仰角）。每条命令前会应用静默时间，与 OscarWatch 一致。</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>时序检查会比较紧跟位置应答之后发送的移动，与静默时间之后的同一次移动，然后把天线转回。旋转器只动一次就不再跟随时可用。</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>在 {0} 上的旋转器运行时序检查？天线大约会转动 5° 再返回。延迟移动的静默时间为 {1} 毫秒。请确认周围没有障碍物。</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>时序检查：立即发送的命令使旋转器移动了。可能不需要命令间隔。</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>时序检查：只有延迟命令使旋转器移动了。请在设置中将命令间隔提高到此处使用的静默时间。</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>时序检查：两条命令都没有使旋转器移动。请查看会话日志和接口接线。</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>时序检查已停止，因为控制器未报告位置。会话日志显示了返回内容。</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>会话日志</value>

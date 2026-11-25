@@ -3559,6 +3559,12 @@ Lanjutkan?</value>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Hanya azimut</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Jeda perintah (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Waktu tenang setelah balasan sebelum perintah GS-232 berikutnya. Beberapa antarmuka mengabaikan gerakan yang dikirim tepat setelah laporan posisi. 0 mengirim segera. Coba 200 hingga 300 jika rotor bergerak sekali lalu berhenti.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Port serial azimut</value>
   </data>

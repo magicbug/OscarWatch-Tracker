@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>Ultima posizione</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>Tempo di silenzio (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>Sì</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>Ruota di 5 gradi</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>Controllo tempi</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>Ruota di 5 gradi sposta l'antenna di 5° in azimut dopo una conferma e mantiene l'elevazione. È disponibile quando Leggi posizione ha restituito l'azimut (e l'elevazione, salvo controller solo azimut).</value>
+    <value>Ruota di 5 gradi sposta l'antenna di 5° in azimut dopo una conferma e mantiene l'elevazione. È disponibile quando Leggi posizione ha restituito l'azimut (e l'elevazione, salvo controller solo azimut). Il tempo di silenzio si applica prima di ogni comando, come in OscarWatch.</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>Il controllo tempi confronta un movimento inviato subito dopo una risposta di posizione con lo stesso movimento dopo il tempo di silenzio, poi riporta l'antenna. Usarlo se il rotore si muove una volta e poi smette di seguire.</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>Eseguire il controllo tempi sul rotore su {0}? L'antenna ruoterà di circa 5° e tornerà. Il tempo di silenzio per il movimento ritardato è {1} ms. Controllare che non ci siano ostacoli.</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>Controllo tempi: il comando immediato ha mosso il rotore. Una pausa tra comandi probabilmente non serve.</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>Controllo tempi: solo il comando ritardato ha mosso il rotore. Aumentare la pausa tra comandi in Impostazioni al tempo di silenzio usato qui.</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>Controllo tempi: nessun comando ha mosso il rotore. Controllare il registro di sessione e il cablaggio dell'interfaccia.</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>Controllo tempi interrotto perché il controller non ha riportato una posizione. Il registro di sessione mostra la risposta.</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>Registro della sessione</value>

@@ -3559,6 +3559,12 @@ Continue?</value>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Azimuth only</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Command gap (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Quiet time after a reply before the next GS-232 command. Some interfaces ignore a move sent straight after a position report. 0 sends immediately. Try 200 to 300 if the rotator moves once and then stops.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Azimuth serial port</value>
   </data>

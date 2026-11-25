@@ -2011,6 +2011,12 @@ LOS: {2} UTC
   <data name="Settings.Rotator.AzimuthOnly">
     <value>アジマスのみ</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>コマンド間隔 (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>応答の後、次の GS-232 コマンドまでの待機時間です。位置報告の直後に送った移動を無視するインターフェースがあります。0 は即時送信です。一度動いて止まる場合は 200～300 を試してください。</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>アジマスのシリアルポート</value>
   </data>

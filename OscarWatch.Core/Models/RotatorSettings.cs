@@ -58,6 +58,22 @@ public sealed class RotatorSettings
     /// </summary>
     public bool AzimuthOnly { get; set; }
 
+    /// <summary>
+    /// Quiet time (ms) after a GS-232 reply before the next command. Some basic interfaces ignore a
+    /// move written in the same instant as a position report. Valid range: [0, 1000]. Default: 200.
+    /// Ignored for other rotator types.
+    /// </summary>
+    private int _commandGapMs = 200;
+    public int CommandGapMs
+    {
+        get => _commandGapMs;
+        set
+        {
+            if (value < 0 || value > 1000) return;
+            _commandGapMs = value;
+        }
+    }
+
     public RotatorAzimuthRange AzimuthRange { get; set; } = RotatorAzimuthRange.Deg450;
     public RotatorElevationRange ElevationRange { get; set; } = RotatorElevationRange.Deg180;
     /// <summary>Start slewing when satellite elevation reaches this value while approaching.</summary>

@@ -3559,6 +3559,12 @@ Continuar?</value>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Somente azimute</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Intervalo entre comandos (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Tempo de silêncio após uma resposta antes do próximo comando GS-232. Algumas interfaces ignoram um movimento enviado logo após um relatório de posição. 0 envia imediatamente. Experimente 200 a 300 se o rotor se mover uma vez e depois parar.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Porta série de azimute</value>
   </data>

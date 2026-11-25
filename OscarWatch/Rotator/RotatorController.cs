@@ -1080,6 +1080,9 @@ public sealed class RotatorController : IRotatorController, IDisposable
         if (_rotator is null)
             return;
 
+        if (_rotator is Gs232Rotator gs232)
+            gs232.CommandGapMs = _cachedSettings.CommandGapMs;
+
         try
         {
             var (az, el) = _rotator.GetPosition();

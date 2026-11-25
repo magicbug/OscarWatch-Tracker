@@ -3559,6 +3559,12 @@ Duración: {4}</value>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Solo acimut</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Pausa entre órdenes (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Tiempo de silencio tras una respuesta antes de la siguiente orden GS-232. Algunas interfaces ignoran un movimiento enviado justo después de un informe de posición. 0 envía al momento. Pruebe 200 a 300 si el rotor se mueve una vez y luego se detiene.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Puerto serie de acimut</value>
   </data>

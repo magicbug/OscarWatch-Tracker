@@ -21,7 +21,10 @@ public static class RotatorDriverFactory
                 CreateTransport(settings, settings.Port, 1000, 1000, ";"),
                 CreateTransport(settings, settings.ElevationPort, 1000, 1000, ";")),
             RotatorType.AntRunner => new GrblRotator(CreateTransport(settings, 500, 500, "\n")),
-            _ => new Gs232Rotator(CreateTransport(settings, 1000, 1000, "\r"), settings.IsAzimuthOnly)
+            _ => new Gs232Rotator(
+                CreateTransport(settings, 1000, 1000, "\r"),
+                settings.IsAzimuthOnly,
+                settings.CommandGapMs)
         };
 
     private static SpidRotator CreateSpidMd01(RotatorSettings settings)

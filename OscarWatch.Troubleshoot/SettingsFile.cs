@@ -24,7 +24,8 @@ internal sealed record Gs232Target(
     int BaudRate,
     bool AzimuthOnly,
     int MaxAzimuthDeg,
-    int MaxElevationDeg);
+    int MaxElevationDeg,
+    int CommandGapMs = 200);
 
 internal enum HardwareDevice
 {
@@ -446,13 +447,15 @@ internal static class SettingsFile
         var serialTransport = transport.Length == 0 || transport == "0"
             || string.Equals(transport, "serial", StringComparison.OrdinalIgnoreCase);
 
+        var commandGap = ReadInt(rotator, "commandGapMs");
         return new Gs232Target(
             isGs232 && serialTransport,
             ReadString(rotator, "port"),
             ReadInt(rotator, "baudRate") is int baud and > 0 ? baud : 4800,
             ReadBool(rotator, "azimuthOnly") == true,
             ReadDegreeRange(rotator, "azimuthRange", 450),
-            ReadDegreeRange(rotator, "elevationRange", 180));
+            ReadDegreeRange(rotator, "elevationRange", 180),
+            commandGap is int gap && gap is >= 0 and <= 1000 ? gap : 200);
     }
 
     /// <summary>Range enums are saved as <c>"deg450"</c>, or as the number itself.</summary>

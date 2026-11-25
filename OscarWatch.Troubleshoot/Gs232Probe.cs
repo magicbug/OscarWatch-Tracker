@@ -127,16 +127,42 @@ internal sealed class Gs232ProbeLog
 
 /// <summary>
 /// One open COM port. Queries and commands follow the tracker's GS-232 driver (CR terminator, 150 ms settle,
-/// one second for a reply) but log the bytes the driver discards.
+/// one second for a reply, optional quiet time before each write) but log the bytes the driver discards.
 /// </summary>
-internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<int>? sleep = null)
+internal sealed class Gs232Session
 {
     public const int SettleMs = 150;
     public const int ReplyTimeoutMs = 1000;
     private const int PollMs = 20;
     private const int TrailingBytesMs = 40;
 
-    private readonly Action<int> _sleep = sleep ?? Thread.Sleep;
+    private readonly IGs232Port _port;
+    private readonly Gs232ProbeLog _log;
+    private readonly Action<int> _sleep;
+    private readonly Func<long> _nowMs;
+    private int _commandGapMs;
+    private long? _lastExchangeUtcMs;
+
+    public Gs232Session(
+        IGs232Port port,
+        Gs232ProbeLog log,
+        Action<int>? sleep = null,
+        int commandGapMs = 0,
+        Func<long>? nowMs = null)
+    {
+        _port = port;
+        _log = log;
+        _sleep = sleep ?? Thread.Sleep;
+        _nowMs = nowMs ?? (() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+        CommandGapMs = commandGapMs;
+    }
+
+    /// <summary>Quiet time after a reply before the next write. 0 sends immediately.</summary>
+    public int CommandGapMs
+    {
+        get => _commandGapMs;
+        set => _commandGapMs = Math.Clamp(value, 0, 1000);
+    }
 
     /// <summary>
     /// Opens the port, runs <paramref name="action"/>, and closes the port again. Port failures (in use, access
@@ -147,16 +173,19 @@ internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<in
         Gs232Target target,
         Gs232ProbeLog log,
         Func<Gs232Session, T> action,
-        Action<int>? sleep = null)
+        Action<int>? sleep = null,
+        int? commandGapMs = null,
+        Func<long>? nowMs = null)
     {
+        var gap = commandGapMs ?? target.CommandGapMs;
         log.Info(string.Create(
             CultureInfo.InvariantCulture,
-            $"Opening {target.Port} at {target.BaudRate} baud, {Gs232SerialPort.LineSettings}"));
+            $"Opening {target.Port} at {target.BaudRate} baud, {Gs232SerialPort.LineSettings}, command gap {gap} ms"));
         try
         {
             using var port = createPort();
             port.Open();
-            var value = action(new Gs232Session(port, log, sleep));
+            var value = action(new Gs232Session(port, log, sleep, gap, nowMs));
             log.Info($"Closed {target.Port}");
             return (value, null);
         }
@@ -177,23 +206,23 @@ internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<in
         if (azimuthOnly)
         {
             var azOnly = Gs232PositionParser.TryParseAzimuthLine(Query("C"), out var azValue) ? azValue : (int?)null;
-            log.Parsed(azOnly is null ? "C: no azimuth in the reply" : $"C: azimuth {azOnly}");
+            _log.Parsed(azOnly is null ? "C: no azimuth in the reply" : $"C: azimuth {azOnly}");
             return new Gs232Position(azOnly, null);
         }
 
         Gs232PositionParser.TryParseParts(Query("C2"), out var az, out var el);
-        log.Parsed($"C2: azimuth {Show(az)}, elevation {Show(el)}");
+        _log.Parsed($"C2: azimuth {Show(az)}, elevation {Show(el)}");
 
         if (az is null)
         {
             az = Gs232PositionParser.TryParseAzimuthLine(Query("C"), out var cValue) ? cValue : null;
-            log.Parsed($"C: azimuth {Show(az)}");
+            _log.Parsed($"C: azimuth {Show(az)}");
         }
 
         if (el is null)
         {
             el = Gs232PositionParser.TryParseElevationLine(Query("B"), out var bValue) ? bValue : null;
-            log.Parsed($"B: elevation {Show(el)}");
+            _log.Parsed($"B: elevation {Show(el)}");
         }
 
         return new Gs232Position(az, el);
@@ -204,7 +233,7 @@ internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<in
     {
         var reply = Exchange(command);
         if (reply.Length == 0)
-            log.Info($"No reply to {command} within {ReplyTimeoutMs} ms. Most controllers send nothing back to a command.");
+            _log.Info($"No reply to {command} within {ReplyTimeoutMs} ms. Most controllers send nothing back to a command.");
     }
 
     public void Wait(int milliseconds) => _sleep(milliseconds);
@@ -214,7 +243,7 @@ internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<in
         var reply = Exchange(command);
         if (reply.Length == 0)
         {
-            log.Info($"No reply to {command} within {ReplyTimeoutMs} ms");
+            _log.Info($"No reply to {command} within {ReplyTimeoutMs} ms");
             return null;
         }
 
@@ -223,19 +252,36 @@ internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<in
 
     private byte[] Exchange(string command)
     {
+        WaitForCommandGap(command);
+
         var stale = ReadAvailable();
         if (stale.Length > 0)
-            log.Stale(stale);
+            _log.Stale(stale);
 
         var bytes = Encoding.ASCII.GetBytes(command + "\r");
-        port.Write(bytes);
-        log.Tx(bytes);
+        _port.Write(bytes);
+        _log.Tx(bytes);
 
         _sleep(SettleMs);
         var reply = ReadReply();
         if (reply.Length > 0)
-            log.Rx(reply);
+            _log.Rx(reply);
+        _lastExchangeUtcMs = _nowMs();
         return reply;
+    }
+
+    private void WaitForCommandGap(string command)
+    {
+        if (_commandGapMs <= 0 || _lastExchangeUtcMs is null)
+            return;
+
+        var elapsed = _nowMs() - _lastExchangeUtcMs.Value;
+        var remaining = (int)(_commandGapMs - elapsed);
+        if (remaining <= 0)
+            return;
+
+        _log.Info(string.Create(CultureInfo.InvariantCulture, $"Waiting {remaining} ms before {command}"));
+        _sleep(remaining);
     }
 
     /// <summary>Reads until a CR or LF arrives or the timeout passes, then picks up a trailing LF.</summary>
@@ -260,14 +306,125 @@ internal sealed class Gs232Session(IGs232Port port, Gs232ProbeLog log, Action<in
 
     private byte[] ReadAvailable()
     {
-        var count = port.BytesToRead;
+        var count = _port.BytesToRead;
         if (count <= 0)
             return [];
 
         var buffer = new byte[count];
-        var read = port.Read(buffer, 0, count);
+        var read = _port.Read(buffer, 0, count);
         return read == count ? buffer : buffer[..read];
     }
 
     private static string Show(int? degrees) => degrees?.ToString(CultureInfo.InvariantCulture) ?? "none";
+}
+
+/// <summary>Outcome of the immediate-then-delayed move comparison on the GS-232 tab.</summary>
+internal enum Gs232TimingVerdict
+{
+    ImmediateMoved,
+    DelayedOnlyMoved,
+    NeitherMoved,
+    PositionReadFailed
+}
+
+/// <summary>
+/// Compares a move sent with no quiet time against the same move after the chosen command gap,
+/// then returns the antenna to the starting heading.
+/// </summary>
+internal static class Gs232TimingCheck
+{
+    public const int ObserveMs = 2000;
+
+    public static (Gs232TimingVerdict Verdict, Gs232Position FinalPosition) Run(
+        Gs232Session session,
+        Gs232Target target,
+        Gs232ProbeLog log,
+        int quietTimeMs)
+    {
+        quietTimeMs = Math.Clamp(quietTimeMs, 0, 1000);
+        var start = session.ReadPosition(target.AzimuthOnly);
+        if (start.Azimuth is null || (!target.AzimuthOnly && start.Elevation is null))
+        {
+            log.Info("Timing check stopped: no starting position.");
+            return (Gs232TimingVerdict.PositionReadFailed, start);
+        }
+
+        var fromAz = start.Azimuth.Value;
+        var fromEl = start.Elevation ?? 0;
+        var toAz = Gs232Commands.NudgeAzimuth(fromAz, target.MaxAzimuthDeg);
+        var nudge = Gs232Commands.Move(
+            toAz, fromEl, target.AzimuthOnly, target.MaxAzimuthDeg, target.MaxElevationDeg);
+        var home = Gs232Commands.Move(
+            fromAz, fromEl, target.AzimuthOnly, target.MaxAzimuthDeg, target.MaxElevationDeg);
+
+        log.Info(string.Create(
+            CultureInfo.InvariantCulture,
+            $"Timing check: nudge {nudge}, then return with {home}, quiet time {quietTimeMs} ms"));
+
+        session.CommandGapMs = 0;
+        session.Send(nudge);
+        session.Wait(ObserveMs);
+        var afterImmediate = session.ReadPosition(target.AzimuthOnly);
+        if (!afterImmediate.HasAny)
+        {
+            log.Info("Timing check stopped: no position after the immediate move.");
+            var failedHome = ReturnHome(session, home, quietTimeMs, target.AzimuthOnly, log);
+            return (Gs232TimingVerdict.PositionReadFailed, failedHome);
+        }
+
+        if (Moved(start, afterImmediate))
+        {
+            log.Info("Verdict: the immediate command moved the rotator.");
+            var homeAfterImmediate = ReturnHome(session, home, quietTimeMs, target.AzimuthOnly, log);
+            return (Gs232TimingVerdict.ImmediateMoved, homeAfterImmediate);
+        }
+
+        log.Info("Immediate command did not move the rotator. Reading again, then sending after the quiet time.");
+        session.CommandGapMs = quietTimeMs;
+        var beforeDelayed = session.ReadPosition(target.AzimuthOnly);
+        if (!beforeDelayed.HasAny)
+        {
+            log.Info("Timing check stopped: no position before the delayed move.");
+            var failedHome = ReturnHome(session, home, quietTimeMs, target.AzimuthOnly, log);
+            return (Gs232TimingVerdict.PositionReadFailed, failedHome);
+        }
+
+        session.Send(nudge);
+        session.Wait(ObserveMs);
+        var afterDelayed = session.ReadPosition(target.AzimuthOnly);
+        if (!afterDelayed.HasAny)
+        {
+            log.Info("Timing check stopped: no position after the delayed move.");
+            var failedHome = ReturnHome(session, home, quietTimeMs, target.AzimuthOnly, log);
+            return (Gs232TimingVerdict.PositionReadFailed, failedHome);
+        }
+
+        var delayedMoved = Moved(start, afterDelayed);
+        var verdict = delayedMoved
+            ? Gs232TimingVerdict.DelayedOnlyMoved
+            : Gs232TimingVerdict.NeitherMoved;
+        log.Info(verdict == Gs232TimingVerdict.DelayedOnlyMoved
+            ? "Verdict: only the delayed command moved the rotator."
+            : "Verdict: neither command moved the rotator.");
+        var final = ReturnHome(session, home, quietTimeMs, target.AzimuthOnly, log);
+        return (verdict, final);
+    }
+
+    private static Gs232Position ReturnHome(
+        Gs232Session session,
+        string home,
+        int quietTimeMs,
+        bool azimuthOnly,
+        Gs232ProbeLog log)
+    {
+        session.CommandGapMs = quietTimeMs;
+        log.Info($"Returning to the starting heading with {home}");
+        session.Send(home);
+        session.Wait(ObserveMs);
+        return session.ReadPosition(azimuthOnly);
+    }
+
+    private static bool Moved(Gs232Position from, Gs232Position to) =>
+        (from.Azimuth is { } fromAz && to.Azimuth is { } toAz && Math.Abs(toAz - fromAz) >= 2)
+        || (from.Elevation is { } fromEl && to.Elevation is { } toEl && Math.Abs(toEl - fromEl) >= 2);
 }

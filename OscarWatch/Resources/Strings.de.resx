@@ -3559,6 +3559,12 @@ Fortfahren?</value>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Nur Azimut</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Befehlsabstand (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Ruhezeit nach einer Antwort vor dem nächsten GS-232-Befehl. Manche Schnittstellen ignorieren eine Bewegung, die direkt nach einer Positionsmeldung gesendet wird. 0 sendet sofort. Versuchen Sie 200 bis 300, wenn der Rotor einmal fährt und dann stehen bleibt.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Azimut-Seriellport</value>
   </data>

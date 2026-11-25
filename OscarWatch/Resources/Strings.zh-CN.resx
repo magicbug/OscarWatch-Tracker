@@ -3559,6 +3559,12 @@
   <data name="Settings.Rotator.AzimuthOnly">
     <value>仅方位角</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>命令间隔（毫秒）</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>收到应答后到下一条 GS-232 命令之前的静默时间。有些接口会忽略紧跟在位置报告之后发送的移动命令。0 表示立即发送。如果旋转器只动一次就停下，可尝试 200 到 300。</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>方位角串口</value>
   </data>

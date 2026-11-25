@@ -263,6 +263,9 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private double _rotatorMovementThresholdDeg = 1.0;
 
+    [ObservableProperty]
+    private int _rotatorCommandGapMs = 200;
+
     public ObservableCollection<string> AvailableComPorts { get; } = [];
 
     public bool ShowLinuxSerialPortHint => OperatingSystem.IsLinux();
@@ -1440,6 +1443,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             ElevationOffsetDeg = RotatorElevationOffsetDeg,
             SmartAzimuth450 = RotatorSmartAzimuth450,
             AzimuthOnly = RotatorAzimuthOnly,
+            CommandGapMs = Math.Clamp(RotatorCommandGapMs, 0, 1000),
             KeyholeAvoidanceEnabled = RotatorKeyholeAvoidanceEnabled
                 && SelectedElevationRangeChoice?.Value == RotatorElevationRange.Deg180
                 && !IsRotatorAzimuthOnlyActive,
@@ -1695,6 +1699,7 @@ public partial class SettingsViewModel : ViewModelBase, IDisposable
             RotatorElevationOffsetDeg = rotator.ElevationOffsetDeg;
             RotatorSmartAzimuth450 = rotator.SmartAzimuth450;
             RotatorAzimuthOnly = rotator.AzimuthOnly;
+            RotatorCommandGapMs = rotator.CommandGapMs;
             RotatorKeyholeAvoidanceEnabled = rotator.KeyholeAvoidanceEnabled;
             RotatorSlewRateDegPerSec = rotator.SlewRateDegPerSec;
             RotatorKeyholeThresholdDeg = rotator.KeyholeThresholdDeg;

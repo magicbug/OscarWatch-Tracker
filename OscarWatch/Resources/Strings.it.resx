@@ -3559,6 +3559,12 @@ Continuare?</value>
   <data name="Settings.Rotator.AzimuthOnly">
     <value>Solo azimut</value>
   </data>
+  <data name="Settings.Rotator.CommandGap">
+    <value>Pausa tra comandi (ms)</value>
+  </data>
+  <data name="Settings.Rotator.CommandGapNote">
+    <value>Tempo di silenzio dopo una risposta prima del comando GS-232 successivo. Alcune interfacce ignorano un movimento inviato subito dopo un rapporto di posizione. 0 invia subito. Provare da 200 a 300 se il rotore si muove una volta e poi si ferma.</value>
+  </data>
   <data name="Settings.Rotator.AzimuthPort">
     <value>Porta seriale azimut</value>
   </data>

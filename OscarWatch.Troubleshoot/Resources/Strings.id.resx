@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>Posisi terakhir</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>Waktu tenang (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>Ya</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>Putar 5 derajat</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>Uji waktu</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>Putar 5 derajat memutar antena 5° pada azimut setelah dikonfirmasi, dan elevasi tetap. Tombol ini tersedia setelah Baca posisi mengembalikan azimut (dan elevasi, kecuali pengendali hanya azimut).</value>
+    <value>Putar 5 derajat memutar antena 5° pada azimut setelah dikonfirmasi, dan elevasi tetap. Tombol ini tersedia setelah Baca posisi mengembalikan azimut (dan elevasi, kecuali pengendali hanya azimut). Waktu tenang diterapkan sebelum setiap perintah, sama seperti OscarWatch.</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>Uji waktu membandingkan gerakan yang dikirim tepat setelah balasan posisi dengan gerakan yang sama setelah waktu tenang, lalu mengembalikan antena. Gunakan jika rotator bergerak sekali lalu berhenti mengikuti.</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>Jalankan uji waktu pada rotator di {0}? Antena akan berputar sekitar 5° lalu kembali. Waktu tenang untuk gerakan tertunda adalah {1} ms. Pastikan tidak ada yang menghalangi.</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>Uji waktu: perintah segera menggerakkan rotator. Jeda perintah mungkin tidak diperlukan.</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>Uji waktu: hanya perintah tertunda yang menggerakkan rotator. Naikkan jeda perintah di Pengaturan agar cocok dengan waktu tenang di sini.</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>Uji waktu: tidak ada perintah yang menggerakkan rotator. Periksa log sesi dan kabel antarmuka.</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>Uji waktu berhenti karena pengendali tidak melaporkan posisi. Log sesi menampilkan balasan.</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>Log sesi</value>

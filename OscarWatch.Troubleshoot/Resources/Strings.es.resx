@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>Última posición</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>Tiempo de silencio (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>Sí</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>Mover 5 grados</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>Comprobación de tiempo</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>Mover 5 grados gira la antena 5° en acimut tras una confirmación y mantiene la elevación. Está disponible cuando Leer posición ha devuelto el acimut (y la elevación, salvo en controladores solo de acimut).</value>
+    <value>Mover 5 grados gira la antena 5° en acimut tras una confirmación y mantiene la elevación. Está disponible cuando Leer posición ha devuelto el acimut (y la elevación, salvo en controladores solo de acimut). El tiempo de silencio se aplica antes de cada orden, como en OscarWatch.</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>La comprobación de tiempo compara un movimiento enviado justo después de una respuesta de posición con el mismo movimiento tras el tiempo de silencio, y luego devuelve la antena. Úsela si el rotor se mueve una vez y luego deja de seguir.</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>¿Ejecutar la comprobación de tiempo en el rotor de {0}? La antena girará unos 5° y volverá. El tiempo de silencio del movimiento retrasado es {1} ms. Compruebe que no haya obstáculos.</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>Comprobación de tiempo: la orden inmediata movió el rotor. Probablemente no hace falta una pausa entre órdenes.</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>Comprobación de tiempo: solo la orden retrasada movió el rotor. Suba la pausa entre órdenes en Ajustes al tiempo de silencio usado aquí.</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>Comprobación de tiempo: ninguna orden movió el rotor. Revise el registro de sesión y el cableado de la interfaz.</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>Comprobación de tiempo detenida porque el controlador no informó una posición. El registro de sesión muestra la respuesta.</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>Registro de la sesión</value>

@@ -263,6 +263,9 @@ GPS: {2}</value>
   <data name="Gs232.Label.Position">
     <value>Letzte Position</value>
   </data>
+  <data name="Gs232.Label.QuietTime">
+    <value>Ruhezeit (ms)</value>
+  </data>
   <data name="Gs232.Yes">
     <value>Ja</value>
   </data>
@@ -305,8 +308,29 @@ GPS: {2}</value>
   <data name="Action.Gs232Move">
     <value>5 Grad drehen</value>
   </data>
+  <data name="Action.Gs232TimingCheck">
+    <value>Zeitprüfung</value>
+  </data>
   <data name="Gs232.MoveHint">
-    <value>„5 Grad drehen“ dreht die Antenne nach einer Bestätigung um 5° im Azimut und behält die Elevation bei. Die Schaltfläche ist verfügbar, sobald „Position lesen“ den Azimut geliefert hat (und die Elevation, außer bei Controllern nur für Azimut).</value>
+    <value>„5 Grad drehen“ dreht die Antenne nach einer Bestätigung um 5° im Azimut und behält die Elevation bei. Die Schaltfläche ist verfügbar, sobald „Position lesen“ den Azimut geliefert hat (und die Elevation, außer bei Controllern nur für Azimut). Die Ruhezeit gilt vor jedem Befehl, wie in OscarWatch.</value>
+  </data>
+  <data name="Gs232.TimingCheckHint">
+    <value>Die Zeitprüfung vergleicht eine Bewegung direkt nach einer Positionsantwort mit derselben Bewegung nach der Ruhezeit und stellt die Antenne danach zurück. Nutzen Sie sie, wenn der Rotor einmal fährt und dann nicht mehr folgt.</value>
+  </data>
+  <data name="Confirm.Gs232TimingCheck">
+    <value>Zeitprüfung am Rotor an {0} ausführen? Die Antenne dreht etwa 5° und kehrt zurück. Ruhezeit für die verzögerte Bewegung: {1} ms. Prüfen Sie, dass nichts im Weg ist.</value>
+  </data>
+  <data name="Result.Gs232TimingImmediate">
+    <value>Zeitprüfung: der sofortige Befehl hat den Rotor bewegt. Ein Befehlsabstand ist vermutlich nicht nötig.</value>
+  </data>
+  <data name="Result.Gs232TimingDelayed">
+    <value>Zeitprüfung: nur der verzögerte Befehl hat den Rotor bewegt. Erhöhen Sie den Befehlsabstand in den Einstellungen auf die hier verwendete Ruhezeit.</value>
+  </data>
+  <data name="Result.Gs232TimingNeither">
+    <value>Zeitprüfung: keiner der Befehle hat den Rotor bewegt. Prüfen Sie das Sitzungsprotokoll und die Verkabelung der Schnittstelle.</value>
+  </data>
+  <data name="Result.Gs232TimingFailed">
+    <value>Zeitprüfung abgebrochen, weil der Controller keine Position gemeldet hat. Das Sitzungsprotokoll zeigt die Antwort.</value>
   </data>
   <data name="Gs232.LogHeading">
     <value>Sitzungsprotokoll</value>
