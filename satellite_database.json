@@ -1015,6 +1015,14 @@
         "doppler": "NOR"
       },
       {
+        "type": "FT4",
+        "downlink": 436888,
+        "uplink": 145925,
+        "downlink_mode": "DATA-USB",
+        "uplink_mode": "DATA-USB",
+        "doppler": "NOR"
+      },
+      {
         "type": "200bps FSK Telemetry",
         "downlink": 436888,
         "uplink": 0,

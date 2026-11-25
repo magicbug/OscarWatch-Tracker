@@ -2967,7 +2967,10 @@ public partial class MainViewModel : ViewModelBase
         Ft4SatelliteEligibility.IsAllowed(
             Frequencies.SatelliteName,
             FocusedNoradId,
-            Frequencies.SelectedMode);
+            Frequencies.SelectedMode)
+        || Frequencies.AvailableModes.Any(mode =>
+            Ft4SlotGate.IsFt4Transponder(mode)
+            && Ft4SatelliteEligibility.IsAllowed(Frequencies.SatelliteName, FocusedNoradId, mode));
 
     private bool CanOpenFt8() =>
         Frequencies.AvailableModes.Any(mode =>
