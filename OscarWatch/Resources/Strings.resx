@@ -5062,6 +5062,15 @@ Latest: {1} ({2})</value>
   <data name="Ft4.AutoReply.Note">
     <value>While calling CQ, answer the first station that calls you. Clear this to keep calling CQ until you click a station. Tick it again to answer the next caller, including one from the last few seconds.</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>Sound when called</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>Plays three short notes when a station calls you to start a contact. This is a different sound from a pass alert. Messages later in that contact stay quiet. If you do not answer, the same station does not play it again for a minute. The sound uses the computer speakers, not the FT4 transmit output.</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>Test sound</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>Blocked callsigns</value>
   </data>

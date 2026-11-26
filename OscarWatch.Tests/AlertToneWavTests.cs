@@ -36,4 +36,19 @@ public class AlertToneWavTests
         var dataBytes = BitConverter.ToInt32(wav, 40);
         Assert.Equal(dataBytes, pcm.Length * sizeof(short));
     }
+
+    [Fact]
+    public void Call_tone_is_not_the_pass_alert()
+    {
+        var pass = AlertToneWav.CreatePcm16();
+        var call = AlertToneWav.CreateCallPcm16();
+
+        Assert.NotEqual(pass.Length, call.Length);
+        Assert.NotEqual(pass, call);
+
+        var wav = AlertToneWav.CreateCall();
+        Assert.Equal((byte)'R', wav[0]);
+        Assert.Equal((byte)'d', wav[36]);
+        Assert.Equal(call.Length * sizeof(short), BitConverter.ToInt32(wav, 40));
+    }
 }

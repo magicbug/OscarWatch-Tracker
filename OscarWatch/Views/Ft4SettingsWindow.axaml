@@ -218,6 +218,16 @@
             <TextBlock Classes="ft4-note"
                        Margin="24,0,0,0"
                        Text="{loc:Localize Key=Ft4.AutoReply.Note}" />
+            <CheckBox Content="{loc:Localize Key=Ft4.CallAlertSound}"
+                      IsChecked="{Binding CallAlertSoundEnabled, Mode=TwoWay}" />
+            <TextBlock Classes="ft4-note"
+                       Margin="24,0,0,0"
+                       Text="{loc:Localize Key=Ft4.CallAlertSound.Note}" />
+            <Button Content="{loc:Localize Key=Ft4.CallAlertSound.Test}"
+                    Command="{Binding TestCallAlertSoundCommand}"
+                    HorizontalAlignment="Left"
+                    MinWidth="140"
+                    Margin="24,0,0,0" />
             <TextBlock Classes="ft4-section"
                        Margin="0,4,0,0"
                        Text="{loc:Localize Key=Ft4.BlockedCallsigns}" />

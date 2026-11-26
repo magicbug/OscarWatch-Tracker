@@ -90,6 +90,12 @@ public sealed class Ft4Settings
     public bool AutoReply { get; set; } = true;
 
     /// <summary>
+    /// When true, a short sound plays when a station calls this operator to start a contact.
+    /// Off by default so the computer speakers stay quiet until the operator asks.
+    /// </summary>
+    public bool CallAlertSoundEnabled { get; set; }
+
+    /// <summary>
     /// Callsigns that are not answered automatically while calling CQ.
     /// Clicking their decode still starts a contact. A trailing /P or /R matches the base callsign.
     /// Replace the list when it changes. The sequencer reads it on the decode thread.

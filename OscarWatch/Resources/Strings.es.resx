@@ -5062,6 +5062,15 @@ Está utilizando la versión {0}.
   <data name="Ft4.AutoReply.Note">
     <value>Al llamar CQ, responde a la primera estación que le llame. Desmarque para seguir llamando CQ hasta que haga clic en una estación. Vuelva a marcarlo para responder a la siguiente, incluida una de los últimos segundos.</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>Sonido al ser llamado</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>Reproduce tres notas cortas cuando una estación le llama para empezar un contacto. Es un sonido distinto del aviso de un pase. Los mensajes posteriores de ese contacto no suenan. Si no responde, la misma estación no lo reproduce otra vez durante un minuto. El sonido sale por los altavoces del ordenador, no por la salida de transmisión de FT4.</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>Probar sonido</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>Indicativos bloqueados</value>
   </data>

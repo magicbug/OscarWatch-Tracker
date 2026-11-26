@@ -5062,6 +5062,15 @@
   <data name="Ft4.AutoReply.Note">
     <value>呼叫 CQ 时，应答第一个呼叫您的电台。取消后会继续呼叫 CQ，直到您点击某个电台。再次勾选后，将应答下一个呼叫，包括几秒前的呼叫。</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>被呼叫时发声</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>有电台呼叫您并开始联络时播放三声短音，与过境提醒的声音不同。该联络随后的报文不再发声。如果您没有应答，同一电台在一分钟内不会再次发声。声音从电脑扬声器播出，不从 FT4 发射输出播出。</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>试听</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>已阻止的呼号</value>
   </data>

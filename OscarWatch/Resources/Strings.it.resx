@@ -5062,6 +5062,15 @@ Ultima versione: {1} ({2})</value>
   <data name="Ft4.AutoReply.Note">
     <value>Durante la chiamata CQ, risponde alla prima stazione che ti chiama. Deseleziona per continuare a chiamare CQ finché non fai clic su una stazione. Seleziona di nuovo per rispondere al chiamante successivo, compresi quelli che hanno chiamato negli ultimi secondi.</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>Suono quando chiamati</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>Riproduce tre note brevi quando una stazione ti chiama per iniziare un collegamento. È un suono diverso dall'avviso di un passaggio. I messaggi successivi di quel collegamento restano in silenzio. Se non rispondi, la stessa stazione non lo riproduce di nuovo per un minuto. Il suono usa gli altoparlanti del computer, non l'uscita di trasmissione FT4.</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>Prova suono</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>Nominativi bloccati</value>
   </data>

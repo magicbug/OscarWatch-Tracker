@@ -1,8 +1,11 @@
 namespace OscarWatch.Core.Services;
 
-/// <summary>Plays a short system alert sound for scheduled-pass reminders.</summary>
+/// <summary>Plays short alert sounds through the computer speakers.</summary>
 public interface IAlertSoundService
 {
-    /// <summary>Best-effort ding; never throws. May be a no-op when playback is unavailable.</summary>
+    /// <summary>Scheduled-pass ding. Best-effort; never throws.</summary>
     void PlayAlert();
+
+    /// <summary>FT4 call alert. A different tone from <see cref="PlayAlert"/>. Best-effort; never throws.</summary>
+    void PlayCall();
 }

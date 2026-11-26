@@ -2,34 +2,50 @@ using System.Buffers.Binary;
 
 namespace OscarWatch.Services;
 
-/// <summary>Builds a short mono PCM ding as a WAV blob (same tone on every platform).</summary>
+/// <summary>Builds short mono PCM tones as WAV blobs (the same tones on every platform).</summary>
 internal static class AlertToneWav
 {
     public const int SampleRate = 44100;
     public const int Channels = 1;
     public const int BitsPerSample = 16;
 
-    /// <summary>Two short sine blips (~0.4 s total), suitable for a pre-AOS alert.</summary>
-    public static byte[] Create()
-    {
-        var samples = new short[SampleRate * 2 / 5]; // 0.4 s
-        WriteTone(samples, offset: 0, durationSamples: SampleRate / 10, frequencyHz: 880);
-        WriteTone(samples, offset: SampleRate / 8, durationSamples: SampleRate / 8, frequencyHz: 1174.66);
+    /// <summary>Two rising blips (~0.4 s), the scheduled-pass alert.</summary>
+    public static byte[] Create() => Wrap(CreatePcm16());
 
-        var dataBytes = samples.Length * sizeof(short);
-        var file = new byte[44 + dataBytes];
-        WriteHeader(file, dataBytes);
-        Buffer.BlockCopy(samples, 0, file, 44, dataBytes);
-        return file;
-    }
-
-    /// <summary>PCM16 little-endian samples only (no WAV header), for PortAudio playback.</summary>
+    /// <summary>PCM16 samples for <see cref="Create"/>, for PortAudio playback.</summary>
     public static short[] CreatePcm16()
     {
         var samples = new short[SampleRate * 2 / 5];
         WriteTone(samples, offset: 0, durationSamples: SampleRate / 10, frequencyHz: 880);
         WriteTone(samples, offset: SampleRate / 8, durationSamples: SampleRate / 8, frequencyHz: 1174.66);
         return samples;
+    }
+
+    /// <summary>
+    /// Three even notes stepping down (~0.5 s). A station calling on FT4,
+    /// distinct from the rising pass alert.
+    /// </summary>
+    public static byte[] CreateCall() => Wrap(CreateCallPcm16());
+
+    /// <summary>PCM16 samples for <see cref="CreateCall"/>, for PortAudio playback.</summary>
+    public static short[] CreateCallPcm16()
+    {
+        var note = SampleRate / 8;
+        var gap = SampleRate / 20;
+        var samples = new short[note * 3 + gap * 2];
+        WriteTone(samples, 0, note, 659.25);
+        WriteTone(samples, note + gap, note, 523.25);
+        WriteTone(samples, (note + gap) * 2, note, 392);
+        return samples;
+    }
+
+    private static byte[] Wrap(short[] samples)
+    {
+        var dataBytes = samples.Length * sizeof(short);
+        var file = new byte[44 + dataBytes];
+        WriteHeader(file, dataBytes);
+        Buffer.BlockCopy(samples, 0, file, 44, dataBytes);
+        return file;
     }
 
     private static void WriteTone(short[] samples, int offset, int durationSamples, double frequencyHz)

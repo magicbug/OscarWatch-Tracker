@@ -35,6 +35,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     private IReadOnlySet<string> _workedCalls = new HashSet<string>(StringComparer.Ordinal);
     private IReadOnlySet<string> _workedGridFields = new HashSet<string>(StringComparer.Ordinal);
     private readonly HashSet<string> _finishedPartners = new(StringComparer.Ordinal);
+    private readonly IAlertSoundService _alertSound;
+    private readonly Ft4CallAlert _callAlert = new();
+    private string? _callAlertPartner;
     private string? _highlightPartner;
     private Ft4PounceTarget? _highlightPounce;
 
@@ -44,7 +47,8 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         ILiveTrackerSnapshotProvider tracker,
         ILocalizationService localization,
         Ft4ModemService modem,
-        IQsoLogbookRepository logbook)
+        IQsoLogbookRepository logbook,
+        IAlertSoundService alertSound)
     {
         _settings = settings;
         _frequencyOverlay = frequencyOverlay;
@@ -52,6 +56,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _l = localization;
         _modem = modem;
         _logbook = logbook;
+        _alertSound = alertSound;
 
         PttMethodOptions =
         [
@@ -106,6 +111,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         _txLevel = Math.Clamp(ft4.TxLevel, 0.05, 1.0);
         _holdTxFrequency = ft4.HoldTxFrequency;
         _autoReply = ft4.AutoReply;
+        _callAlertSoundEnabled = ft4.CallAlertSoundEnabled;
         foreach (var call in Ft4BlockedCallsigns.Clean(ft4.BlockedCallsigns))
             BlockedCallsigns.Add(call);
         _autoLowerRfPower = ft4.AutoLowerRfPower;
@@ -410,6 +416,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _preferEvenSlot;
     [ObservableProperty] private bool _holdTxFrequency = true;
     [ObservableProperty] private bool _autoReply = true;
+
+    /// <summary>Play a sound when a station calls this operator to start a contact.</summary>
+    [ObservableProperty] private bool _callAlertSoundEnabled;
     [ObservableProperty] private string _blockedCallsignDraft = "";
     [ObservableProperty] private string? _selectedBlockedCallsign;
     [ObservableProperty] private bool _autoLowerRfPower;
@@ -503,6 +512,15 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
         // left CQ running after the box was cleared and ticked again.
         _modem.SetAutoReply(value);
     }
+
+    partial void OnCallAlertSoundEnabledChanged(bool value)
+    {
+        _settings.Current.Ft4.CallAlertSoundEnabled = value;
+        _settings.RequestSave();
+    }
+
+    [RelayCommand]
+    private void TestCallAlertSound() => _alertSound.PlayCall();
 
     partial void OnBlockedCallsignDraftChanged(string value) =>
         AddBlockedCallsignCommand.NotifyCanExecuteChanged();
@@ -615,7 +633,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     {
         _settings.Current.Ft4.NewestDecodesAtBottom = value;
         _settings.RequestSave();
-        SyncDecodeRows();
+        SyncDecodeRows(_callAlertPartner);
     }
 
     [RelayCommand]
@@ -1847,7 +1865,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             PreferEvenSlot = _modem.Sequencer?.PreferEvenSlot ?? PreferEvenSlot;
             IsTuning = _modem.IsTuning;
             // Recolour rows already on screen when the QSO partner changes.
-            QsoPartnerCall = _modem.Sequencer?.TheirCall;
+            NoteCallAlertPartner(_modem.Sequencer?.TheirCall);
             if (!string.IsNullOrEmpty(_modem.ManualPrompt))
                 SetManualPttPrompt(_modem.ManualPrompt);
             SyncPounceState();
@@ -1876,9 +1894,34 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     private void ShowDecodeListChange()
     {
+        // The sequencer may already have taken this caller as the partner. The sound
+        // uses the partner from before this decode, so the opening call still plays.
+        var partnerBefore = _callAlertPartner;
         QsoPartnerCall = _modem.Sequencer?.TheirCall;
-        SyncDecodeRows();
+        SyncDecodeRows(partnerBefore);
+        NoteCallAlertPartner(QsoPartnerCall);
         RefreshRxMarker();
+    }
+
+    private void NoteCallAlertPartner(string? partner)
+    {
+        if (!string.Equals(_callAlertPartner, partner, StringComparison.OrdinalIgnoreCase))
+            _callAlert.NotePartnerChanged(_callAlertPartner, partner);
+        _callAlertPartner = partner;
+        QsoPartnerCall = partner;
+    }
+
+    private void MaybePlayCallAlert(Ft4DecodedMessage message, string? partnerBefore)
+    {
+        if (!CallAlertSoundEnabled)
+            return;
+
+        var age = DateTime.UtcNow - message.SlotUtc;
+        if (age > Ft4CallAlert.RepeatQuietFor || age < TimeSpan.FromMinutes(-2))
+            return;
+
+        if (_callAlert.ShouldPlay(message, StationCallsign, partnerBefore))
+            _alertSound.PlayCall();
     }
 
     /// <summary>
@@ -1887,7 +1930,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     /// Modem storage stays newest-first; the display may reverse that when
     /// <see cref="NewestDecodesAtBottom"/> is on.
     /// </summary>
-    private void SyncDecodeRows()
+    private void SyncDecodeRows(string? partnerBefore)
     {
         var messages = Ft4DecodeDisplayOrder.ForDisplay(_modem.Decodes, NewestDecodesAtBottom);
         var live = new HashSet<Ft4DecodedMessage>(messages, ReferenceEqualityComparer.Instance);
@@ -1922,6 +1965,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             var row = new Ft4DecodeRowViewModel(message, ShowDtWsjtxConvention, _modem.Profile.SlotSeconds);
             ApplyHighlight(row);
             Decodes.Insert(i, row);
+            MaybePlayCallAlert(message, partnerBefore);
         }
 
         while (Decodes.Count > messages.Count)

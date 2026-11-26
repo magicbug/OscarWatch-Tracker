@@ -5062,6 +5062,15 @@ LOS: {2} UTC
   <data name="Ft4.AutoReply.Note">
     <value>CQ中は、最初に呼んできた局に応答します。オフにすると、局をクリックするまでCQを続けます。再度オンにすると、直前数秒の呼び出しを含め、次の局に応答します。</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>呼ばれたときに音を出す</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>交信の始まりに局から呼ばれると、短い音を3つ鳴らします。パス通知の音とは別です。その交信のその後のメッセージでは鳴りません。応答しない場合、同じ局は1分間はもう鳴らしません。音はパソコンのスピーカーから出ます。FT4の送信出力からは出ません。</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>音を試す</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>ブロックするコールサイン</value>
   </data>

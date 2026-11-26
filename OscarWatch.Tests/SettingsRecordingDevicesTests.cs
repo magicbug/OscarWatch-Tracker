@@ -185,6 +185,8 @@ public sealed class SettingsRecordingDevicesTests
     private sealed class StubAlertSoundService : IAlertSoundService
     {
         public void PlayAlert() { }
+
+        public void PlayCall() { }
     }
 
     private sealed class StubCloudlogRadioSyncService : ICloudlogRadioSyncService

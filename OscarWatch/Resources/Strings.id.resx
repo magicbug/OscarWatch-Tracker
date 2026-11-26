@@ -5062,6 +5062,15 @@ Terbaru: {1} ({2})</value>
   <data name="Ft4.AutoReply.Note">
     <value>Saat memanggil CQ, jawab stasiun pertama yang memanggil Anda. Nonaktifkan untuk terus memanggil CQ sampai Anda mengklik stasiun. Aktifkan lagi untuk menjawab pemanggil berikutnya, termasuk yang memanggil beberapa detik lalu.</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>Suara saat dipanggil</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>Memainkan tiga nada pendek saat sebuah stasiun memanggil Anda untuk memulai kontak. Bunyinya berbeda dari peringatan lintasan. Pesan berikutnya dalam kontak itu tetap hening. Jika Anda tidak menjawab, stasiun yang sama tidak memainkannya lagi selama satu menit. Suara ini memakai pengeras suara komputer, bukan keluaran pancar FT4.</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>Uji suara</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>Callsign yang diblokir</value>
   </data>

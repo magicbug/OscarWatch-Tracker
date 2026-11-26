@@ -5062,6 +5062,15 @@ Aktuell: {1} ({2})</value>
   <data name="Ft4.AutoReply.Note">
     <value>Beim CQ-Rufen wird die erste Station beantwortet, die Sie ruft. Abwählen, um CQ weiterzurufen, bis Sie eine Station anklicken. Erneut auswählen, um den nächsten Anrufer zu beantworten, auch einen aus den letzten Sekunden.</value>
   </data>
+  <data name="Ft4.CallAlertSound">
+    <value>Ton bei Anruf</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Note">
+    <value>Spielt drei kurze Töne, wenn eine Station Sie anruft und ein Funkgespräch beginnt. Das ist ein anderer Ton als der Durchgangsalarm. Spätere Meldungen in diesem Gespräch bleiben still. Wenn Sie nicht antworten, spielt dieselbe Station den Ton eine Minute lang nicht erneut. Der Ton kommt aus den Computerlautsprechern, nicht aus dem FT4-Sendeausgang.</value>
+  </data>
+  <data name="Ft4.CallAlertSound.Test">
+    <value>Ton prüfen</value>
+  </data>
   <data name="Ft4.BlockedCallsigns">
     <value>Gesperrte Rufzeichen</value>
   </data>

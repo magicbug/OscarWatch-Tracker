@@ -567,6 +567,10 @@
                         IsChecked="{Binding AutoReply, Mode=TwoWay}"
                         ToolTip.Tip="{loc:Localize Key=Ft4.AutoReply.Note}"
                         VerticalAlignment="Center" />
+              <CheckBox Content="{loc:Localize Key=Ft4.CallAlertSound}"
+                        IsChecked="{Binding CallAlertSoundEnabled, Mode=TwoWay}"
+                        ToolTip.Tip="{loc:Localize Key=Ft4.CallAlertSound.Note}"
+                        VerticalAlignment="Center" />
               <CheckBox x:Name="PounceCheckBox"
                         Content="{Binding PounceCheckLabel}"
                         IsChecked="{Binding IsPounceArmed, Mode=OneWay}"

@@ -10,7 +10,8 @@ using Serilog;
 namespace OscarWatch.Services;
 
 /// <summary>
-/// Plays the same generated ding on Windows, macOS, and Linux.
+/// Plays generated tones on Windows, macOS, and Linux.
+/// The pass alert and the FT4 call alert are different tones.
 /// Prefers OS players / SoundPlayer, then ffmpeg, then PortAudio output.
 /// </summary>
 public sealed class PlatformAlertSoundService : IAlertSoundService
@@ -18,6 +19,7 @@ public sealed class PlatformAlertSoundService : IAlertSoundService
     private static readonly ILogger Log = Serilog.Log.ForContext<PlatformAlertSoundService>();
     private static readonly TimeSpan PlayerTimeout = TimeSpan.FromSeconds(4);
     private const uint MbIconAsterisk = 0x00000040;
+    private const uint MbIconExclamation = 0x00000030;
 
     private readonly FfmpegLocator? _ffmpegLocator;
     private readonly object _portAudioGate = new();
@@ -28,28 +30,40 @@ public sealed class PlatformAlertSoundService : IAlertSoundService
         _ffmpegLocator = ffmpegLocator;
     }
 
-    public void PlayAlert()
+    public void PlayAlert() =>
+        QueuePlayback(AlertToneWav.Create(), AlertToneWav.CreatePcm16(), MbIconAsterisk, "Scheduled pass alert sound");
+
+    public void PlayCall() =>
+        QueuePlayback(AlertToneWav.CreateCall(), AlertToneWav.CreateCallPcm16(), MbIconExclamation, "FT4 call alert sound");
+
+    private void QueuePlayback(byte[] wav, short[] pcm, uint windowsBeep, string label)
     {
-        // Never block the UI thread (Tick / Settings Test sound).
+        // Never block the UI thread (Tick / Settings Test sound / an FT4 decode).
         ThreadPool.QueueUserWorkItem(static state =>
         {
+            var play = (Playback)state!;
             try
             {
-                ((PlatformAlertSoundService)state!).PlayAlertCore();
+                play.Service.PlayCore(play.Wav, play.Pcm, play.WindowsBeep, play.Label);
             }
             catch (Exception ex)
             {
-                Log.Debug(ex, "Scheduled pass alert sound failed");
+                Log.Debug(ex, "{Label} failed", play.Label);
             }
-        }, this);
+        }, new Playback(this, wav, pcm, windowsBeep, label));
     }
 
-    private void PlayAlertCore()
+    private readonly record struct Playback(
+        PlatformAlertSoundService Service,
+        byte[] Wav,
+        short[] Pcm,
+        uint WindowsBeep,
+        string Label);
+
+    private void PlayCore(byte[] wav, short[] pcm, uint windowsBeep, string label)
     {
         try
         {
-            var wav = AlertToneWav.Create();
-
             if (OperatingSystem.IsWindows() && TryPlayWindows(wav))
                 return;
 
@@ -67,20 +81,20 @@ public sealed class PlatformAlertSoundService : IAlertSoundService
             if (TryPlayWithFfmpeg(wav))
                 return;
 
-            if (TryPlayWithPortAudio())
+            if (TryPlayWithPortAudio(pcm))
                 return;
 
             if (OperatingSystem.IsWindows())
             {
-                MessageBeep(MbIconAsterisk);
+                MessageBeep(windowsBeep);
                 return;
             }
 
-            Log.Warning("Scheduled pass alert sound could not be played on this system");
+            Log.Warning("{Label} could not be played on this system", label);
         }
         catch (Exception ex)
         {
-            Log.Debug(ex, "Scheduled pass alert sound failed");
+            Log.Debug(ex, "{Label} failed", label);
         }
     }
 
@@ -147,7 +161,7 @@ public sealed class PlatformAlertSoundService : IAlertSoundService
         }
     }
 
-    private bool TryPlayWithPortAudio()
+    private bool TryPlayWithPortAudio(short[] pcm)
     {
         lock (_portAudioGate)
         {
@@ -162,7 +176,7 @@ public sealed class PlatformAlertSoundService : IAlertSoundService
                     return false;
                 }
 
-                return PlayPcmViaPortAudio(AlertToneWav.CreatePcm16());
+                return PlayPcmViaPortAudio(pcm);
             }
             catch (Exception ex)
             {
