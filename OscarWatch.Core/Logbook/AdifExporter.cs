@@ -80,8 +80,9 @@ public static class AdifExporter
                 AppendField(sb, "SUBMODE", txMode.Submode);
         }
 
-        if (qso.FreqRxHz > 0 && qso.FreqRxHz != qso.FreqHz)
-            AppendField(sb, "FREQ_RX", FormatFreqMhz(qso.FreqRxHz));
+        var freqRx = FormatRxFrequencyMhz(qso);
+        if (freqRx.Length > 0)
+            AppendField(sb, "FREQ_RX", freqRx);
         if (!string.IsNullOrWhiteSpace(qso.BandRx) && !string.Equals(qso.Band, qso.BandRx, StringComparison.OrdinalIgnoreCase))
             AppendField(sb, "BAND_RX", qso.BandRx.Trim());
 
@@ -116,8 +117,15 @@ public static class AdifExporter
         }
     }
 
-    private static string FormatFreqMhz(long hz) =>
+    internal static string FormatFreqMhz(long hz) =>
         (hz / 1_000_000.0).ToString("0.000000", CultureInfo.InvariantCulture);
+
+    internal static string FormatRxFrequencyMhz(QsoRecord qso)
+    {
+        if (qso.FreqRxHz <= 0 || qso.FreqRxHz == qso.FreqHz)
+            return "";
+        return FormatFreqMhz(qso.FreqRxHz);
+    }
 
     internal static void AppendField(StringBuilder sb, string tag, string value)
     {

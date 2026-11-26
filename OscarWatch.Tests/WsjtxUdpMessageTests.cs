@@ -32,9 +32,9 @@ public class WsjtxUdpMessageTests
     }
 
     [Fact]
-    public void Qso_logged_carries_the_contact_time_call_and_frequency()
+    public void Qso_logged_carries_satellite_name_sat_mode_and_rx_frequency()
     {
-        var frame = Read(WsjtxUdpMessage.QsoLogged(SampleLogbook(), SampleQso()));
+        var frame = Read(WsjtxUdpMessage.QsoLogged(SampleLogbook(), SatelliteQso()));
 
         Assert.Equal(WsjtxUdpMessage.QsoLoggedType, frame.Type);
         Assert.Equal(WsjtxUdpMessage.ClientId, frame.Id);
@@ -50,6 +50,31 @@ public class WsjtxUdpMessageTests
         Assert.Equal("FT4", frame.ReadString());
         Assert.Equal("-12", frame.ReadString());
         Assert.Equal("-14", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        _ = frame.ReadDateTime();
+        Assert.Equal("MM9SQL", frame.ReadString());
+        Assert.Equal("MM9SQL", frame.ReadString());
+        Assert.Equal("IO86", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("SAT", frame.ReadString());
+        Assert.Equal("RS-44", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("435.640000", frame.ReadString());
+        Assert.Equal(frame.Length, frame.Offset);
+    }
+
+    [Fact]
+    public void Qso_logged_omits_satellite_fields_when_not_a_satellite_qso()
+    {
+        var frame = Read(WsjtxUdpMessage.QsoLogged(SampleLogbook(), TerrestrialQso()));
+        AssertSkipQsoLoggedHeader(frame);
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal("", frame.ReadString());
+        Assert.Equal(frame.Length, frame.Offset);
     }
 
     [Fact]
@@ -67,6 +92,8 @@ public class WsjtxUdpMessageTests
         Assert.Contains("<CALL:4>K2MO", adif, StringComparison.Ordinal);
         Assert.Contains("<SAT_NAME:5>RS-44", adif, StringComparison.Ordinal);
         Assert.Contains("<PROP_MODE:3>SAT", adif, StringComparison.Ordinal);
+        Assert.Contains("<FREQ_RX:10>435.640000", adif, StringComparison.Ordinal);
+        Assert.Contains("<BAND_RX:4>70cm", adif, StringComparison.Ordinal);
         Assert.Contains("<EOR>", adif, StringComparison.Ordinal);
     }
 
@@ -96,7 +123,9 @@ public class WsjtxUdpMessageTests
         MyGridSquare = "io86"
     };
 
-    private static QsoRecord SampleQso() => new()
+    private static QsoRecord SampleQso() => SatelliteQso();
+
+    private static QsoRecord SatelliteQso() => new()
     {
         Call = "k2mo",
         GridSquare = "fn31",
@@ -106,8 +135,48 @@ public class WsjtxUdpMessageTests
         SatName = "RS-44",
         PropMode = "SAT",
         FreqHz = 145_950_000,
+        FreqRxHz = 435_640_000,
+        Band = "2m",
+        BandRx = "70cm",
         QsoUtc = QsoTime
     };
+
+    private static QsoRecord TerrestrialQso() => new()
+    {
+        Call = "k2mo",
+        GridSquare = "fn31",
+        Mode = "FT4",
+        RstSent = "-12",
+        RstRcvd = "-14",
+        PropMode = "",
+        FreqHz = 14_074_000,
+        FreqRxHz = 0,
+        Band = "20m",
+        BandRx = "",
+        QsoUtc = QsoTime
+    };
+
+    private static void AssertSkipQsoLoggedHeader(Frame frame)
+    {
+        Assert.Equal(WsjtxUdpMessage.QsoLoggedType, frame.Type);
+        _ = frame.ReadDateTime();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadUInt64();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadDateTime();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+        _ = frame.ReadString();
+    }
 
     private static Frame Read(byte[] packet) => new(packet);
 

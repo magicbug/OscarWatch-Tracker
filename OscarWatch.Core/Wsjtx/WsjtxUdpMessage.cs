@@ -63,8 +63,22 @@ public static class WsjtxUdpMessage
         WriteUtf8(buffer, "");
         WriteUtf8(buffer, "");
         WriteUtf8(buffer, prop);
+        WriteUtf8(buffer, SatelliteNameForWsjtx(qso));
+        WriteUtf8(buffer, SatModeForWsjtx(qso));
+        WriteUtf8(buffer, AdifExporter.FormatRxFrequencyMhz(qso));
         return buffer.ToArray();
     }
+
+    private static string SatelliteNameForWsjtx(QsoRecord qso)
+    {
+        if (string.IsNullOrWhiteSpace(qso.SatName))
+            return "";
+
+        var satName = LotwSatelliteNameMapper.MapForExport(qso.SatName, forLotw: false);
+        return string.IsNullOrWhiteSpace(satName) ? "" : satName;
+    }
+
+    private static string SatModeForWsjtx(QsoRecord qso) => "";
 
     public static byte[] LoggedAdif(QsoLogbook logbook, QsoRecord qso)
     {
