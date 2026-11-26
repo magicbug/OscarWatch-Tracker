@@ -30,11 +30,12 @@ public static class Ft4DecodeDepth
         elevationDeg is >= 0;
 
     /// <summary>
-    /// Earliest DT still treated as a satellite copy. FT4 starts 0.5 s into the
-    /// slot, so a burst at DT 0 is already half a second early. The R+35 guess
-    /// sat at −0.5 s, a full second before the real copies.
+    /// Earliest raw slot-relative DT still treated as a satellite copy. Up to 0.9 s
+    /// early on the WSJT-X display scale (raw − 0.5 s offset) is accepted so
+    /// genuine early-timed satellite bursts are not dropped. The known R+35 false
+    /// decode sat at raw −0.5 s and remains below this floor.
     /// </summary>
-    public const double MinSatelliteDtSec = 0;
+    public const double MinSatelliteDtSec = -0.4;
 
     /// <summary>
     /// SNR estimator floor. A hinted reply parked on this value has no measurable signal.

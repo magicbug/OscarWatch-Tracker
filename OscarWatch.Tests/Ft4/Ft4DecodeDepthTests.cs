@@ -82,6 +82,9 @@ public sealed class Ft4DecodeDepthTests
     }
 
     [Theory]
+    [InlineData(-0.4)]
+    [InlineData(-0.3)]
+    [InlineData(-0.1)]
     [InlineData(0)]
     [InlineData(0.4)]
     [InlineData(0.5)]
@@ -94,6 +97,7 @@ public sealed class Ft4DecodeDepthTests
     }
 
     [Theory]
+    [InlineData(-0.41)]
     [InlineData(-0.5)]
     [InlineData(-0.6)]
     [InlineData(1.6)]
@@ -102,6 +106,20 @@ public sealed class Ft4DecodeDepthTests
     public void Moonbounce_dt_is_not_a_satellite_copy(double timeSec)
     {
         Assert.False(Ft4DecodeDepth.IsPlausibleSatelliteDt(timeSec));
+    }
+
+    [Theory]
+    [InlineData(-0.3)]
+    [InlineData(-0.1)]
+    public void Early_rs44_copies_are_accepted_on_the_satellite_path(double timeSec)
+    {
+        Assert.True(Ft4DecodeDepth.IsPlausibleSatelliteDt(timeSec));
+    }
+
+    [Fact]
+    public void R_plus_35_hint_at_raw_minus_half_second_stays_rejected()
+    {
+        Assert.False(Ft4DecodeDepth.IsPlausibleSatelliteDt(-0.5));
     }
 
     [Fact]
