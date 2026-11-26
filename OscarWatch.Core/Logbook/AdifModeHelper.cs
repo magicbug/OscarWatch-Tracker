@@ -19,6 +19,7 @@ public static class AdifModeHelper
             "DATA-USB" or "DATA" => new("SSB", "USB"),
             "CW" => new("CW", null),
             "FM" => new("FM", null),
+            "DV" or "DSTAR" or "D-STAR" or "DIGITALVOICE" => new("DIGITALVOICE", "DSTAR"),
             "FT8" => new("FT8", null),
             "FT4" => new("MFSK", "FT4"),
             "PKT" or "PACKET" => new("PKT", null),
@@ -41,6 +42,7 @@ public static class AdifModeHelper
         {
             ("SSB", "LSB") => "LSB",
             ("SSB", "USB") => "USB",
+            ("DIGITALVOICE", "DSTAR") or ("DIGITALVOICE", _) => "DV",
             ("MFSK", "FT4") => "FT4",
             ("FT8", _) => "FT8",
             ("FM", _) => "FM",

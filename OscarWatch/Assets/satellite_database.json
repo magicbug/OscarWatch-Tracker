@@ -1015,6 +1015,14 @@
         "doppler": "NOR"
       },
       {
+        "type": "D-STAR",
+        "downlink": 436888,
+        "uplink": 145925,
+        "downlink_mode": "DV",
+        "uplink_mode": "DV",
+        "doppler": "NOR"
+      },
+      {
         "type": "FT4",
         "downlink": 436888,
         "uplink": 145925,

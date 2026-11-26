@@ -26,7 +26,7 @@ public static class KnobTuneCapturePolicy
         var mode = TransponderCatModes.Normalize(downlinkMode);
         return mode switch
         {
-            "FM" or "FMN" or "DATA-FM" => FmThresholdHz,
+            "FM" or "FMN" or "DATA-FM" or "DV" => FmThresholdHz,
             _ => LinearThresholdHz
         };
     }

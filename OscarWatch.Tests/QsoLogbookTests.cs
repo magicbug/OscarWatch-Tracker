@@ -341,6 +341,7 @@ public class AdifExporterTests
     [InlineData("CW", "CW", null)]
     [InlineData("FT4", "MFSK", "FT4")]
     [InlineData("DATA-USB", "SSB", "USB")]
+    [InlineData("DV", "DIGITALVOICE", "DSTAR")]
     public void AdifModeHelper_maps_operating_modes(string source, string mode, string? submode)
     {
         var mapped = AdifModeHelper.FromOperatingMode(source);

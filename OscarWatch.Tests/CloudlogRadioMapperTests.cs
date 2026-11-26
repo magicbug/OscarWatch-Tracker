@@ -38,6 +38,13 @@ public class CloudlogRadioMapperTests
     }
 
     [Fact]
+    public void MapMode_converts_DV_to_DIGITALVOICE()
+    {
+        Assert.Equal("DIGITALVOICE", CloudlogRadioMapper.MapMode("DV"));
+        Assert.Equal("DIGITALVOICE", CloudlogRadioMapper.MapMode("D-STAR"));
+    }
+
+    [Fact]
     public void ToApiRequest_serializes_key_field_for_cloudlog()
     {
         var update = new CloudlogRadioUpdate("SO-50", 145_850_000, 436_795_000, "FM", "FM");

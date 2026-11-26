@@ -12,7 +12,7 @@ public static class SetupVfosPolicy
         var mode = TransponderCatModes.Normalize(downlinkMode);
         return mode switch
         {
-            "FM" or "FMN" or "DATA-FM" => new SetupVfosResult(dopplerThresholdFmHz, Interactive: false),
+            "FM" or "FMN" or "DATA-FM" or "DV" => new SetupVfosResult(dopplerThresholdFmHz, Interactive: false),
             "LSB" or "USB" or "CW" => new SetupVfosResult(dopplerThresholdLinearHz, Interactive: true),
             "DATA-LSB" or "DATA-USB" => new SetupVfosResult(0, Interactive: false),
             _ => new SetupVfosResult(dopplerThresholdLinearHz, Interactive: true)

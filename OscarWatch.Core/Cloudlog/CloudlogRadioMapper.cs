@@ -66,6 +66,7 @@ public static class CloudlogRadioMapper
             "DATA-FM" or "FM-DATA" => "FM",
             "DATA-USB" => "USB",
             "DATA" => "USB",
+            "DV" or "DSTAR" or "D-STAR" => "DIGITALVOICE",
             _ => upper
         };
     }

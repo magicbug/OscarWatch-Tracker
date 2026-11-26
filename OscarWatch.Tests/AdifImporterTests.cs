@@ -58,6 +58,8 @@ public class AdifImporterTests
     [InlineData("FT8", null, "FT8")]
     [InlineData("FM", null, "FM")]
     [InlineData("CW", "", "CW")]
+    [InlineData("DIGITALVOICE", "DSTAR", "DV")]
+    [InlineData("DIGITALVOICE", null, "DV")]
     public void AdifModeHelper_ToOperatingMode_reverses_export(string mode, string? submode, string expected) =>
         Assert.Equal(expected, AdifModeHelper.ToOperatingMode(mode, submode));
 

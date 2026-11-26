@@ -20,6 +20,7 @@ public sealed class KnobTuneCapturePolicyTests
     [InlineData("FM")]
     [InlineData("FMN")]
     [InlineData("DATA-FM")]
+    [InlineData("DV")]
     public void Fm_modes_use_250_hz_threshold(string mode)
     {
         Assert.Equal(KnobTuneCapturePolicy.FmThresholdHz, KnobTuneCapturePolicy.Resolve(mode));

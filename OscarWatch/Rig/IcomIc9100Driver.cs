@@ -29,4 +29,6 @@ public sealed class IcomIc9100Driver : IcomCivDriverBase
     }
 
     protected override bool SupportsDataMode => true;
+
+    protected override bool SupportsDigitalVoice => true;
 }

@@ -300,8 +300,17 @@ public abstract class IcomCivDriverBase : IRigDriver
     /// </summary>
     protected virtual bool SupportsDataMode => false;
 
+    /// <summary>
+    /// True when the radio accepts CI-V D-STAR Digital Voice (mode byte <c>0x17</c>).
+    /// IC-9100 needs the UT-121 unit; without it the radio NAKs and tracking continues.
+    /// </summary>
+    protected virtual bool SupportsDigitalVoice => false;
+
     protected virtual IEnumerable<byte[]> GetSetModeCommands(string mode)
     {
+        if (TransponderCatModes.IsDigitalVoice(mode))
+            return SupportsDigitalVoice ? [IcomCivCodec.EncodeSetDigitalVoiceModeCommand()] : [];
+
         if (SupportsDataMode)
             return IcomCivCodec.EncodeSetModeWithDataCommands(mode);
 

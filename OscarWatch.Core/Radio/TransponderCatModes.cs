@@ -12,7 +12,8 @@ public static class TransponderCatModes
         "CW",
         "DATA-USB",
         "DATA-LSB",
-        "DATA-FM"
+        "DATA-FM",
+        "DV"
     ];
 
     /// <summary>Canonical form for storage and CAT (e.g. FM-DATA → DATA-FM).</summary>
@@ -24,12 +25,17 @@ public static class TransponderCatModes
         return mode.Trim().ToUpperInvariant() switch
         {
             "FM-DATA" => "DATA-FM",
+            "DSTAR" or "D-STAR" or "DIGITALVOICE" => "DV",
             _ => mode.Trim().ToUpperInvariant()
         };
     }
 
     public static bool IsDigitalFm(string mode) =>
         Normalize(mode) == "DATA-FM";
+
+    /// <summary>ICOM D-STAR Digital Voice (catalogue <c>DV</c>).</summary>
+    public static bool IsDigitalVoice(string? mode) =>
+        Normalize(mode ?? "") == "DV";
 
     /// <summary>
     /// Catalogue data mode (DATA-USB, DATA-LSB, DATA-FM). FM-DATA is treated as DATA-FM.

@@ -58,4 +58,23 @@ public sealed class SatelliteDatabaseBundledDataModeTests
         Assert.Equal("NOR", ft4.Doppler);
         Assert.True(Ft4SatelliteEligibility.IsAllowed(so131.Name, so131.NoradId, ft4));
     }
+
+    [Fact]
+    public void Bundled_database_SO131_has_DSTAR_transponder_with_DV_modes()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "Assets", "satellite_database.json");
+        Assert.True(File.Exists(path), $"Bundled database not found at {path}");
+
+        var entries = SatelliteDatabaseFile.Load(path);
+        var so131 = entries.Single(e => e.Name == "SO-131");
+        var fm = so131.Modes.Single(m => m.Type == "FM Repeater");
+        var dstar = so131.Modes.Single(m => m.Type == "D-STAR");
+
+        Assert.Equal(fm.DownlinkKHz, dstar.DownlinkKHz);
+        Assert.Equal(fm.UplinkKHz, dstar.UplinkKHz);
+        Assert.Equal("DV", dstar.DownlinkMode);
+        Assert.Equal("DV", dstar.UplinkMode);
+        Assert.Equal("NOR", dstar.Doppler);
+        Assert.True(TransponderCatModes.IsDigitalVoice(dstar.DownlinkMode));
+    }
 }

@@ -199,6 +199,12 @@ public static class IcomCivCodec
         };
 
     /// <summary>
+    /// CI-V SET mode for D-STAR Digital Voice (mode byte <c>0x17</c>).
+    /// Distinct from CW text command <c>0x17</c>. Omits the filter byte so the radio keeps its current DV filter.
+    /// </summary>
+    public static byte[] EncodeSetDigitalVoiceModeCommand() => [0x06, 0x17];
+
+    /// <summary>
     /// IC-910 SET mode: FM uses filter width byte (1 = wide, 2 = narrow).
     /// Hamlib <c>ic910_r2i_mode</c> / SatPC32 undocumented FM-N path — plain <c>06 05</c> leaves wide FM.
     /// </summary>

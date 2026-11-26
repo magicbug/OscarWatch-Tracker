@@ -129,6 +129,21 @@ public class IcomCivCodecTests
             Assert.Equal(expectedHex[i], Convert.ToHexString(commands[i]).ToLowerInvariant());
     }
 
+    [Fact]
+    public void EncodeSetDigitalVoiceModeCommand_is_06_17()
+    {
+        var body = IcomCivCodec.EncodeSetDigitalVoiceModeCommand();
+        Assert.Equal("0617", Convert.ToHexString(body).ToLowerInvariant());
+    }
+
+    [Fact]
+    public void EncodeSetModeCommand_does_not_emit_dv() =>
+        Assert.Null(IcomCivCodec.EncodeSetModeCommand("DV"));
+
+    [Fact]
+    public void EncodeSetModeWithDataCommands_does_not_emit_dv() =>
+        Assert.Empty(IcomCivCodec.EncodeSetModeWithDataCommands("DV"));
+
     [Theory]
     [InlineData(145_950_000, true)]
     [InlineData(29_450_000, true)]

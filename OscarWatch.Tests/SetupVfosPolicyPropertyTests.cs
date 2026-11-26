@@ -18,7 +18,7 @@ namespace OscarWatch.Tests;
 public class SetupVfosPolicyPropertyTests
 {
     private static readonly string[] RecognisedModes =
-        { "FM", "FMN", "LSB", "USB", "CW", "DATA-LSB", "DATA-USB", "DATA-FM" };
+        { "FM", "FMN", "LSB", "USB", "CW", "DATA-LSB", "DATA-USB", "DATA-FM", "DV" };
 
     private static readonly string[] LinearModes = { "LSB", "USB", "CW" };
 
@@ -98,7 +98,7 @@ public class SetupVfosPolicyPropertyTests
 
     private static bool IsRecognisedMode(string trimmedUpper)
     {
-        return trimmedUpper is "FM" or "FMN" or "LSB" or "USB" or "CW" or "DATA-LSB" or "DATA-USB" or "DATA-FM";
+        return trimmedUpper is "FM" or "FMN" or "LSB" or "USB" or "CW" or "DATA-LSB" or "DATA-USB" or "DATA-FM" or "DV";
     }
 
     private static bool IsLinearModeString(string trimmedUpper)

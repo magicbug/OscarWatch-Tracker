@@ -165,6 +165,88 @@ public sealed class IcomCivDriverTests
         Assert.Equal(["0605", "1a060101"], transport.SentCommandBodies);
     }
 
+    [Fact]
+    public void Ic9700_SetMode_DV_sends_digital_voice_only()
+    {
+        var transport = new RecordingIcomCivTransport();
+        var driver = new IcomIc9700Driver(transport);
+        driver.Open();
+        driver.SelectVfo(RigVfo.Main);
+        transport.SentCommandBodies.Clear();
+        driver.SetMode("DV");
+
+        Assert.Equal(["0617"], transport.SentCommandBodies);
+    }
+
+    [Fact]
+    public void Ic9100_SetMode_DV_sends_digital_voice_only()
+    {
+        var transport = new RecordingIcomCivTransport();
+        var driver = new IcomIc9100Driver(transport);
+        driver.Open();
+        driver.SelectVfo(RigVfo.Main);
+        transport.SentCommandBodies.Clear();
+        driver.SetMode("DV");
+
+        Assert.Equal(["0617"], transport.SentCommandBodies);
+    }
+
+    [Theory]
+    [InlineData(RigType.IcomIc705)]
+    [InlineData(RigType.IcomIc905)]
+    [InlineData(RigType.IcomIc7100)]
+    public void Dual_radio_leg_SetMode_DV_sends_digital_voice_only(RigType rigType)
+    {
+        var transport = new RecordingIcomCivTransport();
+        IcomCivDriverBase driver = rigType switch
+        {
+            RigType.IcomIc705 => new IcomIc705Driver(transport),
+            RigType.IcomIc905 => new IcomIc905Driver(transport),
+            _ => new IcomIc7100Driver(transport)
+        };
+        driver.Open();
+        transport.SentCommandBodies.Clear();
+        driver.SetMode("DV");
+
+        Assert.Equal(["0617"], transport.SentCommandBodies);
+    }
+
+    [Fact]
+    public void Ic7300_SetMode_DV_sends_nothing()
+    {
+        var transport = new RecordingIcomCivTransport();
+        var driver = new IcomIc7300Driver(transport);
+        driver.Open();
+        transport.SentCommandBodies.Clear();
+        driver.SetMode("DV");
+
+        Assert.Empty(transport.SentCommandBodies);
+    }
+
+    [Fact]
+    public void Ic910_SetMode_DV_sends_nothing()
+    {
+        var transport = new RecordingIcomCivTransport();
+        var driver = new IcomIc910Driver(transport);
+        driver.Open();
+        transport.SentCommandBodies.Clear();
+        driver.SetMode("DV");
+
+        Assert.Empty(transport.SentCommandBodies);
+    }
+
+    [Fact]
+    public void Ic706_SetMode_DV_sends_nothing()
+    {
+        var transport = new RecordingIcomCivTransport();
+        var driver = new IcomIc706SeriesDriver(RigType.IcomIc706MkiiG, transport);
+        driver.Open();
+        transport.SentCommandBodies.Clear();
+        driver.SetMode("DV");
+
+        Assert.Empty(transport.SentCommandBodies);
+    }
+
     [Theory]
     [InlineData("DATA-USB", new[] { "0601", "1a060101" })]
     [InlineData("DATA-LSB", new[] { "0600", "1a060101" })]

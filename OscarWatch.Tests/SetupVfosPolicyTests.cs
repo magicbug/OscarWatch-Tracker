@@ -20,6 +20,7 @@ public sealed class SetupVfosPolicyBranchTests
     [Theory]
     [InlineData("FM")]
     [InlineData("FMN")]
+    [InlineData("DV")]
     public void Fm_modes_return_fm_threshold_with_interactive_false(string mode)
     {
         var result = SetupVfosPolicy.Evaluate(mode, FmThreshold, LinearThreshold);

@@ -54,6 +54,7 @@ public class SetupVfosPolicyTests
 {
     [Theory]
     [InlineData("FMN", 200, 50, 200, false)]
+    [InlineData("DV", 200, 50, 200, false)]
     [InlineData("USB", 200, 50, 50, true)]
     [InlineData("DATA-USB", 200, 50, 0, false)]
     [InlineData("DATA-FM", 200, 50, 200, false)]
