@@ -163,7 +163,11 @@ public sealed class GrblRotator : IRotatorDriver
             if (!GrblStatusParser.IsError(reply) || !controllerWasIdle)
                 return;
 
-            Log.Warning("AntRunner rejected jog ({Reply}); falling back to G0 moves", reply);
+            // The reply is whatever the controller sent. Drop line breaks so it cannot
+            // start a second log line.
+            Log.Warning(
+                "AntRunner rejected jog ({Reply}); falling back to G0 moves",
+                reply!.Replace("\r", "").Replace("\n", ""));
             _jogUnsupported = true;
         }
 
