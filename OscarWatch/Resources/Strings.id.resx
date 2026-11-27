@@ -5141,7 +5141,7 @@ Terbaru: {1} ({2})</value>
     <value>Pengawas TX (menit)</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>Hentikan transmisi jika tidak ada yang membalas Anda selama menit ini. Stasiun lain dan gema Anda sendiri tidak dihitung. 0 mematikan pengawas.</value>
+    <value>Hentikan transmisi jika tidak ada yang membalas Anda selama menit ini. Waktu saat transmisi mati tidak dihitung, dan menyalakannya lagi memulai penghitung dari awal. Stasiun lain dan gema Anda sendiri tidak dihitung. 0 mematikan pengawas.</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>Laporkan decode ke PSK Reporter</value>

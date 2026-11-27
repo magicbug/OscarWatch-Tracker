@@ -5141,7 +5141,7 @@ Mais recente: {1} ({2})</value>
     <value>Vigilância de TX (minutos)</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>Interrompe a transmissão se ninguém responder a você por estes minutos. Outras estações e o seu próprio eco não contam. 0 desliga a vigilância.</value>
+    <value>Interrompe a transmissão se ninguém responder a você por estes minutos. O tempo com a transmissão desligada não conta, e ligá-la de novo reinicia a contagem. Outras estações e o seu próprio eco não contam. 0 desliga a vigilância.</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>Reportar decodificações ao PSK Reporter</value>

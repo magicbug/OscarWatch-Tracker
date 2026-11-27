@@ -5141,7 +5141,7 @@ Aktuell: {1} ({2})</value>
     <value>TX-Watchdog (Minuten)</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>Stoppt das Senden, wenn so viele Minuten niemand Ihnen antwortet. Andere Stationen und das eigene Echo zählen nicht. 0 schaltet den Watchdog aus.</value>
+    <value>Stoppt das Senden, wenn so viele Minuten niemand Ihnen antwortet. Zeit mit ausgeschaltetem Senden zählt nicht, und erneutes Einschalten startet die Zeit neu. Andere Stationen und das eigene Echo zählen nicht. 0 schaltet den Watchdog aus.</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>Dekodierungen an PSK Reporter melden</value>

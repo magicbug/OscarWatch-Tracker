@@ -46,6 +46,7 @@ public sealed class Ft4ModemService : IDisposable
     private CancellationTokenSource? _txScheduleCts;
     private DateTime _scheduledTxSlot = DateTime.MinValue;
     private int _txRunning; // 0 idle, 1 in progress
+    private int _txRunGeneration;
     private int _prepareRunning;
     private int _preparedPlayed;
     private readonly object _prepareGate = new();
@@ -77,7 +78,8 @@ public sealed class Ft4ModemService : IDisposable
     private readonly Ft4LearnedCallsigns _learnedCalls = new();
     private readonly Dictionary<string, Ft4DecodedMessage> _postedEchoes = new(StringComparer.Ordinal);
     private readonly object _decodePostGate = new();
-    private DateTime _txWatchdogResetUtc = DateTime.UtcNow;
+    private readonly object _txWatchdogGate = new();
+    private Ft4TxWatchdogClock _txWatchdog = Ft4TxWatchdogClock.Idle(DateTime.UtcNow);
     private int _tuning; // 0 off, 1 on
     private Ft4QsoSequencer? _sequencer;
     // Slot timing and protocol for the selected transponder. Changes only between sessions.
@@ -373,7 +375,7 @@ public sealed class Ft4ModemService : IDisposable
             _callDt.Clear();
             _lastEchoCalibrationSlot = DateTime.MinValue;
         }
-        _txWatchdogResetUtc = DateTime.UtcNow;
+        DisarmTxWatchdog();
         _rxHealth.Reset(DateTime.UtcNow);
         _captureStall.Reset(DateTime.UtcNow);
         RefreshClockFromGps();
@@ -539,9 +541,10 @@ public sealed class Ft4ModemService : IDisposable
         if (!EnsureSatelliteAllowed())
             return;
 
+        // Start the watchdog before arming, so a poll cannot see transmit on with a stale clock.
+        TouchTxWatchdog();
         _sequencer?.StartCq(evenSlot);
         _lastLoggedKey = null;
-        _txWatchdogResetUtc = DateTime.UtcNow;
         if (!TryAcceptRecentCaller(out var answered))
             Status = _l.Get("Ft4.Status.CallingCq");
         else
@@ -563,7 +566,7 @@ public sealed class Ft4ModemService : IDisposable
         if (!enabled || !TryAcceptRecentCaller(out var answered))
             return;
 
-        _txWatchdogResetUtc = DateTime.UtcNow;
+        TouchTxWatchdog();
         Status = _l.Get("Ft4.Status.Answering", answered);
         Changed?.Invoke();
     }
@@ -630,10 +633,9 @@ public sealed class Ft4ModemService : IDisposable
         StopTune();
         if (!EnsureSatelliteAllowed())
             return false;
+        TouchTxWatchdog();
         if (!_sequencer.ForceReport(snrDb))
             return false;
-
-        _txWatchdogResetUtc = DateTime.UtcNow;
         Status = _l.Get("Ft4.Status.SendingReport", _sequencer.TheirCall);
         Changed?.Invoke();
         return true;
@@ -646,10 +648,9 @@ public sealed class Ft4ModemService : IDisposable
         StopTune();
         if (!EnsureSatelliteAllowed())
             return false;
+        TouchTxWatchdog();
         if (!_sequencer.Force73())
             return false;
-
-        _txWatchdogResetUtc = DateTime.UtcNow;
         Status = _l.Get("Ft4.Status.Sending73", _sequencer.TheirCall);
         Changed?.Invoke();
         return true;
@@ -661,9 +662,9 @@ public sealed class Ft4ModemService : IDisposable
         if (!EnsureSatelliteAllowed())
             return;
 
+        // Start the watchdog before arming, so a poll cannot halt this attempt on time spent listening.
+        TouchTxWatchdog();
         _sequencer?.EnableTx();
-        // Reset idle timeout so re-arming after a watchdog halt does not trip again immediately.
-        _txWatchdogResetUtc = DateTime.UtcNow;
         if (TryAcceptRecentCaller(out var answered))
             Status = _l.Get("Ft4.Status.Answering", answered);
         else
@@ -676,6 +677,7 @@ public sealed class Ft4ModemService : IDisposable
     {
         Volatile.Write(ref _pounceTarget, null);
         StopTune();
+        DisarmTxWatchdog();
         _sequencer?.HaltTx();
         CancelTxSchedule();
         _txCts?.Cancel();
@@ -687,6 +689,9 @@ public sealed class Ft4ModemService : IDisposable
             Volatile.Write(ref _txKickedMessage, "");
             _audio.StopPlayback();
         }
+        // After cancel, so a transmit that failed to start (or is stuck) cannot block the next arm.
+        // A task still winding down sees the new generation and does not clear that next run.
+        AbandonTxRun();
         _ = _ptt.UnkeyAsync();
         _txThisSlot = false;
         Status = _l.Get("Ft4.Status.TxHalted");
@@ -731,7 +736,7 @@ public sealed class Ft4ModemService : IDisposable
         _txCts?.Cancel();
         ClearPrepared();
         Interlocked.Exchange(ref _preparedPlayed, 0);
-        Interlocked.Exchange(ref _txRunning, 0);
+        AbandonTxRun();
         lock (_retargetGate)
         {
             Interlocked.Increment(ref _txRetargetGeneration);
@@ -833,9 +838,9 @@ public sealed class Ft4ModemService : IDisposable
             return false;
 
         var even = Ft4SlotClock.IsEvenSlot(decode.SlotUtc, _profile.SlotSeconds);
+        TouchTxWatchdog();
         _sequencer.StartAnswer(decode, oppositeEvenSlot: !even);
         _lastLoggedKey = null;
-        _txWatchdogResetUtc = DateTime.UtcNow;
         Status = _l.Get("Ft4.Status.Answering", decode.Text);
         Changed?.Invoke();
         return true;
@@ -1161,19 +1166,8 @@ public sealed class Ft4ModemService : IDisposable
                 // Early RX decode once the FT4 burst should be in the buffer (~6 s).
                 MaybeQueueEarlyDecode(now);
 
-                // Watchdog: stop TX if nobody has replied to this station.
-                var watchdogMinutes = Ft4TxWatchdog.ClampMinutes(_settings.Current.Ft4.TxWatchdogMinutes);
-                if (Ft4TxWatchdog.ShouldHalt(
-                        _sequencer is { TransmitEnabled: true },
-                        IsTuning,
-                        watchdogMinutes,
-                        DateTime.UtcNow,
-                        _txWatchdogResetUtc))
-                {
-                    HaltTx();
-                    Status = _l.Get("Ft4.Status.WatchdogStopped", watchdogMinutes);
-                    Changed?.Invoke();
-                }
+                // Watchdog: stop TX if nobody has replied while transmit has stayed armed.
+                PollTxWatchdog();
 
                 var n = _audio.ReadCaptureSamples(scratch);
                 var readUtc = DateTime.UtcNow;
@@ -1286,6 +1280,83 @@ public sealed class Ft4ModemService : IDisposable
             Log.Information("FT4 slot timing back on the PC clock (measured {PcErrorMs:0} ms)", pcErrorMs);
     }
 
+    private void TouchTxWatchdog()
+    {
+        var now = DateTime.UtcNow;
+        lock (_txWatchdogGate)
+            _txWatchdog = _txWatchdog.NoteReply(now);
+    }
+
+    private void DisarmTxWatchdog()
+    {
+        var now = DateTime.UtcNow;
+        lock (_txWatchdogGate)
+            _txWatchdog = _txWatchdog.Disarm(now);
+    }
+
+    /// <summary>
+    /// Halt only after transmit has stayed armed, with no reply, for the whole watchdog time.
+    /// The sample that first sees transmit armed starts that time. Listening does not.
+    /// </summary>
+    private void PollTxWatchdog()
+    {
+        var minutes = Ft4TxWatchdog.ClampMinutes(_settings.Current.Ft4.TxWatchdogMinutes);
+        var now = DateTime.UtcNow;
+        var armed = _sequencer is { TransmitEnabled: true };
+        bool halt;
+        lock (_txWatchdogGate)
+        {
+            var polled = _txWatchdog.Poll(armed, IsTuning, minutes, now);
+            _txWatchdog = polled.Clock;
+            halt = polled.Halt;
+        }
+
+        if (!halt)
+            return;
+
+        // Arming again after this sample was decided must not be halted on the old clock.
+        lock (_txWatchdogGate)
+        {
+            armed = _sequencer is { TransmitEnabled: true };
+            var again = _txWatchdog.Poll(armed, IsTuning, minutes, DateTime.UtcNow);
+            _txWatchdog = again.Clock;
+            halt = again.Halt;
+        }
+
+        if (!halt)
+            return;
+
+        HaltTx();
+        Status = _l.Get("Ft4.Status.WatchdogStopped", minutes);
+        Changed?.Invoke();
+    }
+
+    private bool TryBeginTxRun(out int generation)
+    {
+        generation = Volatile.Read(ref _txRunGeneration);
+        if (Interlocked.CompareExchange(ref _txRunning, 1, 0) != 0)
+            return false;
+
+        if (Volatile.Read(ref _txRunGeneration) == generation)
+            return true;
+
+        // Halt released the run between the read and the claim, then this claim took it back.
+        Interlocked.Exchange(ref _txRunning, 0);
+        return false;
+    }
+
+    private void EndTxRun(int generation)
+    {
+        if (Volatile.Read(ref _txRunGeneration) == generation)
+            Interlocked.Exchange(ref _txRunning, 0);
+    }
+
+    private void AbandonTxRun()
+    {
+        Interlocked.Increment(ref _txRunGeneration);
+        Interlocked.Exchange(ref _txRunning, 0);
+    }
+
     private void KickTransmit(DateTime slotStart, CancellationToken loopCt)
     {
         if (IsTuning)
@@ -1301,62 +1372,80 @@ public sealed class Ft4ModemService : IDisposable
         if (Ft4SlotClock.IsEvenSlot(slotStart, _profile.SlotSeconds) != seq.PreferEvenSlot)
             return;
 
-        if (Interlocked.CompareExchange(ref _txRunning, 1, 0) != 0)
+        if (!TryBeginTxRun(out var generation))
             return;
 
-        Interlocked.Exchange(ref _txKickedAudioHz, Math.Clamp(seq.TxAudioHz, 200, 3000));
-        Interlocked.Exchange(ref _txKickedSlotTicks, slotStart.Ticks);
-        lock (_retargetGate)
+        var handedOff = false;
+        try
         {
-            Interlocked.Increment(ref _txRetargetGeneration);
-            Volatile.Write(ref _txKickedMessage, seq.CurrentTxMessage);
+            Interlocked.Exchange(ref _txKickedAudioHz, Math.Clamp(seq.TxAudioHz, 200, 3000));
+            Interlocked.Exchange(ref _txKickedSlotTicks, slotStart.Ticks);
+            lock (_retargetGate)
+            {
+                Interlocked.Increment(ref _txRetargetGeneration);
+                Volatile.Write(ref _txKickedMessage, seq.CurrentTxMessage);
+            }
+
+            _txThisSlot = true;
+
+            // Queue CAT PTT before playback and before the caller can enqueue Doppler.
+            // The 0.5 s silence at the start of the waveform is the lead-in.
+            if (CatPttSharesRig())
+                _ptt.KeyNow();
+            _txCts?.Cancel();
+            _txCts?.Dispose();
+            _txCts = CancellationTokenSource.CreateLinkedTokenSource(loopCt);
+            var txCt = _txCts.Token;
+
+            // Start a ready buffer on this thread for every PTT method. Waiting for the TX task
+            // (CAT lead, encode) was holding the tone; VOX also needs the tone as soon as the slot opens.
+            if (TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
+                && TryPlayAligned(slotStart, ready, readyRate))
+            {
+                Interlocked.Exchange(ref _preparedPlayed, 1);
+                var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
+                Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot from a prepared buffer", intoMs);
+            }
+
+            _txTask = Task.Run(async () =>
+            {
+                try
+                {
+                    await RunTransmitAsync(slotStart, txCt).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    _ptt.UnkeyNow();
+                }
+                catch (Exception ex)
+                {
+                    _ptt.UnkeyNow();
+                    Log.Warning(ex, "FT4 transmit task failed");
+                    Status = _l.Get(
+                        "Ft4.Status.TxError",
+                        PttFailureLocalizer.Localize(ex.Message, _l));
+                    Changed?.Invoke();
+                }
+                finally
+                {
+                    EndTxRun(generation);
+                }
+            }, CancellationToken.None);
+            handedOff = true;
         }
-
-        _txThisSlot = true;
-
-        // Queue CAT PTT before playback and before the caller can enqueue Doppler.
-        // The 0.5 s silence at the start of the waveform is the lead-in.
-        if (CatPttSharesRig())
-            _ptt.KeyNow();
-        _txCts?.Cancel();
-        _txCts?.Dispose();
-        _txCts = CancellationTokenSource.CreateLinkedTokenSource(loopCt);
-        var txCt = _txCts.Token;
-
-        // Start a ready buffer on this thread for every PTT method. Waiting for the TX task
-        // (CAT lead, encode) was holding the tone; VOX also needs the tone as soon as the slot opens.
-        if (TryTakePrepared(slotStart, seq.CurrentTxMessage, out var ready, out var readyRate)
-            && TryPlayAligned(slotStart, ready, readyRate))
+        catch (Exception ex)
         {
-            Interlocked.Exchange(ref _preparedPlayed, 1);
-            var intoMs = (Ft4Clock.UtcNow - slotStart).TotalMilliseconds;
-            Log.Information("FT4 TX audio started {IntoMs:0} ms into the slot from a prepared buffer", intoMs);
+            // KeyNow and playback run before the task exists. Leaving _txRunning set
+            // blocked every later slot until the FT4 window was opened again.
+            if (!handedOff)
+                EndTxRun(generation);
+            _ptt.UnkeyNow();
+            Log.Warning(ex, "FT4 transmit failed to start");
+            Status = _l.Get(
+                "Ft4.Status.TxError",
+                PttFailureLocalizer.Localize(ex.Message, _l));
+            Changed?.Invoke();
         }
-
-        _txTask = Task.Run(async () =>
-        {
-            try
-            {
-                await RunTransmitAsync(slotStart, txCt).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                _ptt.UnkeyNow();
-            }
-            catch (Exception ex)
-            {
-                _ptt.UnkeyNow();
-                Log.Warning(ex, "FT4 transmit task failed");
-                Status = _l.Get(
-                    "Ft4.Status.TxError",
-                    PttFailureLocalizer.Localize(ex.Message, _l));
-                Changed?.Invoke();
-            }
-            finally
-            {
-                Interlocked.Exchange(ref _txRunning, 0);
-            }
-        }, CancellationToken.None);
     }
 
     private async Task RunTransmitAsync(DateTime slotStart, CancellationToken ct)
@@ -2481,7 +2570,7 @@ public sealed class Ft4ModemService : IDisposable
                 var finished = _sequencer.OnDecoded(msg);
                 var blockedCaller = _sequencer.IsBlockedCall(callDe);
                 if (Ft4TxWatchdog.IsReply(callTo, callDe, my) && !blockedCaller)
-                    _txWatchdogResetUtc = DateTime.UtcNow;
+                    TouchTxWatchdog();
                 LogBlockedAutoReplySkip(wasCallingCq, callTo, callDe);
                 if (wasCallingCq && _sequencer.Phase == Ft4QsoPhase.InQso)
                 {

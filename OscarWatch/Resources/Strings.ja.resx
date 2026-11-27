@@ -5141,7 +5141,7 @@ LOS: {2} UTC
     <value>TXウォッチドッグ（分）</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>この分数のあいだ自分宛の応答がなければ送信を止めます。他局と自分のエコーは数えません。0 で無効です。</value>
+    <value>この分数のあいだ自分宛の応答がなければ送信を止めます。送信オフの時間は数えず、送信を入れ直すと最初から数え直します。他局と自分のエコーは数えません。0 で無効です。</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>デコードをPSK Reporterに報告</value>

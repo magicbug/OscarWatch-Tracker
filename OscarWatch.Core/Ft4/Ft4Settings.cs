@@ -150,7 +150,8 @@ public sealed class Ft4Settings
     public bool SaveSlotAudio { get; set; }
 
     /// <summary>
-    /// Minutes of transmit with no reply before TX is halted. 0 disables the watchdog.
+    /// Minutes of armed transmit with no reply before TX is halted.
+    /// Time with transmit off does not count. 0 disables the watchdog.
     /// </summary>
     public int TxWatchdogMinutes { get; set; } = Ft4TxWatchdog.DefaultMinutes;
 

@@ -5141,7 +5141,7 @@ Ultima versione: {1} ({2})</value>
     <value>Controllo TX automatico (minuti)</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>Interrompe la trasmissione se nessuno ti risponde entro il numero di minuti indicato. Le altre stazioni e il tuo eco non vengono conteggiati. 0 disattiva il controllo.</value>
+    <value>Interrompe la trasmissione se nessuno ti risponde entro il numero di minuti indicato. Il tempo con la trasmissione spenta non conta, e riattivarla fa ripartire il timer. Le altre stazioni e il tuo eco non vengono conteggiati. 0 disattiva il controllo.</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>Invia le decodifiche a PSK Reporter</value>

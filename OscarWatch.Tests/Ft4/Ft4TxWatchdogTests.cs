@@ -30,6 +30,38 @@ public sealed class Ft4TxWatchdogTests
         Assert.Equal(30, Ft4TxWatchdog.ClampMinutes(90));
     }
 
+    [Fact]
+    public void Listening_does_not_trip_the_watchdog_when_transmit_is_armed()
+    {
+        var clock = Ft4TxWatchdogClock.Idle(Start);
+        var listened = clock.Poll(false, false, 3, Start.AddMinutes(10));
+        Assert.False(listened.Halt);
+
+        var armed = listened.Clock.Poll(true, false, 3, Start.AddMinutes(10));
+        Assert.False(armed.Halt);
+        Assert.True(armed.Clock.WasArmed);
+
+        var stillInside = armed.Clock.Poll(true, false, 3, Start.AddMinutes(13));
+        Assert.False(stillInside.Halt);
+        Assert.True(armed.Clock.Poll(true, false, 3, Start.AddMinutes(13).AddSeconds(1)).Halt);
+    }
+
+    [Fact]
+    public void Re_arming_after_a_halt_starts_a_fresh_timer()
+    {
+        var armed = Ft4TxWatchdogClock.Idle(Start).Poll(true, false, 3, Start).Clock;
+        var expired = armed.Poll(true, false, 3, Start.AddMinutes(3).AddSeconds(1));
+        Assert.True(expired.Halt);
+
+        var halted = expired.Clock.Disarm(Start.AddMinutes(3).AddSeconds(1));
+        var again = halted.Poll(true, false, 3, Start.AddMinutes(3).AddSeconds(2));
+        Assert.False(again.Halt);
+
+        var reply = again.Clock.NoteReply(Start.AddMinutes(4));
+        Assert.False(reply.Poll(true, false, 3, Start.AddMinutes(7)).Halt);
+        Assert.True(reply.Poll(true, false, 3, Start.AddMinutes(7).AddSeconds(1)).Halt);
+    }
+
     [Theory]
     [InlineData("MM9SQL", "G4ABC", "MM9SQL", true)]
     [InlineData("CQ", "G4ABC", "MM9SQL", false)]

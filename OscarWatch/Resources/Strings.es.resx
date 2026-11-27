@@ -5141,7 +5141,7 @@ Está utilizando la versión {0}.
     <value>Vigilancia de TX (minutos)</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>Detiene la transmisión si nadie le responde durante estos minutos. Otras estaciones y su propio eco no cuentan. 0 desactiva la vigilancia.</value>
+    <value>Detiene la transmisión si nadie le responde durante estos minutos. El tiempo con la transmisión apagada no cuenta, y volver a activarla reinicia el temporizador. Otras estaciones y su propio eco no cuentan. 0 desactiva la vigilancia.</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>Enviar decodificaciones a PSK Reporter</value>

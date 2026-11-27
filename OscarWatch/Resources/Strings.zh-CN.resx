@@ -5141,7 +5141,7 @@
     <value>发射看门狗（分钟）</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>若在这段时间内没有人应答您，则停止发射。其他电台和您自己的回波不算。0 表示关闭。</value>
+    <value>若在这段时间内没有人应答您，则停止发射。发射关闭的时间不计，重新打开发射会重新计时。其他电台和您自己的回波不算。0 表示关闭。</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>向 PSK Reporter 报告解码</value>

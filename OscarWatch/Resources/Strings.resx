@@ -5174,7 +5174,7 @@ Latest: {1} ({2})</value>
     <value>TX watchdog (minutes)</value>
   </data>
   <data name="Ft4.TxWatchdogMinutes.Note">
-    <value>Stop transmitting if nobody replies to you for this many minutes. Other stations and your own echo do not count. 0 turns the watchdog off.</value>
+    <value>Stop transmitting if nobody replies to you for this many minutes. Time with transmit off does not count, and turning transmit back on starts the timer again. Other stations and your own echo do not count. 0 turns the watchdog off.</value>
   </data>
   <data name="Ft4.PskReporter">
     <value>Report decodes to PSK Reporter</value>
