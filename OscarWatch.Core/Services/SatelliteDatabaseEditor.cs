@@ -51,6 +51,10 @@ public sealed class SatelliteDatabaseEditor : ISatelliteDatabaseEditor
         {
             Name = source.Name,
             NoradId = source.NoradId,
+            DownlinkMinKHz = source.DownlinkMinKHz,
+            DownlinkMaxKHz = source.DownlinkMaxKHz,
+            UplinkMinKHz = source.UplinkMinKHz,
+            UplinkMaxKHz = source.UplinkMaxKHz,
             AlternativeNames = source.AlternativeNames?.ToList() ?? [],
             Notices = CloneNotices(source.Notices),
             Modes = source.Modes.Select(CloneMode).ToList()
@@ -62,6 +66,10 @@ public sealed class SatelliteDatabaseEditor : ISatelliteDatabaseEditor
             Type = source.Type,
             DownlinkKHz = source.DownlinkKHz,
             UplinkKHz = source.UplinkKHz,
+            DownlinkMinKHz = source.DownlinkMinKHz,
+            DownlinkMaxKHz = source.DownlinkMaxKHz,
+            UplinkMinKHz = source.UplinkMinKHz,
+            UplinkMaxKHz = source.UplinkMaxKHz,
             DownlinkMode = source.DownlinkMode,
             UplinkMode = source.UplinkMode,
             Doppler = source.Doppler,

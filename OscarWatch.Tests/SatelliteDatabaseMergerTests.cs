@@ -600,6 +600,69 @@ public class SatelliteDatabaseMergerTests
         }
     }
 
+    [Fact]
+    public void LoadForEditing_keeps_passband_edges_so_a_matching_remote_is_not_a_conflict()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), $"ow-passband-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        var userPath = Path.Combine(directory, "user.json");
+        var bundledPath = Path.Combine(directory, "bundled.json");
+
+        try
+        {
+            var local = new SatelliteRadioEntry
+            {
+                Name = "AO-07",
+                NoradId = "07530",
+                Modes =
+                [
+                    new SatelliteTransponderMode
+                    {
+                        Type = "Mode B",
+                        DownlinkKHz = 145_950,
+                        UplinkKHz = 432_146,
+                        DownlinkMinKHz = 145_925,
+                        DownlinkMaxKHz = 145_975,
+                        UplinkMinKHz = 432_125,
+                        UplinkMaxKHz = 432_175,
+                        DownlinkMode = "USB",
+                        UplinkMode = "LSB",
+                        Doppler = "REV"
+                    }
+                ]
+            };
+            local.DownlinkMinKHz = 145_925;
+            local.DownlinkMaxKHz = 145_975;
+
+            SatelliteDatabaseFile.Save(bundledPath, []);
+            SatelliteDatabaseFile.Save(userPath, [local]);
+
+            var editor = new SatelliteDatabaseEditor(
+                new SatelliteDatabaseService(bundledPath, userPath),
+                bundledPath,
+                userPath);
+            var remote = SatelliteDatabaseFile.Load(userPath);
+            var plan = SatelliteDatabaseMerger.BuildPlan(editor.LoadForEditing(), remote);
+
+            Assert.Empty(plan.Conflicts);
+            Assert.False(plan.HasChanges);
+
+            editor.Save(editor.LoadForEditing());
+            var saved = Assert.Single(SatelliteDatabaseFile.Load(userPath));
+            var mode = Assert.Single(saved.Modes);
+            Assert.Equal(145_925, mode.DownlinkMinKHz);
+            Assert.Equal(145_975, mode.DownlinkMaxKHz);
+            Assert.Equal(432_125, mode.UplinkMinKHz);
+            Assert.Equal(432_175, mode.UplinkMaxKHz);
+            Assert.Equal(145_925, saved.DownlinkMinKHz);
+            Assert.Equal(145_975, saved.DownlinkMaxKHz);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     private static SatelliteRadioEntry Entry(string name, params SatelliteTransponderMode[] modes) =>
         new() { Name = name, Modes = modes.ToList() };
 

@@ -302,9 +302,21 @@ public static class SatelliteDatabaseMerger
         var rx = mode.DownlinkKHz;
         var tx = mode.UplinkKHz;
         var tone = mode.CtcssHz is > 0 ? $", CTCSS {mode.CtcssHz:0.#}" : "";
+        var passband = DescribePassband(mode);
         return tx <= 0
-            ? $"RX {rx:0.###} kHz · {mode.DownlinkMode}{tone}"
-            : $"TX {tx:0.###} ↑ · RX {rx:0.###} ↓ · {mode.UplinkMode}/{mode.DownlinkMode} · {mode.Doppler}{tone}";
+            ? $"RX {rx:0.###} kHz · {mode.DownlinkMode}{tone}{passband}"
+            : $"TX {tx:0.###} ↑ · RX {rx:0.###} ↓ · {mode.UplinkMode}/{mode.DownlinkMode} · {mode.Doppler}{tone}{passband}";
+    }
+
+    private static string DescribePassband(SatelliteTransponderMode mode)
+    {
+        var parts = new List<string>();
+        if (mode.HasDownlinkPassband)
+            parts.Add($"RX {mode.DownlinkMinKHz:0.###}–{mode.DownlinkMaxKHz:0.###}");
+        if (mode.HasUplinkPassband)
+            parts.Add($"TX {mode.UplinkMinKHz:0.###}–{mode.UplinkMaxKHz:0.###}");
+
+        return parts.Count == 0 ? "" : " · " + string.Join(" · ", parts);
     }
 
     private static SatelliteRadioEntry? FindLocalMatch(
