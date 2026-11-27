@@ -8,11 +8,14 @@ using OscarWatch.Core.Radio;
 using OscarWatch.Core.Services;
 using OscarWatch.Localization;
 using OscarWatch.Views;
+using Serilog;
 
 namespace OscarWatch.ViewModels;
 
 public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
 {
+    private static readonly ILogger Log = Serilog.Log.ForContext<SatelliteDatabaseEditorViewModel>();
+
     /// <summary>Upper frequency bound in kHz (300 GHz), covering VHF/UHF/SHF/EHF amateur bands including QO-100.</summary>
     public const decimal MaxFrequencyKHz = 300_000_000m;
 
@@ -269,8 +272,18 @@ public partial class SatelliteDatabaseEditorViewModel : ViewModelBase
             return;
 
         var existing = Satellites.ToList();
-        var pick = await AddSatelliteFromTleDialog.TryPickAsync(App.MainWindow, _tleService, existing)
-            .ConfigureAwait(true);
+        AddSatellitePickResult? pick;
+        try
+        {
+            pick = await AddSatelliteFromTleDialog.TryPickAsync(App.MainWindow, _tleService, existing)
+                .ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "TLE load failed while adding a satellite from the catalogue");
+            StatusMessage = _l.Get("Status.TleReloadFailed", ex.Message);
+            return;
+        }
 
         if (pick is null)
         {

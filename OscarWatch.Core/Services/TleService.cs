@@ -162,8 +162,10 @@ public sealed class TleService : ITleService
             await RefreshAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             return _catalog.Count > 0;
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
+            // HttpClient reports its own timeout as TaskCanceledException even when the caller
+            // did not cancel. Treat that as a failed download so the bundled seed or cache can load.
             Trace.TraceWarning("TLE network refresh failed: {0}", ex.Message);
             return false;
         }

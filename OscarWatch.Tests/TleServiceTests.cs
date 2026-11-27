@@ -158,6 +158,37 @@ public sealed class TleServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task EnsureLoadedAsync_falls_back_when_download_times_out()
+    {
+        var cachePath = CreateCachePath();
+        await File.WriteAllTextAsync(cachePath, Ao07Json);
+        await File.WriteAllTextAsync(cachePath + ".meta", "OscarWatch||");
+
+        var settings = new TestSettingsService();
+        settings.Current.TleSource = CelestrakSource();
+        var service = new TleService(settings, new HttpClient(new TimeoutHandler()), cachePath);
+
+        await service.EnsureLoadedAsync();
+
+        Assert.Equal("AO-07", Assert.Single(service.Catalog).Name);
+        Assert.Equal(TleLoadOrigin.Cache, service.LastLoadDiagnostics?.Origin);
+        Assert.Equal(Ao07Json.Trim(), (await File.ReadAllTextAsync(cachePath)).Trim());
+    }
+
+    [Fact]
+    public async Task EnsureLoadedAsync_does_not_swallow_caller_cancellation()
+    {
+        var cachePath = CreateCachePath();
+        var settings = new TestSettingsService();
+        var service = new TleService(settings, new HttpClient(new TimeoutHandler()), cachePath);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => service.EnsureLoadedAsync(cts.Token));
+        Assert.Empty(service.Catalog);
+    }
+
+    [Fact]
     public async Task EnsureLoadedAsync_falls_back_to_previous_source_cache_when_new_source_is_forbidden()
     {
         var cachePath = CreateCachePath();
@@ -263,6 +294,19 @@ public sealed class TleServiceTests : IDisposable
                 Content = new StringContent(body, Encoding.UTF8, "application/json")
             };
             return Task.FromResult(response);
+        }
+    }
+
+    private sealed class TimeoutHandler : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            throw new TaskCanceledException(
+                "The request was canceled due to the configured HttpClient.Timeout of 00:00:30 elapsing.",
+                new TimeoutException("The operation has timed out."));
         }
     }
 

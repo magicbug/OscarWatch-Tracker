@@ -2795,7 +2795,17 @@ public partial class MainViewModel : ViewModelBase
     private async Task OpenSunlightPredictionAsync()
     {
         var vm = App.Services.GetRequiredService<SunlightPredictionViewModel>();
-        await vm.InitializeAsync();
+        try
+        {
+            await vm.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "TLE load failed while opening sunlight prediction");
+            StatusText = _l.Get("Status.TleReloadFailed", DescribeTleFailure(ex));
+            return;
+        }
+
         var window = new SunlightPredictionWindow { DataContext = vm };
         if (App.MainWindow is null)
             return;
@@ -3801,8 +3811,17 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private async Task OpenSatellitesAsync()
     {
-        await _tleService.EnsureLoadedAsync();
-        TryBackfillEnabledSatelliteIds();
+        try
+        {
+            await _tleService.EnsureLoadedAsync();
+            TryBackfillEnabledSatelliteIds();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "TLE load failed while opening Select Satellites");
+            StatusText = _l.Get("Status.TleReloadFailed", DescribeTleFailure(ex));
+        }
+
         var vm = App.Services.GetRequiredService<SatellitePickerViewModel>();
         var window = new SatellitePickerWindow { DataContext = vm };
         var saved = App.MainWindow is not null
