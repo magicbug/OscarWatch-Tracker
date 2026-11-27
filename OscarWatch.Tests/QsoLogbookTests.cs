@@ -1066,6 +1066,53 @@ public class QsoLogbookSelectedExportTests
         Assert.Equal("Exported 3 selected QSOs to ADIF.", vm.FormatExportStatusText(options, 3));
     }
 
+    [Fact]
+    public void SuggestedFileNameForSavePicker_omits_extension_when_the_panel_appends_it()
+    {
+        var selected = new QsoAdifExportOptions { Scope = QsoAdifExportScope.Selected };
+        var all = new QsoAdifExportOptions { Scope = QsoAdifExportScope.All };
+        var range = new QsoAdifExportOptions
+        {
+            Scope = QsoAdifExportScope.DateRange,
+            FromUtcDate = new DateTime(2026, 7, 12),
+            ToUtcDate = new DateTime(2026, 7, 13)
+        };
+
+        Assert.Equal(
+            "Field Day_selected",
+            QsoLogbookViewModel.SuggestedFileNameForSavePicker(
+                QsoLogbookViewModel.BuildSuggestedExportFileName("Field Day", selected),
+                "adi",
+                savePanelAppendsExtension: true));
+        Assert.Equal(
+            "Field Day",
+            QsoLogbookViewModel.SuggestedFileNameForSavePicker(
+                QsoLogbookViewModel.BuildSuggestedExportFileName("Field Day", all),
+                "adi",
+                savePanelAppendsExtension: true));
+        Assert.Equal(
+            "Field Day_20260712-20260713",
+            QsoLogbookViewModel.SuggestedFileNameForSavePicker(
+                QsoLogbookViewModel.BuildSuggestedExportFileName("Field Day", range),
+                "adi",
+                savePanelAppendsExtension: true));
+
+        Assert.Equal(
+            "Field Day_selected.adi",
+            QsoLogbookViewModel.SuggestedFileNameForSavePicker(
+                QsoLogbookViewModel.BuildSuggestedExportFileName("Field Day", selected),
+                "adi",
+                savePanelAppendsExtension: false));
+
+        // A logbook named My.adi keeps that part. The panel appends the export extension.
+        Assert.Equal(
+            "My.adi",
+            QsoLogbookViewModel.SuggestedFileNameForSavePicker("My.adi.adi", ".adi", savePanelAppendsExtension: true));
+        Assert.Equal(
+            "notes.txt",
+            QsoLogbookViewModel.SuggestedFileNameForSavePicker("notes.txt", "adi", savePanelAppendsExtension: true));
+    }
+
     private static QsoRowViewModel Row(
         string call,
         DateTime qsoUtc,

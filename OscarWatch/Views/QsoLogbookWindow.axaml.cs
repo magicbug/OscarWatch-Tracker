@@ -376,11 +376,15 @@ public partial class QsoLogbookWindow : Window
         if (string.IsNullOrWhiteSpace(adif))
             return;
 
+        const string adifExtension = "adi";
         var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = LocalizationService.Instance.Get("Logbook.ExportPicker.Title"),
-            SuggestedFileName = QsoLogbookViewModel.BuildSuggestedExportFileName(vm.SelectedLogbook.Name, options),
-            DefaultExtension = "adi",
+            SuggestedFileName = QsoLogbookViewModel.SuggestedFileNameForSavePicker(
+                QsoLogbookViewModel.BuildSuggestedExportFileName(vm.SelectedLogbook.Name, options),
+                adifExtension,
+                OperatingSystem.IsMacOS()),
+            DefaultExtension = adifExtension,
             FileTypeChoices =
             [
                 new FilePickerFileType("ADIF files") { Patterns = ["*.adi", "*.adif"] }

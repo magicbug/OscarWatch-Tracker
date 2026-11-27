@@ -971,6 +971,29 @@ public partial class QsoLogbookViewModel : ViewModelBase, OscarWatch.Services.IC
             : $"{safeName}_{fromToken}-{toToken}.adi";
     }
 
+    /// <summary>
+    /// File name for the save dialog. On macOS, NSSavePanel appends the default
+    /// extension itself, so a name that already ends with it is saved twice
+    /// (Logbook_selected.adi.adi).
+    /// </summary>
+    public static string SuggestedFileNameForSavePicker(
+        string fileName,
+        string defaultExtension,
+        bool savePanelAppendsExtension)
+    {
+        if (!savePanelAppendsExtension || string.IsNullOrEmpty(fileName))
+            return fileName;
+
+        var extension = defaultExtension.Trim().TrimStart('.');
+        if (extension.Length == 0)
+            return fileName;
+
+        var suffix = "." + extension;
+        return fileName.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)
+            ? fileName[..^suffix.Length]
+            : fileName;
+    }
+
     private static string SanitizeExportFileName(string name)
     {
         var invalid = Path.GetInvalidFileNameChars();
