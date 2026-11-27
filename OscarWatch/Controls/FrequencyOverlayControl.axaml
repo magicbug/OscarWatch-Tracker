@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:OscarWatch.ViewModels"
+             xmlns:controls="using:OscarWatch.Controls"
              xmlns:models="using:OscarWatch.Core.Models"
              xmlns:loc="using:OscarWatch.Localization"
              x:Class="OscarWatch.Controls.FrequencyOverlayControl"
@@ -332,6 +333,64 @@
       <Setter Property="VerticalAlignment" Value="Center" />
       <Setter Property="HorizontalAlignment" Value="Center" />
       <Setter Property="TextAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.passband-status">
+      <Setter Property="FontFamily" Value="Consolas,Courier New,monospace" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Foreground" Value="#FF3DDC84" />
+    </Style>
+    <Style Selector="TextBlock.passband-status.near-edge">
+      <Setter Property="Foreground" Value="#FFFFD27A" />
+    </Style>
+    <Style Selector="TextBlock.passband-status.out-of-band">
+      <Setter Property="Foreground" Value="#FFFF8A8A" />
+    </Style>
+    <Style Selector="TextBlock.passband-scale">
+      <Setter Property="FontFamily" Value="Consolas,Courier New,monospace" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="Foreground" Value="#FFB0B0B0" />
+    </Style>
+    <Style Selector="Button.passband-hide">
+      <Setter Property="MinWidth" Value="26" />
+      <Setter Property="MinHeight" Value="26" />
+      <Setter Property="Width" Value="26" />
+      <Setter Property="Height" Value="26" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="8,0,0,0" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Foreground" Value="#FFB0B0B0" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.passband-hide:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#FF2A2A2A" />
+      <Setter Property="Foreground" Value="#FFFFFFFF" />
+    </Style>
+    <Style Selector="Button.passband-reveal">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="10,4" />
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Background" Value="#FF181818" />
+      <Setter Property="BorderBrush" Value="#FF3C3C3C" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Foreground" Value="#FFE0E0E0" />
+    </Style>
+    <Style Selector="Button.passband-reveal:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#FF242424" />
+      <Setter Property="BorderBrush" Value="#FF5A5A5A" />
+      <Setter Property="Foreground" Value="#FFFFFFFF" />
     </Style>
   </UserControl.Styles>
 
@@ -707,6 +766,80 @@
                      TextWrapping="Wrap"
                      Foreground="#FFB0B0B0" />
         </Grid>
+
+        <Border IsVisible="{Binding ShowPassbandIndicator}"
+                Background="#FF181818"
+                BorderBrush="#FF3C3C3C"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="10,8">
+          <StackPanel Spacing="4">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+              <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Localize Key=Freq.Passband}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="#FFE0E0E0"
+                           VerticalAlignment="Center" />
+                <Border Background="#FF252525"
+                        BorderBrush="#FF454545"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        Padding="5,1"
+                        VerticalAlignment="Center">
+                  <TextBlock Text="{Binding PassbandBadgeText}"
+                             FontFamily="Consolas,Courier New,monospace"
+                             FontSize="12"
+                             Foreground="#FFB0B0B0" />
+                </Border>
+              </StackPanel>
+              <TextBlock Grid.Column="1"
+                         Classes="passband-status"
+                         Classes.near-edge="{Binding PassbandIsNearEdge}"
+                         Classes.out-of-band="{Binding PassbandIsOutOfBand}"
+                         Text="{Binding PassbandStatusText}"
+                         Margin="8,0,0,0"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Center" />
+              <Button Grid.Column="2"
+                      Classes="passband-hide"
+                      Content="×"
+                      Command="{Binding HidePassbandCommand}"
+                      ToolTip.Tip="{loc:Localize Key=Freq.PassbandHideToolTip}"
+                      AutomationProperties.Name="{loc:Localize Key=Freq.PassbandHide}" />
+            </Grid>
+
+            <Grid ColumnDefinitions="12*,76*,12*"
+                  Margin="0,2,0,0">
+              <Grid Grid.Column="1" ColumnDefinitions="*,Auto,*">
+                <TextBlock Grid.Column="0" Classes="passband-scale" Text="{Binding PassbandDownlinkLeftText}" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="1" Classes="passband-scale" Text="{Binding PassbandDownlinkCentreText}" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="2" Classes="passband-scale" Text="{Binding PassbandDownlinkRightText}" HorizontalAlignment="Right" />
+              </Grid>
+            </Grid>
+
+            <controls:TransponderPassbandBarControl PassbandState="{Binding PassbandState}"
+                                                    Height="32"
+                                                    HorizontalAlignment="Stretch"
+                                                    AutomationProperties.Name="{Binding PassbandStatusText}" />
+
+            <Grid ColumnDefinitions="12*,76*,12*"
+                  IsVisible="{Binding ShowPassbandUplinkScale}">
+              <Grid Grid.Column="1" ColumnDefinitions="*,Auto,*">
+                <TextBlock Grid.Column="0" Classes="passband-scale" Text="{Binding PassbandUplinkLeftText}" HorizontalAlignment="Left" />
+                <TextBlock Grid.Column="1" Classes="passband-scale" Text="{Binding PassbandUplinkCentreText}" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="2" Classes="passband-scale" Text="{Binding PassbandUplinkRightText}" HorizontalAlignment="Right" />
+              </Grid>
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <Button Classes="passband-reveal"
+                Content="{loc:Localize Key=Freq.PassbandShow}"
+                Command="{Binding ShowPassbandCommand}"
+                IsVisible="{Binding ShowPassbandReveal}"
+                ToolTip.Tip="{loc:Localize Key=Freq.PassbandShowToolTip}"
+                AutomationProperties.Name="{loc:Localize Key=Freq.PassbandShow}" />
 
         <StackPanel IsVisible="{Binding HasTransponderData}" Spacing="10">
           <StackPanel Spacing="6">

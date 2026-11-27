@@ -7,6 +7,10 @@
         "type": "Mode B",
         "downlink": 145950,
         "uplink": 432146,
+        "downlink_min": 145925,
+        "downlink_max": 145975,
+        "uplink_min": 432125,
+        "uplink_max": 432175,
         "downlink_mode": "USB",
         "uplink_mode": "LSB",
         "doppler": "REV"
@@ -15,6 +19,10 @@
         "type": "Mode A",
         "downlink": 29450,
         "uplink": 145900,
+        "downlink_min": 29400,
+        "downlink_max": 29500,
+        "uplink_min": 145850,
+        "uplink_max": 145950,
         "downlink_mode": "USB",
         "uplink_mode": "USB",
         "doppler": "NOR"
@@ -46,6 +54,10 @@
   {
     "name": "AO-73",
     "norad_id": "39444",
+    "downlink_min": 145950,
+    "downlink_max": 145970,
+    "uplink_min": 435130,
+    "uplink_max": 435150,
     "modes": [
       {
         "type": "Voice U/V",
@@ -153,6 +165,10 @@
   {
     "name": "FO-29",
     "norad_id": "24278",
+    "downlink_min": 435800,
+    "downlink_max": 435900,
+    "uplink_min": 145900,
+    "uplink_max": 146000,
     "modes": [
       {
         "type": "SSB Transponder",
@@ -189,6 +205,10 @@
   {
     "name": "JO-97",
     "norad_id": "43803",
+    "downlink_min": 145855,
+    "downlink_max": 145875,
+    "uplink_min": 435100,
+    "uplink_max": 435120,
     "modes": [
       {
         "type": "SSB Transponder",
@@ -227,6 +247,10 @@
   {
     "name": "RS-44",
     "norad_id": "44909",
+    "downlink_min": 435610,
+    "downlink_max": 435670,
+    "uplink_min": 145935,
+    "uplink_max": 145995,
     "modes": [
       {
         "type": "SSB Transponder",
@@ -510,6 +534,10 @@
   {
     "name": "QO-100",
     "norad_id": "43700",
+    "downlink_min": 10489500,
+    "downlink_max": 10490000,
+    "uplink_min": 2400000,
+    "uplink_max": 2400500,
     "modes": [
       {
         "type": "Narrowband Transponder",
@@ -539,6 +567,10 @@
         "type": "Wideband DATV",
         "downlink": 10495000,
         "uplink": 2405500,
+        "downlink_min": 10490500,
+        "downlink_max": 10499500,
+        "uplink_min": 2401000,
+        "uplink_max": 2410000,
         "downlink_mode": "DATA-USB",
         "uplink_mode": "DATA-USB",
         "doppler": "NOR"

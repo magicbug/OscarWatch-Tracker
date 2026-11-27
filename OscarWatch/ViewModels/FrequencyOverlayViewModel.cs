@@ -37,6 +37,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
     private string? _currentSatelliteName;
     private string? _currentStorageKey;
     private string? _currentNoradId;
+    private SatelliteRadioEntry? _currentEntry;
     private bool _isLoadingSelection;
     private double _lastRangeRateKmPerSec;
     private SatelliteTrackState? _lastTrackState;
@@ -51,6 +52,8 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowLeadTuningPanelVisible))]
+    [NotifyPropertyChangedFor(nameof(ShowPassbandIndicator))]
+    [NotifyPropertyChangedFor(nameof(ShowPassbandReveal))]
     private bool _hasTransponderData;
 
     [ObservableProperty]
@@ -79,6 +82,59 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _dopplerShiftText = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowPassbandIndicator))]
+    [NotifyPropertyChangedFor(nameof(ShowPassbandReveal))]
+    [NotifyPropertyChangedFor(nameof(PassbandIsInBand))]
+    [NotifyPropertyChangedFor(nameof(PassbandIsNearEdge))]
+    [NotifyPropertyChangedFor(nameof(PassbandIsOutOfBand))]
+    private PassbandIndicatorState? _passbandState;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowPassbandIndicator))]
+    [NotifyPropertyChangedFor(nameof(ShowPassbandReveal))]
+    private bool _showPassbandVisual = true;
+
+    [ObservableProperty]
+    private string _passbandBadgeText = "";
+
+    [ObservableProperty]
+    private string _passbandStatusText = "";
+
+    [ObservableProperty]
+    private bool _showPassbandUplinkScale;
+
+    [ObservableProperty]
+    private string _passbandUplinkLeftText = "";
+
+    [ObservableProperty]
+    private string _passbandUplinkCentreText = "";
+
+    [ObservableProperty]
+    private string _passbandUplinkRightText = "";
+
+    [ObservableProperty]
+    private string _passbandDownlinkLeftText = "";
+
+    [ObservableProperty]
+    private string _passbandDownlinkCentreText = "";
+
+    [ObservableProperty]
+    private string _passbandDownlinkRightText = "";
+
+    public bool ShowPassbandIndicator =>
+        ShowPassbandVisual && HasTransponderData && PassbandState is not null;
+
+    /// <summary>One-line control that brings the passband diagram back after the operator hides it.</summary>
+    public bool ShowPassbandReveal =>
+        !ShowPassbandVisual && HasTransponderData && PassbandState is not null;
+
+    public bool PassbandIsInBand => PassbandState?.Zone == PassbandZone.InBand;
+
+    public bool PassbandIsNearEdge => PassbandState?.Zone == PassbandZone.NearEdge;
+
+    public bool PassbandIsOutOfBand => PassbandState?.Zone == PassbandZone.OutOfBand;
 
     [ObservableProperty]
     private bool _showCtcssRow;
@@ -275,9 +331,16 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         OverlayX = settings.Current.FrequencyOverlayX;
         OverlayY = settings.Current.FrequencyOverlayY;
         IsCollapsed = settings.Current.FrequencyOverlayCollapsed;
+        ShowPassbandVisual = settings.Current.ShowFrequencyPassband;
         EmptyStateMessage = _l.Get("Freq.SelectSatelliteHint");
         CollapsedSummaryText = _l.Get("Freq.SelectSatellite");
     }
+
+    [RelayCommand]
+    private void HidePassband() => ShowPassbandVisual = false;
+
+    [RelayCommand]
+    private void ShowPassband() => ShowPassbandVisual = true;
 
     [RelayCommand]
     private void ToggleCollapse()
@@ -415,6 +478,17 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         RequestOverlayReclamp();
     }
 
+    partial void OnShowPassbandVisualChanged(bool value)
+    {
+        if (_settings.Current.ShowFrequencyPassband != value)
+        {
+            _settings.Current.ShowFrequencyPassband = value;
+            _settings.RequestSave();
+        }
+
+        RequestOverlayReclamp();
+    }
+
     /// <summary>Keep the full panel inside the map area (called after measure / resize).</summary>
     public void EnsureOverlayWithinHost(double hostWidth, double hostHeight, double overlayWidth, double overlayHeight)
     {
@@ -435,6 +509,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         OverlayX = _settings.Current.FrequencyOverlayX;
         OverlayY = _settings.Current.FrequencyOverlayY;
         IsCollapsed = _settings.Current.FrequencyOverlayCollapsed;
+        ShowPassbandVisual = _settings.Current.ShowFrequencyPassband;
         OnPropertyChanged(nameof(OverlayMargin));
         RequestOverlayReclamp();
     }
@@ -468,6 +543,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
             _currentNoradId = null;
             _currentSatelliteName = null;
             _currentStorageKey = null;
+            _currentEntry = null;
             _passbandSyncSuspended = false;
             HasTransponderData = false;
             EmptyStateMessage = _l.Get("Freq.SelectSatelliteHint");
@@ -972,6 +1048,8 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         StoreOffsetCommand.NotifyCanExecuteChanged();
         NotifyDopplerStrategySelectionChanged();
         OnPropertyChanged(nameof(ShowOffsetLegToggle));
+        OnPropertyChanged(nameof(ShowPassbandIndicator));
+        OnPropertyChanged(nameof(ShowPassbandReveal));
         UpdateCollapsedSummaryText();
     }
 
@@ -1021,7 +1099,102 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         SatelliteTransmitText = IsBeaconOnly ? "—" : FrequencyDisplayFormat.FormatMHz(snapshotCorrected.SatelliteTransmitKHz);
         SatelliteReceiveText = FrequencyDisplayFormat.FormatMHz(snapshotCorrected.SatelliteReceiveKHz);
         DopplerShiftText = FrequencyDisplayFormat.FormatDopplerKHz(snapshotCorrected.DopplerShiftKHz);
+        UpdatePassbandDisplay(snapshotCorrected);
         UpdateCollapsedSummaryText(radioCorrected);
+    }
+
+    private void UpdatePassbandDisplay(CorrectedFrequencies snapshotCorrected)
+    {
+        var previousShow = ShowPassbandIndicator;
+        var previousReveal = ShowPassbandReveal;
+        var state = PassbandIndicatorCalculator.Build(
+            _currentEntry,
+            SelectedMode,
+            AvailableModes,
+            snapshotCorrected.SatelliteReceiveKHz,
+            snapshotCorrected.IsBeaconOnly ? null : snapshotCorrected.SatelliteTransmitKHz);
+
+        PassbandState = state;
+        if (state is null)
+        {
+            ClearPassbandText();
+            if (previousShow || previousReveal)
+                RequestOverlayReclamp();
+            return;
+        }
+
+        var widthStr = FormatPassbandWidth(state.WidthKHz, out var widthUnit);
+        var invLabel = _l.Get(state.IsInverting ? "Freq.PassbandInv" : "Freq.PassbandNor");
+        PassbandBadgeText = $"{widthStr} {widthUnit} · {invLabel}";
+
+        var centreOffset = state.OffsetFromCentreKHz.ToString("+0.0;-0.0;0.0", System.Globalization.CultureInfo.InvariantCulture);
+        PassbandStatusText = state.Zone switch
+        {
+            PassbandZone.OutOfBand when state.OutOfBandDeltaKHz < 0 =>
+                _l.Get("Freq.PassbandOutBelow", Math.Abs(state.OutOfBandDeltaKHz).ToString("F1", System.Globalization.CultureInfo.InvariantCulture)),
+            PassbandZone.OutOfBand =>
+                _l.Get("Freq.PassbandOutAbove", Math.Abs(state.OutOfBandDeltaKHz).ToString("F1", System.Globalization.CultureInfo.InvariantCulture)),
+            PassbandZone.NearEdge => _l.Get("Freq.PassbandNearEdge", centreOffset),
+            _ => _l.Get("Freq.PassbandInBand", centreOffset)
+        };
+
+        var dlCentre = (state.DownlinkMinKHz + state.DownlinkMaxKHz) / 2.0;
+        PassbandDownlinkLeftText = $"↓ {FrequencyDisplayFormat.FormatMHzCompact(state.DownlinkMinKHz)}";
+        PassbandDownlinkCentreText = FrequencyDisplayFormat.FormatMHzCompact(dlCentre);
+        PassbandDownlinkRightText = $"{FrequencyDisplayFormat.FormatMHzCompact(state.DownlinkMaxKHz)} ↓";
+
+        if (state.UplinkMinKHz is > 0 && state.UplinkMaxKHz is > 0)
+        {
+            var ulMin = state.UplinkMinKHz.Value;
+            var ulMax = state.UplinkMaxKHz.Value;
+            var ulCentre = (ulMin + ulMax) / 2.0;
+            var leftFreq = state.IsInverting ? ulMax : ulMin;
+            var rightFreq = state.IsInverting ? ulMin : ulMax;
+            ShowPassbandUplinkScale = true;
+            PassbandUplinkLeftText = $"↑ {FrequencyDisplayFormat.FormatMHzCompact(leftFreq)}";
+            PassbandUplinkCentreText = FrequencyDisplayFormat.FormatMHzCompact(ulCentre);
+            PassbandUplinkRightText = $"{FrequencyDisplayFormat.FormatMHzCompact(rightFreq)} ↑";
+        }
+        else
+        {
+            ShowPassbandUplinkScale = false;
+            PassbandUplinkLeftText = "";
+            PassbandUplinkCentreText = "";
+            PassbandUplinkRightText = "";
+        }
+
+        if (previousShow != ShowPassbandIndicator || previousReveal != ShowPassbandReveal)
+            RequestOverlayReclamp();
+    }
+
+    /// <summary>Widths of 1 MHz and above are labelled in MHz. Narrower bands stay in kHz.</summary>
+    private static string FormatPassbandWidth(double widthKHz, out string unit)
+    {
+        var invariant = System.Globalization.CultureInfo.InvariantCulture;
+        if (widthKHz >= 1000)
+        {
+            unit = "MHz";
+            var mhz = widthKHz / 1000.0;
+            return Math.Abs(mhz % 1) < 0.05 ? mhz.ToString("F0", invariant) : mhz.ToString("F1", invariant);
+        }
+
+        unit = "kHz";
+        return Math.Abs(widthKHz % 1) < 0.05
+            ? widthKHz.ToString("F0", invariant)
+            : widthKHz.ToString("F1", invariant);
+    }
+
+    private void ClearPassbandText()
+    {
+        PassbandBadgeText = "";
+        PassbandStatusText = "";
+        ShowPassbandUplinkScale = false;
+        PassbandUplinkLeftText = "";
+        PassbandUplinkCentreText = "";
+        PassbandUplinkRightText = "";
+        PassbandDownlinkLeftText = "";
+        PassbandDownlinkCentreText = "";
+        PassbandDownlinkRightText = "";
     }
 
     private void UpdateCollapsedSummaryText(CorrectedFrequencies? corrected = null)
@@ -1126,6 +1299,7 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
             AvailableModes.Clear();
             SelectedMode = null;
             var entry = _database.TryGetEntry(name, noradId);
+            _currentEntry = entry;
             if (entry is null || entry.Modes.Count == 0)
             {
                 HasTransponderData = false;
@@ -1448,6 +1622,8 @@ public partial class FrequencyOverlayViewModel : ViewModelBase
         SatelliteTransmitText = "—";
         SatelliteReceiveText = "—";
         DopplerShiftText = "";
+        PassbandState = null;
+        ClearPassbandText();
         ShowDopplerLeadIndicator = false;
         IsDopplerLeadActive = false;
         _dopplerLeadActiveLatched = false;

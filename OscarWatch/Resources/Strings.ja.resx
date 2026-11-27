@@ -7420,4 +7420,37 @@ LOS: {2} UTC
   <data name="Cw.Align.SafetyNote">
     <value>リニアトランスポンダーでは低出力で送信し、無線機のTXサイドトーンやモニター音をCWデコーダーの音声入力に入れないでください。</value>
   </data>
+  <data name="Freq.Passband">
+    <value>パスバンド</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>帯域内 · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>端付近 · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>帯域外 · 下へ {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>帯域外 · 上へ {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>パスバンドを隠す</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>パスバンド図を隠します。このパネルから再び表示できます。</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>パスバンドを表示</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>このリニアトランスポンダーのパスバンド図を表示します。</value>
+  </data>
 </root>

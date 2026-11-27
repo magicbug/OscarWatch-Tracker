@@ -1864,7 +1864,9 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
             // Answering from a decode (pounce or auto reply) picks the slot opposite the caller.
             PreferEvenSlot = _modem.Sequencer?.PreferEvenSlot ?? PreferEvenSlot;
             IsTuning = _modem.IsTuning;
-            // Recolour rows already on screen when the QSO partner changes.
+            // Posted after this slot's decode lines. Adopting the partner here, rather than
+            // on the first inserted line, lets the opening call play when another station
+            // in the same slot was shown first.
             NoteCallAlertPartner(_modem.Sequencer?.TheirCall);
             if (!string.IsNullOrEmpty(_modem.ManualPrompt))
                 SetManualPttPrompt(_modem.ManualPrompt);
@@ -1894,12 +1896,13 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
 
     private void ShowDecodeListChange()
     {
-        // The sequencer may already have taken this caller as the partner. The sound
-        // uses the partner from before this decode, so the opening call still plays.
+        // The sequencer has already chosen the caller before any line from this slot is
+        // inserted, and one slot posts several lines. Adopting that partner on the first
+        // line (often another station) made the real call look like a repeat, so the
+        // sound stayed silent. OnModemChanged adopts the partner after these lines.
         var partnerBefore = _callAlertPartner;
         QsoPartnerCall = _modem.Sequencer?.TheirCall;
         SyncDecodeRows(partnerBefore);
-        NoteCallAlertPartner(QsoPartnerCall);
         RefreshRxMarker();
     }
 

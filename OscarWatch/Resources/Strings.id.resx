@@ -7420,4 +7420,37 @@ Terbaru: {1} ({2})</value>
   <data name="Cw.Align.SafetyNote">
     <value>Gunakan daya pancar rendah pada transponder linear dan jangan arahkan audio sidetone atau monitor TX radio ke input dekoder CW.</value>
   </data>
+  <data name="Freq.Passband">
+    <value>Pita lolos</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>Di dalam pita · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>Dekat tepi · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>Di luar pita · {0} kHz di bawah</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>Di luar pita · {0} kHz di atas</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>Sembunyikan pita lolos</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>Sembunyikan diagram pita lolos. Diagram dapat ditampilkan lagi dari panel ini.</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>Tampilkan pita lolos</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>Tampilkan diagram pita lolos untuk transponder linear ini.</value>
+  </data>
 </root>

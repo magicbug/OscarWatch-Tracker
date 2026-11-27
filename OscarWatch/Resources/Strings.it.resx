@@ -7420,4 +7420,37 @@ Ultima versione: {1} ({2})</value>
   <data name="Cw.Align.SafetyNote">
     <value>Usa bassa potenza di trasmissione sui transponder lineari e non inviare il sidetone o il monitor TX della radio nell'ingresso del decodificatore CW.</value>
   </data>
+  <data name="Freq.Passband">
+    <value>Banda passante</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>In banda · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>Vicino al bordo · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>Fuori banda · {0} kHz sotto</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>Fuori banda · {0} kHz sopra</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>Nascondi banda passante</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>Nascondi il diagramma della banda passante. Si può mostrare di nuovo da questo pannello.</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>Mostra banda passante</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>Mostra il diagramma della banda passante di questo transponder lineare.</value>
+  </data>
 </root>

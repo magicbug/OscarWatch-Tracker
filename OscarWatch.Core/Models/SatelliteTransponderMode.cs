@@ -13,6 +13,22 @@ public sealed class SatelliteTransponderMode
     [JsonPropertyName("uplink")]
     public double UplinkKHz { get; set; }
 
+    [JsonPropertyName("downlink_min")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? DownlinkMinKHz { get; set; }
+
+    [JsonPropertyName("downlink_max")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? DownlinkMaxKHz { get; set; }
+
+    [JsonPropertyName("uplink_min")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? UplinkMinKHz { get; set; }
+
+    [JsonPropertyName("uplink_max")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? UplinkMaxKHz { get; set; }
+
     [JsonPropertyName("downlink_mode")]
     public string DownlinkMode { get; set; } = "";
 
@@ -50,6 +66,37 @@ public sealed class SatelliteTransponderMode
 
     public bool IsBeaconOnly => UplinkKHz <= 0;
 
+    public bool HasDownlinkPassband =>
+        DownlinkMinKHz is > 0 && DownlinkMaxKHz is > 0 && DownlinkMaxKHz > DownlinkMinKHz;
+
+    public bool HasUplinkPassband =>
+        UplinkMinKHz is > 0 && UplinkMaxKHz is > 0 && UplinkMaxKHz > UplinkMinKHz;
+
+    public double? PassbandWidthKHz =>
+        HasDownlinkPassband
+            ? DownlinkMaxKHz!.Value - DownlinkMinKHz!.Value
+            : HasUplinkPassband
+                ? UplinkMaxKHz!.Value - UplinkMinKHz!.Value
+                : null;
+
+    /// <summary>Compact passband width and downlink range for mode dropdown secondary lines.</summary>
+    public string PassbandSummarySuffix
+    {
+        get
+        {
+            if (!HasDownlinkPassband)
+                return "";
+
+            var width = DownlinkMaxKHz!.Value - DownlinkMinKHz!.Value;
+            var widthStr = Math.Abs(width % 1) < 0.05
+                ? $"{width.ToString("F0", System.Globalization.CultureInfo.InvariantCulture)} kHz"
+                : $"{width.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)} kHz";
+            var minStr = FrequencyDisplayFormat.FormatMHzCompact(DownlinkMinKHz!.Value);
+            var maxStr = FrequencyDisplayFormat.FormatMHzCompact(DownlinkMaxKHz!.Value);
+            return $"{widthStr} ({minStr}–{maxStr})";
+        }
+    }
+
     /// <summary>Primary label for mode lists and combo boxes.</summary>
     public string DisplayLabel => string.IsNullOrWhiteSpace(Type) ? "Mode" : Type.Trim();
 
@@ -64,6 +111,9 @@ public sealed class SatelliteTransponderMode
 
             var tx = FrequencyDisplayFormat.FormatMHz(UplinkKHz);
             var summary = $"{tx} ↑ · {rx} ↓ · {UplinkMode}/{DownlinkMode}";
+            var passband = PassbandSummarySuffix;
+            if (!string.IsNullOrEmpty(passband))
+                summary = $"{summary} · {passband}";
             var tone = CtcssSummarySuffix;
             return string.IsNullOrEmpty(tone) ? summary : $"{summary} · {tone}";
         }

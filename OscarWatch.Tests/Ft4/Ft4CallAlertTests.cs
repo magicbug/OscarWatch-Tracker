@@ -40,6 +40,15 @@ public sealed class Ft4CallAlertTests
     }
 
     [Fact]
+    public void An_earlier_line_in_the_slot_does_not_silence_the_caller()
+    {
+        // The sequencer has already chosen G4ABC, but the partner passed in stays the
+        // one from before this slot until every line has been considered.
+        Assert.False(_alert.ShouldPlay(Rx("M0XYZ", "G1AAA", "IO91", Slot), "MM9SQL", null));
+        Assert.True(_alert.ShouldPlay(Rx("MM9SQL", "G4ABC", "JN48", Slot), "MM9SQL", null));
+    }
+
+    [Fact]
     public void A_second_station_plays_as_well()
     {
         Assert.True(_alert.ShouldPlay(Rx("MM9SQL", "G4ABC", "IO91", Slot), "MM9SQL", null));

@@ -7420,4 +7420,37 @@ LOS: {2}
   <data name="Cw.Align.SafetyNote">
     <value>ใช้กำลังส่งต่ำบนทรานสปอนเดอร์เชิงเส้น และอย่าส่งเสียง sidetone หรือมอนิเตอร์ TX ของวิทยุเข้าสู่อินพุตของตัวถอดรหัส CW</value>
   </data>
+  <data name="Freq.Passband">
+    <value>พาสแบนด์</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>ในแบนด์ · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>ใกล้ขอบ · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>นอกแบนด์ · ต่ำกว่า {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>นอกแบนด์ · สูงกว่า {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>ซ่อนพาสแบนด์</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>ซ่อนแผนภาพพาสแบนด์ สามารถแสดงอีกครั้งจากแผงนี้</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>แสดงพาสแบนด์</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>แสดงแผนภาพพาสแบนด์ของทรานสปอนเดอร์เชิงเส้นนี้</value>
+  </data>
 </root>

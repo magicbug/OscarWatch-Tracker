@@ -68,6 +68,8 @@ public sealed class AppSettings
     public double FrequencyOverlayX { get; set; } = 12;
     public double FrequencyOverlayY { get; set; } = 12;
     public bool FrequencyOverlayCollapsed { get; set; }
+    /// <summary>When true, the frequency panel draws the linear-transponder passband diagram.</summary>
+    public bool ShowFrequencyPassband { get; set; } = true;
     public string RemoteStationGridSquare { get; set; } = "";
     public double DxOverlayX { get; set; } = 12;
     public double DxOverlayY { get; set; } = 56;

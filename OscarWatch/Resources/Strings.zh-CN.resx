@@ -7420,4 +7420,37 @@
   <data name="Cw.Align.SafetyNote">
     <value>在线性转发器上请使用低发射功率，并且不要将电台的发射侧音或监听音频接入 CW 解码器输入。</value>
   </data>
+  <data name="Freq.Passband">
+    <value>通带</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>带内 · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>靠近边缘 · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>带外 · 低 {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>带外 · 高 {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>隐藏通带</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>隐藏通带图。可以在此面板上再次显示。</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>显示通带</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>显示此线性转发器的通带图。</value>
+  </data>
 </root>

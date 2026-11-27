@@ -2842,6 +2842,39 @@ Continue?</value>
   <data name="Freq.OperatingVoice">
     <value>Voice uses database modes. Ctrl+W toggles CW.</value>
   </data>
+  <data name="Freq.Passband">
+    <value>Passband</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>In band · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>Near edge · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>Out of band · {0} kHz below</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>Out of band · {0} kHz above</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>Hide passband</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>Hide the passband diagram. You can show it again from this panel.</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>Show passband</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>Show the passband diagram for this linear transponder.</value>
+  </data>
   <data name="Settings.Station.DisplayName">
     <value>Display name</value>
   </data>

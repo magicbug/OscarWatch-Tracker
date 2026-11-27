@@ -7420,4 +7420,37 @@ LOS: {2}
   <data name="Cw.Align.SafetyNote">
     <value>Используйте малую мощность на линейных транспондерах и не подавайте самоконтроль TX трансивера на аудиовход CW-декодера.</value>
   </data>
+  <data name="Freq.Passband">
+    <value>Полоса</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>В полосе · {0} кГц</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>У края · {0} кГц</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>Вне полосы · {0} кГц ниже</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>Вне полосы · {0} кГц выше</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>Скрыть полосу</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>Скрыть диаграмму полосы. Её можно снова показать на этой панели.</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>Показать полосу</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>Показать диаграмму полосы этого линейного транспондера.</value>
+  </data>
 </root>

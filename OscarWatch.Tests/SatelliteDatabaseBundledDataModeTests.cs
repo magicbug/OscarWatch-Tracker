@@ -1,4 +1,5 @@
 using OscarWatch.Core.Ft4;
+using OscarWatch.Core.Models;
 using OscarWatch.Core.Radio;
 using OscarWatch.Core.Services;
 
@@ -76,5 +77,74 @@ public sealed class SatelliteDatabaseBundledDataModeTests
         Assert.Equal("DV", dstar.UplinkMode);
         Assert.Equal("NOR", dstar.Doppler);
         Assert.True(TransponderCatModes.IsDigitalVoice(dstar.DownlinkMode));
+    }
+
+    [Fact]
+    public void Bundled_database_linear_passbands_match_published_edges()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "Assets", "satellite_database.json");
+        var entries = SatelliteDatabaseFile.Load(path);
+
+        var jo97 = entries.Single(e => e.Name == "JO-97");
+        AssertPassband(jo97, 145_855, 145_875, 435_100, 435_120);
+        AssertInside(jo97.Modes.Single(m => m.Type == "SSB Transponder").DownlinkKHz, jo97);
+        AssertInside(jo97.Modes.Single(m => m.Type == "FT4").DownlinkKHz, jo97);
+
+        var ao73 = entries.Single(e => e.Name == "AO-73");
+        AssertPassband(ao73, 145_950, 145_970, 435_130, 435_150);
+        AssertInside(ao73.Modes.Single(m => m.Type == "Voice U/V").DownlinkKHz, ao73);
+
+        var fo29 = entries.Single(e => e.Name == "FO-29");
+        AssertPassband(fo29, 435_800, 435_900, 145_900, 146_000);
+        AssertInside(fo29.Modes.Single(m => m.Type == "SSB Transponder").DownlinkKHz, fo29);
+
+        var ao7 = entries.Single(e => e.Name == "AO-07");
+        Assert.False(ao7.HasDownlinkPassband);
+        var modeB = ao7.Modes.Single(m => m.Type == "Mode B");
+        var modeA = ao7.Modes.Single(m => m.Type == "Mode A");
+        AssertModePassband(modeB, 145_925, 145_975, 432_125, 432_175);
+        AssertModePassband(modeA, 29_400, 29_500, 145_850, 145_950);
+        Assert.False(ao7.Modes.Single(m => m.Type == "CW").HasDownlinkPassband);
+
+        var qo100 = entries.Single(e => e.Name == "QO-100");
+        AssertPassband(qo100, 10_489_500, 10_490_000, 2_400_000, 2_400_500);
+        AssertInside(qo100.Modes.Single(m => m.Type == "Narrowband Transponder").DownlinkKHz, qo100);
+        AssertInside(qo100.Modes.Single(m => m.Type == "FT4").DownlinkKHz, qo100);
+        var wideband = qo100.Modes.Single(m => m.Type == "Wideband DATV");
+        AssertModePassband(wideband, 10_490_500, 10_499_500, 2_401_000, 2_410_000);
+        Assert.True(wideband.DownlinkKHz > qo100.DownlinkMaxKHz);
+    }
+
+    private static void AssertPassband(
+        SatelliteRadioEntry entry,
+        double downlinkMin,
+        double downlinkMax,
+        double uplinkMin,
+        double uplinkMax)
+    {
+        Assert.Equal(downlinkMin, entry.DownlinkMinKHz);
+        Assert.Equal(downlinkMax, entry.DownlinkMaxKHz);
+        Assert.Equal(uplinkMin, entry.UplinkMinKHz);
+        Assert.Equal(uplinkMax, entry.UplinkMaxKHz);
+    }
+
+    private static void AssertInside(double downlinkKHz, SatelliteRadioEntry entry)
+    {
+        Assert.InRange(downlinkKHz, entry.DownlinkMinKHz!.Value, entry.DownlinkMaxKHz!.Value);
+    }
+
+    private static void AssertModePassband(
+        SatelliteTransponderMode mode,
+        double downlinkMin,
+        double downlinkMax,
+        double uplinkMin,
+        double uplinkMax)
+    {
+        Assert.Equal(downlinkMin, mode.DownlinkMinKHz);
+        Assert.Equal(downlinkMax, mode.DownlinkMaxKHz);
+        Assert.Equal(uplinkMin, mode.UplinkMinKHz);
+        Assert.Equal(uplinkMax, mode.UplinkMaxKHz);
+        Assert.InRange(mode.DownlinkKHz, downlinkMin, downlinkMax);
+        Assert.InRange(mode.UplinkKHz, uplinkMin, uplinkMax);
     }
 }

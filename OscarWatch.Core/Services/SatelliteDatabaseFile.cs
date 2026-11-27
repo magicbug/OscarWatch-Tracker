@@ -68,6 +68,12 @@ public static class SatelliteDatabaseFile
     {
         entry.Name = entry.Name.Trim();
         entry.NoradId = NormalizeNoradId(entry.NoradId);
+        NormalizePassbandPair(entry.DownlinkMinKHz, entry.DownlinkMaxKHz, out var entryDlMin, out var entryDlMax);
+        entry.DownlinkMinKHz = entryDlMin;
+        entry.DownlinkMaxKHz = entryDlMax;
+        NormalizePassbandPair(entry.UplinkMinKHz, entry.UplinkMaxKHz, out var entryUlMin, out var entryUlMax);
+        entry.UplinkMinKHz = entryUlMin;
+        entry.UplinkMaxKHz = entryUlMax;
         entry.AlternativeNames = NormalizeAlternativeNames(entry.Name, entry.AlternativeNames);
         if (entry.AlternativeNames is { Count: 0 })
             entry.AlternativeNames = null;
@@ -86,9 +92,39 @@ public static class SatelliteDatabaseFile
                 mode.CtcssHz = null;
             if (mode.CtcssArmHz is <= 0)
                 mode.CtcssArmHz = null;
+            NormalizePassbandPair(mode.DownlinkMinKHz, mode.DownlinkMaxKHz, out var dlMin, out var dlMax);
+            mode.DownlinkMinKHz = dlMin;
+            mode.DownlinkMaxKHz = dlMax;
+            NormalizePassbandPair(mode.UplinkMinKHz, mode.UplinkMaxKHz, out var ulMin, out var ulMax);
+            mode.UplinkMinKHz = ulMin;
+            mode.UplinkMaxKHz = ulMax;
         }
 
         return entry;
+    }
+
+    private static void NormalizePassbandPair(
+        double? rawMin,
+        double? rawMax,
+        out double? min,
+        out double? max)
+    {
+        if (rawMin is not > 0 || rawMax is not > 0 || Math.Abs(rawMax.Value - rawMin.Value) < 0.0001)
+        {
+            min = null;
+            max = null;
+            return;
+        }
+
+        if (rawMin.Value > rawMax.Value)
+        {
+            min = rawMax;
+            max = rawMin;
+            return;
+        }
+
+        min = rawMin;
+        max = rawMax;
     }
 
     public static List<SatelliteOperatingNotice>? NormalizeNotices(

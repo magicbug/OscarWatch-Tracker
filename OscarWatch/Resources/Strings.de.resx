@@ -7420,4 +7420,37 @@ Aktuell: {1} ({2})</value>
   <data name="Cw.Align.SafetyNote">
     <value>Verwenden Sie auf Lineartranspondern geringe Sendeleistung und leiten Sie keinen TX-Mithörton des Funkgeräts in den Audioeingang des CW-Dekoders.</value>
   </data>
+  <data name="Freq.Passband">
+    <value>Passband</value>
+  </data>
+  <data name="Freq.PassbandInv">
+    <value>INV</value>
+  </data>
+  <data name="Freq.PassbandNor">
+    <value>NOR</value>
+  </data>
+  <data name="Freq.PassbandInBand">
+    <value>Im Band · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandNearEdge">
+    <value>Nahe am Rand · {0} kHz</value>
+  </data>
+  <data name="Freq.PassbandOutBelow">
+    <value>Außerhalb · {0} kHz darunter</value>
+  </data>
+  <data name="Freq.PassbandOutAbove">
+    <value>Außerhalb · {0} kHz darüber</value>
+  </data>
+  <data name="Freq.PassbandHide">
+    <value>Passband ausblenden</value>
+  </data>
+  <data name="Freq.PassbandHideToolTip">
+    <value>Passband-Diagramm ausblenden. Es lässt sich in diesem Panel wieder einblenden.</value>
+  </data>
+  <data name="Freq.PassbandShow">
+    <value>Passband anzeigen</value>
+  </data>
+  <data name="Freq.PassbandShowToolTip">
+    <value>Passband-Diagramm für diesen linearen Transponder anzeigen.</value>
+  </data>
 </root>

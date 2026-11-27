@@ -55,6 +55,9 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
             ? SatelliteDatabaseFile.Load(ActiveDatabasePath)
             : [];
 
+        if (IsUsingUserDatabase && File.Exists(_bundledPath))
+            BackfillMissingPassbandBoundsFromBundled(_entries, _bundledPath);
+
         foreach (var entry in _entries)
         {
             if (string.IsNullOrWhiteSpace(entry.Name))
@@ -175,5 +178,100 @@ public sealed class SatelliteDatabaseService : ISatelliteDatabaseService
         }
 
         return buffer[..writeIndex].ToString();
+    }
+
+    /// <summary>
+    /// Existing users with a customised user database will not yet have passband bounds
+    /// for satellites that gained them in a newer bundled database. Fill in missing bounds
+    /// in memory without overwriting any bounds the user explicitly configured.
+    /// </summary>
+    private static void BackfillMissingPassbandBoundsFromBundled(
+        List<SatelliteRadioEntry> userEntries,
+        string bundledPath)
+    {
+        var bundledEntries = SatelliteDatabaseFile.Load(bundledPath);
+        if (bundledEntries.Count == 0)
+            return;
+
+        var bundledByNorad = new Dictionary<string, SatelliteRadioEntry>(StringComparer.Ordinal);
+        var bundledByName = new Dictionary<string, SatelliteRadioEntry>(StringComparer.OrdinalIgnoreCase);
+        foreach (var bundled in bundledEntries)
+        {
+            if (!HasAnyPassbandBounds(bundled))
+                continue;
+
+            var norad = CanonicalNoradId(bundled.NoradId);
+            if (norad is not null)
+                bundledByNorad.TryAdd(norad, bundled);
+
+            if (!string.IsNullOrWhiteSpace(bundled.Name))
+                bundledByName.TryAdd(bundled.Name.Trim(), bundled);
+        }
+
+        if (bundledByNorad.Count == 0 && bundledByName.Count == 0)
+            return;
+
+        foreach (var user in userEntries)
+        {
+            SatelliteRadioEntry? match = null;
+            var userNorad = CanonicalNoradId(user.NoradId);
+            if (userNorad is not null)
+                bundledByNorad.TryGetValue(userNorad, out match);
+
+            if (match is null && !string.IsNullOrWhiteSpace(user.Name))
+                bundledByName.TryGetValue(user.Name.Trim(), out match);
+
+            if (match is null)
+                continue;
+
+            if (!user.HasDownlinkPassband && match.HasDownlinkPassband)
+            {
+                user.DownlinkMinKHz = match.DownlinkMinKHz;
+                user.DownlinkMaxKHz = match.DownlinkMaxKHz;
+            }
+
+            if (!user.HasUplinkPassband && match.HasUplinkPassband)
+            {
+                user.UplinkMinKHz = match.UplinkMinKHz;
+                user.UplinkMaxKHz = match.UplinkMaxKHz;
+            }
+
+            BackfillMissingModePassbandBounds(user, match);
+        }
+    }
+
+    private static bool HasAnyPassbandBounds(SatelliteRadioEntry entry) =>
+        entry.HasDownlinkPassband
+        || entry.HasUplinkPassband
+        || entry.Modes.Any(mode => mode.HasDownlinkPassband || mode.HasUplinkPassband);
+
+    /// <summary>
+    /// AO-07 keeps one passband per transponder (Mode A on 10 m, Mode B on 2 m).
+    /// Copy those mode edges when the user copy has none, and leave edges the operator set.
+    /// </summary>
+    private static void BackfillMissingModePassbandBounds(SatelliteRadioEntry user, SatelliteRadioEntry bundled)
+    {
+        foreach (var bundledMode in bundled.Modes)
+        {
+            if (!bundledMode.HasDownlinkPassband && !bundledMode.HasUplinkPassband)
+                continue;
+
+            var userMode = user.Modes.FirstOrDefault(mode =>
+                string.Equals(mode.Type, bundledMode.Type, StringComparison.OrdinalIgnoreCase));
+            if (userMode is null)
+                continue;
+
+            if (!userMode.HasDownlinkPassband && bundledMode.HasDownlinkPassband)
+            {
+                userMode.DownlinkMinKHz = bundledMode.DownlinkMinKHz;
+                userMode.DownlinkMaxKHz = bundledMode.DownlinkMaxKHz;
+            }
+
+            if (!userMode.HasUplinkPassband && bundledMode.HasUplinkPassband)
+            {
+                userMode.UplinkMinKHz = bundledMode.UplinkMinKHz;
+                userMode.UplinkMaxKHz = bundledMode.UplinkMaxKHz;
+            }
+        }
     }
 }

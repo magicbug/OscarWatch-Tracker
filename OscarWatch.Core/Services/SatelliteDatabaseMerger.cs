@@ -110,7 +110,7 @@ public static class SatelliteDatabaseMerger
 
     public static string ModeFingerprint(SatelliteTransponderMode mode) =>
         string.Create(CultureInfo.InvariantCulture,
-            $"{mode.DownlinkKHz:F4}|{mode.UplinkKHz:F4}|{mode.DownlinkMode.Trim()}|{mode.UplinkMode.Trim()}|{mode.Doppler.Trim()}|{FingerprintNullable(mode.CtcssHz)}|{FingerprintNullable(mode.CtcssArmHz)}");
+            $"{mode.DownlinkKHz:F4}|{mode.UplinkKHz:F4}|{mode.DownlinkMode.Trim()}|{mode.UplinkMode.Trim()}|{mode.Doppler.Trim()}|{FingerprintNullable(mode.CtcssHz)}|{FingerprintNullable(mode.CtcssArmHz)}|{FingerprintNullable(mode.DownlinkMinKHz)}|{FingerprintNullable(mode.DownlinkMaxKHz)}|{FingerprintNullable(mode.UplinkMinKHz)}|{FingerprintNullable(mode.UplinkMaxKHz)}");
 
     public static SatelliteDatabaseMergePlan WithoutAcknowledgedConflicts(
         SatelliteDatabaseMergePlan plan,
@@ -287,6 +287,10 @@ public static class SatelliteDatabaseMerger
     public static bool ModesEqual(SatelliteTransponderMode left, SatelliteTransponderMode right) =>
         NearlyEqual(left.DownlinkKHz, right.DownlinkKHz)
         && NearlyEqual(left.UplinkKHz, right.UplinkKHz)
+        && NearlyEqual(left.DownlinkMinKHz, right.DownlinkMinKHz)
+        && NearlyEqual(left.DownlinkMaxKHz, right.DownlinkMaxKHz)
+        && NearlyEqual(left.UplinkMinKHz, right.UplinkMinKHz)
+        && NearlyEqual(left.UplinkMaxKHz, right.UplinkMaxKHz)
         && string.Equals(left.DownlinkMode.Trim(), right.DownlinkMode.Trim(), StringComparison.OrdinalIgnoreCase)
         && string.Equals(left.UplinkMode.Trim(), right.UplinkMode.Trim(), StringComparison.OrdinalIgnoreCase)
         && string.Equals(left.Doppler.Trim(), right.Doppler.Trim(), StringComparison.OrdinalIgnoreCase)
@@ -483,6 +487,10 @@ public static class SatelliteDatabaseMerger
         {
             Name = source.Name,
             NoradId = source.NoradId,
+            DownlinkMinKHz = source.DownlinkMinKHz,
+            DownlinkMaxKHz = source.DownlinkMaxKHz,
+            UplinkMinKHz = source.UplinkMinKHz,
+            UplinkMaxKHz = source.UplinkMaxKHz,
             AlternativeNames = source.AlternativeNames?.ToList() ?? [],
             Notices = CloneNotices(source.Notices),
             Modes = source.Modes.Select(CloneMode).ToList()
@@ -494,6 +502,10 @@ public static class SatelliteDatabaseMerger
             Type = source.Type,
             DownlinkKHz = source.DownlinkKHz,
             UplinkKHz = source.UplinkKHz,
+            DownlinkMinKHz = source.DownlinkMinKHz,
+            DownlinkMaxKHz = source.DownlinkMaxKHz,
+            UplinkMinKHz = source.UplinkMinKHz,
+            UplinkMaxKHz = source.UplinkMaxKHz,
             DownlinkMode = source.DownlinkMode,
             UplinkMode = source.UplinkMode,
             Doppler = source.Doppler,
