@@ -8,6 +8,8 @@ using OscarWatch.Core.Models;
 using OscarWatch.Core.Services;
 using OscarWatch.Core.Terminal;
 using OscarWatch.Core.Terminal.Uhm;
+using OscarWatch.Ft4;
+using OscarWatch.Hardware;
 using OscarWatch.Localization;
 using OscarWatch.Rotator;
 using OscarWatch.Terminal;
@@ -127,7 +129,9 @@ public sealed partial class TerminalSettingsViewModel : ViewModelBase
         ISettingsService settings,
         ILocalizationService localization,
         TerminalService service,
-        IRigController? rig = null)
+        IRigController? rig = null,
+        Ft4ModemService? ft4 = null,
+        CwKeyerService? cw = null)
     {
         _settings = settings;
         _l = localization;
@@ -161,7 +165,7 @@ public sealed partial class TerminalSettingsViewModel : ViewModelBase
             new(TerminalSatelliteProfiles.ModemHintBpsk1200, _l.Get("Terminal.Settings.Profiles.Modem.Bpsk1200")),
             new(TerminalSatelliteProfiles.ModemHintGmsk9600, _l.Get("Terminal.Settings.Profiles.Modem.Gmsk9600")),
         ];
-        BuiltIn = new TerminalBuiltInModemViewModel(settings, localization, service, rig);
+        BuiltIn = new TerminalBuiltInModemViewModel(settings, localization, service, rig, ft4, cw);
 
         _selectedTransport = TransportOptions.FirstOrDefault(o => o.Kind == t.Transport && o.IsAvailable)
                              ?? TransportOptions[0];

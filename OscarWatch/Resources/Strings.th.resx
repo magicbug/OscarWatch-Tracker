@@ -6724,6 +6724,27 @@ LOS: {2}
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX สั่งส่งวิทยุจากเสียง CAT ใช้การเชื่อมต่อวิทยุจากการควบคุมริก พอร์ต COM แยกจะขับ RTS หรือ DTR บนอินเทอร์เฟซ USB ตั้งตัวจับเวลาหยุดส่งบนวิทยุไว้เป็นการป้องกันด้วยฮาร์ดแวร์</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>ทดสอบ PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>รอให้การส่งปัจจุบันจบก่อน แล้วลองอีกครั้ง</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>ทดสอบ PTT ไม่สำเร็จ: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>สั่งส่งแล้ว</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>เชื่อมต่อวิทยุในการควบคุมริก แล้วลองอีกครั้ง</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>ปลดส่งแล้ว</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX สั่งส่งจากเสียง ใช้ ส่ง ในแท็บการ์ดเสียงเพื่อตรวจสอบ</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>กลับขั้ว</value>
   </data>

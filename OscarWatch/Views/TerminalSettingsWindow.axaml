@@ -292,6 +292,14 @@
                   </StackPanel>
                 </Grid>
                 <TextBlock Classes="ts-hint" Text="{loc:Localize Key=Terminal.Modem.Ptt.Help}" />
+                <Button Content="{Binding PttTestButtonText}"
+                        Command="{Binding TestPttCommand}"
+                        IsEnabled="{Binding CanTestPtt}"
+                        HorizontalAlignment="Left"
+                        AutomationProperties.Name="{loc:Localize Key=Terminal.Modem.Ptt.Test}" />
+                <TextBlock Text="{Binding PttTestText}" TextWrapping="Wrap" FontSize="12"
+                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                           IsVisible="{Binding PttTestText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
               </StackPanel>
             </StackPanel>
             <TextBlock Classes="ts-section" Text="{loc:Localize Key=Terminal.Modem.Timing}" Margin="0,12,0,0" />

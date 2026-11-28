@@ -6724,6 +6724,27 @@ LOS: {2}
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX включает передачу по звуку. CAT использует подключение радиостанции из управления трансивером. Отдельный COM-порт управляет RTS или DTR на USB-интерфейсе. Установите на радиостанции таймер ограничения передачи как аппаратную защиту.</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>Проверить PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>Дождитесь окончания текущей передачи и попробуйте снова.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>Проверка PTT не удалась: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>Включено.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>Подключите радиостанцию в управлении трансивером и попробуйте снова.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>Выключено.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX включается по звуку. Для проверки используйте Отправить на вкладке Звуковая карта.</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>Инвертировать</value>
   </data>

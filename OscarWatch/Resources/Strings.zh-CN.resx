@@ -6724,6 +6724,27 @@
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX 根据音频控制发射。CAT 使用电台控制中的电台连接。独立 COM 端口驱动 USB 接口上的 RTS 或 DTR。请在电台上设置发射超时定时器作为硬件保护。</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>测试 PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>请等当前发射结束后再试。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>PTT 测试失败：{0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>已键控。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>请先在电台控制中连接电台，然后再试。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>已解除键控。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX 由音频键控。请在声卡选项卡使用发送来检查。</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>反相</value>
   </data>

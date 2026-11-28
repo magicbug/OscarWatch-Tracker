@@ -6757,6 +6757,27 @@ Latest: {1} ({2})</value>
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX keys the radio from the audio. CAT uses the radio connection from Rig control. A separate COM port drives RTS or DTR on a USB interface. Set a transmit time-out timer on the radio as a hardware backstop.</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>Test PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>Wait until the current transmission finishes, then try again.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>PTT test failed: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>Keyed.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>Connect the radio in Rig control, then try again.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>Unkeyed.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX keys from the audio. Use Send on the Soundcard tab to check it.</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>Invert</value>
   </data>

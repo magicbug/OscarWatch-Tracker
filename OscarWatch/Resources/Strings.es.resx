@@ -6724,6 +6724,27 @@ Está utilizando la versión {0}.
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX activa la radio con el audio. CAT usa la conexión de radio del control de equipo. Un puerto COM independiente controla RTS o DTR en una interfaz USB. Configure en la radio un temporizador de transmisión como protección de hardware.</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>Probar PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>Espere a que termine la transmisión actual e inténtelo de nuevo.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>Prueba de PTT fallida: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>Activado.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>Conecte la radio en el control de equipo e inténtelo de nuevo.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>Desactivado.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX se activa con el audio. Use Enviar en la pestaña Tarjeta de sonido para comprobarlo.</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>Invertir</value>
   </data>

@@ -6724,6 +6724,27 @@ Aktuell: {1} ({2})</value>
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX tastet das Funkgerät über das Audiosignal. CAT nutzt die Funkgeräteverbindung aus der Rig-Steuerung. Ein separater COM-Port schaltet RTS oder DTR an einem USB-Interface. Stellen Sie am Funkgerät einen Sendezeitbegrenzer als Hardware-Absicherung ein.</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>PTT prüfen</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>Warten Sie, bis die aktuelle Übertragung beendet ist, und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>PTT-Prüfung fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>Getastet.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>Verbinden Sie das Funkgerät in der Rig-Steuerung und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>Getastet beendet.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX tastet über das Audiosignal. Nutzen Sie Senden auf der Soundkarte-Registerkarte zur Prüfung.</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>Invertieren</value>
   </data>

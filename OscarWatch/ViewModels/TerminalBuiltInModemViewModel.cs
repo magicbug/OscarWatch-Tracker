@@ -7,6 +7,7 @@ using OscarWatch.Core.Services;
 using OscarWatch.Core.Sstv;
 using OscarWatch.Core.Terminal;
 using OscarWatch.Core.Terminal.Modem;
+using OscarWatch.Ft4;
 using OscarWatch.Hardware;
 using OscarWatch.Localization;
 using OscarWatch.Rotator;
@@ -45,9 +46,12 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
     private readonly ILocalizationService _l;
     private readonly TerminalService _service;
     private readonly IRigController? _rig;
+    private readonly Ft4ModemService? _ft4;
+    private readonly CwKeyerService? _cw;
     private readonly DispatcherTimer _meterTimer;
     private PacketAudioService? _monitor;
     private CancellationTokenSource? _toneCts;
+    private PttTestSession? _pttTest;
     private bool _loadingDevices;
     private string? _meterError;
 
@@ -61,12 +65,16 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
         ISettingsService settings,
         ILocalizationService localization,
         TerminalService service,
-        IRigController? rig)
+        IRigController? rig,
+        Ft4ModemService? ft4 = null,
+        CwKeyerService? cw = null)
     {
         _settings = settings;
         _l = localization;
         _service = service;
         _rig = rig;
+        _ft4 = ft4;
+        _cw = cw;
         var m = settings.Current.Terminal.BuiltIn;
 
         PttMethodOptions =
@@ -185,6 +193,8 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
     [ObservableProperty] private TerminalTestToneOption _selectedTestTone;
     [ObservableProperty] private bool _isSendingTestTone;
     [ObservableProperty] private string _testToneText = "";
+    [ObservableProperty] private bool _isTestingPtt;
+    [ObservableProperty] private string _pttTestText = "";
     [ObservableProperty] private bool _isMonitoring;
     [ObservableProperty] private double _inputLevelPercent;
     [ObservableProperty] private string _inputLevelText = "";
@@ -201,13 +211,29 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
     public bool ShowHalfDuplexOptions => SelectedDuplex.Value != TerminalDuplexMode.Full || WaitForClearChannelInFullDuplex;
     public bool HasDecodedFrames => DecodedFrames.Count > 0;
 
+    /// <summary>Label for the Test PTT button: Stop while keyed, otherwise Test PTT.</summary>
+    public string PttTestButtonText =>
+        IsTestingPtt ? _l.Get("Terminal.Modem.TestTone.Stop") : _l.Get("Terminal.Modem.Ptt.Test");
+
+    /// <summary>True when the operator can press Test PTT (or Stop while a test is running).</summary>
+    public bool CanTestPtt => IsTestingPtt || CurrentPttTestBlockReason() == PttTestBlockReason.None;
+
     partial void OnSelectedPttMethodChanged(PttMethodOption value)
     {
         OnPropertyChanged(nameof(ShowPttLine));
         OnPropertyChanged(nameof(ShowSeparatePttPort));
         OnPropertyChanged(nameof(ShowPttTiming));
         RefreshSeparatePttConflict();
+        RefreshPttTestEnablement();
     }
+
+    partial void OnIsTestingPttChanged(bool value)
+    {
+        OnPropertyChanged(nameof(PttTestButtonText));
+        OnPropertyChanged(nameof(CanTestPtt));
+    }
+
+    partial void OnIsSendingTestToneChanged(bool value) => RefreshPttTestEnablement();
 
     partial void OnSeparatePttPortChanged(string value)
     {
@@ -216,7 +242,11 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
         RefreshSeparatePttConflict();
     }
 
-    partial void OnSeparatePttConflictTextChanged(string value) => OnPropertyChanged(nameof(ShowSeparatePttConflict));
+    partial void OnSeparatePttConflictTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(ShowSeparatePttConflict));
+        RefreshPttTestEnablement();
+    }
 
     partial void OnSelectedDuplexChanged(TerminalDuplexOption value) => OnPropertyChanged(nameof(ShowHalfDuplexOptions));
 
@@ -364,16 +394,115 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
         {
             InputLevelPercent = 0;
             InputLevelText = _meterError ?? _l.Get("Terminal.Modem.Level.Idle");
+        }
+        else
+        {
+            InputLevelPercent = Math.Round(p * 100);
+            InputLevelText = p switch
+            {
+                >= 0.98 => _l.Get("Terminal.Modem.Level.Clipping", InputLevelPercent),
+                < 0.05 => _l.Get("Terminal.Modem.Level.Low", InputLevelPercent),
+                _ => _l.Get("Terminal.Modem.Level.Ok", InputLevelPercent)
+            };
+        }
+
+        RefreshPttTestEnablement();
+    }
+
+    private PttOptions SnapshotPttOptions() =>
+        new(SelectedPttMethod.Value, SelectedPttLine.Value, PttInvert, SeparatePttPort ?? "", PttLeadMs, PttTailMs);
+
+    private PttTestBlockReason CurrentPttTestBlockReason() =>
+        PttTestSession.GetBlockReason(
+            SelectedPttMethod.Value,
+            hasRig: _rig is not null,
+            rigConnected: _rig?.GetStatus().IsConnected == true,
+            terminalTransmitting: _service.BuiltInModem?.IsTransmitting == true,
+            ft4Active: _ft4?.IsTransmissionActive == true,
+            cwSending: _cw?.IsSending == true,
+            testToneBusy: IsSendingTestTone,
+            separatePortConflict: ShowSeparatePttConflict,
+            sessionActive: false);
+
+    private void RefreshPttTestEnablement()
+    {
+        OnPropertyChanged(nameof(CanTestPtt));
+        if (IsTestingPtt)
+            return;
+
+        var block = CurrentPttTestBlockReason();
+        if (block is PttTestBlockReason.NoRig or PttTestBlockReason.RigDisconnected)
+            PttTestText = _l.Get("Terminal.Modem.Ptt.Test.NeedRig");
+        else if (block is PttTestBlockReason.TerminalBusy or PttTestBlockReason.Ft4Busy or PttTestBlockReason.CwBusy)
+            PttTestText = _l.Get("Terminal.Modem.Ptt.Test.Busy");
+        else if (block == PttTestBlockReason.TestToneBusy)
+            PttTestText = _l.Get("Terminal.Modem.Ptt.Test.Busy");
+        else if (block == PttTestBlockReason.SeparatePortConflict && SeparatePttConflictText.Length > 0)
+            PttTestText = SeparatePttConflictText;
+        else if (PttTestText == _l.Get("Terminal.Modem.Ptt.Test.NeedRig")
+                 || PttTestText == _l.Get("Terminal.Modem.Ptt.Test.Busy")
+                 || (SeparatePttConflictText.Length > 0 && PttTestText == SeparatePttConflictText))
+            PttTestText = "";
+    }
+
+    /// <summary>Keys the radio with the dialogue's PTT settings for two seconds, without audio.</summary>
+    [RelayCommand]
+    private async Task TestPttAsync()
+    {
+        if (IsTestingPtt)
+        {
+            _pttTest?.Cancel();
             return;
         }
 
-        InputLevelPercent = Math.Round(p * 100);
-        InputLevelText = p switch
+        if (SelectedPttMethod.Value == PttMethod.Vox)
         {
-            >= 0.98 => _l.Get("Terminal.Modem.Level.Clipping", InputLevelPercent),
-            < 0.05 => _l.Get("Terminal.Modem.Level.Low", InputLevelPercent),
-            _ => _l.Get("Terminal.Modem.Level.Ok", InputLevelPercent)
-        };
+            PttTestText = _l.Get("Terminal.Modem.Ptt.Test.Vox");
+            return;
+        }
+
+        var block = CurrentPttTestBlockReason();
+        if (block != PttTestBlockReason.None)
+        {
+            RefreshPttTestEnablement();
+            return;
+        }
+
+        if (_rig is null)
+            return;
+
+        var options = SnapshotPttOptions();
+        var session = new PttTestSession(
+            _rig,
+            options,
+            port => SerialPortConflictHelper.TryDescribeTerminalSeparatePttConflict(_settings.Current, port, out var m) ? m : null,
+            PttSessionMarker.ForTerminal(_settings.SettingsPath));
+        _pttTest = session;
+        IsTestingPtt = true;
+        PttTestText = _l.Get("Terminal.Modem.Ptt.Test.Keyed");
+        try
+        {
+            var outcome = await session.RunAsync().ConfigureAwait(true);
+            PttTestText = outcome switch
+            {
+                PttTestOutcome.RigDisconnected => _l.Get("Terminal.Modem.Ptt.Test.NeedRig"),
+                PttTestOutcome.Cancelled => _l.Get("Terminal.Modem.Ptt.Test.Unkeyed"),
+                _ => _l.Get("Terminal.Modem.Ptt.Test.Unkeyed"),
+            };
+        }
+        catch (Exception ex) when (ex is InvalidOperationException or UnauthorizedAccessException or IOException)
+        {
+            Log.Information(ex, "Terminal PTT test failed");
+            PttTestText = _l.Get("Terminal.Modem.Ptt.Test.Failed", ex.Message);
+        }
+        finally
+        {
+            if (ReferenceEquals(_pttTest, session))
+                _pttTest = null;
+            session.Dispose();
+            IsTestingPtt = false;
+            RefreshPttTestEnablement();
+        }
     }
 
     /// <summary>Keys the radio with the dialogue's PTT settings and plays a tone for setting the deviation.</summary>
@@ -382,6 +511,8 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
     {
         if (IsSendingTestTone)
             return;
+        if (IsTestingPtt)
+            return;
         if (_rig is null)
             return;
 
@@ -389,8 +520,7 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
         TestToneText = _l.Get("Terminal.Modem.TestTone.Sending");
         var cts = new CancellationTokenSource();
         _toneCts = cts;
-        var options = new PttOptions(SelectedPttMethod.Value, SelectedPttLine.Value, PttInvert, SeparatePttPort ?? "",
-            PttLeadMs, PttTailMs);
+        var options = SnapshotPttOptions();
         using var audio = new PacketAudioService();
         using var ptt = new PttKeyer(_rig, () => options, "Terminal test tone",
             port => SerialPortConflictHelper.TryDescribeTerminalSeparatePttConflict(_settings.Current, port, out var m) ? m : null);
@@ -556,6 +686,9 @@ public sealed partial class TerminalBuiltInModemViewModel : ObservableObject, ID
     {
         _meterTimer.Stop();
         _toneCts?.Cancel();
+        _pttTest?.Cancel();
+        _pttTest?.Dispose();
+        _pttTest = null;
         StopMonitor();
     }
 }

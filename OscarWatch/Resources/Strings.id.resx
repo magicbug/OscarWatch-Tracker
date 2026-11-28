@@ -6724,6 +6724,27 @@ Terbaru: {1} ({2})</value>
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX memancarkan radio dari audio. CAT memakai koneksi radio dari kontrol rig. Port COM terpisah menggerakkan RTS atau DTR pada antarmuka USB. Atur pembatas waktu pancar di radio sebagai pengaman perangkat keras.</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>Uji PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>Tunggu hingga transmisi saat ini selesai, lalu coba lagi.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>Uji PTT gagal: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>Terkunci.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>Hubungkan radio di kontrol rig, lalu coba lagi.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>Terbuka.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX mengunci dari audio. Gunakan Kirim di tab Kartu suara untuk memeriksanya.</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>Balik</value>
   </data>

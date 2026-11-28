@@ -6724,6 +6724,27 @@ LOS: {2} UTC
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX は音声で無線機を送信状態にします。CAT はリグ制御の無線機接続を使います。個別 COM ポートは USB インターフェースの RTS または DTR を駆動します。ハードウェアの安全策として、無線機に送信タイムアウトタイマーを設定してください。</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>PTT をテスト</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>現在の送信が終わるまで待ってから、もう一度試してください。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>PTT テストに失敗しました: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>送信状態にしました。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>リグ制御で無線機を接続してから、もう一度試してください。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>送信を解除しました。</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX は音声で送信します。サウンドカードタブの送信で確認してください。</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>反転</value>
   </data>

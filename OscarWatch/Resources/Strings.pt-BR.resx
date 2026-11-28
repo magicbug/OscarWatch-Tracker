@@ -6724,6 +6724,27 @@ Mais recente: {1} ({2})</value>
   <data name="Terminal.Modem.Ptt.Help" xml:space="preserve">
     <value>VOX aciona o rádio pelo áudio. CAT usa a conexão do rádio do controle de rig. Uma porta COM separada aciona RTS ou DTR numa interface USB. Configure no rádio um temporizador de transmissão como proteção de hardware.</value>
   </data>
+  <data name="Terminal.Modem.Ptt.Test" xml:space="preserve">
+    <value>Testar PTT</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Busy" xml:space="preserve">
+    <value>Aguarde o fim da transmissão atual e tente de novo.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Failed" xml:space="preserve">
+    <value>Teste de PTT falhou: {0}</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Keyed" xml:space="preserve">
+    <value>Ativado.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.NeedRig" xml:space="preserve">
+    <value>Conecte o rádio no controle de rig e tente de novo.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Unkeyed" xml:space="preserve">
+    <value>Desativado.</value>
+  </data>
+  <data name="Terminal.Modem.Ptt.Test.Vox" xml:space="preserve">
+    <value>VOX ativa pelo áudio. Use Enviar na aba Placa de som para verificar.</value>
+  </data>
   <data name="Terminal.Modem.PttInvert" xml:space="preserve">
     <value>Inverter</value>
   </data>
