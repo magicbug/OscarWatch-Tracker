@@ -99,7 +99,7 @@ public sealed class HdlcDecoder
             }
         }
 
-        _flagRun = _bitsSinceFlag == 7 ? _flagRun + 1 : 1;
+        _flagRun = _bitsSinceFlag is 6 or 7 ? _flagRun + 1 : 1;
         if (_flagRun >= 2)
             Dcd = true;
         _bitsSinceFlag = 0;

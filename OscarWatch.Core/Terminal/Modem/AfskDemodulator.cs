@@ -48,22 +48,29 @@ public sealed class AfskDemodulator
 
     internal sealed class Correlator
     {
-        private const float AgcFastAttack = 0.70f;
-        private const float AgcSlowDecay = 0.00033f;
+        private const float AgcFastAttack = 0.50f;
+        private const float AgcSlowDecay = 0.0025f;
 
         private readonly MovingSum _im;
         private readonly MovingSum _qm;
         private readonly MovingSum _is;
         private readonly MovingSum _qs;
+        private readonly BiquadLowPass? _markLpf;
+        private readonly BiquadLowPass? _spaceLpf;
         private readonly Agc _markAgc = new();
         private readonly Agc _spaceAgc = new();
 
-        public Correlator(int window)
+        public Correlator(int window, bool postLpf = true)
         {
             _im = new MovingSum(window);
             _qm = new MovingSum(window);
             _is = new MovingSum(window);
             _qs = new MovingSum(window);
+            if (postLpf)
+            {
+                _markLpf = new BiquadLowPass(1600, SampleRate);
+                _spaceLpf = new BiquadLowPass(1600, SampleRate);
+            }
         }
 
         public float Mark { get; private set; }
@@ -76,8 +83,10 @@ public sealed class AfskDemodulator
             var b = _qm.Push(qm);
             var c = _is.Push(isp);
             var d = _qs.Push(qs);
-            Mark = MathF.Sqrt(a * a + b * b);
-            Space = MathF.Sqrt(c * c + d * d);
+            var mark = MathF.Sqrt(a * a + b * b);
+            var space = MathF.Sqrt(c * c + d * d);
+            Mark = _markLpf is not null ? _markLpf.Push(mark) : mark;
+            Space = _spaceLpf is not null ? _spaceLpf.Push(space) : space;
             AgcOutput = _markAgc.Push(Mark) - _spaceAgc.Push(Space);
         }
 
@@ -87,6 +96,8 @@ public sealed class AfskDemodulator
             _qm.Reset();
             _is.Reset();
             _qs.Reset();
+            _markLpf?.Reset();
+            _spaceLpf?.Reset();
             _markAgc.Reset();
             _spaceAgc.Reset();
             Mark = Space = AgcOutput = 0;
@@ -107,6 +118,41 @@ public sealed class AfskDemodulator
 
             public void Reset() => _peak = _valley = 0;
         }
+    }
+
+    /// <summary>2nd-order Butterworth low-pass filter (Direct Form II transposed) for post-detection smoothing.</summary>
+    internal sealed class BiquadLowPass
+    {
+        private readonly float _b0;
+        private readonly float _b1;
+        private readonly float _b2;
+        private readonly float _a1;
+        private readonly float _a2;
+        private float _z1;
+        private float _z2;
+
+        public BiquadLowPass(double cutoffHz, double sampleRate)
+        {
+            var k = Math.Tan(Math.PI * cutoffHz / sampleRate);
+            var k2 = k * k;
+            const double invQ = 1.4142135623730951; // sqrt(2) for Butterworth
+            var norm = 1.0 / (1.0 + invQ * k + k2);
+            _b0 = (float)(k2 * norm);
+            _b1 = (float)(2.0 * k2 * norm);
+            _b2 = _b0;
+            _a1 = (float)(2.0 * (k2 - 1.0) * norm);
+            _a2 = (float)((1.0 - invQ * k + k2) * norm);
+        }
+
+        public float Push(float x)
+        {
+            var y = _b0 * x + _z1;
+            _z1 = _b1 * x - _a1 * y + _z2;
+            _z2 = _b2 * x - _a2 * y;
+            return y;
+        }
+
+        public void Reset() => _z1 = _z2 = 0;
     }
 
     internal sealed class MovingSum

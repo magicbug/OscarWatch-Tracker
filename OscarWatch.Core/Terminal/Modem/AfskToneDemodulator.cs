@@ -10,26 +10,38 @@ public sealed class AfskToneDemodulator
     private const int DiscriminatorDelay = 2;
     private const int DiscriminatorWindow = 10;
 
-    private readonly double _markStep;
-    private readonly double _spaceStep;
+    private readonly double _markCosStep;
+    private readonly double _markSinStep;
+    private readonly double _spaceCosStep;
+    private readonly double _spaceSinStep;
     private readonly float _discriminatorThreshold;
     private readonly AfskDemodulator.Correlator[] _correlators;
-    private double _markPhase;
-    private double _spacePhase;
+    private double _markRe = 1.0;
+    private double _markIm;
+    private double _spaceRe = 1.0;
+    private double _spaceIm;
+    private int _ncoCounter;
     private readonly float[] _discDelay = new float[DiscriminatorDelay];
     private int _discDelayIndex;
     private readonly AfskDemodulator.MovingSum _discProduct = new(DiscriminatorWindow);
     private readonly AfskDemodulator.MovingSum _discPower = new(DiscriminatorWindow);
+    private readonly AfskDemodulator.BiquadLowPass _discLpf = new(1600, AfskDemodulator.SampleRate);
 
     public AfskToneDemodulator(double markHz, double spaceHz, IReadOnlyList<int> correlatorWindows)
     {
         MarkHz = markHz;
         SpaceHz = spaceHz;
-        _markStep = 2 * Math.PI * markHz / AfskDemodulator.SampleRate;
-        _spaceStep = 2 * Math.PI * spaceHz / AfskDemodulator.SampleRate;
+        var markStep = 2 * Math.PI * markHz / AfskDemodulator.SampleRate;
+        var spaceStep = 2 * Math.PI * spaceHz / AfskDemodulator.SampleRate;
+        _markCosStep = Math.Cos(markStep);
+        _markSinStep = Math.Sin(markStep);
+        _spaceCosStep = Math.Cos(spaceStep);
+        _spaceSinStep = Math.Sin(spaceStep);
         _discriminatorThreshold = (float)((Math.Cos(2 * Math.PI * markHz * DiscriminatorDelay / AfskDemodulator.SampleRate)
                                            + Math.Cos(2 * Math.PI * spaceHz * DiscriminatorDelay / AfskDemodulator.SampleRate)) / 2);
-        _correlators = correlatorWindows.Select(w => new AfskDemodulator.Correlator(w)).ToArray();
+        _correlators = correlatorWindows
+            .Select((w, idx) => new AfskDemodulator.Correlator(w, postLpf: idx == 0))
+            .ToArray();
     }
 
     public double MarkHz { get; }
@@ -51,23 +63,39 @@ public sealed class AfskToneDemodulator
         _discDelayIndex = 0;
         _discProduct.Reset();
         _discPower.Reset();
+        _discLpf.Reset();
         Discriminator = 0;
-        _markPhase = 0;
-        _spacePhase = 0;
+        _markRe = 1.0;
+        _markIm = 0.0;
+        _spaceRe = 1.0;
+        _spaceIm = 0.0;
+        _ncoCounter = 0;
     }
 
     public void ProcessFiltered(float x)
     {
-        var im = (float)(x * Math.Cos(_markPhase));
-        var qm = (float)(x * Math.Sin(_markPhase));
-        var isp = (float)(x * Math.Cos(_spacePhase));
-        var qs = (float)(x * Math.Sin(_spacePhase));
-        _markPhase += _markStep;
-        _spacePhase += _spaceStep;
-        if (_markPhase >= Math.PI * 2)
-            _markPhase -= Math.PI * 2;
-        if (_spacePhase >= Math.PI * 2)
-            _spacePhase -= Math.PI * 2;
+        var im = (float)(x * _markRe);
+        var qm = (float)(x * _markIm);
+        var isp = (float)(x * _spaceRe);
+        var qs = (float)(x * _spaceIm);
+
+        var nextMarkRe = _markRe * _markCosStep - _markIm * _markSinStep;
+        _markIm = _markRe * _markSinStep + _markIm * _markCosStep;
+        _markRe = nextMarkRe;
+
+        var nextSpaceRe = _spaceRe * _spaceCosStep - _spaceIm * _spaceSinStep;
+        _spaceIm = _spaceRe * _spaceSinStep + _spaceIm * _spaceCosStep;
+        _spaceRe = nextSpaceRe;
+
+        if ((++_ncoCounter & 255) == 0)
+        {
+            var mNorm = 1.5 - 0.5 * (_markRe * _markRe + _markIm * _markIm);
+            _markRe *= mNorm;
+            _markIm *= mNorm;
+            var sNorm = 1.5 - 0.5 * (_spaceRe * _spaceRe + _spaceIm * _spaceIm);
+            _spaceRe *= sNorm;
+            _spaceIm *= sNorm;
+        }
 
         foreach (var c in _correlators)
             c.Push(im, qm, isp, qs);
@@ -77,6 +105,7 @@ public sealed class AfskToneDemodulator
         _discDelayIndex = (_discDelayIndex + 1) % DiscriminatorDelay;
         var product = _discProduct.Push(x * delayed);
         var power = _discPower.Push(x * x);
-        Discriminator = power > 1e-9f ? product / power - _discriminatorThreshold : 0f;
+        var rawDisc = power > 1e-9f ? product / power - _discriminatorThreshold : 0f;
+        Discriminator = _discLpf.Push(rawDisc);
     }
 }

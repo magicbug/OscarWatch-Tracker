@@ -27,7 +27,7 @@ public sealed class AfskReceiver
     private const int DuplicateSamples = AfskDemodulator.SampleRate;
 
     private const int DcdHoldSamples = AfskDemodulator.SampleRate / 10;
-    private const int MaxFixAttemptsPerCluster = 6;
+    private const int MaxFixAttemptsPerCluster = 12;
 
     private readonly PolyphaseResampler _resampler;
     private readonly AfskSlicerBank _bank;
@@ -213,13 +213,37 @@ public sealed class AfskReceiver
         if (BitFix == AfskBitFixMode.Off)
             return;
 
-        var tried = new HashSet<ulong>();
+        // Rank distinct candidate frames by how many paths agreed on them (tie-breaking toward centre-bank paths)
+        // so the highest-confidence near-miss is always attempted first rather than extreme-twist edge paths.
+        var ranked = new List<(ulong Hash, AfskCandidate Representative, int Votes, bool HasCentre)>();
         foreach (var c in cluster)
         {
-            if (tried.Count >= MaxFixAttemptsPerCluster)
-                break;
-            if (!tried.Add(Hash(c.FrameWithFcs)))
-                continue;
+            var h = Hash(c.FrameWithFcs);
+            var isCentre = c.Path < _bank.QualityPathCount;
+            var existing = ranked.FindIndex(r => r.Hash == h);
+            if (existing >= 0)
+            {
+                var item = ranked[existing];
+                ranked[existing] = (item.Hash, item.Representative, item.Votes + 1, item.HasCentre || isCentre);
+            }
+            else
+            {
+                ranked.Add((h, c, 1, isCentre));
+            }
+        }
+
+        ranked.Sort((a, b) =>
+        {
+            var byVotes = b.Votes.CompareTo(a.Votes);
+            if (byVotes != 0)
+                return byVotes;
+            return b.HasCentre.CompareTo(a.HasCentre);
+        });
+
+        var attempts = Math.Min(ranked.Count, MaxFixAttemptsPerCluster);
+        for (var i = 0; i < attempts; i++)
+        {
+            var c = ranked[i].Representative;
             if (FrameBitFixer.TryFix(c.FrameWithFcs, BitFix) is not { } repaired)
                 continue;
 

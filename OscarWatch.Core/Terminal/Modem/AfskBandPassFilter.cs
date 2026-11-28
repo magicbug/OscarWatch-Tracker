@@ -1,14 +1,15 @@
 namespace OscarWatch.Core.Terminal.Modem;
 
 /// <summary>
-/// Band-pass for 1200 baud AFSK at 12 kHz (700 to 2700 Hz). Shared by all tone-offset decoder banks so
-/// residual FM mistune appears as tone shift, not a new DC component.
+/// Band-pass for 1200 baud AFSK at 12 kHz (650 to 2750 Hz). Shared by all tone-offset decoder banks so
+/// residual FM mistune appears as tone shift, not a new DC component, with steeper 61-tap skirts to keep
+/// noise bandwidth tight while rejecting hum, CTCSS tones, and 3rd harmonics (3600 Hz).
 /// </summary>
 public sealed class AfskBandPassFilter
 {
-    private const int Taps = 41;
+    private const int Taps = 61;
 
-    private static readonly float[] Coefficients = DesignBandPass(Taps, 700, 2700);
+    private static readonly float[] Coefficients = DesignBandPass(Taps, 650, 2750);
 
     private readonly float[] _history = new float[Taps * 2];
     private int _index;

@@ -248,6 +248,7 @@ public sealed class BuiltInModemTransport : ITerminalModemTransport
     private void ReceiveLoop(CancellationToken ct)
     {
         BuiltInModemDataRate? activeRate = null;
+        bool? activeFrequencyOffsetDecoders = null;
         AfskReceiver? afsk = null;
         G3ruhReceiver? g3ruh = null;
         var buffer = new float[4096];
@@ -258,11 +259,13 @@ public sealed class BuiltInModemTransport : ITerminalModemTransport
             while (!ct.IsCancellationRequested)
             {
                 var rate = DataRate;
-                if (rate != activeRate)
+                var freqOffset = _settings().BuiltIn.FrequencyOffsetDecoders;
+                if (rate != activeRate || (rate == BuiltInModemDataRate.Afsk1200 && freqOffset != activeFrequencyOffsetDecoders))
                 {
                     activeRate = rate;
+                    activeFrequencyOffsetDecoders = freqOffset;
                     afsk = rate == BuiltInModemDataRate.Afsk1200
-                        ? new AfskReceiver(_audio.CaptureSampleRate, _settings().BuiltIn.BitFix, _settings().BuiltIn.FrequencyOffsetDecoders)
+                        ? new AfskReceiver(_audio.CaptureSampleRate, _settings().BuiltIn.BitFix, freqOffset)
                         : null;
                     g3ruh = rate == BuiltInModemDataRate.G3ruh9600
                         ? new G3ruhReceiver(_audio.CaptureSampleRate, _settings().BuiltIn.BitFix)

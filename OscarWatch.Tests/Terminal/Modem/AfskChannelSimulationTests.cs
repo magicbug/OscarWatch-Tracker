@@ -157,4 +157,67 @@ public sealed class AfskChannelSimulationTests
 
         Assert.True(dcdSeen);
     }
+
+    [Theory]
+    [InlineData(3.0)]
+    [InlineData(6.0)]
+    public void Hard_symmetric_clipping_decodes(double drive)
+    {
+        var frame = ModemTestSignals.UiFrame("=5555.55N/00333.33W-loud clipped pass");
+        var audio = ModemTestSignals.Transmission([frame], 48000, amplitude: 0.5);
+        for (var i = 0; i < audio.Length; i++)
+            audio[i] = Math.Clamp((float)(audio[i] * drive), -1f, 1f);
+
+        Assert.Contains(AfskReceiver.DecodeAll(audio, 48000), d => d.Ax25.SequenceEqual(frame));
+    }
+
+    [Fact]
+    public void Asymmetric_clipping_with_dc_bias_decodes()
+    {
+        var frame = ModemTestSignals.UiFrame("=5555.55N/00333.33W-asymmetric clip 2400Hz harmonic");
+        var audio = ModemTestSignals.Transmission([frame], 48000, amplitude: 0.5);
+        for (var i = 0; i < audio.Length; i++)
+            audio[i] = Math.Clamp(audio[i] * 4.0f + 0.55f, -1f, 1f);
+
+        Assert.Contains(AfskReceiver.DecodeAll(audio, 48000), d => d.Ax25.SequenceEqual(frame));
+    }
+
+    [Theory]
+    [InlineData(0.25)]
+    [InlineData(0.70)]
+    public void Open_squelch_noise_transitioning_to_quieting_packet_decodes(double packetAmplitude)
+    {
+        const int rate = 48000;
+        var frame = ModemTestSignals.UiFrame("=5555.55N/00333.33W-open squelch burst");
+        var noiseLead = new float[rate];
+        ModemTestSignals.AddNoise(noiseLead, 0.45, seed: 77);
+        for (var i = 0; i < noiseLead.Length; i++)
+            noiseLead[i] = Math.Clamp(noiseLead[i], -1f, 1f);
+
+        // Loud open-squelch hiss drops abruptly as a full-quieting satellite packet with speaker
+        // de-emphasis and residual +175 Hz offset keys up.
+        var packet = ModemTestSignals.Transmission([frame], rate, amplitude: packetAmplitude, txDelayMs: 150, silenceSeconds: 0.0, toneOffsetHz: 175);
+        ModemTestSignals.DeEmphasise(packet, rate);
+        ModemTestSignals.Normalise(packet, packetAmplitude);
+
+        var combined = new float[noiseLead.Length + packet.Length + rate / 5];
+        noiseLead.CopyTo(combined, 0);
+        packet.CopyTo(combined, noiseLead.Length);
+
+        Assert.Contains(AfskReceiver.DecodeAll(combined, rate), d => d.Ax25.SequenceEqual(frame));
+    }
+
+    [Theory]
+    [InlineData(-175)]
+    [InlineData(175)]
+    [InlineData(-350)]
+    [InlineData(350)]
+    public void Combined_frequency_offset_and_de_emphasis_decodes(int offsetHz)
+    {
+        var frame = ModemTestSignals.UiFrame($"offset {offsetHz} plus speaker de-emphasis");
+        var audio = ModemTestSignals.Transmission([frame], 48000, toneOffsetHz: offsetHz);
+        ModemTestSignals.DeEmphasise(audio, 48000);
+
+        Assert.Contains(AfskReceiver.DecodeAll(audio, 48000), d => d.Ax25.SequenceEqual(frame));
+    }
 }

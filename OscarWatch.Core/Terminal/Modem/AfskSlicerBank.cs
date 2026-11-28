@@ -12,7 +12,7 @@ public sealed class AfskSlicerBank
     private const int CorrelatorA = 0;
     private const int CorrelatorB = 1;
 
-    private static readonly int[] BalancesADb = [-6, -4, -2, 0, 2, 4, 6, 8, 10];
+    private static readonly int[] BalancesADb = [-6, -4, -2, 0, 2, 4, 6, 8, 10, 12];
     private static readonly int[] BalancesBDb = [-3, 0, 3, 6];
 
     private readonly AfskBandPassFilter _filter = new();
@@ -28,7 +28,7 @@ public sealed class AfskSlicerBank
             var tone = new AfskToneDemodulator(
                 AfskFrequencyOffsetDecoders.MarkHz + offset,
                 AfskFrequencyOffsetDecoders.SpaceHz + offset,
-                [12, 10]);
+                offset == 0 ? [12, 10] : [12]);
             channels.Add(new ToneChannel(offset, tone));
         }
 
@@ -49,6 +49,7 @@ public sealed class AfskSlicerBank
             {
                 var tag = $"F{ch.OffsetHz:+0;-0;0}";
                 paths.Add(new Path(ch, $"{tag} A0", PathKind.Balance, CorrelatorA, 1));
+                paths.Add(new Path(ch, $"{tag} A+6", PathKind.Balance, CorrelatorA, (float)Math.Pow(10, 6 / 20.0)));
                 paths.Add(new Path(ch, $"{tag} AGC", PathKind.Agc, CorrelatorA, 1));
                 paths.Add(new Path(ch, $"{tag} D", PathKind.Discriminator, 0, 1));
             }

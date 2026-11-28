@@ -48,7 +48,7 @@ public sealed class AfskFrequencyOffsetTests
     public void Fixed_lo_fails_where_offset_banks_succeed()
     {
         var frame = ModemTestSignals.UiFrame("beyond fixed LO");
-        var audio = ModemTestSignals.Transmission([frame], 48000, toneOffsetHz: 450);
+        var audio = ModemTestSignals.Transmission([frame], 48000, toneOffsetHz: 500);
 
         Assert.Empty(AfskReceiver.DecodeAll(audio, 48000, frequencyOffsetDecoders: false));
         Assert.Contains(AfskReceiver.DecodeAll(audio, 48000, frequencyOffsetDecoders: true),

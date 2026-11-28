@@ -122,6 +122,37 @@ public sealed class HdlcAndFcsTests
         Assert.Equal(5, HdlcEncoder.FlagsFor(30));
     }
 
+    [Fact]
+    public void Shared_zero_preamble_flags_assert_dcd_and_decode()
+    {
+        var payload = ModemTestSignals.UiFrame("shared zero flags");
+        // Build shared-zero preamble: 0 111111 0 111111 0 111111 0 (3 flags sharing boundary zeros).
+        var bits = new List<bool> { false };
+        for (var f = 0; f < 3; f++)
+        {
+            for (var i = 0; i < 6; i++)
+                bits.Add(true);
+            bits.Add(false);
+        }
+
+        // Append stuffed frame body and closing flag without extra leading flags.
+        bits.AddRange(HdlcEncoder.EncodeBits([payload], preambleFlags: 0, tailFlags: 1, leadingFlags: false));
+
+        var decoder = new HdlcDecoder();
+        var frames = new List<byte[]>();
+        var dcdSeen = false;
+        foreach (var b in bits)
+        {
+            if (decoder.PushBit(b) is { } frame)
+                frames.Add(frame);
+            dcdSeen |= decoder.Dcd;
+        }
+
+        Assert.True(dcdSeen);
+        var single = Assert.Single(frames);
+        Assert.Equal(Fcs16.Append(payload), single);
+    }
+
     private static List<byte[]> DecodeBits(IEnumerable<bool> bits)
     {
         var decoder = new HdlcDecoder();
