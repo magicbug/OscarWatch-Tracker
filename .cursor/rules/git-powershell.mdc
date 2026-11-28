@@ -1,0 +1,57 @@
+---
+description: Fast PowerShell git commit, push, and GitHub issue close on Windows
+alwaysApply: true
+---
+
+# Git and GitHub on Windows PowerShell
+
+The agent shell is **PowerShell**. Do not invent bash.
+
+## Do not waste turns
+
+- Do **not** run `where.exe git`, search PATH, or rediscover `git.exe`. Use:
+  `C:\Program Files\Git\cmd\git.exe`
+- Do **not** use bash `&&`, `||`, or `$(cat <<'EOF')`. Chain with `;` or separate Shell calls.
+- Prefer `gh` for issue comment/close. MCP `issue_write` may show a form the operator never sees.
+
+## Commit (when asked)
+
+1. Parallel in one turn: `git status`; `git diff --stat`; `git diff`; `git log -8 --oneline`
+2. Stage and commit with a PowerShell here-string:
+
+```powershell
+git add -A -- path1 path2
+git commit -m @"
+Subject line without ellipsis.
+
+Optional body.
+"@
+```
+
+3. Strip Cursor co-author **before push** (see `no-cursor-coauthor.mdc`). Verify with:
+   `& "C:\Program Files\Git\cmd\git.exe" log -1 --format=full`
+
+## Push (when asked)
+
+```powershell
+git push origin HEAD
+```
+
+## Close a GitHub issue (when asked)
+
+Comment (UK English, MM9SQL 73 when signing as Peter), then close. Do both with `gh`, not MCP forms:
+
+```powershell
+gh issue comment 273 --repo magicbug/OscarWatch-Tracker --body @"
+Shipped on main in <sha>.
+
+Brief what landed.
+
+73,
+
+Peter MM9SQL
+"@
+gh issue close 273 --repo magicbug/OscarWatch-Tracker --reason completed
+```
+
+Website docs live in `C:\Users\peter\Herd\oscarwatch`. Commit and push that repo separately when docs changed.

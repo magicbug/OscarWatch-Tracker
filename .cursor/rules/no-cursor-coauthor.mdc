@@ -8,6 +8,19 @@ alwaysApply: true
 Never attribute commits to Cursor.
 
 - Do **not** add `Co-authored-by: Cursor <cursoragent@cursor.com>` (or any Cursor / cursoragent co-author trailer).
-- After every `git commit` or amend, run `git log -1 --format=full` and confirm there is no Cursor co-author line.
-- If the environment injected one, rewrite the tip commit **before push** to remove it (same tree/parents/author; message without the trailer). Prefer invoking `git.exe` by full path for `commit-tree` / `reset --soft` so wrappers that intercept `git commit*` are bypassed.
+- After every `git commit` or amend, run:
+  `& "C:\Program Files\Git\cmd\git.exe" log -1 --format=full`
+  and confirm there is no Cursor co-author line.
+- If the environment injected one, rewrite the tip commit **before push** (same tree/parents/author; message without the trailer). Do not use `git commit --amend` for this (wrappers re-inject the trailer). Use:
+
+```powershell
+$git = "C:\Program Files\Git\cmd\git.exe"
+$tree = & $git log -1 --format=%T
+$parent = & $git log -1 --format=%P
+$msg = "Subject line.`n`nBody paragraph.`n"
+$new = $msg | & $git commit-tree $tree -p $parent
+& $git reset --soft $new
+& $git log -1 --format=full
+```
+
 - Do not use `--no-verify` unless the user explicitly asks.
