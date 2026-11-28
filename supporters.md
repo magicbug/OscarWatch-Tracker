@@ -41,6 +41,7 @@ Thank you to everyone who has donated to support OscarWatch development.
 | Claes                    | SM6LRW         |
 | Joseph                   | KF7UAN         |
 | Nick                     | M1DDD          |
+| Dave                     | G0OFC          |
 
 
 If you donate and would like to be listed here, let Peter know your name and callsign.
