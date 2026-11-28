@@ -170,7 +170,7 @@ public sealed class AfskReceiver
         var good = new List<(ulong Hash, byte[] Ax25, long Sample, List<int> Paths)>();
         foreach (var c in cluster)
         {
-            if (!Fcs16.Check(c.FrameWithFcs))
+            if (c.FrameWithFcs is null || !Fcs16.Check(c.FrameWithFcs))
                 continue;
             var ax25 = c.FrameWithFcs.AsSpan(0, c.FrameWithFcs.Length - 2);
             if (!Ax25Frame.TryParse(ax25, out _))
@@ -213,18 +213,27 @@ public sealed class AfskReceiver
         if (BitFix == AfskBitFixMode.Off)
             return;
 
-        // Rank distinct candidate frames by how many paths agreed on them (tie-breaking toward centre-bank paths)
-        // so the highest-confidence near-miss is always attempted first rather than extreme-twist edge paths.
+        // Rank distinct byte-aligned candidate frames by how many paths agreed on them (tie-breaking toward
+        // centre-bank paths) so the highest-confidence near-miss is always attempted first.
         var ranked = new List<(ulong Hash, AfskCandidate Representative, int Votes, bool HasCentre)>();
+        var rawOnly = new List<AfskCandidate>();
         foreach (var c in cluster)
         {
+            if (c.FrameWithFcs is null)
+            {
+                if (c.RawDemod is not null)
+                    rawOnly.Add(c);
+                continue;
+            }
+
             var h = Hash(c.FrameWithFcs);
             var isCentre = c.Path < _bank.QualityPathCount;
             var existing = ranked.FindIndex(r => r.Hash == h);
             if (existing >= 0)
             {
                 var item = ranked[existing];
-                ranked[existing] = (item.Hash, item.Representative, item.Votes + 1, item.HasCentre || isCentre);
+                var rep = item.Representative.RawDemod is null && c.RawDemod is not null ? c : item.Representative;
+                ranked[existing] = (item.Hash, rep, item.Votes + 1, item.HasCentre || isCentre);
             }
             else
             {
@@ -244,7 +253,28 @@ public sealed class AfskReceiver
         for (var i = 0; i < attempts; i++)
         {
             var c = ranked[i].Representative;
-            if (FrameBitFixer.TryFix(c.FrameWithFcs, BitFix) is not { } repaired)
+            var repaired = (c.RawDemod is not null ? FrameBitFixer.TryFixRawDemod(c.RawDemod, BitFix) : null)
+                           ?? FrameBitFixer.TryFix(c.FrameWithFcs!, BitFix);
+            if (repaired is null)
+                continue;
+
+            var hash = Hash(repaired);
+            if (IsRecent(hash))
+                return;
+            _recent.Add((hash, c.Sample));
+            _pathCounts[c.Path]++;
+            FrameCount++;
+            FixedCount++;
+            output.Add(new AfskDecodedFrame(repaired, c.Sample, _bank.PathName(c.Path) + " fixed", 0, Fixed: true));
+            return;
+        }
+
+        // Also attempt soft-decision pre-NRZI repair on candidates whose bit stuffing was disturbed by a single noisy symbol.
+        var rawAttempts = Math.Min(rawOnly.Count, MaxFixAttemptsPerCluster);
+        for (var i = 0; i < rawAttempts; i++)
+        {
+            var c = rawOnly[i];
+            if (FrameBitFixer.TryFixRawDemod(c.RawDemod!, BitFix) is not { } repaired)
                 continue;
 
             var hash = Hash(repaired);

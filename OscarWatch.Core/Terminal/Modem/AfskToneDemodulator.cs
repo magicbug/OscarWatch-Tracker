@@ -27,7 +27,11 @@ public sealed class AfskToneDemodulator
     private readonly AfskDemodulator.MovingSum _discPower = new(DiscriminatorWindow);
     private readonly AfskDemodulator.BiquadLowPass _discLpf = new(1600, AfskDemodulator.SampleRate);
 
-    public AfskToneDemodulator(double markHz, double spaceHz, IReadOnlyList<int> correlatorWindows)
+    public AfskToneDemodulator(
+        double markHz,
+        double spaceHz,
+        IReadOnlyList<int> correlatorWindows,
+        IReadOnlyList<double>? postLpfCutoffsHz = null)
     {
         MarkHz = markHz;
         SpaceHz = spaceHz;
@@ -40,7 +44,13 @@ public sealed class AfskToneDemodulator
         _discriminatorThreshold = (float)((Math.Cos(2 * Math.PI * markHz * DiscriminatorDelay / AfskDemodulator.SampleRate)
                                            + Math.Cos(2 * Math.PI * spaceHz * DiscriminatorDelay / AfskDemodulator.SampleRate)) / 2);
         _correlators = correlatorWindows
-            .Select((w, idx) => new AfskDemodulator.Correlator(w, postLpf: idx == 0))
+            .Select((w, idx) =>
+            {
+                var cutoff = postLpfCutoffsHz is not null && idx < postLpfCutoffsHz.Count
+                    ? postLpfCutoffsHz[idx]
+                    : (idx == 0 ? 1600.0 : 0.0);
+                return new AfskDemodulator.Correlator(w, cutoff);
+            })
             .ToArray();
     }
 

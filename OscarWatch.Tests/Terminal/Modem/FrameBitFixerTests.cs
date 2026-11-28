@@ -61,4 +61,42 @@ public sealed class FrameBitFixerTests
         bad[8] = (byte)('#' << 1);
         Assert.False(FrameBitFixer.IsPlausibleUi(bad));
     }
+
+    [Fact]
+    public void Soft_decision_pre_nrzi_repairs_single_noisy_tone_symbol()
+    {
+        var frame = ModemTestSignals.UiFrame("=5555.55N/00333.33W-soft pre-nrzi single");
+        var bits = HdlcEncoder.EncodeBits([frame], preambleFlags: 1, tailFlags: 1);
+        var tones = HdlcEncoder.ToTones(bits);
+        // Opening flag is 8 bits (0..7); seed symbol is index 7, body is 8..(tones.Length - 9).
+        var bodyLen = tones.Length - 16;
+        var raw = new float[bodyLen + 1];
+        for (var i = 0; i < raw.Length; i++)
+            raw[i] = tones[7 + i] ? 1.0f : -1.0f;
+
+        // Corrupt one tone symbol with low confidence (flips two adjacent NRZI bits and may disturb stuffing).
+        raw[95] = raw[95] > 0 ? -0.04f : 0.04f;
+
+        var repaired = FrameBitFixer.TryFixRawDemod(raw, AfskBitFixMode.SingleBit);
+
+        Assert.Equal(frame, repaired);
+    }
+
+    [Fact]
+    public void Soft_decision_pre_nrzi_repairs_two_weak_symbols_in_pair_mode()
+    {
+        var frame = ModemTestSignals.UiFrame("=5555.55N/00333.33W-soft pre-nrzi double");
+        var bits = HdlcEncoder.EncodeBits([frame], preambleFlags: 1, tailFlags: 1);
+        var tones = HdlcEncoder.ToTones(bits);
+        var bodyLen = tones.Length - 16;
+        var raw = new float[bodyLen + 1];
+        for (var i = 0; i < raw.Length; i++)
+            raw[i] = tones[7 + i] ? 1.0f : -1.0f;
+
+        raw[60] = raw[60] > 0 ? -0.03f : 0.03f;
+        raw[180] = raw[180] > 0 ? -0.05f : 0.05f;
+
+        Assert.Null(FrameBitFixer.TryFixRawDemod(raw, AfskBitFixMode.SingleBit));
+        Assert.Equal(frame, FrameBitFixer.TryFixRawDemod(raw, AfskBitFixMode.SingleAndAdjacentPair));
+    }
 }

@@ -60,16 +60,16 @@ public sealed class AfskDemodulator
         private readonly Agc _markAgc = new();
         private readonly Agc _spaceAgc = new();
 
-        public Correlator(int window, bool postLpf = true)
+        public Correlator(int window, double postLpfCutoffHz = 1600)
         {
             _im = new MovingSum(window);
             _qm = new MovingSum(window);
             _is = new MovingSum(window);
             _qs = new MovingSum(window);
-            if (postLpf)
+            if (postLpfCutoffHz > 0)
             {
-                _markLpf = new BiquadLowPass(1600, SampleRate);
-                _spaceLpf = new BiquadLowPass(1600, SampleRate);
+                _markLpf = new BiquadLowPass(postLpfCutoffHz, SampleRate);
+                _spaceLpf = new BiquadLowPass(postLpfCutoffHz, SampleRate);
             }
         }
 
