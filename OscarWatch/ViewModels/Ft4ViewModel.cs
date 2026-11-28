@@ -1583,7 +1583,7 @@ public partial class Ft4ViewModel : ViewModelBase, IDisposable
     [RelayCommand(CanExecute = nameof(CanManualLog))]
     private async Task ManualLogAsync()
     {
-        await _modem.LogQsoAsync(manual: true).ConfigureAwait(true);
+        await _modem.LogQsoAsync(manual: true, pendingTxMessage: CurrentTxMessage).ConfigureAwait(true);
         if (!string.IsNullOrWhiteSpace(_modem.Status))
             StatusLine = _modem.Status;
         else if (_modem.Sequencer?.TheirCall is not null)

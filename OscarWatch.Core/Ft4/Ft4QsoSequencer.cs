@@ -147,12 +147,19 @@ public sealed class Ft4QsoSequencer
             TxAudioHz = decode.FreqHz;
         _weSent73 = false;
         _theySent73 = false;
+        // A click on this station's 73 used to wipe the reports, so Log QSO saved
+        // the contact with neither one. A new station, or their CQ, starts again.
+        var sameStation = TheirCall is not null
+            && callDe.Equals(TheirCall, StringComparison.OrdinalIgnoreCase);
         AssignTheirStation(callDe, extra);
         NoteTheirAudio(decode.FreqHz);
         Phase = Ft4QsoPhase.InQso;
         TransmitEnabled = true;
-        ReportSent = null;
-        ReportReceived = null;
+        if (!sameStation || Ft4MessageCodec.IsCq(callTo))
+        {
+            ReportSent = null;
+            ReportReceived = null;
+        }
 
         if (Ft4MessageCodec.IsCq(callTo))
         {

@@ -463,6 +463,40 @@ public sealed class Ft4QsoSequencerTests
     }
 
     [Fact]
+    public void Clicking_their_73_keeps_reports_already_exchanged()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        seq.StartCq(evenSlot: true);
+        Assert.False(seq.OnDecoded(Msg("MM9SQL G4ABC IO91", snr: -6f)));
+        Assert.False(seq.OnDecoded(Msg("MM9SQL G4ABC -10", snr: -10f)));
+        Assert.Equal("-06", seq.ReportSent);
+        Assert.Equal("-10", seq.ReportReceived);
+
+        seq.StartAnswer(Msg("MM9SQL G4ABC 73"), oppositeEvenSlot: false);
+
+        Assert.Equal("G4ABC", seq.TheirCall);
+        Assert.Equal("-06", seq.ReportSent);
+        Assert.Equal("-10", seq.ReportReceived);
+        Assert.Equal("G4ABC MM9SQL 73", seq.CurrentTxMessage);
+    }
+
+    [Fact]
+    public void Clicking_their_new_cq_clears_reports_from_the_previous_contact()
+    {
+        var seq = new Ft4QsoSequencer(() => "MM9SQL", () => "IO85", () => true);
+        seq.StartAnswer(Msg("MM9SQL G4ABC -07", snr: -8f), oppositeEvenSlot: true);
+        Assert.Equal("-07", seq.ReportReceived);
+        Assert.Equal("-08", seq.ReportSent);
+
+        seq.StartAnswer(Msg("CQ G4ABC JO01"), oppositeEvenSlot: false);
+
+        Assert.Equal("G4ABC", seq.TheirCall);
+        Assert.Null(seq.ReportSent);
+        Assert.Null(seq.ReportReceived);
+        Assert.Equal("G4ABC MM9SQL IO85", seq.CurrentTxMessage);
+    }
+
+    [Fact]
     public void Answer_rr73_sends_73_not_a_signal_report()
     {
         // RR73 matches a Maidenhead locator. Clicking it must resend 73.

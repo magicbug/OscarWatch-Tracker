@@ -1043,9 +1043,12 @@ public sealed class Ft4ModemService : IDisposable
 
     /// <summary>
     /// Save the current QSO to the OscarWatch Logbook.
-    /// Manual log needs their callsign; auto-complete still requires both reports.
+    /// Manual log needs their callsign. A report the sequencer no longer holds is taken
+    /// from <paramref name="pendingTxMessage"/> or from the messages already on the list.
+    /// Auto-complete still requires both reports on the sequencer.
     /// </summary>
-    public Task LogQsoAsync(bool manual = false) => TryLogAsync(manual);
+    public Task LogQsoAsync(bool manual = false, string? pendingTxMessage = null) =>
+        TryLogAsync(manual, pendingTxMessage);
 
     /// <summary>True when the current period is being transmitted, or will still be used.</summary>
     public bool IsLiveTransmitSlot(DateTime utc)
@@ -2761,7 +2764,7 @@ public sealed class Ft4ModemService : IDisposable
         return trimmed is not "-" and not "—" and not "–";
     }
 
-    private async Task TryLogAsync(bool manual)
+    private async Task TryLogAsync(bool manual, string? pendingTxMessage = null)
     {
         var seq = _sequencer;
         if (seq?.TheirCall is null)
@@ -2781,13 +2784,27 @@ public sealed class Ft4ModemService : IDisposable
         if (!manual && string.Equals(key, _lastLoggedKey, StringComparison.Ordinal))
             return;
 
+        var sent = Ft4MessageCodec.NormalizeSnrReport(seq.ReportSent);
+        var received = Ft4MessageCodec.NormalizeSnrReport(seq.ReportReceived);
+        if (manual)
+        {
+            var activity = Decodes.ToArray();
+            (sent, received) = Ft4LoggedReports.Resolve(
+                _settings.Current.GroundStation.Callsign,
+                seq.TheirCall,
+                seq.ReportSent,
+                seq.ReportReceived,
+                string.IsNullOrWhiteSpace(pendingTxMessage) ? seq.CurrentTxMessage : pendingTxMessage,
+                activity);
+        }
+
         try
         {
             var record = await _qsoLogger.LogAsync(new LiveQsoEntry(
                 Ft4Clock.UtcNow,
                 seq.TheirCall,
-                Ft4MessageCodec.NormalizeSnrReport(seq.ReportSent),
-                Ft4MessageCodec.NormalizeSnrReport(seq.ReportReceived),
+                sent,
+                received,
                 seq.TheirGrid ?? "",
                 _profile.Mode,
                 _profile.Mode,
