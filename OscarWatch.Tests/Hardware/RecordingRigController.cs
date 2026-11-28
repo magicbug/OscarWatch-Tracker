@@ -46,6 +46,10 @@ internal sealed class RecordingRigController : IRigController
     public void Update(RigSettings settings, RigTrackingContext? context) { }
     public void ApplySelectedCtcss(RigSettings settings, RigTrackingContext? context) { }
     public void SetFt4SlotGatedDoppler(bool hold) { }
+
+    public void SetCwTextDopplerHold(bool hold) =>
+        Record(hold ? "cwdoppler:on" : "cwdoppler:off");
+
     public void ForceFt4DopplerStep() { }
     public bool TryForceFt4DopplerStep(DateTime frequencyAtUtc, TimeSpan timeout) => true;
     public bool TryGetUplinkRfPowerWatts(out double watts)

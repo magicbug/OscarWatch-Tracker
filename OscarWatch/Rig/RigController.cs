@@ -123,6 +123,8 @@ public sealed class RigController : IRigController, IDisposable
     private bool _holdPassbandCaptureUntilDialMatches;
     /// <summary>FT4 modem holds CAT Doppler between explicit slot-boundary steps.</summary>
     private bool _ft4SlotGatedDoppler;
+    /// <summary>CW text keying holds CAT Doppler while characters are on the air or queued.</summary>
+    private bool _cwTextDopplerHold;
     private bool _ft4ForceDopplerStep;
     /// <summary>True while a forced FT4 step should write frequencies and skip the dial read.</summary>
     private bool _ft4DirectDopplerStep;
@@ -252,6 +254,9 @@ public sealed class RigController : IRigController, IDisposable
     public void SetFt4SlotGatedDoppler(bool hold) =>
         Enqueue(new RigCommand(RigCommandKind.SetFt4SlotGatedDoppler, ft4HoldDoppler: hold));
 
+    public void SetCwTextDopplerHold(bool hold) =>
+        Enqueue(new RigCommand(RigCommandKind.SetCwTextDopplerHold, cwTextHoldDoppler: hold));
+
     public void ForceFt4DopplerStep() =>
         Enqueue(new RigCommand(RigCommandKind.ForceFt4DopplerStep));
 
@@ -372,7 +377,7 @@ public sealed class RigController : IRigController, IDisposable
         }
         catch (Exception ex) when (ex is TimeoutException or ObjectDisposedException)
         {
-            Log.Debug(ex, "CW {Kind} did not finish in time", command.Kind);
+            Log.Information(ex, "CW {Kind} did not finish in time; command dropped", command.Kind);
             return false;
         }
 
@@ -401,6 +406,13 @@ public sealed class RigController : IRigController, IDisposable
     /// <summary>Blocks until queued commands are processed (unit tests).</summary>
     internal void DrainCommandQueueForTests() =>
         EnqueueAndWait(new RigCommand(RigCommandKind.Drain));
+
+    /// <summary>Disconnect with a custom wait (unit tests for abandon behaviour).</summary>
+    internal void DisconnectAndWaitForTests(TimeSpan timeout)
+    {
+        _disconnectRequested = true;
+        EnqueueAndWait(new RigCommand(RigCommandKind.Disconnect), timeout);
+    }
 
     public void Dispose()
     {
@@ -442,7 +454,14 @@ public sealed class RigController : IRigController, IDisposable
         command.Completed = done;
         Enqueue(command);
         if (!done.Wait(timeout ?? CommandWaitTimeout))
+        {
+            // A late disconnect must still tear the radio down. Other waits leave the
+            // command queued; mark it abandoned so ProcessCommand does not run it late
+            // (for example CW text followed by an immediate stop).
+            if (command.Kind != RigCommandKind.Disconnect)
+                command.Abandoned = true;
             throw new TimeoutException("Rig worker did not complete the command in time.");
+        }
     }
 
     private void EnsureWorker()
@@ -515,6 +534,12 @@ public sealed class RigController : IRigController, IDisposable
     {
         try
         {
+            if (command.Abandoned)
+            {
+                Log.Information("Dropped abandoned {Kind} after waiter timed out", command.Kind);
+                return;
+            }
+
             switch (command.Kind)
             {
                 case RigCommandKind.PublishContext:
@@ -556,6 +581,11 @@ public sealed class RigController : IRigController, IDisposable
                     if (!_ft4SlotGatedDoppler)
                         _ft4ForceDopplerStep = false;
                     Log.Information("FT4 slot-gated Doppler hold={Hold}", _ft4SlotGatedDoppler);
+                    break;
+
+                case RigCommandKind.SetCwTextDopplerHold:
+                    _cwTextDopplerHold = command.CwTextHoldDoppler;
+                    Log.Information("CW text Doppler hold={Hold}", _cwTextDopplerHold);
                     break;
 
                 case RigCommandKind.ForceFt4DopplerStep:
@@ -933,6 +963,7 @@ public sealed class RigController : IRigController, IDisposable
         _kenwoodFaFbFailCount = 0;
         // The hold belongs to the FT4 session, which does not resend it after a reconnect.
         _ft4ForceDopplerStep = false;
+        _cwTextDopplerHold = false;
         EndSameBandTransmitHold(force: true);
     }
 
@@ -1002,6 +1033,12 @@ public sealed class RigController : IRigController, IDisposable
         // OrbitDeck-style FT4: hold the dial within a slot; only write on ForceFt4DopplerStep.
         if (_ft4SlotGatedDoppler && !_ft4ForceDopplerStep)
             return;
+
+        // CW text shares this worker with Doppler. Hold frequency writes while characters
+        // are on the air so 0x17 / KY is not delayed or clipped by a CI-V Doppler step.
+        if (_cwTextDopplerHold)
+            return;
+
         var directStep = _ft4DirectDopplerStep;
         _ft4ForceDopplerStep = false;
         _dopplerPreempted = false;
@@ -3798,6 +3835,7 @@ public sealed class RigController : IRigController, IDisposable
         SetPtt,
         SetHandshakePtt,
         SetFt4SlotGatedDoppler,
+        SetCwTextDopplerHold,
         ForceFt4DopplerStep,
         HoldSameBandTransmit,
         ReadUplinkRfPower,
@@ -3821,7 +3859,8 @@ public sealed class RigController : IRigController, IDisposable
             bool pttTransmit = false,
             bool handshakeUseRts = true,
             bool handshakeAssert = false,
-            bool ft4HoldDoppler = false)
+            bool ft4HoldDoppler = false,
+            bool cwTextHoldDoppler = false)
         {
             Kind = kind;
             Settings = settings ?? new RigSettings();
@@ -3832,6 +3871,7 @@ public sealed class RigController : IRigController, IDisposable
             HandshakeUseRts = handshakeUseRts;
             HandshakeAssert = handshakeAssert;
             Ft4HoldDoppler = ft4HoldDoppler;
+            CwTextHoldDoppler = cwTextHoldDoppler;
         }
 
         public RigCommandKind Kind { get; }
@@ -3843,6 +3883,7 @@ public sealed class RigController : IRigController, IDisposable
         public bool HandshakeUseRts { get; }
         public bool HandshakeAssert { get; }
         public bool Ft4HoldDoppler { get; }
+        public bool CwTextHoldDoppler { get; }
         public int Generation { get; set; }
         public DateTime? DopplerAtUtc { get; set; }
         public double? RfPowerWatts { get; set; }
@@ -3850,6 +3891,7 @@ public sealed class RigController : IRigController, IDisposable
         public CwMessage? CwPiece { get; set; }
         public int CwWpm { get; set; }
         public bool Succeeded { get; set; }
+        public bool Abandoned { get; set; }
         public ManualResetEventSlim? Completed { get; set; }
     }
 }

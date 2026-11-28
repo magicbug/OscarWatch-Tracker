@@ -492,9 +492,16 @@ public sealed class CwKeyerService : IDisposable
         finally
         {
             if (!CwKeyingRoute.IsTextMethod(method))
+            {
                 SetLine(method, useRts, assert: false);
-            else if (token.IsCancellationRequested || finish != CwKeyerFinish.Completed)
-                _rig.TryStopCwText();
+            }
+            else
+            {
+                if (token.IsCancellationRequested || finish != CwKeyerFinish.Completed)
+                    _rig.TryStopCwText();
+                // Release after stop so a Doppler write cannot land between them.
+                _rig.SetCwTextDopplerHold(false);
+            }
 
             Interlocked.CompareExchange(ref _activeSlot, IdleSlot, KeyboardSlot);
             lock (_keyboardGate)
@@ -509,38 +516,50 @@ public sealed class CwKeyerService : IDisposable
 
     private CwKeyerFinish RunText(CwMessage message, CwKeyingMethod method, CancellationToken token)
     {
-        _rig.TrySetCwSpeed(_wpm);
-
-        var pieces = method == CwKeyingMethod.KenwoodText
-            ? KenwoodCwCodec.BuildSendCommands(message).Select(p => p.Piece).ToList()
-            : IcomCwCodec.BuildSendCommands(message).Select(p => p.Piece).ToList();
-
-        foreach (var piece in pieces)
+        _rig.SetCwTextDopplerHold(true);
+        try
         {
-            if (token.IsCancellationRequested)
-                break;
+            _rig.TrySetCwSpeed(_wpm);
 
-            if (!_rig.TrySendCwText(piece, TextCommandTimeout))
+            var pieces = method == CwKeyingMethod.KenwoodText
+                ? KenwoodCwCodec.BuildSendCommands(message).Select(p => p.Piece).ToList()
+                : IcomCwCodec.BuildSendCommands(message).Select(p => p.Piece).ToList();
+
+            foreach (var piece in pieces)
             {
-                _rig.TryStopCwText();
-                return CwKeyerFinish.RigRejected;
+                if (token.IsCancellationRequested)
+                    break;
+
+                if (!_rig.TrySendCwText(piece, TextCommandTimeout))
+                {
+                    _rig.TryStopCwText();
+                    return CwKeyerFinish.RigRejected;
+                }
+
+                // The radios report no buffer space, so wait until this piece has gone out.
+                if (token.WaitHandle.WaitOne(MorseCode.EstimateDuration(piece, _wpm)))
+                    break;
             }
 
-            // The radios report no buffer space, so wait until this piece has gone out.
-            if (token.WaitHandle.WaitOne(MorseCode.EstimateDuration(piece, _wpm)))
-                break;
+            if (!token.IsCancellationRequested)
+                return CwKeyerFinish.Completed;
+
+            _rig.TryStopCwText();
+            return CwKeyerFinish.Aborted;
         }
-
-        if (!token.IsCancellationRequested)
-            return CwKeyerFinish.Completed;
-
-        _rig.TryStopCwText();
-        return CwKeyerFinish.Aborted;
+        finally
+        {
+            _rig.SetCwTextDopplerHold(false);
+        }
     }
 
     private CwKeyerFinish RunKeyboardText(CwKeyingMethod method, CancellationToken token)
     {
+        _rig.SetCwTextDopplerHold(true);
         _rig.TrySetCwSpeed(_wpm);
+        // Idle until the first keystroke so Doppler can keep up while the operator thinks.
+        _rig.SetCwTextDopplerHold(false);
+
         var clock = Stopwatch.StartNew();
         var readyAtMs = 0.0;
         var sentAny = false;
@@ -568,6 +587,8 @@ public sealed class CwKeyerService : IDisposable
                     + MorseCode.WordGapUnits * MorseCode.DotMs(_wpm);
                 if (!WaitUntil(clock, readyAtMs, token))
                     return CwKeyerFinish.Aborted;
+                if (IsKeyboardQueueEmpty())
+                    _rig.SetCwTextDopplerHold(false);
                 continue;
             }
 
@@ -582,6 +603,7 @@ public sealed class CwKeyerService : IDisposable
                     return CwKeyerFinish.Aborted;
             }
 
+            _rig.SetCwTextDopplerHold(true);
             if (!_rig.TrySendCwText(piece, TextCommandTimeout))
             {
                 _rig.TryStopCwText();
@@ -593,9 +615,17 @@ public sealed class CwKeyerService : IDisposable
                 return CwKeyerFinish.Aborted;
 
             sentAny = true;
+            if (IsKeyboardQueueEmpty())
+                _rig.SetCwTextDopplerHold(false);
         }
 
         return token.IsCancellationRequested ? CwKeyerFinish.Aborted : CwKeyerFinish.Completed;
+    }
+
+    private bool IsKeyboardQueueEmpty()
+    {
+        lock (_keyboardGate)
+            return _keyboardQueue.Count == 0;
     }
 
     private CwKeyerFinish RunLine(CwMessage message, CwKeyingMethod method, bool useRts, CancellationToken token)

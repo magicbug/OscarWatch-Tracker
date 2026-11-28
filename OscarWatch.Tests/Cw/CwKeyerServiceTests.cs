@@ -60,7 +60,9 @@ public sealed class CwKeyerServiceTests
         Assert.Equal(CwKeyerStartResult.Started, keyer.Send(0, CwMessage.FromText("E")));
         Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
 
-        Assert.Equal(["cwspeed:60", "cwtext:E"], rig.Calls);
+        Assert.Equal(
+            ["cwdoppler:on", "cwspeed:60", "cwtext:E", "cwdoppler:off"],
+            rig.Calls);
     }
 
     [Fact]
@@ -77,6 +79,24 @@ public sealed class CwKeyerServiceTests
         Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
 
         Assert.Equal(CwKeyerFinish.RigRejected, finish);
+        Assert.Equal("cwdoppler:on", rig.Calls[0]);
+        Assert.Equal("cwdoppler:off", rig.Calls[^1]);
+        Assert.Contains("cwstop", rig.Calls);
+    }
+
+    [Fact]
+    public void Cat_line_send_does_not_hold_doppler()
+    {
+        var rig = new RecordingRigController();
+        var settings = Settings(RigType.YaesuFt817, cw => cw.Wpm = 60);
+        using var keyer = new CwKeyerService(rig, settings);
+        var finished = new ManualResetEventSlim();
+        keyer.Finished += (_, _) => finished.Set();
+
+        Assert.Equal(CwKeyerStartResult.Started, keyer.Send(0, CwMessage.FromText("E")));
+        Assert.True(finished.Wait(TimeSpan.FromSeconds(5)));
+
+        Assert.DoesNotContain(rig.Calls, c => c.StartsWith("cwdoppler:", StringComparison.Ordinal));
     }
 
     [Fact]

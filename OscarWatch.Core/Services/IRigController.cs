@@ -30,6 +30,13 @@ public interface IRigController
     /// </summary>
     void SetFt4SlotGatedDoppler(bool hold);
 
+    /// <summary>
+    /// When true, hold CAT Doppler frequency writes while CW text (Kenwood <c>KY</c> or
+    /// Icom <c>0x17</c>) is being sent on the shared rig worker. When false, continuous
+    /// Doppler resumes. COM key-line keying does not use this hold.
+    /// </summary>
+    void SetCwTextDopplerHold(bool hold);
+
     /// <summary>Apply one Doppler write now while FT4 slot-gating is active (slot boundary).</summary>
     void ForceFt4DopplerStep();
 
