@@ -6,6 +6,21 @@ using OscarWatch.ViewModels;
 
 namespace OscarWatch.Tests;
 
+public class AdifSatModeHelperTests
+{
+    [Theory]
+    [InlineData(145_850_000, 436_795_000, "V/U")]
+    [InlineData(435_640_000, 145_965_000, "U/V")]
+    [InlineData(145_825_000, 145_825_000, "V")]
+    [InlineData(2_400_000_000, 10_489_500_000, "S/X")]
+    [InlineData(1_269_500_000, 436_500_000, "L/U")]
+    [InlineData(0, 436_795_000, "")]
+    [InlineData(145_850_000, 0, "")]
+    [InlineData(14_074_000, 14_074_000, "")]
+    public void FromUplinkDownlinkHz_maps_amsat_band_letters(long uplinkHz, long downlinkHz, string expected) =>
+        Assert.Equal(expected, AdifSatModeHelper.FromUplinkDownlinkHz(uplinkHz, downlinkHz));
+}
+
 public class AdifBandHelperTests
 {
     [Theory]
@@ -57,6 +72,7 @@ public class AdifExporterTests
         Assert.Contains("<TIME_ON:4>1710", adif, StringComparison.Ordinal);
         Assert.Contains("<SAT_NAME:5>SO-50", adif, StringComparison.Ordinal);
         Assert.Contains("<PROP_MODE:3>SAT", adif, StringComparison.Ordinal);
+        Assert.Contains("<SAT_MODE:3>V/U", adif, StringComparison.Ordinal);
         Assert.Contains("<STATION_CALLSIGN:6>2M0SQL", adif, StringComparison.Ordinal);
         Assert.Contains("<MY_GRIDSQUARE:6>IO87IP", adif, StringComparison.Ordinal);
         Assert.Contains("<EOR>", adif, StringComparison.Ordinal);

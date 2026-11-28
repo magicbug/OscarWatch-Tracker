@@ -61,7 +61,7 @@ public class WsjtxUdpMessageTests
         Assert.Equal("", frame.ReadString());
         Assert.Equal("SAT", frame.ReadString());
         Assert.Equal("RS-44", frame.ReadString());
-        Assert.Equal("", frame.ReadString());
+        Assert.Equal("V/U", frame.ReadString());
         Assert.Equal("435.640000", frame.ReadString());
         Assert.Equal(frame.Length, frame.Offset);
     }
@@ -92,6 +92,7 @@ public class WsjtxUdpMessageTests
         Assert.Contains("<CALL:4>K2MO", adif, StringComparison.Ordinal);
         Assert.Contains("<SAT_NAME:5>RS-44", adif, StringComparison.Ordinal);
         Assert.Contains("<PROP_MODE:3>SAT", adif, StringComparison.Ordinal);
+        Assert.Contains("<SAT_MODE:3>V/U", adif, StringComparison.Ordinal);
         Assert.Contains("<FREQ_RX:10>435.640000", adif, StringComparison.Ordinal);
         Assert.Contains("<BAND_RX:4>70cm", adif, StringComparison.Ordinal);
         Assert.Contains("<EOR>", adif, StringComparison.Ordinal);

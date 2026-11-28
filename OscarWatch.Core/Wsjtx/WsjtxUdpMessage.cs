@@ -78,7 +78,8 @@ public static class WsjtxUdpMessage
         return string.IsNullOrWhiteSpace(satName) ? "" : satName;
     }
 
-    private static string SatModeForWsjtx(QsoRecord qso) => "";
+    private static string SatModeForWsjtx(QsoRecord qso) =>
+        AdifSatModeHelper.FromUplinkDownlinkHz(qso.FreqHz, qso.FreqRxHz);
 
     public static byte[] LoggedAdif(QsoLogbook logbook, QsoRecord qso)
     {

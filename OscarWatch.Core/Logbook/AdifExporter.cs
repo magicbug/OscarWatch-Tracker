@@ -67,6 +67,10 @@ public static class AdifExporter
         }
         AppendField(sb, "PROP_MODE", string.IsNullOrWhiteSpace(qso.PropMode) ? "SAT" : qso.PropMode.Trim());
 
+        var satMode = AdifSatModeHelper.FromUplinkDownlinkHz(qso.FreqHz, qso.FreqRxHz);
+        if (satMode.Length > 0)
+            AppendField(sb, "SAT_MODE", satMode);
+
         if (qso.FreqHz > 0)
             AppendField(sb, "FREQ", FormatFreqMhz(qso.FreqHz));
         if (!string.IsNullOrWhiteSpace(qso.Band))
